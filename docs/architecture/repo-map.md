@@ -26,7 +26,7 @@
 | 分類 | 主要目錄 (僅列核心) | 備註 |
 | --- | --- | --- |
 | 核心平台 | `core/`, `runtime/`, `shared/` | AI 決策、整合層、運行時、共用資源 |
-| 自動化 | `automation/` | 智能/超自動化、架構骨架、零觸部署（含 `automation/pipelines/` 子模組） |
+| 自動化 | `automation/` | 智能/超自動化、架構骨架、零觸及部署（含 `automation/pipelines/` 子模組） |
 | 自主/無人 | `autonomous/`, `v1-python-drones/`, `v2-multi-islands/` | 無人機與多島嶼框架 |
 | 服務/代理 | `services/`, `agent/`, `mcp-servers/` | 長生命週期代理、MCP 工具端點 |
 | 前端/應用 | `frontend/`, `apps/` | UI 套件與 Web 應用 |
