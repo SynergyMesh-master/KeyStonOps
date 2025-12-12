@@ -124,12 +124,12 @@
   - automation_level 說明
 ```
 
-### Phase 3: Integration (30-integration)
+### Phase 3: Integration (30-agents (formerly 30-integration))
 
 #### 6. unmanned-island-integration-manifest.md
 
 ```yaml
-路徑: governance/30-integration/unmanned-island-integration-manifest.md
+路徑: governance/_legacy/30-agents (formerly 30-integration) (deprecated)/unmanned-island-integration-manifest.md
 用途: 跨維度整合清單
 大小: ~14.5 KB
 內容:
@@ -209,7 +209,7 @@
 | 00-vision-strategy | Vision & Strategy | AI-BEHAVIOR-CONTRACT.md, INSTANT-EXECUTION-MANIFEST.yaml, AUTONOMOUS_AGENT_STATE.md | ✅ 100% |
 | 14-improvement | Improvement & Learning | unmanned-island-self-healing.yaml, improvement-policy.yaml | ✅ 100% |
 | 28-tests | Tests & Validation | validate_unmanned_island_integration.py | ✅ 100% |
-| 30-integration | Integration & Coordination | unmanned-island-integration-manifest.md | ✅ 100% |
+| 30-agents (formerly 30-integration) | Integration & Coordination | unmanned-island-integration-manifest.md | ✅ 100% |
 | 39-automation | Automation & Orchestration | unmanned_island_integration_engine.py | ✅ 100% |
 
 ---
@@ -404,7 +404,7 @@ print(result)
 ### 功能文檔
 
 - [自我修復框架](governance/14-improvement/unmanned-island-self-healing.yaml)
-- [整合清單](governance/30-integration/unmanned-island-integration-manifest.md)
+- [整合清單](governance/_legacy/30-agents (formerly 30-integration) (deprecated)/unmanned-island-integration-manifest.md)
 
 ### 代碼與腳本
 

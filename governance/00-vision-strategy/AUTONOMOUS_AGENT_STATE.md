@@ -470,8 +470,9 @@ self_healing_integration:
         - "跨維度自動化"
     
     integration_manifest:
-      file: "governance/30-integration/unmanned-island-integration-manifest.md"
-      status: ACTIVE
+      file: "governance/_legacy/30-integration/unmanned-island-integration-manifest.md"
+      status: DEPRECATED_LEGACY
+      note: "Integration coordination moved to 30-agents/"
       documents:
         - "跨維度整合點"
         - "API 端點與事件流"
@@ -507,7 +508,7 @@ self_healing_integration:
   governance_dimensions_integrated:
     - "00-vision-strategy: AI 行為契約與執行標準"
     - "14-improvement: 自我修復與持續改進"
-    - "30-integration: 跨維度整合協調"
+    - "30-agents: AI Agent Governance (formerly 30-integration)"
     - "39-automation: 自動化引擎與島嶼協調"
     - "28-tests: 驗證與測試框架"
 ```

@@ -2,9 +2,9 @@ apiVersion: governance.synergymesh.io/v2
 kind: GovernanceStructureMap
 metadata:
   name: governance-structure-registry
-  version: 1.0.0
+  version: 1.1.0
   created_at: '2025-12-11T21:54:00Z'
-  updated_at: '2025-12-11T21:54:00Z'
+  updated_at: '2025-12-12T12:02:00Z'
   owner: governance-bot
   description: Central registry of all governance directories and their relationships
 validation_rules:
@@ -129,11 +129,13 @@ dimensions:
   type: dimension
   category: policy
   owner: stakeholder-team
-  path: governance/10-stakeholder
+  path: governance/_legacy/10-stakeholder
   depends_on:
   - 00-vision-strategy
   purpose: Stakeholder management and engagement
-  status: active
+  status: deprecated
+  deprecated_reason: Conflicting number with new layered framework
+  migration_target: 11-tools-systems or other dimensions
 - name: 11-tools-systems
   type: dimension
   category: policy
@@ -219,11 +221,13 @@ dimensions:
   type: dimension
   category: orchestration
   owner: information-team
-  path: governance/20-information
+  path: governance/_legacy/20-information
   depends_on:
   - 29-docs
   purpose: Information architecture and knowledge management
-  status: active
+  status: deprecated
+  deprecated_reason: Conflicting number with new layered framework
+  migration_target: Content consolidated into other dimensions
 - name: 20-intent
   type: dimension
   category: orchestration
@@ -328,11 +332,13 @@ dimensions:
   type: dimension
   category: execution
   owner: integration-team
-  path: governance/30-integration
+  path: governance/_legacy/30-integration
   depends_on:
   - 01-architecture
   purpose: Integration patterns and orchestration
-  status: active
+  status: deprecated
+  deprecated_reason: Conflicting number with new layered framework
+  migration_target: 30-agents/coordination
 - name: 31-schemas
   type: dimension
   category: execution

@@ -35,8 +35,9 @@ dimensions:
           description: "Self-healing automation engine"
           
       integration:
-        - path: "governance/30-integration/self-healing-integration.md"
-          description: "Integration manifest"
+        - path: "governance/_legacy/30-integration/self-healing-integration.md"
+          description: "Integration manifest (legacy - moved to 30-agents)"
+          status: deprecated
         - path: "governance/14-improvement/self-healing-improvement.yaml"
           description: "Improvement policies"
           
@@ -61,9 +62,10 @@ dimensions:
         assets:
           - "self-healing-validation.py"
           
-      - dimension: "30-integration"
+      - dimension: "30-agents"
+        note: "formerly 30-integration - now handles AI Agent Governance"
         assets:
-          - "self-healing-integration.md"
+          - "coordination/self-healing-integration.md"
           
       - dimension: "39-automation"
         assets:

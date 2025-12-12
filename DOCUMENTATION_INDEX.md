@@ -450,9 +450,13 @@ const reports = await runStageOne({
 
 ### 治理文檔 (`governance/`)
 
+> **⚠️ 重要更新 (2025-12-12)**: 治理目錄已完成重組，解決目錄衝突與重複問題。詳見 [governance/RESTRUCTURING_GUIDE.md](./governance/RESTRUCTURING_GUIDE.md)
+
 | 文件路徑                                                                                                                     | 說明              | 操作指引      |
 | ---------------------------------------------------------------------------------------------------------------------------- | ----------------- | ------------- |
-| [governance/README.md](./governance/README.md)                                                                               | 治理入口          | 政策與規則    |
+| [governance/README.md](./governance/README.md)                                                                               | 治理入口          | 政策與規則（已更新結構） |
+| [governance/RESTRUCTURING_GUIDE.md](./governance/RESTRUCTURING_GUIDE.md) 🆕                                                  | 重組遷移指南      | 目錄重組說明與遷移步驟 |
+| [governance/RESTRUCTURING_SUMMARY.md](./governance/RESTRUCTURING_SUMMARY.md) 🆕                                              | 重組完成摘要      | 變更總結與驗證結果 |
 | [governance/ARCHITECTURE_GOVERNANCE_MATRIX.md](./governance/ARCHITECTURE_GOVERNANCE_MATRIX.md) ⭐                            | 架構治理矩陣      | 九大治理維度完整框架 |
 | [governance/architecture/layers-domains.yaml](./governance/architecture/layers-domains.yaml)                                 | 層級與領域定義    | 架構層級與功能領域語義 |
 | [governance/ownership-map.yaml](./governance/ownership-map.yaml)                                                             | 所有權與生命週期  | 模組責任人與狀態追蹤 |

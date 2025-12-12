@@ -51,18 +51,16 @@ This framework makes architecture governance **explicit, measurable, and automat
 
 ## 📁 Directory Structure 目錄結構
 
+> **⚠️ RESTRUCTURING NOTICE** (2025-12-12): Directory structure has been cleaned up to resolve duplicates and conflicts.
+> See [RESTRUCTURING_GUIDE.md](./RESTRUCTURING_GUIDE.md) for migration details.
+
 ```
 governance/
 ├── ARCHITECTURE_GOVERNANCE_MATRIX.md     # 🎯 架構治理矩陣（核心文檔）
-├── GOVERNANCE_INTEGRATION_ARCHITECTURE.md # 🏗️ 完整整合架構（NEW!）
+├── GOVERNANCE_INTEGRATION_ARCHITECTURE.md # 🏗️ 完整整合架構
+├── RESTRUCTURING_GUIDE.md                # 📋 重組指南 (NEW!)
 │
-├── 00-40: 原有 40 維度治理框架
-│   ├── 00-vision-strategy/               # 願景與策略
-│   ├── ...
-│   ├── 39-automation/                    # 自動化引擎
-│   └── 40-self-healing/                  # 自我修復框架
-│
-├── 新增分層治理框架 (Layered Governance Framework) ⭐
+├── 分層治理框架 (Layered Governance Framework) ⭐ PRIMARY ARCHITECTURE
 │   ├── 10-policy/                        # Policy as Code Framework
 │   │   ├── README.md
 │   │   ├── framework.yaml
@@ -94,7 +92,7 @@ governance/
 │   │   ├── versioning/
 │   │   └── validation/
 │   │
-│   ├── 70-audit/                         # Audit & Traceability
+│   ├── 70-audit/                         # Audit & Traceability (Observability Layer)
 │   │   ├── README.md
 │   │   ├── framework.yaml
 │   │   ├── audit-logs/
@@ -108,16 +106,60 @@ governance/
 │       ├── analysis/
 │       └── optimization/
 │
-├── 支援目錄 (Supporting Directories)
-│   ├── architecture/                     # 架構定義
-│   ├── behavior-contracts/               # 行為契約
-│   ├── modules/                          # 模組規範
-│   ├── ownership-map.yaml                # 所有權映射
-│   ├── registry/                         # 模組註冊表
-│   ├── rules/                            # 治理規則
-│   ├── sbom/                             # 軟體物料清單
-│   └── schemas/                          # Schema 定義
+├── 原有治理維度 (Original Governance Dimensions) 00-09
+│   ├── 00-vision-strategy/               # 願景與策略
+│   ├── 01-architecture/                  # 架構治理
+│   ├── 02-decision/                      # 決策管理
+│   ├── 03-change/                        # 變更管理
+│   ├── 04-risk/                          # 風險管理
+│   ├── 05-compliance/                    # 合規管理
+│   ├── 06-security/                      # 安全管理
+│   ├── 07-audit/                         # 審計 (Strategy Layer - Policy Definition)
+│   ├── 08-process/                       # 流程管理
+│   └── 09-performance/                   # 性能管理
+│
+├── 支援與工具維度 (Support & Tool Dimensions) 11-40
+│   ├── 11-tools-systems/                 # 工具系統
+│   ├── 12-culture-capability/            # 文化能力
+│   ├── 13-metrics-reporting/             # 指標報告
+│   ├── 14-improvement/                   # 持續改進
+│   ├── ...
+│   ├── 23-policies/                      # 策略定義 (Consolidated from root policies/)
+│   ├── 24-registry/                      # 模組註冊表
+│   ├── 31-schemas/                       # Schema 定義 (Consolidated from root schemas/)
+│   ├── 35-scripts/                       # 腳本工具 (Consolidated from root scripts/)
+│   ├── 39-automation/                    # 自動化引擎
+│   └── 40-self-healing/                  # 自我修復框架
+│
+├── 已棄用目錄 (Deprecated Directories) ⚠️
+│   ├── _legacy/                          # 已遷移的舊維度
+│   │   ├── 10-stakeholder/               # → 功能已整合到其他維度
+│   │   ├── 20-information/               # → 內容已整合
+│   │   └── 30-integration/               # → 已整合到 30-agents
+│   ├── policies/ → 23-policies/          # 已整合 (See README_DEPRECATED.md)
+│   ├── schemas/ → 31-schemas/            # 已整合 (See README_DEPRECATED.md)
+│   └── scripts/ → 35-scripts/            # 已整合 (See README_DEPRECATED.md)
+│
+└── 跨維度共享資源 (Cross-Dimensional Shared Resources)
+    ├── dimensions/                       # 完整維度索引 (80+ dimensions)
+    ├── index/                            # 索引與事件
+    ├── packages/                         # 共享套件
+    └── ci/                               # CI/CD 整合
 ```
+
+### 🔄 Recent Changes (2025-12-12)
+
+**問題解決 (Problems Resolved)**:
+1. ✅ 移除目錄編號衝突 (10, 20, 30)
+2. ✅ 統一共享資源位置 (policies, schemas, scripts)
+3. ✅ 釐清審計職責 (07-audit vs 70-audit)
+4. ✅ 建立單一真相來源
+
+**遷移影響 (Migration Impact)**:
+- Legacy dimensions moved to `_legacy/`
+- Shared resources consolidated into numbered dimensions
+- All changes tracked in `governance-map.yaml`
+- Migration deadline: 2026-03-31
 
 ## 🎯 What This Directory Does 本目錄負責什麼
 
@@ -303,3 +345,23 @@ SynergyMesh follows SLSA (Supply-chain Levels for Software Artifacts) framework:
 - [SLSA Framework](https://slsa.dev/)
 - [Migration Guide](../docs/MIGRATION.md)
 - [Sigstore Documentation](https://docs.sigstore.dev/)
+
+
+## Directory Structure
+
+### Canonical Directories (Use These)
+
+- `23-policies/` - Governance policies (consolidated)
+- `26-tools/` - Governance tools
+- `28-tests/` - Test suites
+- `31-schemas/` - JSON/YAML schemas (consolidated)
+- `33-common/` - Common utilities
+- `35-scripts/` - Automation scripts (consolidated)
+
+### Deprecated Directories (Do Not Use)
+
+- ~~`policies/`~~ → Use `23-policies/`
+- ~~`schemas/`~~ → Use `31-schemas/`
+- ~~`scripts/`~~ → Use `35-scripts/`
+
+Last updated: 2025-12-12

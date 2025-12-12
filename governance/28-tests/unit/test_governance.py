@@ -14,10 +14,13 @@ def test_dimensions_exist(governance_root):
     expected_dims = [
         "00-vision-strategy", "01-architecture", "02-decision",
         "03-change", "04-risk", "05-compliance", "06-security",
-        "07-audit", "08-process", "09-performance", "10-stakeholder",
+        "07-audit", "08-process", "09-performance", "10-policy",
         "11-tools-systems", "12-culture-capability", 
         "13-metrics-reporting", "14-improvement"
     ]
+    
+    # Note: 10-stakeholder moved to _legacy/10-stakeholder (2025-12-12)
+    # Now using 10-policy for layered governance framework
     
     for dim in expected_dims:
         dim_path = governance_root / dim

@@ -106,7 +106,7 @@
 ✅ 協調任務執行成功 (analyze, monitor, deploy)
 ```
 
-### 階段 4: 在 governance/30-integration 中創建跨維度整合 ✅
+### 階段 4: 在 governance/_legacy/30-integration (deprecated - see 30-agents) 中創建跨維度整合 ✅
 
 **已創建文件:**
 
