@@ -73,7 +73,25 @@ export class ProvenanceService {
     this.slsaService = new SLSAAttestationService();
   }
   /**
-   * 生成文件的 SHA256 摘要
+   * Generates a SHA256 digest for a file with path traversal protection
+   * 
+   * @param filePath - Relative path to the file within the safe directory
+   * @returns SHA256 digest in format "sha256:hexstring"
+   * @throws {PathValidationError} If the path attempts to escape the safe directory
+   * 
+   * @security Path Traversal Protection
+   * - All paths are resolved relative to SAFE_ROOT
+   * - Blocks directory traversal attempts (../)
+   * - Blocks absolute paths (/path or C:\path)
+   * - Cross-platform compatible (Windows/Linux/macOS)
+   * 
+   * @example
+   * // Valid usage
+   * const digest = await generateFileDigest('test-file.txt');
+   * 
+   * @example
+   * // Blocked - directory traversal
+   * await generateFileDigest('../../../etc/passwd'); // throws PathValidationError
    */
   async generateFileDigest(filePath: string): Promise<string> {
     // Normalize and resolve against the SAFE_ROOT
@@ -90,7 +108,27 @@ export class ProvenanceService {
   }
 
   /**
-   * 創建構建認證 - 使用 SLSA 格式
+   * Creates a build attestation using SLSA format with path traversal protection
+   * 
+   * @param subjectPath - Relative path to the subject file within the safe directory
+   * @param builder - Builder information including ID and version
+   * @param metadata - Optional build metadata (timestamps, reproducibility, etc.)
+   * @returns Build attestation with SLSA provenance
+   * @throws {PathValidationError} If the path attempts to escape the safe directory
+   * @throws {Error} If the subject path is not a file
+   * 
+   * @security Path Traversal Protection
+   * - All paths are resolved relative to SAFE_ROOT
+   * - Blocks directory traversal attempts (../)
+   * - Blocks absolute paths (/path or C:\path)
+   * - Cross-platform compatible (Windows/Linux/macOS)
+   * 
+   * @example
+   * const attestation = await createBuildAttestation(
+   *   'build-artifact.tar.gz',
+   *   { id: 'https://builder.example.com', version: '1.0.0' },
+   *   { reproducible: true }
+   * );
    */
   async createBuildAttestation(
     subjectPath: string,
