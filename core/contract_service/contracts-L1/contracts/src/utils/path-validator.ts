@@ -93,9 +93,12 @@ export class PathValidator {
       this.config.allowedAbsolutePrefixes.map(async (prefix) => {
         try {
           return await realpath(prefix);
-        } catch {
-          // If realpath fails (e.g., directory doesn't exist), use normalized path
-          return path.normalize(prefix);
+        } catch (error) {
+          // If realpath fails (e.g., directory doesn't exist), throw a validation error
+          throw new PathValidationError(
+            `Allowed prefix does not exist or cannot be resolved: ${prefix} (${error instanceof Error ? error.message : String(error)})`,
+            'ALLOWED_PREFIX_INVALID'
+          );
         }
       })
     );
