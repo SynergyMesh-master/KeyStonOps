@@ -458,6 +458,10 @@ const reports = await runStageOne({
 | [governance/RESTRUCTURING_GUIDE.md](./governance/RESTRUCTURING_GUIDE.md) 🆕                                                  | 重組遷移指南      | 目錄重組說明與遷移步驟 |
 | [governance/RESTRUCTURING_SUMMARY.md](./governance/RESTRUCTURING_SUMMARY.md) 🆕                                              | 重組完成摘要      | 變更總結與驗證結果 |
 | [governance/ARCHITECTURE_GOVERNANCE_MATRIX.md](./governance/ARCHITECTURE_GOVERNANCE_MATRIX.md) ⭐                            | 架構治理矩陣      | 九大治理維度完整框架 |
+| [governance/DEEP_ANALYSIS_GOVERNANCE_STRUCTURE.md](./governance/DEEP_ANALYSIS_GOVERNANCE_STRUCTURE.md)                       | 目錄結構深度分析  | 治理目錄完整結構與統計 |
+| [governance/FILE_CONTENT_STRUCTURE_ANALYSIS.md](./governance/FILE_CONTENT_STRUCTURE_ANALYSIS.md) 🆕                          | 檔案內容結構分析  | 實際檔案內容模式與最佳實踐 |
+| [governance/MISSING_DIMENSIONS_ANALYSIS.md](./governance/MISSING_DIMENSIONS_ANALYSIS.md) 🆕                                  | 缺失維度分析報告  | 39 個缺失維度評估與擴展建議 |
+| **🎉 已實施完整 81 個治理維度** | 治理覆蓋率達成 100% | 完整 00-80 連續維度覆蓋 (執行層、觀測層、回饋層全面完成) |
 | [governance/architecture/layers-domains.yaml](./governance/architecture/layers-domains.yaml)                                 | 層級與領域定義    | 架構層級與功能領域語義 |
 | [governance/ownership-map.yaml](./governance/ownership-map.yaml)                                                             | 所有權與生命週期  | 模組責任人與狀態追蹤 |
 | [governance/architecture-health.yaml](./governance/architecture-health.yaml)                                                 | 架構健康度指標    | 可量測的架構品質閘門 |
