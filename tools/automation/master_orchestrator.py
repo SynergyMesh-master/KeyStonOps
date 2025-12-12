@@ -12,6 +12,53 @@ Master Orchestrator - 主控引擎啟動器
 5. 健康監控與自我修復
 6. 事件總線協調
 
+Project Structure Context / 專案結構定位
+========================================
+
+本模組位於 Unmanned Island System 的三大子系統架構中：
+
+┌─────────────────────────────────────────────────────────────┐
+│              🏝️ Unmanned Island System                      │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  🔷 SynergyMesh Core        ⚖️ Structural Governance       │
+│     (core/)                    (governance/, config/)       │
+│     • AI decision engine       • Schema namespaces          │
+│     • Service registries       • Ten-stage pipeline         │
+│     • Safety mechanisms        • SLSA provenance            │
+│                                                             │
+│  🚁 Autonomous/Drone Stack  ⟵ 🎯 THIS MODULE               │
+│     (automation/)                 (tools/automation/)       │
+│     • Five-skeleton framework    • Engine discovery         │
+│     • Drone control              • & registration           │
+│     • Self-driving integration   • Lifecycle management     │
+│                                   • Task orchestration      │
+└─────────────────────────────────────────────────────────────┘
+
+Architecture Role / 架構角色
+----------------------------
+- **Layer**: Automation & Orchestration (自動化與編排層)
+- **Subsystem**: Autonomous Framework Support (自主框架支援)
+- **Responsibilities**:
+  * Discover and register automation engines from `automation/` subsystems
+  * Coordinate with intelligent automation (`automation/intelligent/`)
+  * Support autonomous framework skeletons (`automation/autonomous/`)
+  * Interface with governance policies (`governance/policies/`)
+
+Configuration Sources / 配置來源
+--------------------------------
+- Primary: `synergymesh.yaml` (root-level truth source)
+- Governance: `config/system-manifest.yaml`, `config/unified-config-index.yaml`
+- Engine configs: `tools/automation/engines/*/engine.yaml`
+- State persistence: `.automation_state/`
+
+Related Documentation / 相關文檔
+--------------------------------
+- System Overview: README.md (三系統視圖)
+- Architecture Boundaries: docs/architecture/repo-map.md
+- Automation Layer: automation/README.md
+- Governance Integration: governance/README.md
+
 Usage:
     # 啟動主控
     python master_orchestrator.py start
@@ -197,6 +244,95 @@ class EventBus:
 class EngineRegistry:
     """
     引擎註冊中心 - 管理所有引擎的註冊與發現
+    
+    Engine Registry - Central Hub for Engine Discovery & Lifecycle Management
+    
+    Architecture Context / 架構定位
+    ==============================
+    
+    The EngineRegistry serves as the **service registry component** within the 
+    Unmanned Island System's automation orchestration layer, bridging multiple
+    subsystems:
+    
+    ┌──────────────────────────────────────────────────────────────────┐
+    │                    Master Orchestrator                           │
+    │                    (tools/automation/)                           │
+    ├──────────────────────────────────────────────────────────────────┤
+    │                                                                  │
+    │   ┌─────────────────────┐         ┌─────────────────────┐      │
+    │   │  EngineRegistry     │◄────────│  Discovery System   │      │
+    │   │  (This Class)       │         │  • Python modules   │      │
+    │   │                     │         │  • YAML configs     │      │
+    │   │  • Registration     │         └─────────────────────┘      │
+    │   │  • Lifecycle        │                                      │
+    │   │  • Type filtering   │         ┌─────────────────────┐      │
+    │   │  • Health tracking  │◄────────│  Engine Instances   │      │
+    │   └─────────────────────┘         │  automation/*       │      │
+    │            │                      └─────────────────────┘      │
+    │            │                                                    │
+    │            ▼                                                    │
+    │   ┌─────────────────────┐                                      │
+    │   │  MasterOrchestrator │  Coordinates with:                   │
+    │   │  • Task dispatch    │  • automation/intelligent/           │
+    │   │  • Health monitor   │  • automation/autonomous/            │
+    │   │  • Event bus        │  • automation/hyperautomation/       │
+    │   └─────────────────────┘                                      │
+    └──────────────────────────────────────────────────────────────────┘
+    
+    Integration Points / 整合接口
+    -----------------------------
+    
+    1. **Discovery Integration** (發現整合):
+       - Scans `automation/` for BaseEngine subclasses
+       - Loads engine.yaml configs from engine directories
+       - Interfaces with governance schemas in `config/`
+    
+    2. **SynergyMesh Core Integration** (核心整合):
+       - Provides engine metadata to AI decision engine (`core/`)
+       - Supports virtual expert coordination
+       - Reports health status for monitoring
+    
+    3. **Governance Integration** (治理整合):
+       - Validates engine configs against governance schemas
+       - Ensures SLSA provenance for discovered engines
+       - Enforces policy constraints from `governance/policies/`
+    
+    4. **Autonomous Framework Support** (自主框架支援):
+       - Registers five-skeleton engines (`automation/autonomous/`)
+       - Coordinates drone control engines
+       - Manages ROS/C++ bridge engines
+    
+    Key Responsibilities / 核心職責
+    -------------------------------
+    
+    - **Engine Discovery**: Automatic detection of engines via filesystem scan
+    - **Registration Management**: Maintain engine inventory with metadata
+    - **Type Classification**: Support filtering by EngineType enum
+    - **Health Tracking**: Monitor engine lifecycle states
+    - **Query Interface**: Provide lookup by ID, type, state, or tags
+    
+    Configuration Sources / 配置來源
+    --------------------------------
+    
+    - Discovery paths: Defined in MasterOrchestrator initialization
+    - Engine configs: `tools/automation/engines/*/engine.yaml`
+    - Governance schemas: `config/system-manifest.yaml`
+    - State persistence: `.automation_state/registry.json`
+    
+    Thread Safety / 線程安全
+    -----------------------
+    
+    ⚠️ This class is NOT thread-safe by design. It's intended for use within
+    the asyncio event loop of the MasterOrchestrator. For concurrent access,
+    wrap operations in asyncio locks or use separate registry instances.
+    
+    See Also / 參考文檔
+    -------------------
+    
+    - `automation/README.md` - Automation layer overview
+    - `docs/architecture/repo-map.md` - System boundaries
+    - `engine_base.py` - BaseEngine interface definition
+    - `config/system-manifest.yaml` - Module registration schema
     """
 
     def __init__(self):
