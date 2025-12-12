@@ -22,6 +22,7 @@ dependency management, and explicit language boundaries.
 - **[📂 Deep Analysis: Governance Structure](./DEEP_ANALYSIS_GOVERNANCE_STRUCTURE.md)** - 目錄結構深度分析
 - **[📄 File Content Structure Analysis](./FILE_CONTENT_STRUCTURE_ANALYSIS.md)** - 檔案內容結構分析
 - **[🆕 Missing Dimensions Analysis](./MISSING_DIMENSIONS_ANALYSIS.md)** - 缺失維度分析與擴展建議
+- **[🔄 CI Refactoring Guide](./CI_REFACTORING_GUIDE.md)** - CI 管線重構指南 (NEW!)
 
 > **⚡ 更新 (2025-12-12)**: 已實施完整 81 個治理維度 (00-80)，達成 100% 完整覆蓋率！
 
