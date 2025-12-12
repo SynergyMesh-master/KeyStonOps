@@ -10,7 +10,7 @@ const SAFE_ROOT = path.resolve(process.cwd(), 'safefiles');
 // In production: allow project workspace and safefiles directory only
 const ALLOWED_ABSOLUTE_PREFIXES = process.env.NODE_ENV === 'test' 
   ? [tmpdir(), process.cwd()] 
-  : [process.cwd()];
+  : [process.cwd(), SAFE_ROOT];
 import { SLSAAttestationService, SLSAProvenance, BuildMetadata } from './attestation';
 
 export interface BuildAttestation {
