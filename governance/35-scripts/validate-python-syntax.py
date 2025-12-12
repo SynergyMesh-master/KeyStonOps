@@ -167,6 +167,7 @@ class PythonSyntaxValidator:
             )
             return True  # Don't fail on validation errors
 
+    # REFACTOR: Function 'validate_init_imports' has complexity 17. Consider extracting helper methods.
     def validate_init_imports(self, file_path: Path) -> bool:
         # NOTE: Consider refactoring this function (complexity > 50 lines)
         """Validate __init__.py files have proper imports for __all__ items."""

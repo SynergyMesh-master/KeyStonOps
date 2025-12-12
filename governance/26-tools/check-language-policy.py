@@ -92,6 +92,7 @@ class LanguagePolicyChecker:
         
         return best_pattern, best_match
     
+    # REFACTOR: Function '_check_directory_rules' has complexity 14. Consider extracting helper methods.
     def _check_directory_rules(self):
         # NOTE: Consider refactoring this function (complexity > 50 lines)
         """檢查目錄級別的語言規則"""

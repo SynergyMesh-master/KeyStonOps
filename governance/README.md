@@ -345,3 +345,23 @@ SynergyMesh follows SLSA (Supply-chain Levels for Software Artifacts) framework:
 - [SLSA Framework](https://slsa.dev/)
 - [Migration Guide](../docs/MIGRATION.md)
 - [Sigstore Documentation](https://docs.sigstore.dev/)
+
+
+## Directory Structure
+
+### Canonical Directories (Use These)
+
+- `23-policies/` - Governance policies (consolidated)
+- `26-tools/` - Governance tools
+- `28-tests/` - Test suites
+- `31-schemas/` - JSON/YAML schemas (consolidated)
+- `33-common/` - Common utilities
+- `35-scripts/` - Automation scripts (consolidated)
+
+### Deprecated Directories (Do Not Use)
+
+- ~~`policies/`~~ → Use `23-policies/`
+- ~~`schemas/`~~ → Use `31-schemas/`
+- ~~`scripts/`~~ → Use `35-scripts/`
+
+Last updated: 2025-12-12

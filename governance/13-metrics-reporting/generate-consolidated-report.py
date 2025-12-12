@@ -61,6 +61,7 @@ class ConsolidatedReportGenerator:
         else:
             print("⚠ Semgrep results not found")
     
+    # REFACTOR: Function 'generate_report' has complexity 25. Consider extracting helper methods.
     def generate_report(self):
         # NOTE: Consider refactoring this function (complexity > 50 lines)
         """Generate consolidated markdown report"""

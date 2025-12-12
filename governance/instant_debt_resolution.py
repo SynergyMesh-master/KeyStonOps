@@ -157,6 +157,7 @@ class InstantDebtResolver:
                 # These are intentionally preserved for reference, not duplicates
                 pass
     
+    # REFACTOR: Function '_fix_complexity' has complexity 11. Consider extracting helper methods.
     def _fix_complexity(self):
         # NOTE: Consider refactoring this function (complexity > 50 lines)
         """INSTANT: Fix high-complexity functions by extracting helper methods"""

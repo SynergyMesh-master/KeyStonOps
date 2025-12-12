@@ -146,6 +146,7 @@ class SchemaValidator:
 
         return errors
 
+    # REFACTOR: Function '_validate_field' has complexity 11. Consider extracting helper methods.
     def _validate_field(self, value: Any, field_schema: Dict[str, Any],
         # NOTE: Consider refactoring this function (complexity > 50 lines)
                         field_name: str, file_path: Path) -> List[ValidationError]:
