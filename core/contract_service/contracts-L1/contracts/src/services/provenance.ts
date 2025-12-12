@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'crypto';
-import { readFile, stat, realpath } from 'fs/promises';
+import { readFile, stat } from 'fs/promises';
 import { tmpdir } from 'os';
 import * as path from 'path';
 
@@ -169,11 +169,30 @@ export class ProvenanceService {
     builder: BuilderInfo,
     metadata: Partial<MetadataInfo> = {}
   ): Promise<BuildAttestation> {
-    // Use secure path validation that resolves symlinks via realpath
-    // The validateAndNormalizePath function handles all cases including test environment
-    const validatedPath = await validateAndNormalizePath(subjectPath);
-
-    const stats = await stat(validatedPath);
+    // Handle absolute vs relative paths
+    let resolvedPath: string;
+    if (path.isAbsolute(subjectPath)) {
+      // For absolute paths, validate against allowed prefixes (security check)
+      resolvedPath = path.normalize(subjectPath);
+      const isAllowed = ALLOWED_ABSOLUTE_PREFIXES.some(
+        (prefix) => resolvedPath.startsWith(prefix + path.sep) || resolvedPath === prefix
+      );
+      if (!isAllowed) {
+        throw new Error('Invalid file path: Absolute paths must be within allowed directories.');
+      }
+      resolvedPath = canonicalPath;
+    } else {
+      // For relative paths, resolve against SAFE_ROOT
+      resolvedPath = path.resolve(SAFE_ROOT, subjectPath);
+      // Canonicalize the path to resolve symlinks
+      const canonicalPath = await realpath(resolvedPath);
+      // Ensure the resolved path is within SAFE_ROOT
+      if (!(canonicalPath === SAFE_ROOT || canonicalPath.startsWith(SAFE_ROOT + path.sep))) {
+        throw new Error('Invalid file path: Access outside of allowed directory is not permitted.');
+      }
+      resolvedPath = canonicalPath;
+    }
+    const stats = await stat(resolvedPath);
     if (!stats.isFile()) {
       throw new Error(`Subject path must be a file: ${subjectPath}`);
     }
