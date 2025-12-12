@@ -85,10 +85,10 @@ router.get('/healthz', (_req: Request, res: Response) => {
  * @apiVersion 1.0.0
  *
  * @apiDescription Kubernetes readiness probe endpoint. Returns 200 when the service
- * is ready to accept traffic. Should return non-200 during startup initialization
- * or when dependencies are unavailable.
+ * is ready to accept traffic. This simplified implementation always returns 200 and does not
+ * currently check actual readiness status or dependencies. To be enhanced in the future.
  *
- * @apiSuccess {String} status Always "ready" when service is ready
+ * @apiSuccess {String} status Always "ready"
  * @apiSuccess {String} timestamp ISO 8601 timestamp
  * @apiSuccess {Object} checks Dependency health check results (empty if no deps)
  */
