@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'crypto';
-import { readFile, stat, realpath } from 'fs/promises';
+import { readFile, stat } from 'fs/promises';
 import { tmpdir } from 'os';
 import * as path from 'path';
 
@@ -178,10 +178,8 @@ export class ProvenanceService {
     if (path.isAbsolute(subjectPath)) {
       // For absolute paths, validate against allowed prefixes (security check)
       resolvedPath = path.normalize(subjectPath);
-      // Canonicalize the path to resolve symlinks
-      const canonicalPath = await realpath(resolvedPath);
-      const isAllowed = ALLOWED_ABSOLUTE_PREFIXES.some(prefix => 
-        canonicalPath.startsWith(prefix + path.sep) || canonicalPath === prefix
+      const isAllowed = ALLOWED_ABSOLUTE_PREFIXES.some(
+        (prefix) => resolvedPath.startsWith(prefix + path.sep) || resolvedPath === prefix
       );
       if (!isAllowed) {
         throw new Error('Invalid file path: Absolute paths must be within allowed directories.');
