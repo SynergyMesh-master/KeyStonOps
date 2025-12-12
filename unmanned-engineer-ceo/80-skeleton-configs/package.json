@@ -1,0 +1,29 @@
+{
+  "name": "@synergymesh/skeleton-configs",
+  "version": "1.0.0",
+  "description": "Architecture skeleton configurations for Unmanned Island System",
+  "private": true,
+  "workspaces": [
+    "01-architecture-stability",
+    "04-security-observability",
+    "05-identity-tenancy"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "clean": "npm run clean --workspaces --if-present"
+  },
+  "keywords": [
+    "architecture",
+    "skeleton",
+    "configuration",
+    "unmanned-island"
+  ],
+  "author": "SynergyMesh Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}
