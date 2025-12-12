@@ -215,7 +215,7 @@ PY
           python-version: "3.11"
       - name: Scan technical debt markers
         run: |
-          PYTHONPATH=. python - <<'PY'
+          python - <<'PY'
 import json
 from pathlib import Path
 
@@ -254,7 +254,7 @@ PY
       - name: Generate SBOM and run audit
         run: |
           npm install --ignore-scripts
-          npx @cyclonedx/cyclonedx-npm --output-file sbom.json || echo "SBOM generation reported issues"
+          npx @cyclonedx/cyclonedx-npm --output-file sbom.json
           npm audit --audit-level=high
       - name: Upload SBOM
         if: always()
@@ -278,7 +278,7 @@ PY
             compose_cmd="docker-compose"
           fi
 
-          ${compose_cmd} config
+          ${compose_cmd} config || { echo "::error::Compose config validation failed"; exit 1; }
           if [ -f docker-compose.dev.yml ]; then
-            ${compose_cmd} -f docker-compose.dev.yml config
+            ${compose_cmd} -f docker-compose.dev.yml config || { echo "::error::Dev compose config validation failed"; exit 1; }
           fi
