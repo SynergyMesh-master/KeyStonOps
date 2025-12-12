@@ -215,7 +215,7 @@ PY
           python-version: "3.11"
       - name: Scan technical debt markers
         run: |
-          python - <<'PY'
+          PYTHONPATH=. python - <<'PY'
 import json
 from pathlib import Path
 
@@ -255,7 +255,7 @@ PY
         run: |
           npm install --ignore-scripts
           npx @cyclonedx/cyclonedx-npm --output-file sbom.json || echo "SBOM generation reported issues"
-          npm audit --audit-level=high || echo "npm audit reported vulnerabilities"
+          npm audit --audit-level=high
       - name: Upload SBOM
         if: always()
         uses: actions/upload-artifact@v4
@@ -273,13 +273,12 @@ PY
       - name: Validate docker-compose manifests
         run: |
           if command -v docker compose >/dev/null 2>&1; then
-            docker compose config
-            if [ -f docker-compose.dev.yml ]; then
-              docker compose -f docker-compose.dev.yml config
-            fi
+            compose_cmd="docker compose"
           else
-            docker-compose config
-            if [ -f docker-compose.dev.yml ]; then
-              docker-compose -f docker-compose.dev.yml config
-            fi
+            compose_cmd="docker-compose"
+          fi
+
+          ${compose_cmd} config
+          if [ -f docker-compose.dev.yml ]; then
+            ${compose_cmd} -f docker-compose.dev.yml config
           fi
