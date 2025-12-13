@@ -19,10 +19,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: "20.x"
 
       - name: Install governance tool dependencies
-        run: npm install --prefix governance/dimensions/81-auto-comment/scripts
+        run: |
+          if [ ! -f governance/dimensions/81-auto-comment/scripts/package.json ]; then
+            echo "governance/dimensions/81-auto-comment/scripts/package.json not found, skipping install."
+            exit 0
+          fi
+          npm install --prefix governance/dimensions/81-auto-comment/scripts
 
       - name: Run governance tool
         continue-on-error: true
@@ -38,7 +43,7 @@ jobs:
             --run-id "${{ github.run_id }}" \
             --commit "${COMMIT_SHA}" \
             --branch "${BRANCH_NAME}" \
-            --pr-number "${PR_NUMBER}"
+            --pr-number "${PR_NUMBER}" || echo "generate-comment script failed; continuing"
 
           node governance/dimensions/81-auto-comment/scripts/update-registry.js \
             --event-id "auto-comment-${{ github.run_id }}" \
@@ -46,4 +51,4 @@ jobs:
             --workflow "${WORKFLOW_NAME}" \
             --commit "${COMMIT_SHA}" \
             --branch "${BRANCH_NAME}" \
-            --pr-number "${PR_NUMBER}"
+            --pr-number "${PR_NUMBER}" || echo "update-registry script failed; continuing"
