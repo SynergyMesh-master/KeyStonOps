@@ -1,27 +1,132 @@
 # Governance Scripts
 
-This directory contains utility scripts for governance automation and validation.
+This directory contains utility scripts for governance automation and
+validation.
 
 ## Scripts Overview
 
 ### Quick Reference
 
-| Script | Purpose | Execution | Auto-Fix |
-|--------|---------|-----------|----------|
-| extreme-problem-identifier.py | 10-category problem detection | < 5s | 76.6% |
-| intelligent-file-router.py | Content-based file routing | < 5s | N/A |
-| logical-consistency-engine.py | Logical consistency analysis | < 10s | 65% |
-| validate-governance-structure.py | Structure validation | < 5s | No |
-| validate-dag.py | DAG dependency validation | < 2s | No |
-| auto-fix-medium-issues.py | Auto-fix MEDIUM issues | < 3s | 100% |
+| Script                           | Purpose                       | Execution | Auto-Fix |
+| -------------------------------- | ----------------------------- | --------- | -------- |
+| scan-governance-directory.py     | Comprehensive governance scan | < 10s     | No       |
+| extreme-problem-identifier.py    | 10-category problem detection | < 5s      | 76.6%    |
+| intelligent-file-router.py       | Content-based file routing    | < 5s      | N/A      |
+| logical-consistency-engine.py    | Logical consistency analysis  | < 10s     | 65%      |
+| validate-governance-structure.py | Structure validation          | < 5s      | No       |
+| validate-dag.py                  | DAG dependency validation     | < 2s      | No       |
+| auto-fix-medium-issues.py        | Auto-fix MEDIUM issues        | < 3s      | 100%     |
 
 ---
 
 ## Detailed Documentation
 
+### `scan-governance-directory.py` ⭐ NEW
+
+**治理目錄掃描器** - Comprehensive governance directory scanner with deep
+analysis and reporting.
+
+**Purpose:**
+
+- Full directory structure scan (00-80 dimensions)
+- File completeness verification (dimension.yaml, README.md, framework.yaml)
+- Naming convention validation
+- Dependency graph analysis
+- Orphaned directory detection
+- Coverage analysis (dimension implementation %)
+- Statistics generation
+- Actionable recommendations
+- INSTANT EXECUTION: < 10 seconds full scan
+
+**Features:**
+
+- 100% dimension coverage reporting
+- Multiple report formats (YAML, JSON, text)
+- Integration with existing validators
+- Detailed statistics on governance health
+- Automated issue detection and recommendations
+- CI/CD ready
+
+**Usage:**
+
+```bash
+# Basic scan with summary
+python governance/35-scripts/scan-governance-directory.py
+
+# Verbose output
+python governance/35-scripts/scan-governance-directory.py --verbose
+
+# Generate YAML report
+python governance/35-scripts/scan-governance-directory.py \
+  --report-output governance/scan-report.yaml
+
+# Generate JSON report
+python governance/35-scripts/scan-governance-directory.py \
+  --report-format json \
+  --report-output governance/scan-report.json
+
+# Quiet mode (report only, no console output)
+python governance/35-scripts/scan-governance-directory.py \
+  --quiet \
+  --report-output governance/scan-report.yaml
+
+# Using Make
+make scan-governance              # Interactive scan
+make scan-governance-report       # Generate YAML report
+make scan-governance-json         # Generate JSON report
+make governance-full-check        # Full validation + scan
+```
+
+**Output Example:**
+
+```
+================================================================================
+Governance Directory Scan Summary
+================================================================================
+
+Directory Structure:
+  Total directories: 87
+  Dimensions (00-80): 82
+  Shared resources: 4
+  Orphaned directories: 1
+
+Dimension Coverage:
+  Expected dimensions: 81
+  Present: 81
+  Missing: 0
+  Coverage: 100.0%
+
+File Completeness:
+  With dimension.yaml: 81/82
+  With README.md: 72/82
+  With framework.yaml: 43/82
+  Missing required files: 1
+
+Issues Found:
+  Total issues: 1
+  ERROR: 1
+
+Recommendations:
+  1. Create dimension.yaml files for 1 dimensions: 55-slo-sli
+  2. Add README.md documentation for 10 dimensions
+  3. Register 1 orphaned directories in governance-map.yaml
+```
+
+**Exit Codes:**
+
+- `0`: No errors found
+- `1`: Errors detected (missing required files, validation failures)
+
+**Detailed Documentation:** See
+[README-SCANNER.md](./README-SCANNER.md) for comprehensive documentation,
+examples, and troubleshooting.
+
+---
+
 ### `intelligent-file-router.py` ⭐ NEW
 
-**智能文件路由系統** - AI-powered content analysis and intelligent path assignment.
+**智能文件路由系統** - AI-powered content analysis and intelligent path
+assignment.
 
 **Purpose:**
 
@@ -71,7 +176,8 @@ Top matches:
 
 ### `logical-consistency-engine.py` ⭐ NEW
 
-**邏輯一致性引擎** - Deep project understanding and logical consistency validation.
+**邏輯一致性引擎** - Deep project understanding and logical consistency
+validation.
 
 **Purpose:**
 
@@ -156,7 +262,8 @@ Issues by Category:
 
 ### `extreme-problem-identifier.py` ⭐
 
-**極致問題識別系統** - Advanced multi-dimensional problem detection and root cause analysis.
+**極致問題識別系統** - Advanced multi-dimensional problem detection and root
+cause analysis.
 
 **Purpose:**
 
@@ -211,7 +318,8 @@ python governance/scripts/extreme-problem-identifier.py --export json --output p
 
 **CI Integration:**
 
-- `.github/workflows/extreme-problem-identification.yml` - Runs on governance/ changes and daily
+- `.github/workflows/extreme-problem-identification.yml` - Runs on governance/
+  changes and daily
 - Exports JSON report as workflow artifact
 - Comments on PRs with problem summary
 - Fails on critical problems
@@ -220,7 +328,8 @@ python governance/scripts/extreme-problem-identifier.py --export json --output p
 
 ### `validate-governance-structure.py`
 
-Validates the governance directory structure against `governance-map.yaml` registry.
+Validates the governance directory structure against `governance-map.yaml`
+registry.
 
 **Purpose:**
 
@@ -257,8 +366,8 @@ python governance/scripts/validate-governance-structure.py --governance-root ./g
 5. Dependency graph validation
 6. Migration deadline tracking
 
-**CI Integration:**
-This script is automatically run by `.github/workflows/governance-validation.yml` on:
+**CI Integration:** This script is automatically run by
+`.github/workflows/governance-validation.yml` on:
 
 - Push to `governance/**`
 - Pull requests modifying `governance/**`
@@ -279,13 +388,13 @@ When adding a new dimension directory:
 3. Register in `governance-map.yaml`:
 
    ```yaml
-   - name: "XX-dimension-name"
+   - name: 'XX-dimension-name'
      type: dimension
      category: strategic|policy|execution|observability|feedback
      owner: team-name
      path: governance/XX-dimension-name
-     depends_on: ["other-dimension"]
-     purpose: "Description of dimension"
+     depends_on: ['other-dimension']
+     purpose: 'Description of dimension'
      status: active
    ```
 
@@ -300,12 +409,12 @@ When adding shared (unnumbered) directories:
 2. Register in `governance-map.yaml`:
 
    ```yaml
-   - name: "resource-name"
+   - name: 'resource-name'
      type: shared
      owner: team-name
      path: governance/resource-name
-     purpose: "Description of shared resource"
-     consumers: ["dimension-1", "dimension-2"]
+     purpose: 'Description of shared resource'
+     consumers: ['dimension-1', 'dimension-2']
    ```
 
 3. Run validation
