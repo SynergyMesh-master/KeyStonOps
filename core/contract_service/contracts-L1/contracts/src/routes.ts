@@ -26,6 +26,8 @@
  * @see {@link https://slsa.dev/} SLSA Framework
  */
 
+import { randomUUID } from 'crypto';
+
 import { Router, Request, Response } from 'express';
 import type { Router as RouterType } from 'express';
 
@@ -35,6 +37,7 @@ import { AssignmentController } from './controllers/assignment';
 import { EscalationController } from './controllers/escalation';
 import { ProvenanceController } from './controllers/provenance';
 import { SLSAController } from './controllers/slsa';
+import { ErrorCode } from './errors';
 
 /** Express router instance for all API routes */
 const router: RouterType = Router();
@@ -76,20 +79,23 @@ const router: RouterType = Router();
  * ## Modifying the Policy
  * - To change the rate limiting policy, modify the `max` and `windowMs` values below.
  */
-const limiter: RateLimitRequestHandler = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: 'Too many requests, please try again later.',
-    handler: (req: Request, res: Response /*, next: NextFunction*/) => {
-        res.status(429).json({
-            status: 'error',
-            error: 'rate_limit_exceeded',
-            message: 'Too many requests, please try again later.',
-            timestamp: new Date().toISOString(),
-        });
-    },
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req: Request, res: Response /*, next: NextFunction*/) => {
+    const traceId = req.traceId || randomUUID();
+    res.status(429).json({
+      error: {
+        code: ErrorCode.RATE_LIMIT,
+        message: 'Too many requests, please try again later.',
+        status: 429,
+        traceId,
+        timestamp: new Date().toISOString(),
+      },
+    });
+  },
 });
 
 /** Controller instances */
