@@ -415,10 +415,13 @@ describe('SLSA API Endpoints', () => {
       // Verify the rate limit error response format
       const rateLimitedResponse = rateLimitedRequests[0];
       expect(rateLimitedResponse.body).toMatchObject({
-        status: 'error',
-        error: 'rate_limit_exceeded',
-        message: 'Too many requests, please try again later.',
-        timestamp: expect.any(String)
+        error: {
+          code: 'rate_limit_exceeded',
+          message: 'Too many requests, please try again later.',
+          status: 429,
+          traceId: expect.any(String),
+          timestamp: expect.any(String)
+        }
       });
 
       // Verify rate limit headers are still present in error response

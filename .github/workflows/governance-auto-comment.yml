@@ -68,35 +68,47 @@ jobs:
     steps:
       - name: Check trigger conditions
         id: check
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          MOCK_FAILURE: ${{ inputs.mock_failure }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          WORKFLOW_RUN_NAME: ${{ github.event.workflow_run.name }}
+          WORKFLOW_RUN_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          WORKFLOW_RUN_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          WORKFLOW_RUN_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          WORKFLOW_RUN_PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
         run: |
           # workflow_dispatch 總是執行
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             echo "should_run=true" >> $GITHUB_OUTPUT
             echo "workflow_name=Manual Test" >> $GITHUB_OUTPUT
-            echo "workflow_conclusion=${{ inputs.mock_failure != 'none' && 'failure' || 'success' }}" >> $GITHUB_OUTPUT
+            if [ "$MOCK_FAILURE" != "none" ]; then
+              echo "workflow_conclusion=failure" >> $GITHUB_OUTPUT
+            else
+              echo "workflow_conclusion=success" >> $GITHUB_OUTPUT
+            fi
             echo "pr_number=" >> $GITHUB_OUTPUT
-            echo "head_sha=${{ github.sha }}" >> $GITHUB_OUTPUT
-            echo "head_branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+            echo "head_sha=$GITHUB_SHA" >> $GITHUB_OUTPUT
+            echo "head_branch=$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
             exit 0
           fi
 
           # workflow_run 事件
-          CONCLUSION="${{ github.event.workflow_run.conclusion }}"
-          echo "workflow_name=${{ github.event.workflow_run.name }}" >> $GITHUB_OUTPUT
-          echo "workflow_conclusion=$CONCLUSION" >> $GITHUB_OUTPUT
-          echo "head_sha=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_OUTPUT
-          echo "head_branch=${{ github.event.workflow_run.head_branch }}" >> $GITHUB_OUTPUT
+          echo "workflow_name=$WORKFLOW_RUN_NAME" >> $GITHUB_OUTPUT
+          echo "workflow_conclusion=$WORKFLOW_RUN_CONCLUSION" >> $GITHUB_OUTPUT
+          echo "head_sha=$WORKFLOW_RUN_HEAD_SHA" >> $GITHUB_OUTPUT
+          echo "head_branch=$WORKFLOW_RUN_HEAD_BRANCH" >> $GITHUB_OUTPUT
 
           # 只在失敗時執行
-          if [ "$CONCLUSION" = "failure" ]; then
+          if [ "$WORKFLOW_RUN_CONCLUSION" = "failure" ]; then
             echo "should_run=true" >> $GITHUB_OUTPUT
           else
             echo "should_run=false" >> $GITHUB_OUTPUT
           fi
 
           # 獲取 PR 編號
-          PR_NUMBER="${{ github.event.workflow_run.pull_requests[0].number }}"
-          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "pr_number=$WORKFLOW_RUN_PR_NUMBER" >> $GITHUB_OUTPUT
 
   # ===========================================================================
   # 階段 2：生成自動評論
@@ -286,6 +298,10 @@ jobs:
 
       - name: Commit registry update
         if: inputs.test_mode != true
+        env:
+          EVENT_ID: ${{ needs.generate-comment.outputs.event_id }}
+          ERROR_TYPE: ${{ needs.generate-comment.outputs.error_type }}
+          AUTO_FIXED: ${{ needs.generate-comment.outputs.auto_fixed }}
         run: |
           git config --local user.email "governance-bot@synergymesh.io"
           git config --local user.name "Governance Bot"
@@ -299,9 +315,9 @@ jobs:
           git add governance/index/events/registry.json
           git commit -m "[81-auto-comment] Update events registry
 
-          Event ID: ${{ needs.generate-comment.outputs.event_id }}
-          Error Type: ${{ needs.generate-comment.outputs.error_type }}
-          Auto-Fixed: ${{ needs.generate-comment.outputs.auto_fixed }}"
+          Event ID: $EVENT_ID
+          Error Type: $ERROR_TYPE
+          Auto-Fixed: $AUTO_FIXED"
 
           git push
 
@@ -330,6 +346,9 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Push auto-fix changes
+        env:
+          EVENT_ID: ${{ needs.generate-comment.outputs.event_id }}
+          ERROR_TYPE: ${{ needs.generate-comment.outputs.error_type }}
         run: |
           git config --local user.email "governance-bot@synergymesh.io"
           git config --local user.name "Governance Bot"
@@ -337,11 +356,11 @@ jobs:
           # 檢查是否有自動修復產生的變更
           if git status --porcelain | grep -q .; then
             git add .
-            git commit -m "[auto-fix] 自動修復 ${{ needs.generate-comment.outputs.error_type }} 錯誤
+            git commit -m "[auto-fix] 自動修復 $ERROR_TYPE 錯誤
 
             治理維度：81-auto-comment
-            事件 ID：${{ needs.generate-comment.outputs.event_id }}
-            修復類型：${{ needs.generate-comment.outputs.error_type }}"
+            事件 ID：$EVENT_ID
+            修復類型：$ERROR_TYPE"
 
             git push
             echo "Auto-fix changes committed and pushed"
@@ -359,6 +378,8 @@ jobs:
 
     steps:
       - name: Generate workflow summary
+        env:
+          EVENT_ID: ${{ needs.generate-comment.outputs.event_id }}
         run: |
           cat >> $GITHUB_STEP_SUMMARY << EOF
           ## 🤖 Governance Auto-Comment Engine Report
@@ -366,18 +387,18 @@ jobs:
           ### 執行資訊
           | 項目 | 值 |
           |------|-----|
-          | 觸發 Workflow | ${{ needs.check-trigger.outputs.workflow_name }} |
-          | 結果 | ${{ needs.check-trigger.outputs.workflow_conclusion }} |
-          | Commit | \`${{ needs.check-trigger.outputs.head_sha }}\` |
-          | 分支 | ${{ needs.check-trigger.outputs.head_branch }} |
-          | PR 編號 | ${{ needs.check-trigger.outputs.pr_number || 'N/A' }} |
+          | 觸發 Workflow | $WORKFLOW_NAME |
+          | 結果 | $WORKFLOW_CONCLUSION |
+          | Commit | \`$HEAD_SHA\` |
+          | 分支 | $HEAD_BRANCH |
+          | PR 編號 | $PR_NUMBER |
 
           ### 處理結果
           | 項目 | 值 |
           |------|-----|
           | 事件 ID | \`$EVENT_ID\` |
-          | 錯誤類型 | ${{ needs.generate-comment.outputs.error_type }} |
-          | 自動修復 | ${{ needs.generate-comment.outputs.auto_fixed }} |
+          | 錯誤類型 | $ERROR_TYPE |
+          | 自動修復 | $AUTO_FIXED |
 
           ### 治理追蹤
           - **維度**：81-auto-comment

@@ -184,33 +184,44 @@ jobs:
       # ─────────────────────────────────────────────────────────────────────────
 
       - name: Setup Summary
+        env:
+          SETUP_PYTHON: ${{ inputs.setup-python }}
+          PYTHON_VERSION: ${{ inputs.python-version }}
+          SETUP_NODE: ${{ inputs.setup-node }}
+          NODE_VERSION: ${{ inputs.node-version }}
+          SETUP_GO: ${{ inputs.setup-go }}
+          GO_VERSION: ${{ inputs.go-version }}
+          SETUP_RUST: ${{ inputs.setup-rust }}
+          RUST_TOOLCHAIN: ${{ inputs.rust-toolchain }}
+          ENABLE_CACHE: ${{ inputs.enable-cache }}
+          INSTALL_DEPS: ${{ inputs.install-dependencies }}
         run: |
           echo "## 🚀 Setup Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Configured Runtimes:" >> $GITHUB_STEP_SUMMARY
 
-          if [ "${{ inputs.setup-python }}" == "true" ]; then
-            echo "- ✅ Python ${{ inputs.python-version }}" >> $GITHUB_STEP_SUMMARY
+          if [ "$SETUP_PYTHON" == "true" ]; then
+            echo "- ✅ Python $PYTHON_VERSION" >> $GITHUB_STEP_SUMMARY
             python --version >> $GITHUB_STEP_SUMMARY || true
           fi
 
-          if [ "${{ inputs.setup-node }}" == "true" ]; then
-            echo "- ✅ Node.js ${{ inputs.node-version }}" >> $GITHUB_STEP_SUMMARY
+          if [ "$SETUP_NODE" == "true" ]; then
+            echo "- ✅ Node.js $NODE_VERSION" >> $GITHUB_STEP_SUMMARY
             node --version >> $GITHUB_STEP_SUMMARY || true
             npm --version >> $GITHUB_STEP_SUMMARY || true
           fi
 
-          if [ "${{ inputs.setup-go }}" == "true" ]; then
-            echo "- ✅ Go ${{ inputs.go-version }}" >> $GITHUB_STEP_SUMMARY
+          if [ "$SETUP_GO" == "true" ]; then
+            echo "- ✅ Go $GO_VERSION" >> $GITHUB_STEP_SUMMARY
             go version >> $GITHUB_STEP_SUMMARY || true
           fi
 
-          if [ "${{ inputs.setup-rust }}" == "true" ]; then
-            echo "- ✅ Rust ${{ inputs.rust-toolchain }}" >> $GITHUB_STEP_SUMMARY
+          if [ "$SETUP_RUST" == "true" ]; then
+            echo "- ✅ Rust $RUST_TOOLCHAIN" >> $GITHUB_STEP_SUMMARY
             rustc --version >> $GITHUB_STEP_SUMMARY || true
           fi
 
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Cache:" >> $GITHUB_STEP_SUMMARY
-          echo "- Cache enabled: ${{ inputs.enable-cache }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Dependencies installed: ${{ inputs.install-dependencies }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Cache enabled: $ENABLE_CACHE" >> $GITHUB_STEP_SUMMARY
+          echo "- Dependencies installed: $INSTALL_DEPS" >> $GITHUB_STEP_SUMMARY

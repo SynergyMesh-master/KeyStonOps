@@ -731,18 +731,26 @@ jobs:
 
     steps:
       - name: Generate Summary
+        env:
+          DAG_RESULT: ${{ needs.dag-validation.result == 'success' && '✅ Passed' || '❌ Failed' }}
+          POLICY_RESULT: ${{ needs.policy-execution-check.result == 'success' && '✅ Passed' || '❌ Failed' }}
+          COMPLIANCE_RESULT: ${{ needs.compliance-framework-check.result == 'success' && '✅ Passed' || '❌ Failed' }}
+          EVENT_RESULT: ${{ needs.event-closure-check.result == 'success' && '✅ Passed' || '❌ Failed' }}
+          DEBT_RESULT: ${{ needs.tech-debt-tracking.result == 'success' && '✅ Passed' || '❌ Failed' }}
+          SECURITY_RESULT: ${{ needs.security-check.result == 'success' && '✅ Passed' || '❌ Failed' }}
+          DEPLOY_RESULT: ${{ needs.deployment-verification.result == 'success' && '✅ Passed' || '❌ Failed' }}
         run: |
           echo "# 🎯 Governance Closed-Loop CI Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| 1️⃣ DAG Validation | ${{ needs.dag-validation.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| 2️⃣ Policy Execution | ${{ needs.policy-execution-check.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| 3️⃣ Compliance Framework | ${{ needs.compliance-framework-check.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| 4️⃣ Event Closure | ${{ needs.event-closure-check.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| 5️⃣ Tech Debt Tracking | ${{ needs.tech-debt-tracking.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| 6️⃣ Security Check | ${{ needs.security-check.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| 7️⃣ Deployment Verification | ${{ needs.deployment-verification.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 1️⃣ DAG Validation | $DAG_RESULT |" >> $GITHUB_STEP_SUMMARY
+          echo "| 2️⃣ Policy Execution | $POLICY_RESULT |" >> $GITHUB_STEP_SUMMARY
+          echo "| 3️⃣ Compliance Framework | $COMPLIANCE_RESULT |" >> $GITHUB_STEP_SUMMARY
+          echo "| 4️⃣ Event Closure | $EVENT_RESULT |" >> $GITHUB_STEP_SUMMARY
+          echo "| 5️⃣ Tech Debt Tracking | $DEBT_RESULT |" >> $GITHUB_STEP_SUMMARY
+          echo "| 6️⃣ Security Check | $SECURITY_RESULT |" >> $GITHUB_STEP_SUMMARY
+          echo "| 7️⃣ Deployment Verification | $DEPLOY_RESULT |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "Generated at: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> $GITHUB_STEP_SUMMARY

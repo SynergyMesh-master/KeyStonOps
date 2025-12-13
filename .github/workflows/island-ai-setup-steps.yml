@@ -59,8 +59,10 @@ jobs:
           cache: ${{ steps.detect-pm.outputs.manager }}
 
       - name: 🔍 Show detected package manager
+        env:
+          PKG_MANAGER: ${{ steps.detect-pm.outputs.manager }}
         run: |
-          echo "📦 偵測到套件管理器: ${{ steps.detect-pm.outputs.manager }}"
+          echo "📦 偵測到套件管理器: $PKG_MANAGER"
 
       - name: 📦 Install Node.js dependencies
         run: |

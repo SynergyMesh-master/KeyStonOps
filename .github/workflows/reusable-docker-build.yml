@@ -119,15 +119,20 @@ jobs:
 
       - name: 🧪 Test Docker image
         if: inputs.health-check-url != '' && inputs.push-image == false
+        env:
+          SERVICE_NAME: ${{ inputs.service-name }}
+          HEALTH_PORT: ${{ inputs.health-check-port }}
+          HEALTH_URL: ${{ inputs.health-check-url }}
+          IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
         run: |
           echo "🧪 Testing Docker image..."
 
-          service_name="${{ inputs.service-name }}"
-          port="${{ inputs.health-check-port }}"
-          health_url="${{ inputs.health-check-url }}"
+          service_name="$SERVICE_NAME"
+          port="$HEALTH_PORT"
+          health_url="$HEALTH_URL"
 
           # Extract first tag for testing
-          first_tag=$(echo "${{ steps.meta.outputs.tags }}" | cut -d',' -f1)
+          first_tag=$(echo "$IMAGE_TAGS" | cut -d',' -f1)
 
           # Start container
           container_id=$(docker run --rm -d --name "test-${service_name}" -p "${port}:${port}" "${first_tag}")
@@ -156,11 +161,13 @@ jobs:
 
       - name: 🔒 Run security scan
         if: inputs.enable-security-scan == true && inputs.push-image == false
+        env:
+          IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
         run: |
           echo "🔒 Running container security scan..."
 
           # Extract first tag for scanning
-          first_tag=$(echo "${{ steps.meta.outputs.tags }}" | cut -d',' -f1)
+          first_tag=$(echo "$IMAGE_TAGS" | cut -d',' -f1)
 
           # Use Trivy for security scanning
           docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
@@ -168,13 +175,18 @@ jobs:
             --exit-code 0 "${first_tag}" || echo "⚠️ Security vulnerabilities detected"
 
       - name: 📊 Build summary
+        env:
+          SERVICE_NAME: ${{ inputs.service-name }}
+          BUILD_CONTEXT: ${{ inputs.context }}
+          IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
+          PUSH_IMAGE: ${{ inputs.push-image }}
         run: |
-          echo "## 🐳 Docker Build Complete: ${{ inputs.service-name }}" >> $GITHUB_STEP_SUMMARY
+          echo "## 🐳 Docker Build Complete: $SERVICE_NAME" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Image built successfully" >> $GITHUB_STEP_SUMMARY
-          echo "- 📦 Context: \`${{ inputs.context }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- 🏷️ Tags: \`${{ steps.meta.outputs.tags }}\`" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ inputs.push-image }}" == "true" ]; then
+          echo "- 📦 Context: \`$BUILD_CONTEXT\`" >> $GITHUB_STEP_SUMMARY
+          echo "- 🏷️ Tags: \`$IMAGE_TAGS\`" >> $GITHUB_STEP_SUMMARY
+          if [ "$PUSH_IMAGE" == "true" ]; then
             echo "- 📤 Pushed to registry: ✅" >> $GITHUB_STEP_SUMMARY
           else
             echo "- 📤 Pushed to registry: ⏭️ Skipped" >> $GITHUB_STEP_SUMMARY
