@@ -63,8 +63,8 @@ class ProblemCategory:
 
 class Problem:
     def __init__(self, category: str, severity: str, title: str, description: str, 
-        """TODO: Add function documentation"""
                  location: str, impact: str, recommendation: str, auto_fixable: bool = False):
+        """TODO: Add function documentation"""
         self.id = hashlib.sha256(f"{category}{title}{location}".encode()).hexdigest()[:8]
         self.category = category
         self.severity = severity
@@ -85,7 +85,6 @@ class ExtremeProblemIdentifier:
         
     def log(self, message: str, level: str = "info"):
         """Log message with color. Redacts obvious secrets in logs."""
-            """TODO: Add function documentation"""
         def redact_sensitive(msg: str) -> str:
             # Remove common possible secret substrings (passwords/keys/tokens) from msg (rudimentary)
             patterns = [
