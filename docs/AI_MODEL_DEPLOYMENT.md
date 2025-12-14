@@ -15,6 +15,7 @@
 5. [模型配置](#模型配置)
 6. [性能优化](#性能优化)
 7. [故障排查](#故障排查)
+8. [安全最佳实践](#安全最佳实践)
 
 ---
 
@@ -166,8 +167,12 @@ docker run --gpus all \
   --model Qwen/Qwen2.5-7B-Instruct \
   --max-model-len 32768 \
   --gpu-memory-utilization 0.95 \
-  --enable-prefix-caching \
-  --trust-remote-code
+  --enable-prefix-caching
+
+# ⚠️ 安全注意: 仅在信任模型来源时使用 --trust-remote-code
+# 该参数允许执行模型仓库中的任意 Python 代码，存在安全风险
+# 生产环境建议使用已验证的模型版本或内部镜像
+# docker run ... --trust-remote-code  # 谨慎使用
 ```
 
 #### 步骤 3: 进入容器并更新依赖
@@ -176,8 +181,12 @@ docker run --gpus all \
 # 进入容器
 docker exec -it vllm-server bash
 
-# 更新 transformers 到最新预览版
-pip install -U transformers --pre
+# 更新 transformers（推荐指定版本以确保安全性）
+pip install transformers==4.36.0  # 替换为经过测试的版本
+
+# 或使用预览版（仅在开发/测试环境）
+# ⚠️ 生产环境应避免使用 --pre，建议固定版本号
+# pip install transformers==4.37.0.dev0
 
 # 验证安装
 python -c "import transformers; print(transformers.__version__)"
@@ -230,8 +239,10 @@ services:
       --max-model-len 32768
       --gpu-memory-utilization 0.95
       --enable-prefix-caching
-      --trust-remote-code
     restart: unless-stopped
+    # ⚠️ 安全警告: 避免在生产环境使用 --trust-remote-code
+    # 如需使用，请确保模型来源可信且已固定到特定 commit
+    # command: --trust-remote-code  # 谨慎启用
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -259,11 +270,15 @@ docker-compose -f docker-compose.vllm.yml down
 python3 -m venv vllm-env
 source vllm-env/bin/activate
 
-# 安装 vLLM
-pip install vllm
+# 安装 vLLM（推荐固定版本）
+pip install vllm==0.6.3  # 替换为经过测试的稳定版本
 
-# 更新 transformers
-pip install -U transformers --pre
+# 安装 transformers（推荐固定版本）
+pip install transformers==4.36.0  # 替换为兼容的版本
+
+# ⚠️ 开发环境可使用最新版本（不推荐生产环境）
+# pip install vllm
+# pip install transformers==4.37.0.dev0
 
 # 启动服务器
 python -m vllm.entrypoints.openai.api_server \
@@ -441,11 +456,14 @@ nvcc --version
 # 3. 验证 PyTorch CUDA
 python -c "import torch; print(torch.cuda.is_available())"
 
-# 4. 重新安装 vLLM（匹配 CUDA 版本）
+# 4. 重新安装 vLLM（匹配 CUDA 版本，推荐固定版本）
 pip uninstall vllm
-pip install vllm-cuda118  # CUDA 11.8
+pip install vllm==0.6.3+cu118  # CUDA 11.8，指定版本
 # 或
-pip install vllm-cuda121  # CUDA 12.1
+pip install vllm==0.6.3+cu121  # CUDA 12.1，指定版本
+
+# ⚠️ 安全提示: 避免使用无版本约束的包名
+# 生产环境应固定版本号或使用内部镜像源并验证完整性
 ```
 
 #### 3. 模型加载失败
@@ -459,8 +477,11 @@ OSError: Can't load tokenizer for 'model_name'
 **解决方案**:
 
 ```bash
-# 1. 更新 transformers
-pip install -U transformers --pre
+# 1. 更新 transformers（推荐固定版本）
+pip install transformers==4.36.0  # 替换为兼容版本
+
+# ⚠️ 仅在开发/调试时使用预览版
+# pip install transformers==4.37.0.dev0
 
 # 2. 清除缓存
 rm -rf ~/.cache/huggingface/*
@@ -548,6 +569,189 @@ curl http://localhost:8000/metrics
 
 # 模型信息
 curl http://localhost:8000/v1/models
+```
+
+---
+
+## 🔒 安全最佳实践
+
+### 供应链安全
+
+#### 1. 依赖包版本固定
+
+**问题**: 使用未固定版本的包（如 `pip install -U transformers --pre`）存在供应链攻击风险。
+
+**最佳实践**:
+
+```bash
+# ❌ 不推荐：使用未固定版本
+pip install -U transformers --pre
+pip install vllm
+
+# ✅ 推荐：固定版本号
+pip install transformers==4.36.0
+pip install vllm==0.6.3
+
+# ✅ 更安全：使用哈希验证
+pip install transformers==4.36.0 \
+  --hash sha256:abc123...
+```
+
+**生产环境建议**:
+
+- 使用 `requirements.txt` 或 `poetry.lock` 固定所有依赖版本
+- 使用私有 PyPI 镜像或 Artifactory
+- 定期审计依赖包的安全漏洞（使用 `pip-audit` 或 `safety`）
+
+#### 2. 模型来源验证
+
+**问题**: `--trust-remote-code` 参数允许执行模型仓库中的任意 Python 代码。
+
+**风险场景**:
+
+- 模型仓库被攻击者控制
+- 上游账户被入侵
+- 恶意代码注入到模型配置文件
+
+**最佳实践**:
+
+```bash
+# ❌ 高风险：直接使用远程模型 + trust-remote-code
+docker run ... \
+  --model Qwen/Qwen2.5-7B-Instruct \
+  --trust-remote-code
+
+# ✅ 推荐：不使用 trust-remote-code
+docker run ... \
+  --model Qwen/Qwen2.5-7B-Instruct
+  # 移除 --trust-remote-code
+
+# ✅ 更安全：使用特定 commit 的本地镜像
+docker run ... \
+  --model /models/qwen-2.5-7b-commit-abc123
+
+# ✅ 最安全：内部模型注册表
+docker run ... \
+  --model company-registry.internal/qwen-2.5-7b:v1.0.0
+```
+
+**生产环境建议**:
+
+1. 下载模型到内部存储，审查代码后再使用
+2. 固定模型到特定 git commit
+3. 使用内部模型注册表
+4. 如必须使用 `--trust-remote-code`，在隔离环境中运行
+
+### 容器安全
+
+#### 1. 非特权用户运行
+
+```dockerfile
+# Dockerfile 示例
+FROM vllm/vllm-openai:v0.12.0
+
+# 创建非 root 用户
+RUN useradd -m -u 1000 vllm
+USER vllm
+
+# 以非特权用户运行
+CMD ["--model", "..."]
+```
+
+#### 2. 限制容器权限
+
+```yaml
+# docker-compose.yml
+services:
+  vllm-server:
+    # ... 其他配置
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+    read_only: true
+    tmpfs:
+      - /tmp
+```
+
+### 网络安全
+
+#### 1. TLS 加密
+
+```bash
+# 使用 nginx 反向代理添加 TLS
+docker run -d \
+  --name vllm-server \
+  -p 127.0.0.1:8000:8000 \  # 仅监听本地
+  vllm/vllm-openai:v0.12.0 ...
+
+# nginx 配置
+server {
+  listen 443 ssl http2;
+  ssl_certificate /path/to/cert.pem;
+  ssl_certificate_key /path/to/key.pem;
+  
+  location / {
+    proxy_pass http://127.0.0.1:8000;
+  }
+}
+```
+
+#### 2. 访问控制
+
+```yaml
+# 使用 API Key 认证
+environment:
+  - VLLM_API_KEY=your-secret-key-here
+  
+# 或使用外部认证服务（OAuth2）
+```
+
+### 数据安全
+
+#### 1. 敏感数据处理
+
+```bash
+# 避免在日志中泄露敏感信息
+export VLLM_LOGGING_LEVEL=WARNING
+
+# 使用加密存储缓存
+docker run ... \
+  -v /encrypted-volume/cache:/root/.cache/huggingface
+```
+
+#### 2. 模型缓存隔离
+
+```bash
+# 为不同信任级别的模型使用不同缓存目录
+docker run ... \
+  -v /cache/trusted-models:/root/.cache/huggingface
+```
+
+### 审计与监控
+
+#### 1. 启用详细日志
+
+```bash
+# 记录所有 API 请求
+export VLLM_LOGGING_LEVEL=INFO
+export VLLM_LOG_REQUESTS=true
+```
+
+#### 2. 定期安全扫描
+
+```bash
+# 扫描容器镜像漏洞
+docker scan vllm/vllm-openai:v0.12.0
+
+# 扫描 Python 依赖漏洞
+pip-audit
+# 或
+safety check
 ```
 
 ---
