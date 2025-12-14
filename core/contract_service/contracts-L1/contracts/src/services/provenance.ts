@@ -65,15 +65,27 @@ async function validateAndNormalizePath(
     throw new Error('Invalid file path: Path must be a non-empty string');
   }
 
+
+  // If you need multi-directory paths, reject obvious traversal
+  if (
+    filePath.includes('\0') ||
+    filePath.split(path.sep).includes('..') ||
+    filePath.includes('//')
+  ) {
+    throw new Error('Invalid file path: Directory traversal is not permitted');
+  }
+
   const systemTmpDir = tmpdir();
   const resolvedPath = resolveFilePath(filePath, safeRoot, systemTmpDir);
 
   try {
     const canonicalPath = await realpath(resolvedPath);
 
+    // FINAL GUARD: Path must start with SAFE_ROOT or allowed test directory, comparing canonical (real) paths
     if (isInTestTmpDir(canonicalPath, systemTmpDir)) {
       return canonicalPath;
     }
+    // Fallback for non-existent file, use normalized path and re-check boundaries
 
     if (!isPathContained(canonicalPath, safeRoot)) {
       throw new Error('Invalid file path: Access outside of allowed directory is not permitted');
