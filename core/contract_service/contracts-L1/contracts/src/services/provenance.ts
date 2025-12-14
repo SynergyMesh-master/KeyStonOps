@@ -65,8 +65,6 @@ async function validateAndNormalizePath(
     throw new Error('Invalid file path: Path must be a non-empty string');
   }
 
-  // (A) --- Enforce that filePath must NOT contain directory traversal characters unless you explicitly intend to permit directories.
-  // If only filenames are expected (no subdirectories), strip dangerous chars and reject if not safe:
 
   // If you need multi-directory paths, reject obvious traversal
   if (
