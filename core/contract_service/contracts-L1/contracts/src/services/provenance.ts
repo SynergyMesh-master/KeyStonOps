@@ -72,7 +72,7 @@ async function validateAndNormalizePath(
     filePath.split(path.sep).includes('..') ||
     filePath.includes('//')
   ) {
-    throw new Error('Invalid file path: Directory traversal is not permitted.');
+    throw new Error('Invalid file path: Directory traversal is not permitted');
   }
 
   const systemTmpDir = tmpdir();
