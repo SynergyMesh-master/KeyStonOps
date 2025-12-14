@@ -16,7 +16,7 @@ import os
 # Add the project root to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
-from core.tech_stack.architecture_config import (
+from core.modules.tech_stack.architecture_config import (
     TechStackConfig,
     LanguageConfig,
     FrameworkConfig,
@@ -27,7 +27,7 @@ from core.tech_stack.architecture_config import (
     get_stack_summary,
 )
 
-from core.tech_stack.framework_integrations import (
+from core.modules.tech_stack.framework_integrations import (
     FrameworkIntegration,
     LangChainIntegration,
     CrewAIIntegration,
@@ -40,7 +40,7 @@ from core.tech_stack.framework_integrations import (
     FrameworkStatus,
 )
 
-from core.tech_stack.multi_agent_coordinator import (
+from core.modules.tech_stack.multi_agent_coordinator import (
     AgentRole,
     AgentCapability,
     AgentDefinition,
@@ -56,7 +56,7 @@ from core.tech_stack.multi_agent_coordinator import (
     create_devops_agent,
 )
 
-from core.tech_stack.python_bridge import (
+from core.modules.tech_stack.python_bridge import (
     PythonBridge,
     PythonEnvironment,
     PythonEnvironmentConfig,

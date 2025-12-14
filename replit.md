@@ -17,23 +17,51 @@ This is a polyglot monorepo containing:
 - **Go**: Microservices (planned)
 
 ### Directory Structure
+
 ```
 apps/
-  web/           # React frontend application (esbuild + Tailwind) - STATIC ONLY
-  web-backend/   # Python backend services (moved from web/ for deployment compatibility)
+  web/              # React frontend - THE ONLY SOURCE for UI components
+  web-backend/      # Python backend services
 
 core/
-  modules/       # Python AI/automation modules
+  modules/          # THE ONLY SOURCE for Python AI/automation modules
+    ai_constitution/
+    ci_error_handler/
+    cloud_agent_delegation/
+    drone_system/
+    execution_architecture/
+    execution_engine/
+    main_system/
+    mcp_servers_enhanced/
+    mind_matrix/
+    monitoring_system/
+    tech_stack/
+    training_system/
+    virtual_experts/
+    yaml_module_system/
   safety_mechanisms/
   slsa_provenance/
   unified_integration/
 
-mcp-servers/     # MCP server implementations
-island-ai/       # Island AI components
-tools/           # Development utilities
-docs/            # Documentation
-tests/           # Test suites
+services/
+  agents/           # Agent services (auto-repair, code-analyzer, etc.)
+  mcp/              # MCP services
+
+automation/         # Automation pipelines and intelligent agents
+infrastructure/     # Kubernetes manifests and monitoring
+governance/         # Policies, schemas, and compliance
+docs/               # Documentation
+tests/              # Test suites
+tools/              # Development utilities
 ```
+
+### Key Principles
+
+1. **Single Source of Truth for Python Modules**: All Python modules reside in `core/modules/`. Do not create Python modules elsewhere.
+
+2. **Single Source of Truth for UI Components**: All UI components reside in `apps/web/src/components/`. Do not create UI components elsewhere.
+
+3. **No Scratch Directories**: Temporary scratch directories have been removed. Use `experiments/` for experimental code.
 
 ### Package Managers
 - **npm**: Primary JavaScript package manager (workspaces in package.json)

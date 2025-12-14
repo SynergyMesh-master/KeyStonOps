@@ -13,7 +13,7 @@ import os
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
-from core.execution_engine import (
+from core.modules.execution_engine import (
     ExecutionEngine,
     ExecutionContext,
     ExecutionResult,

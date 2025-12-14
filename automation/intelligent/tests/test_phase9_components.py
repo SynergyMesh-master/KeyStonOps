@@ -11,7 +11,7 @@ from datetime import datetime
 import sys
 sys.path.insert(0, '/home/runner/work/SynergyMesh/SynergyMesh')
 
-from core.execution_architecture.tool_system import (
+from core.modules.execution_architecture.tool_system import (
     Tool,
     ToolCategory,
     ToolRegistry,
@@ -22,14 +22,14 @@ from core.execution_architecture.tool_system import (
     create_api_tool,
     create_code_tool,
 )
-from core.execution_architecture.langchain_integration import (
+from core.modules.execution_architecture.langchain_integration import (
     LangChainToolAdapter,
     ReActAgentBuilder,
     ChainBuilder,
     AgentConfig,
     LangChainToolFormat,
 )
-from core.execution_architecture.agent_orchestration import (
+from core.modules.execution_architecture.agent_orchestration import (
     AgentOrchestrator,
     TaskPlanner,
     ExecutionContext,
@@ -38,7 +38,7 @@ from core.execution_architecture.agent_orchestration import (
     StepStatus,
     OrchestratorConfig,
 )
-from core.execution_architecture.function_calling import (
+from core.modules.execution_architecture.function_calling import (
     FunctionDefinition,
     FunctionCallHandler,
     ToolCallRouter,
@@ -49,7 +49,7 @@ from core.execution_architecture.function_calling import (
     create_api_function,
     create_code_function,
 )
-from core.execution_architecture.mcp_integration import (
+from core.modules.execution_architecture.mcp_integration import (
     MCPToolProvider,
     MCPToolConsumer,
     MCPBridge,

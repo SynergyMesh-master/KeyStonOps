@@ -9,16 +9,16 @@ from datetime import datetime, timedelta
 import sys
 sys.path.insert(0, '/home/runner/work/SynergyMesh/SynergyMesh')
 
-from core.ci_error_handler.ci_error_analyzer import (
+from core.modules.ci_error_handler.ci_error_analyzer import (
     CIErrorAnalyzer, ErrorCategory, ErrorSeverity, CIError, ErrorPattern
 )
-from core.ci_error_handler.issue_manager import (
+from core.modules.ci_error_handler.issue_manager import (
     IssueManager, IssueTemplate, IssueStatus, CIIssue
 )
-from core.ci_error_handler.auto_fix_engine import (
+from core.modules.ci_error_handler.auto_fix_engine import (
     AutoFixEngine, FixStrategy, FixResult, FixAttempt, FixRule
 )
-from core.ci_error_handler.fix_status_tracker import (
+from core.modules.ci_error_handler.fix_status_tracker import (
     FixStatusTracker, FixStatus, FixMetrics, FixHistory
 )
 

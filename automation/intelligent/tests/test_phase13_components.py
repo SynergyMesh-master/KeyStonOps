@@ -10,7 +10,7 @@ from typing import Dict, Any
 import sys
 sys.path.insert(0, '/home/runner/work/SynergyMesh/SynergyMesh')
 
-from core.yaml_module_system.yaml_module_definition import (
+from core.modules.yaml_module_system.yaml_module_definition import (
     YAMLModuleDefinition,
     ModuleMetadata,
     ModuleOwner,
@@ -20,14 +20,14 @@ from core.yaml_module_system.yaml_module_definition import (
     TestVectorType,
     ChangelogEntry,
 )
-from core.yaml_module_system.yaml_schema_validator import (
+from core.modules.yaml_module_system.yaml_schema_validator import (
     YAMLSchemaValidator,
     ValidationResult,
     ValidationError,
     SchemaRegistry,
     ValidationErrorType,
 )
-from core.yaml_module_system.policy_gate import (
+from core.modules.yaml_module_system.policy_gate import (
     PolicyGate,
     PolicyRule,
     PolicySeverity,
@@ -36,7 +36,7 @@ from core.yaml_module_system.policy_gate import (
     PolicyViolation,
     PolicyEvaluationResult,
 )
-from core.yaml_module_system.ci_verification_pipeline import (
+from core.modules.yaml_module_system.ci_verification_pipeline import (
     CIVerificationPipeline,
     PipelineStage,
     PipelineStageType,
@@ -46,7 +46,7 @@ from core.yaml_module_system.ci_verification_pipeline import (
     EvidenceCollector,
     Evidence,
 )
-from core.yaml_module_system.slsa_compliance import (
+from core.modules.yaml_module_system.slsa_compliance import (
     SLSAProvenanceGenerator,
     SLSAProvenance,
     ArtifactSigner,
@@ -56,7 +56,7 @@ from core.yaml_module_system.slsa_compliance import (
     SLSALevel,
     SignatureAlgorithm,
 )
-from core.yaml_module_system.audit_trail import (
+from core.modules.yaml_module_system.audit_trail import (
     AuditLogger,
     AuditEntry,
     AuditAction,

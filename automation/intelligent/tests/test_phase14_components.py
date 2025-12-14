@@ -8,14 +8,14 @@ from datetime import datetime
 from typing import Any, Dict
 
 # Import Phase 14 components
-from core.main_system.synergymesh_core import (
+from core.modules.main_system.synergymesh_core import (
     SynergyMeshCore,
     SystemConfig,
     PhaseStatus,
     SystemHealth,
     PhaseInfo,
 )
-from core.main_system.system_bootstrap import (
+from core.modules.main_system.system_bootstrap import (
     SystemBootstrap,
     BootstrapConfig,
     ServiceRegistry,
@@ -23,14 +23,14 @@ from core.main_system.system_bootstrap import (
     ServiceDefinition,
     ServiceLifecycle,
 )
-from core.main_system.phase_orchestrator import (
+from core.modules.main_system.phase_orchestrator import (
     PhaseOrchestrator,
     PhaseDefinition,
     PhaseTransition,
     ExecutionMode,
     PhaseState,
 )
-from core.main_system.automation_pipeline import (
+from core.modules.main_system.automation_pipeline import (
     AutomationPipeline,
     PipelineTask,
     TaskResult,

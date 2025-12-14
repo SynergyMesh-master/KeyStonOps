@@ -19,7 +19,7 @@ import os
 # Add the project root to the path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
-from core.ai_constitution.fundamental_laws import (
+from core.modules.ai_constitution.fundamental_laws import (
     FundamentalLaws,
     LawZero,
     LawOne,
@@ -28,7 +28,7 @@ from core.ai_constitution.fundamental_laws import (
     ProposedAction,
     EnforcementLevel,
 )
-from core.ai_constitution.operational_rules import (
+from core.modules.ai_constitution.operational_rules import (
     OperationalRuleEngine,
     DataHandlingRule,
     SystemAccessRule,
@@ -37,23 +37,23 @@ from core.ai_constitution.operational_rules import (
     RuleCategory,
     RuleSeverity,
 )
-from core.ai_constitution.adaptive_guidelines import (
+from core.modules.ai_constitution.adaptive_guidelines import (
     AdaptiveGuidelineEngine,
     DomainGuideline,
     ContextualGuideline,
     LearningGuideline,
 )
-from core.ai_constitution.constitution_engine import (
+from core.modules.ai_constitution.constitution_engine import (
     ConstitutionEngine,
     ActionProposal,
     VerdictType,
 )
-from core.ai_constitution.policy_as_prompt import (
+from core.modules.ai_constitution.policy_as_prompt import (
     PolicyAsPrompt,
     PolicyType,
     EnforcementAction,
 )
-from core.ai_constitution.guardrails import (
+from core.modules.ai_constitution.guardrails import (
     GuardrailSystem,
     SafetyGuardrail,
     ComplianceGuardrail,

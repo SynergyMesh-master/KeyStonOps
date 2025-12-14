@@ -19,7 +19,7 @@ import os
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
-from core.monitoring_system import (
+from core.modules.monitoring_system import (
     # Intelligent Monitoring
     MetricType, Metric, MetricsCollector, Alert, AlertSeverity,
     IntelligentMonitoringSystem,
@@ -39,11 +39,11 @@ from core.monitoring_system import (
     LogEntry, TraceSpan, CorrelatedEvent,
     ObservabilityPlatform, CorrelationEngine
 )
-from core.monitoring_system.intelligent_monitoring import MetricType as MT
-from core.monitoring_system.auto_remediation import RemediationType, RemediationStatus
-from core.monitoring_system.smart_anomaly_detector import AnomalySeverity
-from core.monitoring_system.self_learning import PatternType
-from core.monitoring_system.observability_platform import LogLevel, TraceStatus, EventType
+from core.modules.monitoring_system.intelligent_monitoring import MetricType as MT
+from core.modules.monitoring_system.auto_remediation import RemediationType, RemediationStatus
+from core.modules.monitoring_system.smart_anomaly_detector import AnomalySeverity
+from core.modules.monitoring_system.self_learning import PatternType
+from core.modules.monitoring_system.observability_platform import LogLevel, TraceStatus, EventType
 
 
 # ============ Intelligent Monitoring Tests ============

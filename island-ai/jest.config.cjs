@@ -1,5 +1,5 @@
 /** @type {import('jest').Config} */
-export default {
+const config = {
   preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
   extensionsToTreatAsEsm: ['.ts'],
@@ -24,3 +24,5 @@ export default {
   coverageReporters: ['text', 'lcov', 'html'],
   verbose: true,
 };
+
+module.exports = config;
