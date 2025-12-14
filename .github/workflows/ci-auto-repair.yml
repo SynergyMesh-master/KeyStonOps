@@ -1,0 +1,446 @@
+name: CI Auto-Repair System
+
+# =============================================================================
+# SynergyMesh 自動化 CI 監控與修復系統
+# =============================================================================
+# 功能：
+# - 即時檢測 CI 失敗並自動觸發
+# - 智能診斷問題根源（文件、行號、錯誤類型）
+# - 自動執行修復並創建修復 PR
+# - 支援一次性解決問題
+# =============================================================================
+
+on:
+  # 當任何工作流失敗時觸發
+  workflow_run:
+    workflows:
+      - "Governance Trigger"
+      - "CI"
+      - "Build"
+      - "Test"
+      - "Lint"
+    types:
+      - completed
+
+  # 手動觸發
+  workflow_dispatch:
+    inputs:
+      log_url:
+        description: "CI 日誌 URL（可選）"
+        required: false
+        type: string
+      dry_run:
+        description: "只診斷不修復"
+        required: false
+        type: boolean
+        default: false
+      fix_type:
+        description: "快速修復類型"
+        required: false
+        type: choice
+        options:
+          - "auto"
+          - "lint"
+          - "format"
+          - "deps"
+          - "security"
+        default: "auto"
+
+  # PR 評論觸發（使用 /auto-fix 指令）
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: read
+
+env:
+  NODE_VERSION: "20"
+  SCRIPT_DIR: governance/dimensions/81-auto-comment/scripts
+
+jobs:
+  # =============================================================================
+  # 檢查是否需要觸發修復
+  # =============================================================================
+  check-trigger:
+    runs-on: ubuntu-latest
+    outputs:
+      should_repair: ${{ steps.check.outputs.should_repair }}
+      trigger_type: ${{ steps.check.outputs.trigger_type }}
+      failed_workflow: ${{ steps.check.outputs.failed_workflow }}
+    steps:
+      - name: Check trigger conditions
+        id: check
+        run: |
+          # workflow_run 觸發 - 檢查是否失敗
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            if [ "${{ github.event.workflow_run.conclusion }}" = "failure" ]; then
+              echo "should_repair=true" >> $GITHUB_OUTPUT
+              echo "trigger_type=workflow_failure" >> $GITHUB_OUTPUT
+              echo "failed_workflow=${{ github.event.workflow_run.name }}" >> $GITHUB_OUTPUT
+              echo "🚨 檢測到工作流失敗: ${{ github.event.workflow_run.name }}"
+            else
+              echo "should_repair=false" >> $GITHUB_OUTPUT
+              echo "✅ 工作流成功，無需修復"
+            fi
+          # issue_comment 觸發 - 檢查 /auto-fix 指令
+          elif [ "${{ github.event_name }}" = "issue_comment" ]; then
+            COMMENT="${{ github.event.comment.body }}"
+            if [[ "$COMMENT" == "/auto-fix"* ]]; then
+              echo "should_repair=true" >> $GITHUB_OUTPUT
+              echo "trigger_type=command" >> $GITHUB_OUTPUT
+              echo "🔧 收到 /auto-fix 指令"
+            else
+              echo "should_repair=false" >> $GITHUB_OUTPUT
+            fi
+          # workflow_dispatch 手動觸發
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_repair=true" >> $GITHUB_OUTPUT
+            echo "trigger_type=manual" >> $GITHUB_OUTPUT
+            echo "🔧 手動觸發修復"
+          fi
+
+  # =============================================================================
+  # 獲取失敗的 CI 日誌
+  # =============================================================================
+  fetch-logs:
+    needs: check-trigger
+    if: needs.check-trigger.outputs.should_repair == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      log_available: ${{ steps.fetch.outputs.log_available }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch failed workflow logs
+        id: fetch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p artifacts/logs
+
+          # 如果是 workflow_run 觸發，獲取失敗工作流的日誌
+          if [ "${{ needs.check-trigger.outputs.trigger_type }}" = "workflow_failure" ]; then
+            RUN_ID="${{ github.event.workflow_run.id }}"
+            echo "獲取工作流 $RUN_ID 的日誌..."
+
+            # 下載工作流日誌
+            gh run view $RUN_ID --log-failed > artifacts/logs/ci.log 2>&1 || true
+
+            # 如果日誌太短，獲取完整日誌
+            if [ $(wc -l < artifacts/logs/ci.log) -lt 10 ]; then
+              gh run view $RUN_ID --log > artifacts/logs/ci.log 2>&1 || true
+            fi
+          fi
+
+          # 檢查日誌是否可用
+          if [ -f artifacts/logs/ci.log ] && [ -s artifacts/logs/ci.log ]; then
+            echo "log_available=true" >> $GITHUB_OUTPUT
+            echo "✅ CI 日誌已獲取 ($(wc -l < artifacts/logs/ci.log) 行)"
+            head -100 artifacts/logs/ci.log
+          else
+            echo "log_available=false" >> $GITHUB_OUTPUT
+            echo "⚠️ 無法獲取 CI 日誌，將嘗試運行本地檢查"
+          fi
+
+      - name: Upload logs as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-logs
+          path: artifacts/logs/
+          retention-days: 7
+
+  # =============================================================================
+  # 執行診斷
+  # =============================================================================
+  diagnose:
+    needs: [check-trigger, fetch-logs]
+    if: needs.check-trigger.outputs.should_repair == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      diagnosis_id: ${{ steps.diagnose.outputs.diagnosis_id }}
+      can_auto_fix: ${{ steps.diagnose.outputs.can_auto_fix }}
+      error_count: ${{ steps.diagnose.outputs.error_count }}
+      primary_issue: ${{ steps.diagnose.outputs.primary_issue }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download CI logs
+        uses: actions/download-artifact@v4
+        with:
+          name: ci-logs
+          path: artifacts/logs/
+        continue-on-error: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        working-directory: ${{ env.SCRIPT_DIR }}
+        run: npm install
+
+      - name: Run local linting to capture errors
+        id: local-lint
+        continue-on-error: true
+        run: |
+          # 運行本地檢查以捕獲當前錯誤
+          npm run lint 2>&1 | tee -a artifacts/logs/ci.log || true
+          npm run type-check 2>&1 | tee -a artifacts/logs/ci.log || true
+          npm run build 2>&1 | tee -a artifacts/logs/ci.log || true
+
+      - name: Execute CI Diagnosis Engine
+        id: diagnose
+        working-directory: ${{ env.SCRIPT_DIR }}
+        run: |
+          echo "🔍 執行 CI 診斷引擎..."
+
+          # 運行診斷
+          npx ts-node --transpile-only ci-diagnosis-engine.ts \
+            --log "${{ github.workspace }}/artifacts/logs/ci.log" \
+            --output "${{ github.workspace }}/governance/dimensions/81-auto-comment/output/diagnosis-report.json"
+
+          # 讀取診斷結果
+          if [ -f "${{ github.workspace }}/governance/dimensions/81-auto-comment/output/diagnosis-report.json" ]; then
+            REPORT=$(cat "${{ github.workspace }}/governance/dimensions/81-auto-comment/output/diagnosis-report.json")
+
+            DIAGNOSIS_ID=$(echo "$REPORT" | jq -r '.id')
+            CAN_AUTO_FIX=$(echo "$REPORT" | jq -r '.autoFixPlan.canAutoFix')
+            ERROR_COUNT=$(echo "$REPORT" | jq -r '.summary.totalErrors')
+            PRIMARY_ISSUE=$(echo "$REPORT" | jq -r '.summary.primaryIssue')
+
+            echo "diagnosis_id=$DIAGNOSIS_ID" >> $GITHUB_OUTPUT
+            echo "can_auto_fix=$CAN_AUTO_FIX" >> $GITHUB_OUTPUT
+            echo "error_count=$ERROR_COUNT" >> $GITHUB_OUTPUT
+            echo "primary_issue=$PRIMARY_ISSUE" >> $GITHUB_OUTPUT
+
+            echo "📊 診斷結果:"
+            echo "   ID: $DIAGNOSIS_ID"
+            echo "   可自動修復: $CAN_AUTO_FIX"
+            echo "   錯誤數量: $ERROR_COUNT"
+            echo "   主要問題: $PRIMARY_ISSUE"
+          else
+            echo "diagnosis_id=unknown" >> $GITHUB_OUTPUT
+            echo "can_auto_fix=false" >> $GITHUB_OUTPUT
+            echo "error_count=0" >> $GITHUB_OUTPUT
+            echo "primary_issue=無法診斷" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload diagnosis report
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnosis-report
+          path: governance/dimensions/81-auto-comment/output/
+          retention-days: 30
+
+  # =============================================================================
+  # 執行自動修復
+  # =============================================================================
+  auto-repair:
+    needs: [check-trigger, diagnose]
+    if: |
+      needs.check-trigger.outputs.should_repair == 'true' &&
+      needs.diagnose.outputs.can_auto_fix == 'true' &&
+      github.event.inputs.dry_run != 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      repair_success: ${{ steps.repair.outputs.success }}
+      commit_sha: ${{ steps.repair.outputs.commit_sha }}
+      pr_url: ${{ steps.repair.outputs.pr_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download diagnosis report
+        uses: actions/download-artifact@v4
+        with:
+          name: diagnosis-report
+          path: governance/dimensions/81-auto-comment/output/
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        working-directory: ${{ env.SCRIPT_DIR }}
+        run: npm install
+
+      - name: Install project dependencies
+        run: npm ci || npm install
+
+      - name: Configure Git
+        run: |
+          git config user.name "Auto-Fix Bot"
+          git config user.email "auto-fix-bot@synergymesh.com"
+
+      - name: Create fix branch
+        id: branch
+        run: |
+          BRANCH_NAME="auto-fix/${{ needs.diagnose.outputs.diagnosis_id }}"
+          git checkout -b "$BRANCH_NAME"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "📌 創建修復分支: $BRANCH_NAME"
+
+      - name: Execute quick fix
+        id: quick-fix
+        if: github.event.inputs.fix_type != 'auto'
+        working-directory: ${{ env.SCRIPT_DIR }}
+        run: |
+          FIX_TYPE="${{ github.event.inputs.fix_type }}"
+          echo "🔧 執行快速修復: $FIX_TYPE"
+          npx ts-node --transpile-only auto-repair-executor.ts --quick-fix "$FIX_TYPE"
+
+      - name: Execute full auto-repair
+        id: repair
+        if: github.event.inputs.fix_type == 'auto' || github.event.inputs.fix_type == ''
+        working-directory: ${{ env.SCRIPT_DIR }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔧 執行完整自動修復..."
+
+          # 運行自動修復執行器
+          npx ts-node --transpile-only auto-repair-executor.ts \
+            --report "${{ github.workspace }}/governance/dimensions/81-auto-comment/output/diagnosis-report.json" \
+            --no-pr
+
+          # 檢查是否有變更
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "✅ 檢測到修復變更"
+
+            # 提交變更
+            git add .
+            git commit -m "[auto-fix] 自動修復 CI 錯誤: ${{ needs.diagnose.outputs.primary_issue }}
+
+診斷 ID: ${{ needs.diagnose.outputs.diagnosis_id }}
+錯誤數量: ${{ needs.diagnose.outputs.error_count }}
+
+由 Auto-Fix Bot 自動生成"
+
+            COMMIT_SHA=$(git rev-parse HEAD)
+            echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
+            echo "success=true" >> $GITHUB_OUTPUT
+            echo "📝 提交 SHA: $COMMIT_SHA"
+          else
+            echo "⚠️ 無需修改"
+            echo "success=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push fix branch
+        if: steps.repair.outputs.success == 'true' || steps.quick-fix.outcome == 'success'
+        run: |
+          git push -u origin ${{ steps.branch.outputs.branch_name }}
+          echo "📤 已推送修復分支"
+
+      - name: Create Pull Request
+        id: create-pr
+        if: steps.repair.outputs.success == 'true' || steps.quick-fix.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_TITLE="[Auto-Fix] 自動修復: ${{ needs.diagnose.outputs.primary_issue }}"
+          PR_BODY="## 🔧 自動修復摘要
+
+**診斷 ID**: \`${{ needs.diagnose.outputs.diagnosis_id }}\`
+**觸發原因**: ${{ needs.check-trigger.outputs.failed_workflow || '手動觸發' }}
+**錯誤數量**: ${{ needs.diagnose.outputs.error_count }}
+**主要問題**: ${{ needs.diagnose.outputs.primary_issue }}
+
+### 📊 修復詳情
+
+此 PR 由 CI Auto-Repair System 自動生成，包含以下修復：
+
+- 自動修復可解決的 lint/format 錯誤
+- 依賴問題修復
+- 安全漏洞修復（如適用）
+
+### ✅ 驗證清單
+
+- [ ] 確認修復符合預期
+- [ ] 檢查 CI 是否通過
+- [ ] 審查代碼變更
+
+---
+*此 PR 由 [Auto-Repair System](./governance/dimensions/81-auto-comment) 自動生成*
+*觸發工作流: \`${{ github.workflow }}\`*"
+
+          PR_URL=$(gh pr create \
+            --title "$PR_TITLE" \
+            --body "$PR_BODY" \
+            --base main \
+            --head ${{ steps.branch.outputs.branch_name }} \
+            --label "auto-fix,ci-repair")
+
+          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+          echo "✅ PR 已創建: $PR_URL"
+
+  # =============================================================================
+  # 發送通知
+  # =============================================================================
+  notify:
+    needs: [check-trigger, diagnose, auto-repair]
+    if: always() && needs.check-trigger.outputs.should_repair == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create summary comment on PR
+        if: github.event.pull_request.number
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          COMMENT="## 🔍 CI 診斷結果
+
+**診斷 ID**: \`${{ needs.diagnose.outputs.diagnosis_id }}\`
+**錯誤數量**: ${{ needs.diagnose.outputs.error_count }}
+**主要問題**: ${{ needs.diagnose.outputs.primary_issue }}
+**可自動修復**: ${{ needs.diagnose.outputs.can_auto_fix }}
+
+"
+
+          if [ "${{ needs.auto-repair.outputs.repair_success }}" = "true" ]; then
+            COMMENT+="### ✅ 自動修復已執行
+
+- 提交 SHA: \`${{ needs.auto-repair.outputs.commit_sha }}\`
+- 修復 PR: ${{ needs.auto-repair.outputs.pr_url }}
+"
+          elif [ "${{ needs.diagnose.outputs.can_auto_fix }}" = "false" ]; then
+            COMMENT+="### ⚠️ 需要人工修復
+
+此問題無法自動修復，請查看診斷報告並手動處理。
+"
+          fi
+
+          COMMENT+="
+---
+*由 [CI Auto-Repair System](./governance/dimensions/81-auto-comment) 自動生成*"
+
+          gh pr comment ${{ github.event.pull_request.number }} --body "$COMMENT" || true
+
+      - name: Update workflow run summary
+        run: |
+          echo "## 🔧 CI Auto-Repair 執行摘要" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| 項目 | 值 |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-----|" >> $GITHUB_STEP_SUMMARY
+          echo "| 診斷 ID | \`${{ needs.diagnose.outputs.diagnosis_id }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| 錯誤數量 | ${{ needs.diagnose.outputs.error_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 主要問題 | ${{ needs.diagnose.outputs.primary_issue }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 可自動修復 | ${{ needs.diagnose.outputs.can_auto_fix }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 修復成功 | ${{ needs.auto-repair.outputs.repair_success || 'N/A' }} |" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ needs.auto-repair.outputs.pr_url }}" != "" ]; then
+            echo "| 修復 PR | ${{ needs.auto-repair.outputs.pr_url }} |" >> $GITHUB_STEP_SUMMARY
+          fi

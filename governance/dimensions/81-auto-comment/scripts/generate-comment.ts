@@ -1,18 +1,21 @@
 /**
  * =============================================================================
- * SynergyMesh Governance - Auto Comment Generator
- * 81-auto-comment: Generate Comment Script
+ * SynergyMesh Governance - Auto Comment Generator (Enhanced)
+ * 81-auto-comment: Generate Comment Script with Integrated Diagnosis Engine
  * =============================================================================
  *
  * 功能：
+ * - 整合 CI 診斷引擎，精確定位錯誤位置
  * - 解析 CI log，識別錯誤類型
  * - 根據錯誤類型選擇適當的評論模板
  * - 執行可自動修復的錯誤修復
- * - 生成 Markdown 格式的評論
+ * - 生成 Markdown 格式的評論（包含精確位置和修復建議）
+ * - 支援自動創建修復 PR
  * - 寫入事件到 registry.json
  *
  * 使用方式：
  * npx ts-node generate-comment.ts --workflow "CI Pipeline" --run-id "123" --commit "abc123"
+ * npx ts-node generate-comment.ts --workflow "CI Pipeline" --run-id "123" --commit "abc123" --auto-repair
  *
  * =============================================================================
  */
@@ -20,6 +23,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { execSync } from "child_process";
+import { CIDiagnosisEngine, DiagnosisReport, DiagnosedError } from "./ci-diagnosis-engine";
 
 // =============================================================================
 // TYPE DEFINITIONS
@@ -31,6 +35,8 @@ interface WorkflowContext {
   commit: string;
   branch?: string;
   prNumber?: string;
+  autoRepair?: boolean;
+  useDiagnosisEngine?: boolean;
 }
 
 interface ErrorClassification {
@@ -154,6 +160,8 @@ function parseArgs(): WorkflowContext {
     workflow: "CI Pipeline",
     runId: "unknown-run",
     commit: "unknown-commit",
+    autoRepair: false,
+    useDiagnosisEngine: true, // 默認使用診斷引擎
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -172,6 +180,12 @@ function parseArgs(): WorkflowContext {
         break;
       case "--pr-number":
         context.prNumber = args[++i];
+        break;
+      case "--auto-repair":
+        context.autoRepair = true;
+        break;
+      case "--no-diagnosis":
+        context.useDiagnosisEngine = false;
         break;
     }
   }
@@ -345,37 +359,76 @@ function getRelatedDocs(errorType: string): Array<{ title: string; url: string }
 // =============================================================================
 
 async function main(): Promise<void> {
-  console.log("=== Auto-Comment Generator (81-auto-comment) ===\n");
+  console.log("=== Auto-Comment Generator (81-auto-comment) - Enhanced ===\n");
 
   // 解析參數
   const context = parseArgs();
   console.log("Workflow Context:", context);
 
-  // 讀取 CI log
-  const logContent = readCILog();
-  console.log(`CI Log 長度: ${logContent.length} 字元\n`);
-
-  // 分類錯誤
-  const errorClassification = classifyError(logContent);
-  const errorType = errorClassification?.type || "unknown";
-  const errorMessage = extractErrorMessage(logContent, errorType);
-
-  console.log(`錯誤類型: ${errorType}`);
-  console.log(`可自動修復: ${errorClassification?.autoFixable || false}\n`);
-
-  // 嘗試自動修復
+  let diagnosisReport: DiagnosisReport | null = null;
+  let errorType = "unknown";
+  let errorMessage = "";
   let autoFixed = false;
   let fixCommit: string | undefined;
+  let errorClassification: ErrorClassification | null = null;
 
-  if (errorClassification?.autoFixable && errorClassification.fixCommand) {
-    console.log("嘗試自動修復...");
-    const fixResult = executeAutoFix(errorClassification.fixCommand, context.branch);
-    autoFixed = fixResult.success;
-    fixCommit = fixResult.commit;
+  // 使用診斷引擎進行深度分析
+  if (context.useDiagnosisEngine) {
+    console.log("\n🔍 使用 CI 診斷引擎進行深度分析...\n");
+
+    const engine = new CIDiagnosisEngine({
+      workflow: context.workflow,
+      runId: context.runId,
+      commit: context.commit,
+      branch: context.branch,
+    });
+
+    engine.loadLog();
+    diagnosisReport = engine.diagnose();
+
+    // 從診斷報告中提取信息
+    if (diagnosisReport.errors.length > 0) {
+      const primaryError = diagnosisReport.errors[0];
+      errorType = primaryError.type;
+      errorMessage = formatDiagnosisErrors(diagnosisReport.errors);
+
+      console.log(`📊 診斷結果:`);
+      console.log(`   ID: ${diagnosisReport.id}`);
+      console.log(`   總錯誤數: ${diagnosisReport.summary.totalErrors}`);
+      console.log(`   可自動修復: ${diagnosisReport.summary.autoFixableErrors}`);
+      console.log(`   主要問題: ${diagnosisReport.summary.primaryIssue}`);
+
+      // 如果可以自動修復且啟用了 autoRepair
+      if (diagnosisReport.autoFixPlan.canAutoFix && context.autoRepair) {
+        console.log("\n🔧 執行自動修復計劃...\n");
+        const repairResult = await executeAutoRepairPlan(diagnosisReport, context.branch);
+        autoFixed = repairResult.success;
+        fixCommit = repairResult.commit;
+      }
+    }
+  } else {
+    // 使用傳統方法
+    const logContent = readCILog();
+    console.log(`CI Log 長度: ${logContent.length} 字元\n`);
+
+    errorClassification = classifyError(logContent);
+    errorType = errorClassification?.type || "unknown";
+    errorMessage = extractErrorMessage(logContent, errorType);
+
+    console.log(`錯誤類型: ${errorType}`);
+    console.log(`可自動修復: ${errorClassification?.autoFixable || false}\n`);
+
+    // 嘗試自動修復
+    if (errorClassification?.autoFixable && errorClassification.fixCommand) {
+      console.log("嘗試自動修復...");
+      const fixResult = executeAutoFix(errorClassification.fixCommand, context.branch);
+      autoFixed = fixResult.success;
+      fixCommit = fixResult.commit;
+    }
   }
 
   // 生成事件 ID
-  const eventId = generateEventId();
+  const eventId = diagnosisReport?.id || generateEventId();
 
   // 準備評論資料
   const commentData: CommentData = {
@@ -386,7 +439,9 @@ async function main(): Promise<void> {
     commit: context.commit,
     timestamp: new Date().toISOString(),
     error_emoji: "🔍",
-    error_message: errorClassification?.description || "未知錯誤",
+    error_message: diagnosisReport
+      ? diagnosisReport.summary.primaryIssue
+      : (errorClassification?.description || "未知錯誤"),
     error_details: errorMessage,
     fix_emoji: autoFixed ? "✅" : "❌",
     auto_fixed: autoFixed,
@@ -395,16 +450,22 @@ async function main(): Promise<void> {
     fix_commit: fixCommit,
     fix_suggestions: autoFixed
       ? undefined
-      : `需要人工修復。錯誤類型：${errorClassification?.description || "未知"}`,
+      : diagnosisReport
+        ? formatFixSuggestions(diagnosisReport)
+        : `需要人工修復。錯誤類型：${errorClassification?.description || "未知"}`,
     suggestion_emoji: "💡",
-    fix_steps: getFixSuggestions(errorType),
+    fix_steps: diagnosisReport
+      ? formatAutoFixSteps(diagnosisReport)
+      : getFixSuggestions(errorType),
     doc_emoji: "📚",
     docs: getRelatedDocs(errorType),
     event_id: eventId,
   };
 
   // 生成評論內容
-  const comment = generateComment(commentData);
+  const comment = diagnosisReport
+    ? generateEnhancedComment(commentData, diagnosisReport)
+    : generateComment(commentData);
 
   // 確保輸出目錄存在
   const outputDir = path.join(
@@ -422,6 +483,13 @@ async function main(): Promise<void> {
   const commentPath = path.join(outputDir, "comment.md");
   fs.writeFileSync(commentPath, comment, "utf-8");
   console.log(`\n✅ 評論已生成: ${commentPath}`);
+
+  // 保存診斷報告
+  if (diagnosisReport) {
+    const diagnosisPath = path.join(outputDir, "diagnosis-report.json");
+    fs.writeFileSync(diagnosisPath, JSON.stringify(diagnosisReport, null, 2), "utf-8");
+    console.log(`✅ 診斷報告已生成: ${diagnosisPath}`);
+  }
 
   // 準備事件記錄
   const eventRecord: EventRecord = {
@@ -442,6 +510,182 @@ async function main(): Promise<void> {
   console.log(`✅ 事件記錄已生成: ${eventPath}`);
 
   console.log("\n=== 完成 ===");
+}
+
+// =============================================================================
+// DIAGNOSIS ENGINE INTEGRATION HELPERS
+// =============================================================================
+
+function formatDiagnosisErrors(errors: DiagnosedError[]): string {
+  return errors
+    .slice(0, 10) // 限制顯示前 10 個錯誤
+    .map(e => `[${e.type.toUpperCase()}] ${e.location.file}:${e.location.line} - ${e.message}`)
+    .join("\n");
+}
+
+function formatFixSuggestions(report: DiagnosisReport): string {
+  if (report.autoFixPlan.canAutoFix) {
+    return `可以自動修復 ${report.summary.autoFixableErrors} 個錯誤。運行 \`npx ts-node auto-repair-executor.ts\` 執行修復。`;
+  }
+  return `需要人工修復 ${report.summary.manualFixRequired} 個錯誤。主要問題：${report.summary.primaryIssue}`;
+}
+
+function formatAutoFixSteps(report: DiagnosisReport): string[] {
+  if (!report.autoFixPlan.canAutoFix) {
+    return [
+      "查看診斷報告了解錯誤詳情",
+      "根據錯誤位置和建議修復代碼",
+      "本地運行測試驗證修復",
+      "推送修復並重新運行 CI",
+    ];
+  }
+
+  return report.autoFixPlan.steps.map(step => `${step.description}: \`${step.command}\``);
+}
+
+async function executeAutoRepairPlan(
+  report: DiagnosisReport,
+  branch?: string
+): Promise<{ success: boolean; commit?: string }> {
+  if (isProtectedBranch(branch)) {
+    console.log("受保護分支，跳過自動修復");
+    return { success: false };
+  }
+
+  if (!report.autoFixPlan.canAutoFix) {
+    console.log("無法自動修復");
+    return { success: false };
+  }
+
+  try {
+    // 執行每個修復步驟（跳過 commit 步驟，我們自己處理）
+    for (const step of report.autoFixPlan.steps) {
+      if (step.action === "commit" || step.action === "verify") {
+        continue;
+      }
+
+      console.log(`  執行: ${step.command}`);
+      try {
+        execSync(step.command, { stdio: "inherit" });
+      } catch {
+        // 某些命令可能返回非零但實際成功
+        console.log(`  ⚠️ 命令返回非零，繼續執行...`);
+      }
+    }
+
+    // 檢查是否有變更
+    const status = execSync("git status --porcelain").toString().trim();
+    if (status) {
+      execSync("git add .");
+      execSync(`git commit -m "[auto-fix] 自動修復 CI 錯誤 (診斷 ID: ${report.id})"`);
+      const commitSha = execSync("git rev-parse HEAD").toString().trim();
+      console.log(`✅ 自動修復已提交: ${commitSha}`);
+      return { success: true, commit: commitSha };
+    }
+
+    console.log("沒有需要修復的變更");
+    return { success: true };
+  } catch (error) {
+    console.error("自動修復失敗:", error);
+    return { success: false };
+  }
+}
+
+function generateEnhancedComment(data: CommentData, report: DiagnosisReport): string {
+  const errorList = report.errors
+    .slice(0, 5)
+    .map(e => {
+      const codeChangeInfo = e.suggestedFix.codeChange
+        ? `\n     建議: \`${e.suggestedFix.codeChange.explanation}\``
+        : "";
+      return `   - \`${e.location.file}:${e.location.line}\`: ${e.message}${codeChangeInfo}`;
+    })
+    .join("\n");
+
+  const moreErrors = report.errors.length > 5
+    ? `\n   - ... 還有 ${report.errors.length - 5} 個錯誤`
+    : "";
+
+  return `## ${data.emoji} CI 診斷報告：${data.status_text}
+
+**診斷 ID**：\`${report.id}\`
+**工作流程**：${data.workflow}
+**執行 ID**：${data.run_id}
+**Commit**：${data.commit}
+**時間戳**：${data.timestamp}
+
+---
+
+### 📊 診斷摘要
+
+| 項目 | 值 |
+|------|-----|
+| 總錯誤數 | ${report.summary.totalErrors} |
+| 嚴重錯誤 | ${report.summary.criticalErrors} |
+| 可自動修復 | ${report.summary.autoFixableErrors} |
+| 需人工處理 | ${report.summary.manualFixRequired} |
+| 主要問題 | ${report.summary.primaryIssue} |
+| 預估修復時間 | ${report.summary.estimatedFixTime} |
+
+---
+
+### ${data.error_emoji} 錯誤詳情（精確位置）
+
+${errorList}${moreErrors}
+
+<details>
+<summary>展開完整診斷日誌</summary>
+
+\`\`\`
+${data.error_details}
+\`\`\`
+
+</details>
+
+---
+
+### ${data.fix_emoji} 修復狀態
+
+${data.auto_fixed
+    ? `**✅ 已自動修復並提交**
+
+- 修復類型：${data.fix_type}
+- 提交 SHA：\`${data.fix_commit}\`
+- 修復的錯誤數：${report.summary.autoFixableErrors}`
+    : report.autoFixPlan.canAutoFix
+      ? `**⚠️ 可以自動修復**
+
+運行以下命令執行自動修復：
+\`\`\`bash
+cd governance/dimensions/81-auto-comment/scripts
+npx ts-node auto-repair-executor.ts
+\`\`\``
+      : `**❌ 需要人工修復**
+
+${data.fix_suggestions}`
+  }
+
+---
+
+### ${data.suggestion_emoji} 修復步驟
+
+${data.fix_steps.map((step, i) => `${i + 1}. ${step}`).join("\n")}
+
+---
+
+### ${data.doc_emoji} 相關文檔
+
+${data.docs.map((doc) => `- [${doc.title}](${doc.url})`).join("\n")}
+
+---
+
+<sub>
+此報告由 **CI Diagnosis Engine v2.0** (81-auto-comment) 自動生成
+診斷 ID：\`${report.id}\`
+分析時間：${report.metadata.analysisTime}ms
+已寫入 \`governance/dimensions/81-auto-comment/output/\`
+</sub>
+`;
 }
 
 function generateComment(data: CommentData): string {
