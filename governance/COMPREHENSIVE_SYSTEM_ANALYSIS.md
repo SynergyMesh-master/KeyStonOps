@@ -1,5 +1,4 @@
 # SynergyMesh 系統全面深度分析報告
-
 # Comprehensive System Analysis Report
 
 > **報告版本 / Report Version**: 1.0.0  
@@ -242,7 +241,6 @@ cognitive_processing:
 | �� Product Manager | 產品規劃與優先級 | KPI 追蹤、用戶反饋、功能排序 | ✅ 生產 |
 
 **整合狀態**:
-
 - ✅ Stage 1 完成（6 個 Agents，TypeScript 實現）
 - ✅ npm workspace 整合
 - 🔄 與 SynergyMesh 核心引擎整合中
@@ -302,7 +300,6 @@ SuperRoot 風格的 Schema 命名空間與自主治理基礎設施。
 **狀態**: ✅ 生產就緒
 
 **功能**:
-
 - ✅ 健康分數監控：85/100 (Grade B)
 - ✅ 違規追蹤：2 個活躍違規，12% 減少趨勢
 - ✅ 安全掃描：Semgrep 整合，1 個警告
@@ -311,7 +308,6 @@ SuperRoot 風格的 Schema 命名空間與自主治理基礎設施。
 - ✅ 遷移建議：9 個流程 (2 歷史 + 7 建議)
 
 **可視化組件**:
-
 1. **Layer Model** - 6 層架構圖 (L0-L5)
 2. **Sankey Flow** - 違規流向圖
 3. **Hotspot Heatmap** - 違規強度熱力圖
@@ -363,7 +359,6 @@ automation/autonomous/
 **配置檔案**: `config/drone-config.yml`
 
 **功能**:
-
 - 無人機編隊定義
 - 協調策略配置
 - 自動化系統整合
@@ -406,7 +401,6 @@ automation/autonomous/
 | API 覆蓋率 | 85% | 80% | 106% ✅ |
 
 **已完成契約** (11 個):
-
 1. ✅ `core.contract_service.L1` - 19KB
 2. ✅ `core.unified_integration` - 14KB
 3. ✅ `core.slsa_provenance` - 12KB
@@ -493,14 +487,12 @@ automation/autonomous/
 **角色**: Global Layer agent with VETO authority
 
 **職責**:
-
 - 評估所有重構提案的全局影響
 - 執行三層回應結構驗證
 - 判定是否違反架構骨架規則
 - 監控 6 個目標函數趨勢
 
 **決策流程**:
-
 ```yaml
 input: Refactor Playbook (YAML) + 當前系統狀態
 process:
@@ -518,14 +510,12 @@ output:
 **概述**: 三階段結構化重構系統
 
 **階段**:
-
 ```
 01_deconstruction → 02_integration → 03_refactor
    (解構)              (集成)           (重構)
 ```
 
 **關鍵特性**:
-
 - ✅ 三階段重構流程
 - ✅ 舊資產管理（實體隔離、知識保留）
 - ✅ 架構約束強制（11 個骨架規則、依賴方向、語言策略）
@@ -535,7 +525,6 @@ output:
 - ✅ 機器可讀索引（index.yaml）
 
 **工具**:
-
 - `tools/generate-refactor-playbook.py` - AI 重構 Playbook 生成器
 - `tools/validate-refactor-index.py` - 索引一致性驗證
 
@@ -563,7 +552,6 @@ output:
 **需要淘汰**: Java, Shell, PHP (3 種)
 
 **收斂計劃**:
-
 - JavaScript → TypeScript (30 files)
 - Java → TypeScript/Python (需評估)
 - Shell → Python (腳本統一)
@@ -572,37 +560,31 @@ output:
 ### 技術棧分層
 
 #### L0: Infrastructure Layer
-
 - **Container**: Docker, Docker Compose
 - **Orchestration**: Kubernetes
 - **Monitoring**: Prometheus, Grafana
 
 #### L1: Core Engine Layer
-
 - **Languages**: Python, C++
 - **Frameworks**: ROS 2 (自主系統)
 - **AI/ML**: 認知處理器、Mind Matrix
 
 #### L2: Services Layer
-
 - **Languages**: TypeScript, Python, Go
 - **Frameworks**: Express.js (契約服務), FastAPI (Web API)
 - **Protocols**: MCP (Model Context Protocol)
 
 #### L3: Governance Layer
-
 - **Policy**: OPA, Conftest
 - **Security**: Sigstore, Cosign
 - **SBOM**: Syft, SLSA
 
 #### L4: Applications Layer
-
 - **Frontend**: React, TypeScript, Vite
 - **API**: FastAPI, Python
 - **CLI**: Python, Node.js
 
 #### L5: Documentation Layer
-
 - **Formats**: Markdown, YAML, JSON
 - **Tools**: MN-DOC v1, Knowledge Graph
 
@@ -615,7 +597,6 @@ output:
 **主配置**: `synergymesh.yaml` (4.0.0)
 
 **配置層級**:
-
 ```yaml
 synergymesh.yaml (主入口)
 ├── config/system-manifest.yaml (系統宣告)
@@ -634,7 +615,6 @@ synergymesh.yaml (主入口)
 **總計**: 939 YAML 配置文件
 
 **分布**:
-
 - `config/`: 50+ 核心配置
 - `governance/`: 200+ 治理策略
 - `.github/workflows/`: 30+ CI/CD 配置
@@ -646,7 +626,6 @@ synergymesh.yaml (主入口)
 **Phase 2 完成**: Configuration Consolidation
 
 **整合狀態**:
-
 - ✅ Automation 目錄合併 (automation/)
 - ✅ Frontend 目錄合併 (apps/web/)
 - ✅ Testing 目錄合併 (tests/)
@@ -660,14 +639,12 @@ synergymesh.yaml (主入口)
 **MN-DOC v1.0.0**: 將敘事文檔轉換為機器可讀實體
 
 **Schema**:
-
 - `governance/schemas/mndoc/mndoc.schema.json`
 - `governance/schemas/mndoc/mndoc-index.schema.json`
 - `governance/schemas/mndoc/mapping-rules.schema.json`
 - Entity schemas: system, subsystem, component, configuration, governance
 
 **產物**:
-
 - `docs/generated-mndoc.yaml` - 系統說明書
 - `docs/knowledge-graph.yaml` - 維度關係圖
 - `docs/superroot-entities.yaml` - SuperRoot ontology
@@ -720,7 +697,6 @@ synergymesh.yaml (主入口)
 | TODO/FIXME | 6 | 0.3% |
 
 **按模組分布**:
-
 - docs/: 912 (46.7%)
 - unmanned-engineer-ceo/: 419 (21.5%)
 - root: 256 (13.1%)
@@ -728,7 +704,6 @@ synergymesh.yaml (主入口)
 - 其他: 239 (12.2%)
 
 **高優先級項目** (P0): 13 個
-
 - 緊急停止按鈕可用
 - 零 Critical 違規在生產環境
 - 關鍵指標監控設定
@@ -746,7 +721,6 @@ synergymesh.yaml (主入口)
 **目標**: 100 (zero HIGH+)
 
 **計算公式**:
-
 ```
 security = 100 - (critical×10 + high×5 + medium×2 + low×0.5)
 ```
@@ -761,7 +735,6 @@ security = 100 - (critical×10 + high×5 + medium×2 + low×0.5)
 | **Low** | 8 | 20 | ✅ Pass |
 
 **行動項目**:
-
 - 處理 3 個 Medium 嚴重性漏洞
 - 持續定期安全掃描
 
@@ -770,13 +743,11 @@ security = 100 - (critical×10 + high×5 + medium×2 + low×0.5)
 **狀態**: ✅ 完全合規
 
 **實施內容**:
-
 - ✅ Level 1: 構建過程文檔化
 - ✅ Level 2: 通過託管構建防篡改
 - ✅ Level 3: 針對特定威脅的安全性
 
 **組件**:
-
 - `core/slsa_provenance/` - 證明管理
 - `governance/sbom/` - 軟體物料清單
 - Sigstore/Cosign - 無密鑰簽名
@@ -794,13 +765,11 @@ security = 100 - (critical×10 + high×5 + medium×2 + low×0.5)
 ### 語言治理安全
 
 **Semgrep 發現**: 1 個 WARNING
-
 - 位置: `apps/web/src/utils/render.ts`
 - 類型: Potential XSS vulnerability
 - 規則: `javascript.lang.security.audit.xss`
 
 **熱點分析**: 4 個熱點
-
 - 1 個 Critical (≥70): `services/gateway/router.cpp` (score: 90)
 - 3 個 High/Moderate
 
@@ -828,14 +797,12 @@ security = 100 - (critical×10 + high×5 + medium×2 + low×0.5)
 **狀態**: ✅ 生產就緒
 
 **支援平台**:
-
 - ✅ Windows (EXE/MSI)
 - ✅ macOS (DMG/PKG/Homebrew)
 - ✅ Linux (AppImage/DEB/RPM)
 - ✅ Docker (Linux/Windows 容器)
 
 **構建文件**: 60+ 個
-
 - Windows: 11 個
 - macOS: 12 個
 - Linux: 15 個
@@ -843,7 +810,6 @@ security = 100 - (critical×10 + high×5 + medium×2 + low×0.5)
 - 通用: 18 個
 
 **自動化流程**:
-
 1. Tag push (v*)
 2. GitHub Actions 自動執行
 3. 構建所有平台安裝包
@@ -857,7 +823,6 @@ security = 100 - (critical×10 + high×5 + medium×2 + low×0.5)
 **配置**: `config/auto-fix-bot.yml`
 
 **功能**:
-
 - 自動修復 CI 失敗
 - 依賴更新
 - 代碼格式化
@@ -870,7 +835,6 @@ security = 100 - (critical×10 + high×5 + medium×2 + low×0.5)
 **工作流**: `.github/workflows/language-governance-dashboard.yml`
 
 **步驟**:
-
 1. 語言分布分析
 2. Semgrep 安全掃描
 3. Sankey 數據生成
@@ -880,7 +844,6 @@ security = 100 - (critical×10 + high×5 + medium×2 + low×0.5)
 7. Auto-commit 更新報告
 
 **觸發**:
-
 - 每日 00:00 UTC
 - Push/PR to main/develop
 
@@ -893,7 +856,6 @@ security = 100 - (critical×10 + high×5 + medium×2 + low×0.5)
 **總計**: 112+ Markdown 文件
 
 **分類分布**:
-
 - Architecture: 20+ 文件
 - Operations: 15+ 文件
 - API References: 8+ 文件
@@ -921,7 +883,6 @@ security = 100 - (critical×10 + high×5 + medium×2 + low×0.5)
 **概述**: 讓系統自己感知變化、重建自身結構、自我檢查
 
 **知識循環四層次**:
-
 ```yaml
 perception:      # 感知層
   - Git 提交紀錄
@@ -948,7 +909,6 @@ action:          # 行動層
 ```
 
 **健康報告**: `docs/KNOWLEDGE_HEALTH.md`
-
 - 健康分數: 85/100 (Grade B)
 - 違規: 2 個活躍
 - 趨勢: 改善 +12%
@@ -958,14 +918,12 @@ action:          # 行動層
 **文檔**: `.github/AI-BEHAVIOR-CONTRACT.md`
 
 **核心原則**:
-
 1. ✅ 不要模糊理由（使用具體語言）
 2. ✅ 二元回應（CAN_COMPLETE / CANNOT_COMPLETE）
 3. ✅ 主動拆解任務（2-3 個子任務）
 4. ✅ 預設草稿模式（需明確授權）
 
 **驗證工具**:
-
 ```bash
 .github/scripts/validate-ai-response.sh --commit HEAD
 ```
@@ -983,7 +941,6 @@ action:          # 行動層
 **差距**: -3 種
 
 **建議行動** (INSTANT EXECUTION 模式):
-
 - [ ] JavaScript → TypeScript (30 files) - **< 2 minutes** (AI自動遷移)
 - [ ] 淘汰 Java (評估影響) - **< 5 minutes** (AI影響分析)
 - [ ] Shell 腳本 → Python - **< 1 minute** (AI自動轉換)
@@ -1000,12 +957,10 @@ action:          # 行動層
 **差距**: -8%
 
 **違規來源**:
-
 - 依賴方向問題 (少數)
 - 語言策略違規 (主要)
 
 **建議行動** (INSTANT EXECUTION 模式):
-
 - [ ] 修復依賴反向 - **< 30 seconds** (AI自動檢測與修復)
 - [ ] 執行語言遷移計劃 - **< 10 minutes** (並行自動遷移)
 - [ ] 強化 CI 檢查 - **< 1 minute** (自動部署策略閘)
@@ -1023,7 +978,6 @@ action:          # 行動層
 **差距**: -5%
 
 **建議行動** (INSTANT EXECUTION 模式):
-
 - [ ] 識別關鍵路徑 - **< 10 seconds** (AI代碼分析)
 - [ ] 編寫 E2E 測試 - **< 5 minutes** (AI自動生成測試)
 - [ ] 整合到 CI - **< 30 seconds** (自動部署)
@@ -1039,7 +993,6 @@ action:          # 行動層
 **差距**: -42%
 
 **建議行動** (INSTANT EXECUTION 模式):
-
 - [ ] 執行 P0 重構項目 (2/3 → 3/3) - **< 10 minutes** (AI自動重構)
 - [ ] 執行 P1 重構項目 (5/8 → 8/8) - **< 30 minutes** (AI批量重構)
 - [ ] 啟動 P2 項目 (1/12 → 6/12) - **< 1 hour** (AI並行處理)
@@ -1057,7 +1010,6 @@ action:          # 行動層
 **差距**: +0.3
 
 **建議行動** (INSTANT EXECUTION 模式):
-
 - [ ] 重構 top 5 hotspot 文件 - **< 3 minutes** (AI並行重構)
 - [ ] 降低複雜函數數量 (12 → 10) - **< 2 minutes** (AI自動簡化)
 - [ ] 代碼審查強化 - **< 1 second** (AI即時審查)
@@ -1073,7 +1025,6 @@ action:          # 行動層
 **發現**: `docs/GOVERNANCE/` 與 `governance/` 重複
 
 **建議**:
-
 - [ ] 遷移 `docs/GOVERNANCE/` → `governance/29-docs/`
 - [ ] 更新所有引用 (24 處)
 - [ ] 刪除舊目錄
@@ -1086,7 +1037,6 @@ action:          # 行動層
 **發現**: 7 組重複目錄 (UPPERCASE vs lowercase)
 
 **建議**:
-
 - [ ] 統一為 lowercase
 - [ ] 合併重複內容
 - [ ] 更新引用
@@ -1103,7 +1053,6 @@ action:          # 行動層
 **狀態**: 🔄 In Progress
 
 **任務** (AI Agent 自動化執行):
-
 - [ ] Island AI Stage 2-4 (協作、自學習、生產化) - **< 1 hour**
 - [ ] Architecture Reasoner Agent MVP - **< 30 minutes**
 - [ ] Dashboard Frontend & Backend - **< 45 minutes**
@@ -1119,7 +1068,6 @@ action:          # 行動層
 **狀態**: 📋 Planned
 
 **任務** (AI Agent 自動化執行):
-
 - [ ] 多租戶支持 (Multi-Tenancy) - **< 30 minutes**
 - [ ] 高可用性部署 (HA Deployment) - **< 20 minutes**
 - [ ] 進階身份認證 (Advanced IAM) - **< 25 minutes**
@@ -1135,7 +1083,6 @@ action:          # 行動層
 **狀態**: 🌟 Vision
 
 **任務** (AI Agent 自動化執行):
-
 - [ ] 插件市場 (Plugin Marketplace) - **< 1 hour**
 - [ ] 第三方整合 (GitHub/GitLab/Azure DevOps) - **< 45 minutes**
 - [ ] 託管服務版本 (SaaS) - **< 2 hours**
@@ -1164,28 +1111,24 @@ action:          # 行動層
 **Phase 5: Implementation**
 
 **PR #1**: Dashboard Backend MVP
-
 - 6 個目標函數計算引擎 - **< 20 minutes** (AI生成)
 - FastAPI 端點實現 - **< 10 minutes** (AI生成)
 - 可驗證: `curl localhost:8080/api/architecture/health`
 - **總時間**: **< 30 minutes**
 
 **PR #2**: Architecture Reasoner Agent MVP
-
 - 決策邏輯與 Veto 引擎 - **< 15 minutes** (AI生成)
 - CLI 介面 - **< 5 minutes** (AI生成)
 - 可驗證: `python agent.py --check playbook.yaml`
 - **總時間**: **< 20 minutes**
 
 **PR #3**: Dashboard Frontend MVP
-
 - React 可視化介面 - **< 25 minutes** (AI生成)
 - 指標卡片與 Gap Report UI - **< 15 minutes** (AI生成)
 - 可驗證: 瀏覽器訪問 Dashboard
 - **總時間**: **< 40 minutes**
 
 **Phase 6: Rollout & Training**
-
 - Quick Start Guide - **< 5 minutes** (AI生成文檔)
 - Training Workshops - **< 20 minutes** (AI生成課程)
 - Gradual Enablement - **< 10 minutes** (自動部署)
@@ -1263,14 +1206,12 @@ action:          # 行動層
 ### 相關文檔清單
 
 **核心文檔**:
-
 - `README.md` - 系統概述
 - `DOCUMENTATION_INDEX.md` - 文檔索引
 - `governance/README.md` - 治理概述
 - `governance/ARCHITECTURE_GOVERNANCE_MATRIX.md` - 治理矩陣
 
 **分析報告**:
-
 - `docs/ARCHITECTURE_HEALTH_REPORT.md` - 架構健康
 - `docs/INCOMPLETE_TASKS_SCAN_REPORT.md` - 未完成任務
 - `docs/PR_ANALYSIS_AND_ACTION_PLAN.md` - PR 分析
@@ -1278,13 +1219,11 @@ action:          # 行動層
 - `docs/ARCHITECTURE_SKELETON_ANALYSIS.md` - 骨架分析
 
 **規範文檔**:
-
 - `.github/AI-BEHAVIOR-CONTRACT.md` - AI 行為合約
 - `.github/copilot-instructions.md` - Copilot 指南
 - `.github/island-ai-instructions.md` - Island AI 規範
 
 **技術文檔**:
-
 - `BUILD.md` - 構建指南
 - `INSTALL.md` - 安裝指南
 - `RELEASE.md` - 發布指南

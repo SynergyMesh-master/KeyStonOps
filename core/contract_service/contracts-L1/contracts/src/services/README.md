@@ -7,7 +7,6 @@ Services contain the **business logic** of the Contracts-L1 application. They ar
 ## Responsibilities
 
 ✅ **Services SHOULD:**
-
 - Implement all business logic and rules
 - Orchestrate workflows and operations
 - Validate business constraints
@@ -16,7 +15,6 @@ Services contain the **business logic** of the Contracts-L1 application. They ar
 - Be framework-agnostic (no Express/HTTP dependencies)
 
 ❌ **Services SHOULD NOT:**
-
 - Access HTTP objects (Request/Response)
 - Handle HTTP status codes
 - Format responses for HTTP
@@ -67,7 +65,6 @@ export class SomeService {
 **Purpose:** Core engine for intelligent responsibility assignment.
 
 **Key Methods:**
-
 - `assignResponsibility(incident)` - Assign incident to team member
 - `analyzeProblemType(incident)` - Analyze and categorize problem
 - `identifyRelevantTeams(problemType)` - Find teams for problem type
@@ -79,7 +76,6 @@ export class SomeService {
 - `getAllAssignments()` - Get all assignments
 
 **Dependencies:**
-
 - `ResponsibilityMatrix`
 - `WorkloadBalancer`
 
@@ -88,7 +84,6 @@ export class SomeService {
 **Purpose:** Governance and compliance tracking for assignments.
 
 **Key Methods:**
-
 - `validateAssignment(assignment)` - Validate assignment compliance
 - `trackAssignment(assignment)` - Track assignment for governance
 - `getComplianceReport()` - Generate compliance report
@@ -99,7 +94,6 @@ export class SomeService {
 **Purpose:** Maps problem types to responsible teams and members.
 
 **Key Methods:**
-
 - `identifyRelevantTeams(problemType)` - Get teams for problem
 - `getTeamStructure(teamName)` - Get team details
 - `getSpecialties(teamName)` - Get team specialties
@@ -110,7 +104,6 @@ export class SomeService {
 **Purpose:** Balances workload across team members.
 
 **Key Methods:**
-
 - `selectOptimalAssignee(members, incident)` - Choose best member
 - `calculateExpertiseMatch(member, incident)` - Match expertise
 - `calculateAvailability(member)` - Check member availability
@@ -126,7 +119,6 @@ export class SomeService {
 **Purpose:** Manages incident escalation workflows.
 
 **Key Methods:**
-
 - `createEscalation(incident, reason)` - Create new escalation
 - `getEscalation(id)` - Get escalation details
 - `updateStatus(id, status)` - Update escalation status
@@ -141,7 +133,6 @@ export class SomeService {
 **Purpose:** Handles Sigstore attestation creation and verification.
 
 **Key Methods:**
-
 - `createAttestation(subject, predicate)` - Create signed attestation
 - `verifyAttestation(attestation)` - Verify attestation signature
 - `signWithSigstore(data)` - Sign data with Sigstore
@@ -152,7 +143,6 @@ export class SomeService {
 **Purpose:** Manages build provenance tracking.
 
 **Key Methods:**
-
 - `createAttestation(filePath, builder)` - Create build attestation
 - `verifyAttestation(attestation)` - Verify build attestation
 - `importAttestation(data)` - Import external attestation
@@ -372,7 +362,6 @@ describe('UserService', () => {
 ## Adding a New Service
 
 1. **Create the service file:**
-
 ```typescript
 // services/example.service.ts
 import { ExampleInput, ExampleOutput } from '../models/example.model';
@@ -411,8 +400,7 @@ export class ExampleService {
 }
 ```
 
-1. **Create tests:**
-
+2. **Create tests:**
 ```typescript
 // __tests__/example.service.test.ts
 import { ExampleService } from '../services/example.service';
@@ -434,8 +422,7 @@ describe('ExampleService', () => {
 });
 ```
 
-1. **Use in controller:**
-
+3. **Use in controller:**
 ```typescript
 // controllers/example.controller.ts
 import { ExampleService } from '../services/example.service';

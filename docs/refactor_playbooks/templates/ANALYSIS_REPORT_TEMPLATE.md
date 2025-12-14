@@ -42,13 +42,11 @@
 **描述：** {{PROBLEM_1_DESCRIPTION}}
 
 **影響：**
-
 - {{PROBLEM_1_IMPACT_1}}
 - {{PROBLEM_1_IMPACT_2}}
 - {{PROBLEM_1_IMPACT_3}}
 
 **分類：** {{PROBLEM_1_CATEGORY}}
-
 - [ ] 結構問題
 - [ ] 命名問題
 - [ ] 依賴問題
@@ -56,7 +54,6 @@
 - [ ] 安全問題
 
 **阻抗/衝突：**
-
 - {{PROBLEM_1_BLOCKER}}
 
 ---
@@ -66,14 +63,12 @@
 **描述：** {{PROBLEM_2_DESCRIPTION}}
 
 **影響：**
-
 - {{PROBLEM_2_IMPACT_1}}
 - {{PROBLEM_2_IMPACT_2}}
 
 **分類：** {{PROBLEM_2_CATEGORY}}
 
 **阻抗/衝突：**
-
 - {{PROBLEM_2_BLOCKER}}
 
 ---
@@ -83,13 +78,11 @@
 **描述：** {{PROBLEM_3_DESCRIPTION}}
 
 **影響：**
-
 - {{PROBLEM_3_IMPACT_1}}
 
 **分類：** {{PROBLEM_3_CATEGORY}}
 
 **阻抗/衝突：**
-
 - {{PROBLEM_3_BLOCKER}}
 
 ---
@@ -99,7 +92,6 @@
 **描述：** {{PROBLEM_4_DESCRIPTION}}
 
 **結構內容：**
-
 ```
 {{PROBLEM_4_STRUCTURE}}
 ```
@@ -113,7 +105,6 @@
 **描述：** {{PROBLEM_5_DESCRIPTION}}
 
 **阻抗：**
-
 - {{PROBLEM_5_IMPEDANCE}}
 
 ---
@@ -166,7 +157,6 @@
 | 1.3 | 建立目錄 | `{{P1_STEP_3_TARGET}}` | {{P1_STEP_3_DESC}} |
 
 **驗證：**
-
 ```bash
 {{P1_VALIDATION_COMMAND}}
 ```
@@ -186,7 +176,6 @@
 | 2.3 | 移動 | `{{P1_MOVE_3_SOURCE}}` | `{{P1_MOVE_3_TARGET}}` |
 
 **驗證：**
-
 - [ ] 所有檔案已移動到正確位置
 - [ ] 無遺漏檔案
 
@@ -217,7 +206,6 @@
 | 4.2 | `{{P2_REF_2_FILE}}` | `{{P2_REF_2_OLD}}` | `{{P2_REF_2_NEW}}` |
 
 **自動化腳本：**
-
 ```bash
 {{P2_UPDATE_SCRIPT}}
 ```
@@ -263,7 +251,6 @@
 | 7.2 | 刪除 | `{{P3_DELETE_2}}` | 確認無引用 |
 
 **安全檢查：**
-
 ```bash
 {{P3_SAFETY_CHECK}}
 ```

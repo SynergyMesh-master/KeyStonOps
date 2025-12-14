@@ -4,8 +4,7 @@
     "rootDir": ".",
     "outDir": "./dist",
     "baseUrl": ".",
-    "types": ["node"],
-    "noUnusedLocals": false
+    "types": ["node", "vitest/globals"]
   },
   "include": [
     "**/*.ts",

@@ -8,10 +8,7 @@
     "core/contract_service/contracts-L1/contracts",
     "core/advisory-database",
     "apps/web",
-    "island-ai",
-    "unmanned-engineer-ceo/80-skeleton-configs/01-architecture-stability",
-    "unmanned-engineer-ceo/80-skeleton-configs/04-security-observability",
-    "unmanned-engineer-ceo/80-skeleton-configs/05-identity-tenancy"
+    "island-ai"
   ],
   "scripts": {
     "lint": "npm run lint --workspaces --if-present",
@@ -48,12 +45,11 @@
     "eslint-import-resolver-typescript": "^3.10.1",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.5.4",
-    "markdownlint-cli": "^0.47.0",
+    "markdownlint-cli": "^0.46.0",
     "prettier": "^3.7.4",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@eslint/eslintrc": "^3.3.3",
-    "@replit/object-storage": "^1.0.0"
+    "@eslint/eslintrc": "^3.3.3"
   }
 }

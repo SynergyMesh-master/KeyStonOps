@@ -31,7 +31,6 @@
 | **Improvement Trend** | 10% | {{ TREND_SCORE }}/10 | {{ TREND_STATUS }} |
 
 **Score Definition:**
-
 - **90-100 (A)**: Excellent - Full compliance, production-ready
 - **80-89 (B)**: Good - Minor issues, acceptable for deployment
 - **70-79 (C)**: Fair - Moderate issues, needs attention
@@ -204,7 +203,6 @@ graph LR
 ## 📚 10. Resources
 
 ### Documentation
-
 - [Language Stack Guide](./architecture/language-stack.md)
 - [Governance Policy](../config/language-policy.yaml)
 - [Exception Process](./architecture/language-governance.md#exceptions)
@@ -213,7 +211,6 @@ graph LR
 - [Refactor Playbook Next Steps](./REFACTOR_PLAYBOOK_NEXT_STEPS.md) ⭐ **NEW**
 
 ### Tools
-
 - **Analyzer**: `tools/governance/language-governance-analyzer.py`
 - **Health Score**: `tools/language-health-score.py`
 - **AI Review**: `tools/ai-refactor-review.py`
@@ -239,7 +236,6 @@ graph LR
 **注意：** Health Score 越低代表該 cluster 狀態越健康。高分數表示有較多治理問題需要處理。
 
 **Playbook Features:**
-
 - Automated cluster analysis with governance data integration
 - P0/P1/P2 prioritized refactoring plans
 - File & directory structure delivery views
@@ -247,7 +243,6 @@ graph LR
 - Success criteria and acceptance metrics
 
 ### CI/CD
-
 - **Workflow**: `.github/workflows/language-governance.yml`
 - **Auto-Fix**: `.github/workflows/ai-auto-fix-pr.yml`
 - **Playbook Updates**: `.github/workflows/update-refactor-playbooks.yml` ⭐ **NEW**
@@ -281,7 +276,6 @@ graph LR
 
 **Dashboard Generated At:** {{ GENERATION_TIMESTAMP }}  
 **Data Sources:**
-
 - Language Governance Report: `governance/language-governance-report.json`
 - CodeQL Results: `governance/codeql-results-*.sarif`
 - Semgrep Results: `governance/semgrep-results.sarif`

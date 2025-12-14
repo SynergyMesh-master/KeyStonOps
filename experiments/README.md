@@ -53,7 +53,6 @@ experiments/
 - `learning-{technology}` - 技術學習
 
 **範例**：
-
 - `poc-autonomous-failover/`
 - `benchmark-gateway-routing/`
 - `test-ros2-python-integration/`
@@ -66,7 +65,6 @@ experiments/
 - 包含版本或日期（如適用）
 
 **範例**：
-
 - `prototype-v1.py`
 - `benchmark-2025-12-06.py`
 - `test-integration.sh`
@@ -122,12 +120,10 @@ experiments/
 ### 可選擇的策略
 
 **選項 A：進 git（推薦）**
-
 - 優點：保留實驗歷史，團隊可見
 - 適用：大多數實驗與原型
 
 **選項 B：不進 git（.gitignore）**
-
 - 優點：保持 repo 乾淨
 - 適用：包含敏感資料、大型資料集、臨時測試
 

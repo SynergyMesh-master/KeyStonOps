@@ -22,7 +22,6 @@ docker-compose --profile workflow down
 ```
 
 Services started:
-
 - **workflow-system** (port 8081) - Main workflow engine
 - **workflow-postgres** - PostgreSQL database
 - **workflow-redis** - Redis cache
@@ -50,7 +49,6 @@ python tools/generators/contract_generator.py \
 ### Three-Systems Integration
 
 #### 1. SynergyMesh Core
-
 Core engine components for workflow execution:
 
 - **Contract Engine** (`core/contract_engine.py`)
@@ -72,7 +70,6 @@ Core engine components for workflow execution:
   - Compliance validation
 
 #### 2. Structural Governance
-
 Policy and contract definitions:
 
 - **Behavior Contracts** (`governance/policies/workflow/behavior-contracts.yaml`)
@@ -88,7 +85,6 @@ Policy and contract definitions:
   - Security rules
 
 #### 3. Autonomous/Drone Stack
-
 Automation tools and generators:
 
 - **Contract Generator** (`tools/generators/contract_generator.py`)
@@ -102,7 +98,6 @@ The workflow system is configured through `config/system-manifest.yaml` under th
 ### Key Configuration Sections
 
 #### Core Engine
-
 ```yaml
 workflow_system:
   core_engine:
@@ -118,7 +113,6 @@ workflow_system:
 ```
 
 #### AI Governance
-
 ```yaml
 workflow_system:
   ai_governance:
@@ -133,7 +127,6 @@ workflow_system:
 ```
 
 #### Validation System
-
 ```yaml
 workflow_system:
   validation_system:
@@ -151,7 +144,6 @@ workflow_system:
 ```
 
 #### Pipeline Configuration
-
 ```yaml
 workflow_system:
   pipeline:
@@ -417,7 +409,6 @@ docker-compose --profile workflow down
 Access Prometheus at `http://localhost:9090` when running with Docker.
 
 Key metrics:
-
 - `contract_executions_total` - Total contract executions
 - `contract_execution_duration_seconds` - Execution duration histogram
 - `contract_validation_errors_total` - Validation errors
@@ -478,7 +469,6 @@ workflow_system:
 ### Vulnerability Scanning
 
 Integrated security validation includes:
-
 - OWASP Top 10 checks
 - Dependency vulnerability scanning (NVD database)
 - Code analysis with CodeQL
@@ -639,9 +629,9 @@ class MyCustomPlugin(Plugin):
 
 For issues, questions, or contributions:
 
-- **GitHub Issues:** <https://github.com/SynergyMesh/SynergyMesh/issues>
-- **Documentation:** <https://docs.synergymesh.io>
-- **Community:** <https://community.synergymesh.io>
+- **GitHub Issues:** https://github.com/SynergyMesh/SynergyMesh/issues
+- **Documentation:** https://docs.synergymesh.io
+- **Community:** https://community.synergymesh.io
 
 ---
 

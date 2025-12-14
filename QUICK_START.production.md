@@ -9,7 +9,6 @@
 ### 📋 5 分鐘快速設置
 
 #### 1️⃣ 環境準備
-
 ```bash
 # 克隆倉庫
 git clone https://github.com/SynergyMesh-admin/Unmanned-Island.git
@@ -23,7 +22,6 @@ nano .env  # 或使用 vim/code
 ```
 
 #### 2️⃣ 依賴安裝
-
 ```bash
 # 安裝 Node.js 依賴
 npm install
@@ -38,7 +36,6 @@ pip install -r requirements.txt
 ```
 
 #### 3️⃣ 構建應用
-
 ```bash
 # 編譯所有模組
 npm run build
@@ -51,7 +48,6 @@ npm run lint
 ```
 
 #### 4️⃣ 啟動服務
-
 ```bash
 # 開發環境
 npm run dev:stack
@@ -70,7 +66,6 @@ curl http://localhost:3000/health
 ### 📦 核心模組初始化
 
 #### 合約服務 (Contract Service)
-
 ```bash
 cd core/contract_service/contracts-L1/contracts
 npm install
@@ -79,7 +74,6 @@ npm start
 ```
 
 #### MCP 伺服器
-
 ```bash
 cd mcp-servers
 npm install
@@ -87,7 +81,6 @@ npm start
 ```
 
 #### Python 工具驗證
-
 ```bash
 python3 tools/docs/validate_index.py --verbose
 ```
@@ -97,14 +90,12 @@ python3 tools/docs/validate_index.py --verbose
 ### 🐳 Docker 部署
 
 #### 開發環境快速啟動
-
 ```bash
 docker-compose -f docker-compose.dev.yml up -d
 docker-compose logs -f
 ```
 
 #### 生產環境部署
-
 ```bash
 # 構建映像
 docker build -t synergymesh:latest .
@@ -121,7 +112,6 @@ docker-compose logs -f synergymesh
 ### 🔄 Kubernetes 部署
 
 #### 基本步驟
-
 ```bash
 # 建立命名空間
 kubectl create namespace synergymesh
@@ -144,7 +134,6 @@ kubectl get pods -n synergymesh
 ### 📊 監控與日誌
 
 #### 查看應用日誌
-
 ```bash
 # Docker
 docker-compose logs -f synergymesh
@@ -157,7 +146,6 @@ tail -f logs/synergymesh.log
 ```
 
 #### 訪問監控儀表板
-
 ```
 Prometheus: http://localhost:9090
 Grafana:    http://localhost:3000 (admin/admin)
@@ -168,7 +156,6 @@ Grafana:    http://localhost:3000 (admin/admin)
 ### 🔒 安全配置
 
 #### SSL/TLS 設置
-
 ```bash
 # 生成自簽証書 (測試用)
 openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -days 365 -nodes
@@ -178,7 +165,6 @@ certbot certonly --standalone -d your-domain.com
 ```
 
 #### API 金鑰管理
-
 ```bash
 # 生成新的 JWT 密鑰
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
@@ -203,7 +189,6 @@ JWT_SECRET=<generated-key>
 ### 🆘 故障排除
 
 #### 埠被佔用
-
 ```bash
 # 查找佔用埠的進程
 lsof -i :3000  # macOS/Linux
@@ -215,7 +200,6 @@ taskkill /PID <PID> /F  # Windows
 ```
 
 #### 資料庫連線失敗
-
 ```bash
 # 檢查資料庫服務
 docker ps | grep postgres
@@ -227,7 +211,6 @@ npm run db:migrate
 ```
 
 #### Docker 容器無法啟動
-
 ```bash
 # 檢查日誌
 docker-compose logs synergymesh
@@ -263,7 +246,6 @@ docker-compose up -d
 ### 📋 5-Minute Quick Setup
 
 #### 1️⃣ Environment Preparation
-
 ```bash
 # Clone repository
 git clone https://github.com/SynergyMesh-admin/Unmanned-Island.git
@@ -277,7 +259,6 @@ nano .env  # or use vim/code
 ```
 
 #### 2️⃣ Install Dependencies
-
 ```bash
 # Install Node.js dependencies
 npm install
@@ -292,7 +273,6 @@ pip install -r requirements.txt
 ```
 
 #### 3️⃣ Build Application
-
 ```bash
 # Compile all modules
 npm run build
@@ -305,7 +285,6 @@ npm run lint
 ```
 
 #### 4️⃣ Start Services
-
 ```bash
 # Development environment
 npm run dev:stack
@@ -322,7 +301,6 @@ curl http://localhost:3000/health
 ### 📦 Core Module Initialization
 
 #### Contract Service
-
 ```bash
 cd core/contract_service/contracts-L1/contracts
 npm install
@@ -331,7 +309,6 @@ npm start
 ```
 
 #### MCP Servers
-
 ```bash
 cd mcp-servers
 npm install
@@ -339,7 +316,6 @@ npm start
 ```
 
 #### Python Tool Validation
-
 ```bash
 python3 tools/docs/validate_index.py --verbose
 ```
@@ -349,14 +325,12 @@ python3 tools/docs/validate_index.py --verbose
 ### 🐳 Docker Deployment
 
 #### Development Quick Start
-
 ```bash
 docker-compose -f docker-compose.dev.yml up -d
 docker-compose logs -f
 ```
 
 #### Production Deployment
-
 ```bash
 # Build image
 docker build -t synergymesh:latest .
@@ -373,7 +347,6 @@ docker-compose logs -f synergymesh
 ### 🔄 Kubernetes Deployment
 
 #### Basic Steps
-
 ```bash
 # Create namespace
 kubectl create namespace synergymesh
@@ -396,7 +369,6 @@ kubectl get pods -n synergymesh
 ### 📊 Monitoring & Logging
 
 #### View Application Logs
-
 ```bash
 # Docker
 docker-compose logs -f synergymesh
@@ -409,7 +381,6 @@ tail -f logs/synergymesh.log
 ```
 
 #### Access Monitoring Dashboards
-
 ```
 Prometheus: http://localhost:9090
 Grafana:    http://localhost:3000 (admin/admin)
@@ -420,7 +391,6 @@ Grafana:    http://localhost:3000 (admin/admin)
 ### 🔒 Security Configuration
 
 #### SSL/TLS Setup
-
 ```bash
 # Generate self-signed certificate (testing only)
 openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.crt -days 365 -nodes
@@ -430,7 +400,6 @@ certbot certonly --standalone -d your-domain.com
 ```
 
 #### API Key Management
-
 ```bash
 # Generate new JWT secret
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
@@ -455,7 +424,6 @@ JWT_SECRET=<generated-key>
 ### 🆘 Troubleshooting
 
 #### Port Already in Use
-
 ```bash
 # Find process using port
 lsof -i :3000  # macOS/Linux
@@ -467,7 +435,6 @@ taskkill /PID <PID> /F  # Windows
 ```
 
 #### Database Connection Failed
-
 ```bash
 # Check database service
 docker ps | grep postgres
@@ -479,7 +446,6 @@ npm run db:migrate
 ```
 
 #### Docker Container Won't Start
-
 ```bash
 # Check logs
 docker-compose logs synergymesh
@@ -505,3 +471,4 @@ docker-compose up -d
 - 📖 [Documentation](./docs/)
 - 🐛 [Issue Tracker](https://github.com/SynergyMesh-admin/Unmanned-Island/issues)
 - 💬 [Discussions](https://github.com/SynergyMesh-admin/Unmanned-Island/discussions)
+

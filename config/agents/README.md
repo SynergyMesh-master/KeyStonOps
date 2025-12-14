@@ -1,5 +1,4 @@
 # Agent Configuration Directory
-
 # 智能代理配置目錄
 
 This directory contains all agent-related configurations for the SynergyMesh platform.
@@ -24,13 +23,11 @@ config/agents/
 Single agent configurations defining specific capabilities and behaviors.
 
 **Example**: `recovery_expert.yaml`
-
 - Recovery and self-healing capabilities
 - Dr. Phoenix agent configuration
 - Error detection and automated repair
 
 **Format**:
-
 ```yaml
 agent:
   id: agent_id
@@ -45,13 +42,11 @@ agent:
 Multi-agent team configurations for collaborative workflows.
 
 **Example**: `virtual-experts.yaml`
-
 - Expert team definitions (AI Architect, NLP Expert, Security Architect, etc.)
 - Domain mapping and routing
 - Consultation strategies
 
 **Format**:
-
 ```yaml
 experts:
   version: "1.0.0"
@@ -69,7 +64,6 @@ team:
 JSON Schema definitions for configuration validation.
 
 **Available schemas**:
-
 - `virtual-experts.schema.json` - Validates virtual-experts.yaml structure
 
 ## 🔧 Adding New Agents
@@ -82,7 +76,6 @@ JSON Schema definitions for configuration validation.
 ### Step 2: Define Configuration
 
 Follow the format guidelines above. Key elements:
-
 - Unique ID
 - Clear role and responsibilities
 - Domain expertise
@@ -91,7 +84,6 @@ Follow the format guidelines above. Key elements:
 ### Step 3: Validate Schema
 
 If modifying team configurations:
-
 ```bash
 # Validate against schema
 python tools/scripts/validate-config.js
@@ -100,7 +92,6 @@ python tools/scripts/validate-config.js
 ### Step 4: Update Domain Mapping
 
 For expert teams, update the `domain_mapping` section in `virtual-experts.yaml`:
-
 ```yaml
 domain_mapping:
   YOUR_DOMAIN:
@@ -111,7 +102,6 @@ domain_mapping:
 ### Step 5: Implement Agent
 
 Create agent implementation in `services/agents/`:
-
 ```
 services/agents/
 └── your-agent/
@@ -130,7 +120,6 @@ services/agents/
 ## 🔗 Configuration References
 
 Agent configurations can reference:
-
 - Environment configurations: `config/environment.yaml`
 - AI governance principles: `config/ai-constitution.yaml`
 - Tool dependencies: `config/dependencies.yaml`
@@ -188,24 +177,20 @@ python tools/docs/validate_index.py --verbose
 ## 📝 Naming Conventions
 
 ### Agent IDs
-
 - Format: `snake_case` or `domain.role` format
 - Example: `expert_alex_chen`, `recovery.phoenix`
 
 ### File Names
-
 - Format: `kebab-case.yaml`
 - Example: `recovery-expert.yaml`, `virtual-experts.yaml`
 
 ### Domain Names
-
 - Format: `SCREAMING_SNAKE_CASE` for domain mapping
 - Example: `AI_ML`, `DATABASE`, `SECURITY`
 
 ## 🔄 Migration Notes
 
 **Previous locations** (now consolidated here):
-
 - `config/virtual-experts.yaml` → `config/agents/team/virtual-experts.yaml`
 - `infra/config/virtual-experts.yaml` → Removed (duplicate)
 - `governance/schemas/virtual-experts.schema.json` → `config/agents/schemas/virtual-experts.schema.json`
@@ -215,7 +200,6 @@ All references have been updated accordingly.
 ## 📞 Support
 
 For questions or issues:
-
 - Check `services/agents/README.md` for implementation details
 - Review AI Behavior Contract: `.github/AI-BEHAVIOR-CONTRACT.md`
 - See technical guidelines: `.github/copilot-instructions.md`

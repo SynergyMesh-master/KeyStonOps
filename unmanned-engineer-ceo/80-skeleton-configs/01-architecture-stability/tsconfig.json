@@ -5,7 +5,7 @@
     "rootDir": ".",
     "outDir": "./dist",
     "baseUrl": ".",
-    "types": ["node"]
+    "types": ["node", "vitest/globals"]
   },
   "include": [
     "**/*.ts",

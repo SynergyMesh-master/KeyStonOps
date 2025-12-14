@@ -1,5 +1,4 @@
 # Refactor Playbook System - Integration Report
-
 # 重構劇本系統 - 整合報告
 
 **Date:** 2025-12-06  
@@ -17,25 +16,21 @@ This report documents the successful extraction and integration of the three-pha
 ### Key Achievements
 
 ✅ **Complete Architecture Documentation**
-
 - Created comprehensive LEGACY_ANALYSIS_REPORT.md (9.3KB)
 - Documented three-phase system: Deconstruction → Integration → Refactor
 - Recorded legacy asset management lifecycle and best practices
 
 ✅ **Enhanced Index System**
-
 - Updated `index.yaml` with governance_status, priority, and involved_dirs
 - Enhanced `legacy_assets_index.yaml` with complete structure and examples
 - Added inline documentation for CI/CD automation
 
 ✅ **Validation Infrastructure**
-
 - Created `validate-refactor-index.py` tool for consistency checking
 - Validates file existence, legacy asset references, and field completeness
 - Provides actionable error messages and warnings
 
 ✅ **Documentation Integration**
-
 - Updated main `README.md` with three-phase system overview
 - Added comprehensive Refactor Playbooks section to `DOCUMENTATION_INDEX.md`
 - Documented usage patterns and best practices
@@ -89,7 +84,6 @@ This report documents the successful extraction and integration of the three-pha
 ### Legacy Asset Management
 
 **Lifecycle:**
-
 1. **Staging**: Place physical files in `_legacy_scratch/` (gitignored)
 2. **Indexing**: Record ID/source/description in `legacy_assets_index.yaml`
 3. **Reference**: Playbooks use asset_id for traceability
@@ -144,7 +138,6 @@ All refactor playbooks are now registered in `config/unified-config-index.yaml` 
 - Template files
 
 Each entry includes:
-
 - **id**: Unique identifier
 - **file**: Path to the document
 - **domain**: System domain (core/automation/services/etc.)
@@ -199,7 +192,6 @@ Each entry includes:
 ### 1. Index System Structure
 
 **Machine-Readable (`index.yaml`)**:
-
 ```yaml
 clusters:
   - cluster_id: "domain/name"
@@ -218,7 +210,6 @@ clusters:
 ```
 
 **Human-Readable (`INDEX.md`)**:
-
 - Status overview tables by domain
 - Progress tracking (✅ Complete, 🟢 In Progress, 🟡 Draft, ⚪ Pending)
 - Last updated timestamps
@@ -254,7 +245,6 @@ assets:
 ### 4. CI/CD Integration Patterns
 
 **Violation Mapping**:
-
 ```bash
 # Map violations to playbooks
 python3 tools/map-violations-to-playbooks.py \
@@ -264,7 +254,6 @@ python3 tools/map-violations-to-playbooks.py \
 ```
 
 **Auto-Fix Bot Workflow**:
-
 1. Detect governance violation
 2. Query `index.yaml` for cluster_id
 3. Read corresponding `*_refactor.md`
@@ -273,7 +262,6 @@ python3 tools/map-violations-to-playbooks.py \
 6. Create PR with playbook reference
 
 **Dashboard Integration**:
-
 - Display cluster status from `index.yaml`
 - Show playbook links and progress
 - Track P0/P1/P2 completion
@@ -320,7 +308,6 @@ Results:
 ### For Engineers
 
 **Step 1: Understanding the System**
-
 ```bash
 # Read the comprehensive analysis
 cat docs/refactor_playbooks/LEGACY_ANALYSIS_REPORT.md
@@ -333,7 +320,6 @@ cat docs/refactor_playbooks/03_refactor/index.yaml
 ```
 
 **Step 2: Creating a Refactor Plan**
-
 ```bash
 # Generate playbook for a cluster
 python3 tools/generate-refactor-playbook.py --cluster "core/"
@@ -344,7 +330,6 @@ cp docs/refactor_playbooks/03_refactor/templates/REFRACTOR_PLAYBOOK_TEMPLATE.md 
 ```
 
 **Step 3: Validation**
-
 ```bash
 # Validate index consistency
 python3 tools/validate-refactor-index.py
@@ -355,7 +340,6 @@ python3 tools/validate-refactor-index.py
 ### For AI/LLM
 
 **Prompt Template**:
-
 ```
 I need to create a refactor playbook for cluster "services/gateway".
 
@@ -376,7 +360,6 @@ Please generate a complete refactor playbook following the standard template.
 ### For CI/CD
 
 **Workflow Integration**:
-
 ```yaml
 # .github/workflows/refactor-validation.yml
 - name: Validate Refactor Index

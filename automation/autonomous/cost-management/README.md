@@ -20,7 +20,6 @@ This skeleton handles cost monitoring, budget planning, resource optimization, a
 **主要指南**: `unmanned-engineer-ceo/60-machine-guides/70-architecture-skeletons/cost-management/`
 
 ### 指南文件結構
-
 ```
 cost-management/
 ├── overview.md              # 骨架簡介與應用場景
@@ -35,7 +34,6 @@ cost-management/
 ### 使用時機 / When to Use
 
 當您需要：
-
 - 追蹤雲端資源成本
 - 制定預算計劃
 - 優化資源使用
@@ -146,7 +144,6 @@ tagging_strategy:
 ### 計算資源優化
 
 #### 1. 自動擴展 (Auto Scaling)
-
 ```yaml
 cost_saving:
   strategy: "Auto Scaling"
@@ -158,7 +155,6 @@ cost_saving:
 ```
 
 #### 2. 預留實例 (Reserved Instances)
-
 ```yaml
 cost_saving:
   strategy: "Reserved Instances"
@@ -170,7 +166,6 @@ cost_saving:
 ```
 
 #### 3. Spot 實例 (Spot Instances)
-
 ```yaml
 cost_saving:
   strategy: "Spot Instances"
@@ -184,7 +179,6 @@ cost_saving:
 ### 存儲優化
 
 #### 資料生命週期管理
-
 ```yaml
 lifecycle_policy:
   - transition:
@@ -198,7 +192,6 @@ lifecycle_policy:
 ```
 
 #### 資料壓縮和去重
-
 - 啟用資料壓縮 (節省 50-70%)
 - 實施去重技術 (節省 30-50%)
 - 使用增量備份 (節省 60-80%)
@@ -314,13 +307,11 @@ budget_alerts:
 ## 📞 支援與參考 / Support and References
 
 ### 相關文檔
-
 - [架構指南](../../unmanned-engineer-ceo/60-machine-guides/70-architecture-skeletons/cost-management/)
 - [Performance & Reliability Skeleton](../performance-reliability/README.md)
 - [Architecture Stability Skeleton](../architecture-stability/README.md)
 
 ### 外部資源
-
 - [AWS Cost Management](https://aws.amazon.com/aws-cost-management/)
 - [FinOps Foundation](https://www.finops.org/)
 - [Cloud Cost Optimization Best Practices](https://cloud.google.com/architecture/cost-optimization-principles)

@@ -26,7 +26,6 @@ services/agents/
 ```
 
 **Related Configuration** 相關配置: Agent configurations are centralized in `config/agents/` directory.
-
 - Individual profiles: `config/agents/profiles/`
 - Team configurations: `config/agents/team/`
 - Validation schemas: `config/agents/schemas/`

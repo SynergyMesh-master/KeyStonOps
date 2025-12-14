@@ -65,7 +65,6 @@ flow:
 ```
 
 **Key Files:**
-
 - `governance/10-policy/framework.yaml`
 - `governance/30-agents/permissions/rbac-policies.yaml`
 
@@ -89,7 +88,6 @@ flow:
 ```
 
 **Key Files:**
-
 - `governance/20-intent/framework.yaml`
 - `governance/30-agents/registry/capability-matrix.yaml`
 
@@ -145,7 +143,6 @@ flow:
 ```
 
 **Key Files:**
-
 - `governance/60-contracts/framework.yaml`
 - `governance/30-agents/registry/agent-catalog.yaml`
 
@@ -169,7 +166,6 @@ flow:
 ```
 
 **Key Files:**
-
 - `governance/70-audit/framework.yaml`
 - `governance/30-agents/monitoring/health-checks.yaml`
 
@@ -194,7 +190,6 @@ flow:
 ```
 
 **Key Files:**
-
 - `governance/80-feedback/framework.yaml`
 - `governance/30-agents/lifecycle/continuous-evolution.yaml`
 

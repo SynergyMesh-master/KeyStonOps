@@ -1,5 +1,4 @@
 # Knowledge Graph Processing Pipeline
-
 # 知識圖譜處理流水線
 
 **創建日期 (Created Date)**: 2025-12-07  
@@ -61,7 +60,6 @@ graph TD
 **功能 (Function)**: 解析多種格式的文檔，提取純文本內容與元數據。
 
 **支持格式 (Supported Formats)**:
-
 - PDF (使用 PyPDF2 / pdfplumber)
 - DOCX (使用 python-docx)
 - HTML (使用 BeautifulSoup)
@@ -70,7 +68,6 @@ graph TD
 - 純文本 (TXT)
 
 **處理器配置 (Processor Configuration)**:
-
 ```yaml
 document_ingestion:
   processor: "multi-format-parser"
@@ -84,7 +81,6 @@ document_ingestion:
 ```
 
 **輸出 (Output)**:
-
 ```json
 {
   "document_id": "doc-12345",
@@ -103,7 +99,6 @@ document_ingestion:
 **功能 (Function)**: 識別文本中的命名實體（人名、地名、組織、產品等）。
 
 **處理器配置 (Processor Configuration)**:
-
 ```yaml
 entity_extraction:
   processor: "named-entity-recognizer"
@@ -124,7 +119,6 @@ entity_extraction:
 ```
 
 **範例 (Example)**:
-
 ```
 輸入: "馬斯克在2024年訪問了台灣的台北市。"
 輸出:
@@ -139,7 +133,6 @@ entity_extraction:
 **功能 (Function)**: 識別實體間的語義關係。
 
 **處理器配置 (Processor Configuration)**:
-
 ```yaml
 relation_extraction:
   processor: "dependency-parser-enhanced"
@@ -149,7 +142,6 @@ relation_extraction:
 ```
 
 **關係模式範例 (Relation Pattern Examples)**:
-
 ```yaml
 patterns:
   - pattern: "(PERSON) (VERB:訪問) (LOCATION)"
@@ -170,7 +162,6 @@ patterns:
 **功能 (Function)**: 將提取的實體與關係轉換為 RDF 三元組格式。
 
 **處理器配置 (Processor Configuration)**:
-
 ```yaml
 triple_generation:
   processor: "subject-predicate-object-extractor"
@@ -179,7 +170,6 @@ triple_generation:
 ```
 
 **範例 (Example)**:
-
 ```json
 {
   "subject": "ent:馬斯克",
@@ -200,7 +190,6 @@ triple_generation:
 **功能 (Function)**: 去重與合併指向同一實體的不同提及。
 
 **處理器配置 (Processor Configuration)**:
-
 ```yaml
 entity_resolution:
   processor: "fuzzy-matching-engine"
@@ -216,14 +205,12 @@ entity_resolution:
 ```
 
 **解析策略 (Resolution Strategy)**:
-
 1. **字符串相似度**: Jaccard, Levenshtein
 2. **語義相似度**: 嵌入向量 Cosine 距離
 3. **上下文相似度**: 實體周圍詞彙比對
 4. **聚類**: 使用層次聚類 (Hierarchical Agglomerative Clustering)
 
 **範例 (Example)**:
-
 ```
 原始實體:
   - "馬斯克" (PERSON)
@@ -241,7 +228,6 @@ entity_resolution:
 **功能 (Function)**: 將提取的實體與關係對齊到標準本體。
 
 **處理器配置 (Processor Configuration)**:
-
 ```yaml
 ontology_alignment:
   processor: "schema-mapper"
@@ -254,7 +240,6 @@ ontology_alignment:
 ```
 
 **對齊範例 (Alignment Example)**:
-
 ```turtle
 # 本地實體
 :馬斯克 a :Person ;
@@ -277,7 +262,6 @@ ontology_alignment:
 **決策**: 結合規則式 (Rule-based) 與機器學習 (ML-based) 方法。
 
 **理由**:
-
 - 規則式方法處理高精度場景（如日期、貨幣格式）
 - ML 方法處理複雜語義場景（如隱含關係）
 - 混合策略提供更高的召回率與精確率
@@ -287,13 +271,11 @@ ontology_alignment:
 **決策**: 支持批處理與流處理兩種模式。
 
 **理由**:
-
 - 批處理模式用於歷史數據回填
 - 流處理模式用於實時知識更新
 - 配置化切換，無需修改代碼
 
 **配置範例**:
-
 ```yaml
 processing_mode: "batch"  # 或 "streaming" 或 "hybrid"
 
@@ -314,13 +296,11 @@ streaming_processing:
 **決策**: 所有輸出三元組需通過置信度與本體一致性檢查。
 
 **理由**:
-
 - 防止低質量數據污染知識圖譜
 - 提供可解釋的質量指標
 - 支持人工審核工作流
 
 **質量控制配置**:
-
 ```yaml
 quality_control:
   triple_validation:
@@ -368,7 +348,6 @@ quality_control:
 **考慮但未採用**: 端到端神經網絡模型（如 BERT + Graph Neural Network）
 
 **原因**:
-
 - 可解釋性差，難以調試
 - 模型訓練成本高
 - 難以適應新領域
@@ -380,7 +359,6 @@ quality_control:
 **考慮但未採用**: 100% 自動化處理
 
 **原因**:
-
 - 低置信度結果質量不可控
 - 無法處理特殊場景
 - 缺乏知識積累機制
@@ -398,7 +376,6 @@ quality_control:
 - **GDPR 合規**: 支持數據刪除、導出請求
 
 **配置範例**:
-
 ```yaml
 data_privacy:
   pii_detection: true
@@ -494,26 +471,22 @@ metrics:
 ## 10. 參考資料 (References)
 
 ### 內部文檔
-
 - `config/processing/pipeline-config.yaml` - 處理管線配置
 - `knowledge/processing-workflows/kg-construction-workflow.yaml` - 工作流定義
 - `knowledge/semantic-patterns/relation-patterns.json` - 關係模式庫
 - `governance/policies/plugin-quality-gates.yaml` - 質量門檻
 
 ### 外部標準
-
 - [RDF 1.1 Specification](https://www.w3.org/TR/rdf11-primer/)
 - [OWL 2 Web Ontology Language](https://www.w3.org/TR/owl2-overview/)
 - [Schema.org](https://schema.org/)
 - [DBpedia Ontology](https://www.dbpedia.org/resources/ontology/)
 
 ### 學術論文
-
 - Dong, X. et al. (2014). "Knowledge Vault: A Web-Scale Approach to Probabilistic Knowledge Fusion"
 - Suchanek, F. et al. (2007). "YAGO: A Core of Semantic Knowledge"
 
 ### 相關架構文檔
-
 - `docs/ARCHITECTURE/plugin-architecture-pattern.md` - 插件架構
 - `docs/ARCHITECTURE/storage-architecture.md` - 存儲架構
 - `docs/ARCHITECTURE/batch-stream-processing.md` - 批流處理

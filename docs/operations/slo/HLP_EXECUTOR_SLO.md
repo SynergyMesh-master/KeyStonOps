@@ -36,7 +36,6 @@ HLP Executor SLOs are organized into three tiers to ensure comprehensive service
 ### 1.1 服務可用性 | Service Availability
 
 #### 目標 | Objective
-
 ```yaml
 slo_name: hlp_executor_availability
 target: 99.9%
@@ -45,7 +44,6 @@ calculation_method: uptime / total_time
 ```
 
 #### 定義 | Definition
-
 服務可用性定義為 HLP Executor 能夠接受和處理請求的時間百分比。
 
 Service availability is defined as the percentage of time the HLP Executor is able to accept and process requests.
@@ -53,7 +51,6 @@ Service availability is defined as the percentage of time the HLP Executor is ab
 #### 測量方法 | Measurement Method
 
 **Prometheus Query**:
-
 ```promql
 # 30天可用性 | 30-day availability
 (
@@ -73,7 +70,6 @@ Service availability is defined as the percentage of time the HLP Executor is ab
 ```
 
 **監控配置 | Monitoring Configuration**:
-
 ```yaml
 # prometheus-rules.yml
 groups:
@@ -103,21 +99,17 @@ groups:
 ```
 
 #### 排除情況 | Exclusions
-
 以下情況不計入可用性計算：
-
 - 計劃性維護窗口 (每週二 02:00-04:00 UTC)
 - 上游依賴完全故障 (Kubernetes API Server 完全不可用)
 - 災難性基礎設施故障 (整個 region 故障)
 
 The following are excluded from availability calculation:
-
 - Scheduled maintenance windows (Weekly Tuesday 02:00-04:00 UTC)
 - Complete upstream dependency failures (Kubernetes API Server completely unavailable)
 - Catastrophic infrastructure failures (Entire region down)
 
 #### 錯誤預算 | Error Budget
-
 ```yaml
 error_budget:
   monthly: 43.2 minutes  # (30 days * 24 hours * 60 min) * 0.1%
@@ -140,7 +132,6 @@ error_budget:
 ### 1.2 恢復時間目標 | Recovery Time Objective (RTO)
 
 #### 目標 | Objective
-
 ```yaml
 slo_name: hlp_executor_rto
 target: < 30 seconds
@@ -150,7 +141,6 @@ severity: P1
 ```
 
 #### 定義 | Definition
-
 RTO 是指從檢測到服務中斷到服務完全恢復的最大允許時間。
 
 RTO is the maximum acceptable time from service outage detection to full service restoration.
@@ -158,7 +148,6 @@ RTO is the maximum acceptable time from service outage detection to full service
 #### 測量方法 | Measurement Method
 
 **Prometheus Query**:
-
 ```promql
 # 平均恢復時間 | Average recovery time
 avg(hlp_executor_recovery_duration_seconds)
@@ -170,7 +159,6 @@ histogram_quantile(0.95,
 ```
 
 **監控配置 | Monitoring Configuration**:
-
 ```yaml
 groups:
   - name: hlp_executor_rto
@@ -201,7 +189,6 @@ groups:
 ### 1.3 恢復點目標 | Recovery Point Objective (RPO)
 
 #### 目標 | Objective
-
 ```yaml
 slo_name: hlp_executor_rpo
 target: < 5 minutes
@@ -210,7 +197,6 @@ calculation_method: data_loss_window
 ```
 
 #### 定義 | Definition
-
 RPO 是指在災難恢復場景中，可接受的最大數據遺失時間窗口。
 
 RPO is the maximum acceptable time window of data loss in disaster recovery scenarios.
@@ -218,13 +204,11 @@ RPO is the maximum acceptable time window of data loss in disaster recovery scen
 #### 測量方法 | Measurement Method
 
 **實現機制 | Implementation**:
-
 - Checkpoint 頻率: 每 60 秒 | Checkpoint frequency: Every 60 seconds
 - 增量快照: 每 5 分鐘 | Incremental snapshots: Every 5 minutes
 - 完整快照: 每 1 小時 | Full snapshots: Every 1 hour
 
 **驗證查詢 | Verification Query**:
-
 ```promql
 # 最近 checkpoint 時間 | Time since last checkpoint
 time() - hlp_executor_last_checkpoint_timestamp_seconds < 300
@@ -237,7 +221,6 @@ time() - hlp_executor_last_checkpoint_timestamp_seconds < 300
 ### 2.1 DAG 解析延遲 | DAG Parsing Latency
 
 #### 目標 | Objective
-
 ```yaml
 slo_name: hlp_executor_dag_parsing_latency
 target: P95 < 120ms
@@ -246,7 +229,6 @@ calculation_method: histogram_quantile
 ```
 
 #### 定義 | Definition
-
 DAG 解析延遲是指從接收 DAG 定義到解析完成並準備執行的時間。
 
 DAG parsing latency is the time from receiving a DAG definition to parsing completion and readiness for execution.
@@ -254,7 +236,6 @@ DAG parsing latency is the time from receiving a DAG definition to parsing compl
 #### 測量方法 | Measurement Method
 
 **Prometheus Query**:
-
 ```promql
 # P50, P90, P95, P99 延遲 | P50, P90, P95, P99 latencies
 histogram_quantile(0.50, 
@@ -267,7 +248,6 @@ histogram_quantile(0.95,
 ```
 
 **監控配置 | Monitoring Configuration**:
-
 ```yaml
 groups:
   - name: hlp_executor_dag_parsing_latency
@@ -304,7 +284,6 @@ groups:
 ### 2.2 狀態轉換延遲 | State Transition Latency
 
 #### 目標 | Objective
-
 ```yaml
 slo_name: hlp_executor_state_transition_latency
 target: P90 < 50ms
@@ -313,7 +292,6 @@ calculation_method: histogram_quantile
 ```
 
 #### 定義 | Definition
-
 狀態轉換延遲是指執行從一個狀態轉換到下一個狀態所需的時間，包括驗證和持久化。
 
 State transition latency is the time required for an execution to transition from one state to the next, including validation and persistence.
@@ -321,7 +299,6 @@ State transition latency is the time required for an execution to transition fro
 #### 測量方法 | Measurement Method
 
 **Prometheus Query**:
-
 ```promql
 # P90 狀態轉換延遲 | P90 state transition latency
 histogram_quantile(0.90, 
@@ -337,7 +314,6 @@ histogram_quantile(0.90,
 ```
 
 **監控配置 | Monitoring Configuration**:
-
 ```yaml
 groups:
   - name: hlp_executor_state_transition_latency
@@ -374,7 +350,6 @@ groups:
 ### 2.3 請求處理吞吐量 | Request Processing Throughput
 
 #### 目標 | Objective
-
 ```yaml
 slo_name: hlp_executor_throughput
 target: > 1000 requests/second
@@ -383,7 +358,6 @@ calculation_method: rate
 ```
 
 #### 定義 | Definition
-
 請求處理吞吐量是指 HLP Executor 每秒可以處理的請求數量。
 
 Request processing throughput is the number of requests HLP Executor can process per second.
@@ -391,7 +365,6 @@ Request processing throughput is the number of requests HLP Executor can process
 #### 測量方法 | Measurement Method
 
 **Prometheus Query**:
-
 ```promql
 # 當前吞吐量 (requests/sec) | Current throughput (requests/sec)
 sum(rate(hlp_executor_requests_total[5m]))
@@ -401,7 +374,6 @@ sum by (status) (rate(hlp_executor_requests_total[5m]))
 ```
 
 **監控配置 | Monitoring Configuration**:
-
 ```yaml
 groups:
   - name: hlp_executor_throughput
@@ -428,7 +400,6 @@ groups:
 ### 3.1 資源利用率 | Resource Utilization
 
 #### 目標 | Objective
-
 ```yaml
 slo_name: hlp_executor_resource_utilization
 targets:
@@ -439,7 +410,6 @@ measurement_window: 7 days
 ```
 
 #### 定義 | Definition
-
 資源利用率目標確保系統運行在最佳效率範圍內，既不浪費資源也不過度負載。
 
 Resource utilization targets ensure the system operates within optimal efficiency ranges, neither wasting resources nor being overloaded.
@@ -447,7 +417,6 @@ Resource utilization targets ensure the system operates within optimal efficienc
 #### 測量方法 | Measurement Method
 
 **Prometheus Query**:
-
 ```promql
 # CPU 利用率 | CPU utilization
 avg(
@@ -485,7 +454,6 @@ avg(
 ```
 
 **監控配置 | Monitoring Configuration**:
-
 ```yaml
 groups:
   - name: hlp_executor_resource_utilization
@@ -550,7 +518,6 @@ groups:
 ### 3.2 錯誤率 | Error Rate
 
 #### 目標 | Objective
-
 ```yaml
 slo_name: hlp_executor_error_rate
 target: < 1%
@@ -559,7 +526,6 @@ calculation_method: errors / total_requests
 ```
 
 #### 定義 | Definition
-
 錯誤率是指失敗請求數量佔總請求數量的百分比。
 
 Error rate is the percentage of failed requests out of total requests.
@@ -567,7 +533,6 @@ Error rate is the percentage of failed requests out of total requests.
 #### 測量方法 | Measurement Method
 
 **Prometheus Query**:
-
 ```promql
 # 7天錯誤率 | 7-day error rate
 (
@@ -583,7 +548,6 @@ sum by (error_type) (
 ```
 
 **監控配置 | Monitoring Configuration**:
-
 ```yaml
 groups:
   - name: hlp_executor_error_rate
@@ -748,7 +712,6 @@ echo "SLO report generated: $REPORT_FILE"
 ## 🔍 SLO 審查流程 | SLO Review Process
 
 ### 每週審查 | Weekly Review
-
 - **時間**: 每週一 10:00 UTC
 - **參與者**: SRE Team, Platform Engineering Lead
 - **議程**:
@@ -758,7 +721,6 @@ echo "SLO report generated: $REPORT_FILE"
   4. 識別趨勢和模式
 
 ### 季度審查 | Quarterly Review
-
 - **時間**: 每季第一個月第一週
 - **參與者**: 全體工程團隊, 管理層
 - **議程**:

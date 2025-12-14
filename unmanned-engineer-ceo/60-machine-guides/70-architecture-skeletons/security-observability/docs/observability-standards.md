@@ -3,7 +3,6 @@
 ## 日誌 (Logs)
 
 ### 結構化日誌格式
-
 使用 JSON 格式，必須包含以下欄位:
 
 ```json
@@ -23,7 +22,6 @@
 ```
 
 ### 日誌級別
-
 - **debug**: 開發除錯資訊
 - **info**: 一般資訊事件
 - **warn**: 警告但不影響功能
@@ -31,9 +29,7 @@
 - **fatal**: 嚴重錯誤導致服務停止
 
 ### 敏感資訊處理
-
 禁止記錄以下內容:
-
 - 密碼、Token
 - 信用卡號、CVV
 - 完整的電子郵件 (可記錄 hash 或遮罩)
@@ -43,7 +39,6 @@
 ### 必須的指標
 
 #### 1. RED Metrics (服務健康)
-
 ```yaml
 metrics:
   - name: request_rate
@@ -61,7 +56,6 @@ metrics:
 ```
 
 #### 2. USE Metrics (資源利用)
-
 ```yaml
 metrics:
   - name: cpu_usage_percent
@@ -78,7 +72,6 @@ metrics:
 ```
 
 #### 3. 業務指標
-
 ```yaml
 metrics:
   - name: orders_total
@@ -93,7 +86,6 @@ metrics:
 ## 追蹤 (Traces)
 
 ### Span 命名規範
-
 ```
 <operation_type>.<resource>.<action>
 
@@ -105,7 +97,6 @@ metrics:
 ```
 
 ### 必須的 Span 屬性
-
 ```yaml
 attributes:
   - http.method
@@ -118,7 +109,6 @@ attributes:
 ```
 
 ### 取樣策略
-
 ```yaml
 sampling:
   default_rate: 0.1  # 10% 取樣

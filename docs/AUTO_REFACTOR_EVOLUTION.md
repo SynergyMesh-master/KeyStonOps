@@ -1,5 +1,4 @@
 # Auto Refactor & Evolution System
-
 # 自動重構與演化系統
 
 ## 📋 Overview / 概述
@@ -184,38 +183,32 @@ safety:
 ## 🔄 Workflow Phases / 工作流階段
 
 ### Phase 1: Analysis (分析)
-
 - Scan target directories
 - Identify structural issues
 - Assess code quality
 - Generate analysis report
 
 ### Phase 2: Planning (規劃)
-
 - Create execution plan
 - Prioritize actions
 - Validate plan feasibility
 
 ### Phase 3: Execution (執行)
-
 - Apply refactoring changes
 - Track modifications
 - Handle errors gracefully
 
 ### Phase 4: Learning (學習)
-
 - Collect execution metrics
 - Identify patterns
 - Extract insights
 
 ### Phase 5: Evolution (演化)
-
 - Find optimization opportunities
 - Prioritize improvements
 - Apply safe optimizations
 
 ### Phase 6: Validation (驗證)
-
 - Run safety checks
 - Execute test suite
 - Verify stability
@@ -261,42 +254,34 @@ safety:
 ## 🔌 Integration Points / 整合點
 
 ### 1. With automation_launcher.py
-
 The system integrates with the existing automation launcher via pipeline definitions.
 
 ### 2. With Island AI Agents
-
 Leverages Island AI agents for:
-
 - Architecture analysis (Architect Agent)
 - Security validation (Security Agent)
 - Quality assurance (QA Agent)
 
 ### 3. With Knowledge Graph
-
 Automatically updates knowledge graph after successful execution.
 
 ### 4. With CI/CD (Optional)
-
 Can be triggered via CI/CD pipelines (currently disabled by default).
 
 ## 🎛️ Execution Modes / 執行模式
 
 ### Autonomous Mode (自主模式)
-
 - Fully automated execution
 - Minimal human intervention
 - High confidence threshold
 - Safety checks enforced
 
 ### Supervised Mode (監督模式)
-
 - Human approval at key phases
 - Review before execution
 - Lower confidence threshold acceptable
 
 ### Interactive Mode (互動模式)
-
 - Step-by-step execution
 - Human guidance for each action
 - Maximum control and safety
@@ -342,7 +327,6 @@ python tools/refactor/auto_refactor.py quick-scan
 ```
 
 Output:
-
 ```
 🔍 Quick Scan - Analyzing codebase structure...
 
@@ -381,7 +365,6 @@ python automation_launcher.py pipeline refactor_evolution_pipeline
 ### Issue: Engine initialization failed
 
 **Solution**: Ensure all dependencies are installed:
-
 ```bash
 pip install -r requirements.txt
 ```
@@ -389,7 +372,6 @@ pip install -r requirements.txt
 ### Issue: Safety checks failing
 
 **Solution**: Ensure git working directory is clean:
-
 ```bash
 git status
 git stash  # If needed
@@ -398,7 +380,6 @@ git stash  # If needed
 ### Issue: Tests failing during validation
 
 **Solution**: Run tests manually to identify issues:
-
 ```bash
 npm test
 ```
