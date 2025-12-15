@@ -1,6 +1,6 @@
 import { ProvenanceService } from '../services/provenance';
 import { writeFile, unlink, mkdir } from 'fs/promises';
-import { join } from 'path';
+import { join, relative } from 'path';
 import { tmpdir } from 'os';
 
 describe('ProvenanceService', () => {
@@ -36,7 +36,7 @@ describe('ProvenanceService', () => {
   describe('generateFileDigest', () => {
     it('should generate correct SHA256 digest', async () => {
       // Use relative path from SAFE_ROOT (tmpdir in tests)
-      const relativePath = testFilePath.replace(tmpdir(), '').substring(1);
+      const relativePath = relative(tmpdir(), testFilePath);
       const digest = await service.generateFileDigest(relativePath);
       expect(digest).toMatch(/^sha256:[a-f0-9]{64}$/);
     });
