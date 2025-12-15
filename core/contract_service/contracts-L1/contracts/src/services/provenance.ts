@@ -75,7 +75,7 @@ export class ProvenanceService {
   private static getSafeRoot(): string {
     return process.env.SAFE_ROOT_PATH
       ? resolve(process.env.SAFE_ROOT_PATH)
-      : resolve(__dirname, '../../safefiles');
+      : resolve(process.cwd(), 'safefiles');
   }
 
   constructor() {
