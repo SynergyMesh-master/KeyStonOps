@@ -58,7 +58,12 @@ fi
 if [[ -d services ]]; then
   GO_PRESENT=true
   log "Go formatting check"
-  test -z "$(gofmt -l ./services)"
+  GOFMT_OUT="$(gofmt -l ./services)"
+  if [[ -n "${GOFMT_OUT}" ]]; then
+    log "Go formatting issues detected:"
+    echo "${GOFMT_OUT}"
+    exit 1
+  fi
 
   log "Go tests"
   (cd services && go test ./...)
@@ -67,8 +72,13 @@ if [[ -d services ]]; then
   (cd services && go build ./...)
 fi
 
-if [[ -f requirements.txt || -f pyproject.toml || -n "$(find . -maxdepth 3 -name '*.py' -type f -print -quit 2>/dev/null)" ]]; then
+if [[ -f requirements.txt || -f pyproject.toml ]]; then
   PY_PRESENT=true
+elif [[ -n "$(find . -maxdepth 3 -name '*.py' -type f -print -quit 2>/dev/null)" ]]; then
+  PY_PRESENT=true
+fi
+
+if [[ "$PY_PRESENT" = true ]]; then
   log "Python dependencies and tests"
   if [[ -f requirements.txt ]]; then
     pip install -r requirements.txt
