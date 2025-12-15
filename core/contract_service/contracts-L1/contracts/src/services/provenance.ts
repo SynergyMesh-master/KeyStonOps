@@ -80,9 +80,22 @@ function validatePathContainment(
 ): void {
   const allowedRoot = isInTestTmpDir(pathToValidate, systemTmpDir) ? systemTmpDir : safeRoot;
 
-  if (!isPathContained(pathToValidate, allowedRoot)) {
+  if (!isPathContainedStrict(pathToValidate, allowedRoot)) {
     throw new Error('Invalid file path: Access outside of allowed directory is not permitted');
   }
+}
+
+/**
+ * Returns true if child is the same as or contained within parent (using canonical normalized paths),
+ * and comparison is robust against partial/ambiguous matches.
+ */
+function isPathContainedStrict(child: string, parent: string): boolean {
+  const parentNormalized = path.resolve(parent) + path.sep;
+  const childNormalized = path.resolve(child);
+  return (
+    childNormalized === path.resolve(parent) ||
+    childNormalized.startsWith(parentNormalized)
+  );
 }
 
 /**
@@ -131,6 +144,11 @@ async function validateAndNormalizePath(
   const resolvedPath = resolveFilePath(filePath, safeRoot, systemTmpDir);
 
   // Determine the path to validate
+    // Strict containment check after realpath
+    const allowedRoot = isInTestTmpDir(pathToValidate, systemTmpDir) ? systemTmpDir : safeRoot;
+    if (!isPathContainedStrict(pathToValidate, allowedRoot)) {
+      throw new Error('Invalid file path: Access outside of allowed directory is not permitted (realpath)');
+    }
   let pathToValidate: string;
 
   try {
@@ -138,18 +156,15 @@ async function validateAndNormalizePath(
     pathToValidate = await realpath(resolvedPath);
   } catch (error) {
     // If file doesn't exist or can't be resolved, use normalized path
-    pathToValidate = path.normalize(resolvedPath);
-
-    // Validate path containment before re-throwing error
-    validatePathContainment(pathToValidate, safeRoot, systemTmpDir);
-
+    pathToValidate = path.resolve(path.normalize(resolvedPath));
+    // Strict containment check after normalization
+    const allowedRoot = isInTestTmpDir(pathToValidate, systemTmpDir) ? systemTmpDir : safeRoot;
+    if (!isPathContainedStrict(pathToValidate, allowedRoot)) {
+      throw new Error('Invalid file path: Access outside of allowed directory is not permitted (normalize fallback)');
+    }
     // Path is valid but file doesn't exist - re-throw original error
     throw error;
   }
-
-  // FINAL GUARD: Validate that the resolved path is contained within the allowed root
-  // This applies to both test (tmpdir) and non-test (safeRoot) scenarios
-  validatePathContainment(pathToValidate, safeRoot, systemTmpDir);
 
   return pathToValidate;
 }
