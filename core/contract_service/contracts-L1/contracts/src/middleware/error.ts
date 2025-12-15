@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto';
 import { Request, Response, NextFunction } from 'express';
 
 import config from '../config';
-import { ErrorCode, AppError, createError } from '../errors';
+import { ErrorCode, AppError, createError } from '../errors/AppError';
 
 export const errorMiddleware = (
   err: Error | AppError,
