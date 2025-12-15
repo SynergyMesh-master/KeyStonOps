@@ -1,6 +1,6 @@
 import { ProvenanceService } from '../services/provenance';
 import { writeFile, unlink, mkdir, rmdir } from 'fs/promises';
-import { join } from 'path';
+import { join, relative } from 'path';
 import { tmpdir } from 'os';
 
 describe('ProvenanceService', () => {
@@ -109,7 +109,7 @@ describe('ProvenanceService', () => {
       
       try {
         // Use relative path from SAFE_ROOT
-        const relativePath = testDir.replace(tmpdir(), '').substring(1);
+        const relativePath = relative(tmpdir(), testDir);
         await expect(
           service.createBuildAttestation(relativePath, {
             id: 'test-builder',
