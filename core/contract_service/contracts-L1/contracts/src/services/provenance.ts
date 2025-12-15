@@ -83,7 +83,8 @@ export class ProvenanceService {
     // Resolve the user input to an absolute path within SAFE_ROOT
     const absPath = resolve(ProvenanceService.SAFE_ROOT, userInputPath);
     const realAbsPath = await realpath(absPath);
-    if (!realAbsPath.startsWith(ProvenanceService.SAFE_ROOT)) {
+    const rel = relative(ProvenanceService.SAFE_ROOT, realAbsPath);
+    if (rel.startsWith('..') || rel === '' || rel.includes('..' + require('path').sep) || rel === '..') {
       throw new Error('Access to the specified file path is not allowed');
     }
     return realAbsPath;
