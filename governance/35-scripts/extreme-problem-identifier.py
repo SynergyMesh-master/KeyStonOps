@@ -63,8 +63,9 @@ class ProblemCategory:
 
 class Problem:
     def __init__(self, category: str, severity: str, title: str, description: str, 
+        """TODO: Add function documentation"""
                  location: str, impact: str, recommendation: str, auto_fixable: bool = False):
-        self.id = hashlib.md5(f"{category}{title}{location}".encode()).hexdigest()[:8]
+        self.id = hashlib.sha256(f"{category}{title}{location}".encode()).hexdigest()[:8]
         self.category = category
         self.severity = severity
         self.title = title
@@ -83,18 +84,37 @@ class ExtremeProblemIdentifier:
         self.stats = defaultdict(int)
         
     def log(self, message: str, level: str = "info"):
-        """Log message with color"""
+        """Log message with color. Redacts obvious secrets in logs."""
+            """TODO: Add function documentation"""
+        def redact_sensitive(msg: str) -> str:
+            # Remove common possible secret substrings (passwords/keys/tokens) from msg (rudimentary)
+            patterns = [
+                r'(password\s*=\s*)(["\']?)[^"\',]+(\2)',
+                r'(api[_-]?key\s*=\s*)(["\']?)[^"\',]+(\2)',
+                r'(secret\s*=\s*)(["\']?)[^"\',]+(\2)',
+                r'(token\s*=\s*)(["\']?)[^"\',]+(\2)',
+            ]
+            redacted = msg
+            for p in patterns:
+                redacted = re.sub(p, r'\1***\3', redacted, flags=re.IGNORECASE)
+            return redacted
+
+        redacted_message = redact_sensitive(message)
         if level == "critical":
-            print(f"{Colors.FAIL}🔴 CRITICAL: {message}{Colors.ENDC}")
+            print(f"{Colors.FAIL}🔴 CRITICAL: {redacted_message}{Colors.ENDC}")
         elif level == "error":
-            print(f"{Colors.FAIL}❌ HIGH: {message}{Colors.ENDC}")
+            print(f"{Colors.FAIL}❌ HIGH: {redacted_message}{Colors.ENDC}")
         elif level == "warning":
-            print(f"{Colors.WARNING}⚠️  MEDIUM: {message}{Colors.ENDC}")
+            print(f"{Colors.WARNING}⚠️  MEDIUM: {redacted_message}{Colors.ENDC}")
         elif level == "info":
             if self.verbose:
-                print(f"{Colors.OKBLUE}ℹ️  INFO: {message}{Colors.ENDC}")
+                print(f"{Colors.OKBLUE}ℹ️  INFO: {redacted_message}{Colors.ENDC}")
         elif level == "success":
-            print(f"{Colors.OKGREEN}✅ {message}{Colors.ENDC}")
+            # Suppress all logs at success level containing secret-indicative words to prevent information disclosure
+            lowered = redacted_message.lower()
+            if any(s in lowered for s in ["password", "api key", "secret", "token"]):
+                return  # Do not log if message contains secret-indicative keywords
+            print(f"{Colors.OKGREEN}✅ {redacted_message}{Colors.ENDC}")
     
     def add_problem(self, problem: Problem):
         """Add identified problem"""
@@ -113,6 +133,7 @@ class ExtremeProblemIdentifier:
             self.log(f"[{problem.category}] {problem.title} @ {problem.location}", "info")
     
     def detect_security_vulnerabilities(self):
+        # NOTE: Consider refactoring this function (complexity > 50 lines)
         """Category 1: Security vulnerability detection"""
         print(f"\n{Colors.BOLD}[1/10] 🔒 Detecting Security Vulnerabilities...{Colors.ENDC}")
         
@@ -165,6 +186,7 @@ class ExtremeProblemIdentifier:
                 pass
     
     def detect_architecture_violations(self):
+        # NOTE: Consider refactoring this function (complexity > 50 lines)
         """Category 2: Architecture pattern violations"""
         print(f"\n{Colors.BOLD}[2/10] 🏗️  Detecting Architecture Violations...{Colors.ENDC}")
         
@@ -183,6 +205,7 @@ class ExtremeProblemIdentifier:
                         depends_on = dim.get('depends_on', [])
                         dep_graph[name] = depends_on
                     
+                        """TODO: Add function documentation"""
                     # Detect cycles using DFS
                     def has_cycle(node, visited, rec_stack):
                         visited.add(node)
@@ -433,6 +456,7 @@ class ExtremeProblemIdentifier:
                     ))
     
     def detect_predictive_issues(self):
+        # NOTE: Consider refactoring this function (complexity > 50 lines)
         """Category 10: Predictive issue detection"""
         print(f"\n{Colors.BOLD}[10/10] 🔮 Detecting Predictive Issues...{Colors.ENDC}")
         
@@ -538,6 +562,7 @@ class ExtremeProblemIdentifier:
         return len([p for p in self.problems if p.severity in [ProblemSeverity.CRITICAL, ProblemSeverity.HIGH]]) == 0
     
     def print_summary(self, execution_time: float):
+        # NOTE: Consider refactoring this function (complexity > 50 lines)
         """Print problem identification summary"""
         print(f"\n{Colors.HEADER}{Colors.BOLD}{'='*80}")
         print(f"Problem Identification Summary")
