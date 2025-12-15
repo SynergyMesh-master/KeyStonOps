@@ -50,7 +50,7 @@ The CI Consolidated Report System consolidates multiple CI job results into a si
 
 ## 📝 評論模板格式 | Comment Template Format
 
-整合評論遵循以下格式：
+整合評論遵循以下格式（即時修復模式）：
 
 ```markdown
 <!-- CI_REPORT:workflow-name -->
@@ -67,25 +67,25 @@ The CI Consolidated Report System consolidates multiple CI job results into a si
 
 ### 🔍 問題診斷
 
-**錯誤類型**：測試失敗
+**錯誤類型**：測試失敗  
+**即時診斷**：已自動收集測試失敗日誌並分析根因
 
 ---
 
-### 💡 修復建議
+### ⚡ 即時修復
 
-1. 本地執行 `npm test` 重現測試失敗
-2. 檢查測試案例與實際程式碼的差異
-3. 確認測試資料與預期結果是否正確
-4. 推送修復分支，CI 將自動重跑
-
----
-
-### ⚡ 快速修復命令
-
-**檢查環境**
+已執行修復動作：
 \`\`\`bash
-npm test
+bash scripts/check-env.sh
+npm test -- --verbose
+bash scripts/auto-fix.sh
 \`\`\`
+
+**修復結果**：
+- 測試環境檢查已完成
+- 詳細測試日誌已收集
+- 自動修復腳本已執行
+- 待重新觸發 CI pipeline 驗證
 
 ---
 
@@ -99,13 +99,13 @@ npm test
 
 ---
 
-### 🤝 互動式客服
+### 🤝 即時互動
 
-需要更多協助？使用以下命令：
-- `@copilot analyze Workflow Name` - 深度分析此錯誤
-- `@copilot fix Workflow Name` - 獲取自動修復建議
-- `@copilot help Workflow Name` - 查看此 CI 的完整文檔
-- `@copilot similar Workflow Name` - 查找相似問題的解決方案
+需要更多即時操作？使用以下命令：
+- `@copilot rerun Workflow Name` - 立即重新執行 CI
+- `@copilot patch Workflow Name` - 立即套用修復補丁
+- `@copilot logs Workflow Name` - 立即顯示完整日誌
+- `@copilot sync Workflow Name` - 立即同步最新修復狀態
 
 ---
 
@@ -117,7 +117,7 @@ npm test
 
 ---
 
-_此評論由 Workflow Name 互動式客服自動生成_
+_此評論由 Workflow Name 即時修復系統自動生成_
 ```
 
 ---

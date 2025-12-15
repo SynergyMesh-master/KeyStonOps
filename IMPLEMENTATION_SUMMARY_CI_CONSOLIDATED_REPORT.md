@@ -91,9 +91,9 @@ This implementation successfully consolidates CI job comments into a single comm
    - HTML 註解標記用於識別評論
    - @copilot 互動命令
 
-### ✅ 評論模板（中文）
+### ✅ 評論模板（中文 - 即時修復模式）
 
-完全符合問題陳述提供的模板格式：
+完全符合問題陳述提供的即時修復模板格式：
 
 ```markdown
 <!-- CI_REPORT:core-services -->
@@ -103,30 +103,34 @@ This implementation successfully consolidates CI job comments into a single comm
 🔴 狀態：執行失敗
 
 🔍 問題診斷
-錯誤類型：未知錯誤
+錯誤類型：測試失敗
+即時診斷：已自動收集測試失敗日誌並分析根因
 
-💡 修復建議
-1. 查看完整日誌以了解具體錯誤
-2. 檢查最近的代碼變更
-3. 參考 CI 故障排除文檔
-
-⚡ 快速修復命令
-檢查環境
+⚡ 即時修復
+已執行修復動作：
 \`\`\`bash
 bash scripts/check-env.sh
+npm test -- --verbose
+bash scripts/auto-fix.sh
 \`\`\`
+
+修復結果：
+- 測試環境檢查已完成
+- 詳細測試日誌已收集
+- 自動修復腳本已執行
+- 待重新觸發 CI pipeline 驗證
 
 📊 錯誤摘要
 \`\`\`
 （列出各 job 的摘要）
 \`\`\`
 
-🤝 互動式客服
-需要更多協助？使用以下命令：
-- @copilot analyze Core Services CI - 深度分析此錯誤
-- @copilot fix Core Services CI - 獲取自動修復建議
-- @copilot help Core Services CI - 查看此 CI 的完整文檔
-- @copilot similar Core Services CI - 查找相似問題的解決方案
+🤝 即時互動
+需要更多即時操作？使用以下命令：
+- @copilot rerun Core Services CI - 立即重新執行 CI
+- @copilot patch Core Services CI - 立即套用修復補丁
+- @copilot logs Core Services CI - 立即顯示完整日誌
+- @copilot sync Core Services CI - 立即同步最新修復狀態
 
 📚 相關資源
 - CI 故障排除文檔
@@ -134,7 +138,7 @@ bash scripts/check-env.sh
 - 環境檢查工具
 
 ---
-此評論由 Core Services CI 互動式客服自動生成
+此評論由 Core Services CI 即時修復系統自動生成
 ```
 
 ---

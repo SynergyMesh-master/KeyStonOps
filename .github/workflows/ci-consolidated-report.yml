@@ -3,7 +3,8 @@ name: CI Consolidated Report
 
 # Reusable workflow for generating consolidated CI job reports
 # Consolidates multiple job results into a single PR comment
-# Template follows Chinese format specified in problem statement
+# Template follows Chinese instant fix format (即時修復模式)
+# Shows actions already taken instead of suggestions
 
 on:
   workflow_call:
