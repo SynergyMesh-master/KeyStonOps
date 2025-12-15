@@ -7,6 +7,23 @@ import { Request, Response, NextFunction } from 'express';
 import { errorMiddleware } from '../middleware/error';
 import { createError, AppError, ErrorCode } from '../errors';
 
+// Mock the config module
+jest.mock('../config', () => {
+  const mockConfigValues = {
+    NODE_ENV: 'development',
+    PORT: 3000,
+    LOG_LEVEL: 'info',
+    SERVICE_NAME: 'contracts-l1',
+    SERVICE_VERSION: '1.0.0',
+  };
+  
+  return {
+    __esModule: true,
+    default: mockConfigValues,
+    config: mockConfigValues,
+  };
+});
+
 describe('Error Middleware', () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
@@ -396,25 +413,28 @@ describe('Error Middleware', () => {
     });
 
     it('should always show generic message in production', () => {
-      // Temporarily set NODE_ENV to production
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
-
-      // Re-import to get updated config
-      jest.resetModules();
-      const { errorMiddleware: prodErrorMiddleware } = require('../middleware/error');
+      // Mock config to simulate production environment
+      const mockConfig = require('../config');
+      const originalNodeEnv = mockConfig.default.NODE_ENV;
+      mockConfig.default.NODE_ENV = 'production';
+      mockConfig.config.NODE_ENV = 'production';
 
       const error = new Error('Invalid input provided');
 
-      prodErrorMiddleware(error, mockRequest as Request, mockResponse as Response, mockNext);
+      errorMiddleware(
+        error,
+        mockRequest as Request,
+        mockResponse as Response,
+        mockNext
+      );
 
       expect(statusMock).toHaveBeenCalledWith(500);
       const response = jsonMock.mock.calls[0][0];
       expect(response.error.message).toBe('Internal server error');
 
-      // Restore original NODE_ENV
-      process.env.NODE_ENV = originalEnv;
-      jest.resetModules();
+      // Restore original config
+      mockConfig.default.NODE_ENV = originalNodeEnv;
+      mockConfig.config.NODE_ENV = originalNodeEnv;
     });
   });
 });
