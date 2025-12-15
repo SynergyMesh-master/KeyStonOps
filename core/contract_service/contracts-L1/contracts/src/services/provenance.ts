@@ -5,10 +5,6 @@ import { relative, resolve, sep } from 'path';
 
 import { SLSAAttestationService, SLSAProvenance, BuildMetadata } from './attestation';
 
-// Define safe root directories for file operations to prevent path traversal attacks
-const SAFE_ROOT = resolve(process.cwd());
-const TEMP_ROOT = resolve(tmpdir());
-
 export interface BuildAttestation {
   id: string;
   timestamp: string;
