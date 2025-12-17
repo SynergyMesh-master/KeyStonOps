@@ -809,6 +809,7 @@ CLI 工具與腳本文檔。
 | ---------------------------------------------------------------------- | -------------- | ----------------- |
 | [shared/README.md](./shared/README.md)                                 | 共用資源       | 共用模組          |
 | [tests/README.md](./tests/README.md)                                   | 測試說明       | 測試指南          |
+| [docs/CURSOR_2_2_VISUAL_EDITOR.md](./docs/CURSOR_2_2_VISUAL_EDITOR.md) | Cursor 2.2 視覺化編輯器更新 | 功能摘要 |
 | [.github/copilot-instructions.md](./.github/copilot-instructions.md)   | Copilot 指令   | AI 指令配置       |
 | [.github/profile/README.md](./.github/profile/README.md)               | GitHub Profile | 組織說明          |
 | [.github/PULL_REQUEST_TEMPLATE.md](./.github/PULL_REQUEST_TEMPLATE.md) | PR 模板        | Pull Request 模板 |
