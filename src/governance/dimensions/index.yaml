@@ -7,7 +7,7 @@
 # Validation: JSON Schema Enforced
 # =============================================================================
 
-apiVersion: governance.synergymesh.io/v2
+apiVersion: governance.machinenativeops.io/v2
 kind: DimensionIndex
 metadata:
   name: governance-dimensions-index
@@ -715,9 +715,9 @@ dimensions:
     version: "1.0.0"
     category: execution
     status: active
-    path: "./42-deployment/"
-    schema: "./42-deployment/schema.json"
-    policy: "./42-deployment/policy.rego"
+    path: "./42-src/autonomous/deployment/"
+    schema: "./42-src/autonomous/deployment/schema.json"
+    policy: "./42-src/autonomous/deployment/policy.rego"
     dependencies: ["41-orchestration", "03-change"]
     description: "部署策略、發布管理與環境管理"
     metadata:

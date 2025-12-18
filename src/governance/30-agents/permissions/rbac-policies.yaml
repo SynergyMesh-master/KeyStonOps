@@ -117,7 +117,7 @@ permissions:
     actions: ["execute"]
     
   "automation:deploy":
-    scope: "automation/deploy/*"
+    scope: "automation/src/autonomous/deployment/*"
     actions: ["create", "execute"]
     approval_required: true
     
@@ -150,7 +150,7 @@ permissions:
   
   # Deploy Permissions
   "deploy:execute":
-    scope: "deploy/*"
+    scope: "src/autonomous/deployment/*"
     actions: ["execute"]
     approval_required: true
   

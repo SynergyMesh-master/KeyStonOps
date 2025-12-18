@@ -223,7 +223,7 @@ export class SLSAController {
         deployerAddress || 'unknown'
       );
 
-      metadata.buildType = 'https://synergymesh.dev/contracts/deployment/v1';
+      metadata.buildType = 'https://synergymesh.dev/contracts/src/autonomous/deployment/v1';
       metadata.externalParameters = {
         ...metadata.externalParameters,
         deploymentTxHash,

@@ -118,7 +118,7 @@ class AutoGovernanceHub:
     自動治理中樞 - 完全自主治理系統
     
     Auto Governance Hub for fully autonomous system governance.
-    Removes all human approval requirements from architecture/deployment/policies.
+    Removes all human approval requirements from architecture/src/autonomous/deployment/policies.
     
     Core Principles:
     1. 所有決策自動化: All decisions are automated

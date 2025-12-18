@@ -175,7 +175,7 @@ python_naming:
   applies_to:
     paths:
       - "runtime/"
-      - "ai/"
+      - "src/ai/"
       - "tools/"
       - "tests/"
       - "automation/"
@@ -282,7 +282,7 @@ go_naming:
   applies_to:
     paths:
       - "services/"  # 某些子目錄
-      - "infra/"
+      - "src/autonomous/infrastructure/"
     file_extensions:
       - ".go"
   
@@ -347,7 +347,7 @@ go_naming:
         pattern: "lowercase"
         examples:
           - "services/"
-          - "infra/"
+          - "src/autonomous/infrastructure/"
           - "internal/"
   
   enforcement:
@@ -367,7 +367,7 @@ rust_naming:
   language: "Rust"
   applies_to:
     paths:
-      - "infra/"  # 某些模組
+      - "src/autonomous/infrastructure/"  # 某些模組
       - "services/"  # 某些子目錄
     file_extensions:
       - ".rs"
@@ -661,7 +661,7 @@ directory_naming:
       pattern: "lowercase"
       examples:
         - "services/"
-        - "infra/"
+        - "src/autonomous/infrastructure/"
     
     mixed:
       pattern: "Choose one and be consistent"
