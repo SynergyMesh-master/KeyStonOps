@@ -39,14 +39,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 收集校验目录
+        id: collect-dirs
         run: |
           set -euo pipefail
           mapfile -t existing_dirs < <(for dir in $VALIDATION_DIRS; do [ -d "$dir" ] && echo "$dir"; done)
           if [ ${#existing_dirs[@]} -eq 0 ]; then
-            echo "VALIDATION_DIRS_RESOLVED=" >> $GITHUB_ENV
+            echo "dirs=" >> $GITHUB_OUTPUT
             echo "ℹ️ 未找到可用的校验目录"
           else
-            echo "VALIDATION_DIRS_RESOLVED=${existing_dirs[*]}" >> $GITHUB_ENV
+            echo "dirs=${existing_dirs[*]}" >> $GITHUB_OUTPUT
           fi
 
       - name: 操作系统检测
@@ -182,15 +183,18 @@ jobs:
         uses: actions/checkout@v4
 
       - name: YAML配置语法检查
+        env:
+          VALIDATION_DIRS_RESOLVED: ${{ steps.collect-dirs.outputs.dirs }}
         run: |
           set -euo pipefail
           echo "验证YAML配置文件..."
           pip install "yamllint==1.35.1"
-          if [ -z "${VALIDATION_DIRS_RESOLVED:-}" ]; then
+          read -r -a VALIDATION_DIRS_ARRAY <<< "${VALIDATION_DIRS_RESOLVED:-}"
+          if [ ${#VALIDATION_DIRS_ARRAY[@]} -eq 0 ]; then
             echo "ℹ️ 未找到 YAML 搜索目录"
             yaml_files=()
           else
-            mapfile -t yaml_files < <(find ${VALIDATION_DIRS_RESOLVED} -type f \( -name "*.yaml" -o -name "*.yml" \))
+            mapfile -t yaml_files < <(find "${VALIDATION_DIRS_ARRAY[@]}" -type f \( -name "*.yaml" -o -name "*.yml" \))
           fi
           if [ ${#yaml_files[@]} -eq 0 ]; then
             echo "ℹ️ 未找到 YAML 配置文件"
@@ -207,14 +211,17 @@ jobs:
           fi
 
       - name: JSON配置语法检查
+        env:
+          VALIDATION_DIRS_RESOLVED: ${{ steps.collect-dirs.outputs.dirs }}
         run: |
           set -euo pipefail
           echo "验证JSON配置文件..."
-          if [ -z "${VALIDATION_DIRS_RESOLVED:-}" ]; then
+          read -r -a VALIDATION_DIRS_ARRAY <<< "${VALIDATION_DIRS_RESOLVED:-}"
+          if [ ${#VALIDATION_DIRS_ARRAY[@]} -eq 0 ]; then
             echo "ℹ️ 未找到 JSON 搜索目录"
             json_files=()
           else
-            mapfile -t json_files < <(find ${VALIDATION_DIRS_RESOLVED} -type f -name "*.json")
+            mapfile -t json_files < <(find "${VALIDATION_DIRS_ARRAY[@]}" -type f -name "*.json")
           fi
           if [ ${#json_files[@]} -eq 0 ]; then
             echo "ℹ️ 未找到 JSON 配置文件"
@@ -234,7 +241,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "验证环境特定配置..."
-          CONFIG_FILES=(${CONFIG_VALIDATION_FILES})
+          read -r -a CONFIG_FILES <<< "${CONFIG_VALIDATION_FILES}"
           for config in "${CONFIG_FILES[@]}"; do
             if [ -f "$config" ]; then
               echo "✅ 找到配置文件: $config"
