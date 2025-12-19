@@ -1,22 +1,14 @@
 import { createHash, randomUUID } from 'crypto';
 import { readFile, stat, realpath } from 'fs/promises';
 import path from 'path';
-import { tmpdir } from 'os';
 
 import sanitize from 'sanitize-filename';
 
 import { PathValidationError } from '../errors';
 import { SLSAAttestationService, SLSAProvenance, BuildMetadata } from './attestation';
 
-const systemTmpDir = tmpdir();
-
 const getSafeRoot = (): string =>
   path.resolve(process.env.SAFE_ROOT_PATH ?? path.resolve(process.cwd(), 'safefiles'));
-
-const isSubPath = (candidate: string, base: string): boolean => {
-  const relative = path.relative(base, candidate);
-  return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
-};
 
 const assertPathValid = (filePath: string): void => {
   if (!filePath || typeof filePath !== 'string') {
@@ -62,12 +54,13 @@ async function resolveSafePath(userInputPath: string): Promise<string> {
   const safeRoot = getSafeRoot();
   const normalizedInput = path.normalize(userInputPath);
 
-  let canonicalPath: string;
   let canonicalSafeRoot: string;
   try {
     // Canonicalize the safe root directory for robust prefix checking.
     canonicalSafeRoot = await realpath(safeRoot);
 
+  let canonicalPath: string;
+  try {
     // Always resolve user input relative to the canonical safe root.
     const resolvedCandidate = path.resolve(canonicalSafeRoot, normalizedInput);
 
