@@ -1,12 +1,8 @@
 import os
 import json
 import subprocess
-from openai import OpenAI
 
-client = OpenAI(
-    api_key=os.environ.get("AI_INTEGRATIONS_OPENAI_API_KEY"),
-    base_url=os.environ.get("AI_INTEGRATIONS_OPENAI_BASE_URL"),
-)
+from guardrails_client import chat_completion, client_available
 
 WORKSPACE = "/home/runner/workspace"
 
@@ -239,6 +235,9 @@ def chat():
     print("我可以分析您的專案、提供優化建議、管理儲存庫")
     print("輸入 'quit' 或 'exit' 結束對話")
     print("=" * 60)
+    if not client_available():
+        print("⚠️  OpenAI/Guardrails client not configured. Please set AI_INTEGRATIONS_OPENAI_API_KEY or OPENAI_API_KEY.")
+        return
     
     messages = [
         {"role": "system", "content": """你是「加購分析師」- 一位高階程式碼顧問和專案分析師。
@@ -276,11 +275,7 @@ When using tools, explain what you're doing and summarize the results clearly.""
         messages.append({"role": "user", "content": user_input})
         
         try:
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=messages,
-                tools=tools
-            )
+            response = chat_completion(model="gpt-4o-mini", messages=messages, tools=tools)
             
             assistant_message = response.choices[0].message
             
@@ -301,11 +296,7 @@ When using tools, explain what you're doing and summarize the results clearly.""
                         "content": result
                     })
                 
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=messages,
-                    tools=tools
-                )
+                response = chat_completion(model="gpt-4o-mini", messages=messages, tools=tools)
                 assistant_message = response.choices[0].message
             
             final_content = assistant_message.content
