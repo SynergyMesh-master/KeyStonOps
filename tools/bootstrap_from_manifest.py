@@ -100,19 +100,26 @@ class BootstrapContext:
         if self.apply:
             # Security: Only execute scripts from trusted YAML manifests
             # The manifest file should be version-controlled and reviewed
-            with tempfile.NamedTemporaryFile(
-                "w", delete=False, prefix="bootstrap_", suffix=".sh", dir=self.repo_root
-            ) as tmp:
-                tmp.write(formatted)
-                tmp_path = tmp.name
+            tmp_path = ""
+            old_umask = os.umask(0o077)
             try:
-                os.chmod(tmp_path, 0o600)
-                subprocess.run(["/bin/bash", tmp_path], check=True, cwd=self.repo_root)
+                with tempfile.NamedTemporaryFile(
+                    "w", delete=False, prefix="bootstrap_", suffix=".sh", dir=self.repo_root
+                ) as tmp:
+                    tmp.write(formatted)
+                    tmp_path = tmp.name
             finally:
-                try:
-                    Path(tmp_path).unlink()
-                except OSError:
-                    pass
+                os.umask(old_umask)
+            try:
+                if tmp_path:
+                    os.chmod(tmp_path, 0o600)
+                    subprocess.run(["/bin/bash", tmp_path], check=True, cwd=self.repo_root)
+            finally:
+                if tmp_path:
+                    try:
+                        Path(tmp_path).unlink()
+                    except OSError:
+                        pass
             self.log("[shell] executed block")
         else:
             self.log("[dry-run] shell block:\n" + formatted)

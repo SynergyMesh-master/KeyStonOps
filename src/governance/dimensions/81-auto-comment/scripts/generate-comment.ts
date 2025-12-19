@@ -251,7 +251,7 @@ function isProtectedBranch(branch?: string): boolean {
   return branch ? protectedBranches.includes(branch) : false;
 }
 
-const UNSAFE_PATTERN = /[;|`$><]/;
+const UNSAFE_PATTERN = /[;&|`$><()\\]/;
 
 function parseAllowedCommand(segment: string): string[] {
   if (UNSAFE_PATTERN.test(segment)) {
@@ -289,6 +289,9 @@ function parseAllowedCommand(segment: string): string[] {
     default:
       if (trimmed.startsWith("git commit -m ")) {
         const message = trimmed.replace(/^git commit -m\s+/, "").replace(/^['"]|['"]$/g, "");
+        if (UNSAFE_PATTERN.test(message)) {
+          throw new Error("Unsafe commit message content");
+        }
         return ["git", "commit", "-m", message];
       }
   }
