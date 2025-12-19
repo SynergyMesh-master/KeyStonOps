@@ -43,21 +43,28 @@ def test_code_assistant_run_command_safety(monkeypatch, tmp_path):
     assert "Command not allowed" in blocked_output
 
 
-def test_chat_app_chat_turn_uses_client_stub():
+def test_chat_app_chat_turn_uses_stubbed_completion(monkeypatch):
     stub_response = SimpleNamespace(
         choices=[
             SimpleNamespace(message=SimpleNamespace(content="hello back", tool_calls=None))
         ]
     )
-    stub_client = SimpleNamespace(
-        chat=SimpleNamespace(
-            completions=SimpleNamespace(create=lambda **kwargs: stub_response)
-        )
-    )
+
+    def _fake_completion(**kwargs):
+        return stub_response
+
+    monkeypatch.setattr(chat_app, "chat_completion", _fake_completion)
 
     messages = chat_app.initial_messages()
-    reply = chat_app.chat_turn(stub_client, "hello", messages)
+    reply = chat_app.chat_turn("hello", messages)
 
     assert reply == "hello back"
     assert messages[-2]["content"] == "hello"
     assert messages[-1]["content"] == "hello back"
+
+
+def test_chat_app_run_chat_missing_client(monkeypatch, capsys):
+    monkeypatch.setattr(chat_app, "client_available", lambda: False)
+    chat_app.run_chat()
+    captured = capsys.readouterr()
+    assert "AI client not configured" in captured.out
