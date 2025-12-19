@@ -204,7 +204,9 @@ def write_file(file_path: str, content: str) -> str:
 def run_command(command: str) -> str:
     safe_commands = ['ls', 'cat', 'head', 'tail', 'wc', 'find', 'tree', 'pwd', 'echo']
     cmd_parts = command.split()
-    if not cmd_parts or cmd_parts[0] not in safe_commands:
+    if not cmd_parts:
+        return f"Command not allowed. Only these are permitted: {', '.join(safe_commands)}"
+    if cmd_parts[0] not in safe_commands:
         return f"Command not allowed. Only these are permitted: {', '.join(safe_commands)}"
     try:
         result = subprocess.run(

@@ -43,7 +43,7 @@ function parseSegment(segment: string): string[] {
       return ["npx", "yaml-lint", "--fix", "."];
     case "npx markdownlint --fix .":
       return ["npx", "markdownlint", "--fix", "."];
-    default:
+    default: {
       if (trimmed.startsWith("git commit -m ")) {
         const rawMessage = trimmed.replace(/^git commit -m\s+/, "");
         const message = stripWrappingQuotes(rawMessage);
@@ -52,6 +52,8 @@ function parseSegment(segment: string): string[] {
         }
         return ["git", "commit", "-m", message];
       }
+      break;
+    }
   }
 
   throw new Error(`Command not allowed: ${segment}`);
