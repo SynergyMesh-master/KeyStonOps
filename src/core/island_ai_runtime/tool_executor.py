@@ -161,8 +161,8 @@ class CodeRunner(Tool):
             if "temp_file" in locals():
                 try:
                     os.unlink(temp_file)
-                except:
-                    pass
+                except OSError:
+                    pass  # File already deleted or inaccessible
 
     def validate(self, request: ExecutionRequest) -> tuple[bool, str]:
         """驗證代碼是否安全"""
