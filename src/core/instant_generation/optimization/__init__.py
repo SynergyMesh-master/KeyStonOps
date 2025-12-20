@@ -19,6 +19,7 @@ class OptimizationType(Enum):
     COST = "cost"
     SECURITY = "security"
     SCALABILITY = "scalability"
+    RELIABILITY = "reliability"
 
 class HealingStrategy(Enum):
     """修復策略枚舉"""
