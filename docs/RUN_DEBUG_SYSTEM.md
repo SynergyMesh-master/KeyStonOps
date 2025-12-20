@@ -42,6 +42,7 @@
 ### 1. 執行管理 (Execution Management)
 
 #### 1.1 配置系統
+
 支援標準 launch.json 格式，範例配置：
 
 **Python 配置**
