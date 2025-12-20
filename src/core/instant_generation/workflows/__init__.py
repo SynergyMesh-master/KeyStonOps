@@ -134,8 +134,8 @@ class DAGOrchestrator:
             dependencies_completed = True
             for dep_id in task.dependencies:
                 if dep_id in workflow.tasks:
-                    dep_task = workflow.tasks[dep_id]
-                    if dep_task.status != TaskStatus.COMPLETED:
+                    dependency_task = workflow.tasks[dep_id]
+                    if dependency_task.status != TaskStatus.COMPLETED:
                         dependencies_completed = False
                         break
             
@@ -498,6 +498,33 @@ class InstantGenerationWorkflow:
     def get_stats(self) -> Dict[str, Any]:
         """獲取工作流統計信息"""
         return self.workflow_stats.copy()
+    
+    async def health_check(self) -> Dict[str, Any]:
+        """檢查工作流引擎健康狀態"""
+        try:
+            # Check orchestrator status
+            orchestrator_healthy = self.orchestrator is not None
+            
+            # Check processor status
+            processor_healthy = self.processor is not None
+            
+            # Overall health status
+            is_healthy = orchestrator_healthy and processor_healthy
+            
+            return {
+                "status": "healthy" if is_healthy else "unhealthy",
+                "components": {
+                    "orchestrator": "healthy" if orchestrator_healthy else "unhealthy",
+                    "processor": "healthy" if processor_healthy else "unhealthy"
+                },
+                "stats": self.workflow_stats.copy()
+            }
+        except Exception as e:
+            self.logger.error(f"Health check failed: {e}", exc_info=True)
+            return {
+                "status": "unhealthy",
+                "error": str(e)
+            }
 
 __all__ = [
     "InstantGenerationWorkflow",
