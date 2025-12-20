@@ -12,6 +12,7 @@ import os
 import re
 import subprocess
 import tempfile
+from pathlib import Path
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
@@ -114,24 +115,24 @@ class CodeRunner(Tool):
         if working_dir is None:
             return None
 
-        normalized = os.path.realpath(working_dir)
+        normalized = Path(working_dir).resolve()
         if not self.config.allowed_paths:
             raise ValueError(
                 f"Working directory '{normalized}' requires an allowlist; configure allowed_paths."
             )
 
-        allowed_roots = [os.path.realpath(allowed) for allowed in self.config.allowed_paths]
+        allowed_roots = [Path(allowed).resolve() for allowed in self.config.allowed_paths]
 
         for base in allowed_roots:
             try:
-                if os.path.commonpath([normalized, base]) == base:
-                    return normalized
+                normalized.relative_to(base)
+                return str(normalized)
             except ValueError:
-                # Paths on different drives (e.g., Windows); treat as not allowed
+                # Not relative to base; continue checking other roots
                 continue
 
         raise ValueError(
-            f"Working directory '{normalized}' is not allowed; allowed roots: {allowed_roots}"
+            f"Working directory '{normalized}' is not allowed; allowed roots: {[str(r) for r in allowed_roots]}"
         )
 
     def _build_execution_command(self, lang_config: dict[str, str], temp_file: str) -> list[str]:
