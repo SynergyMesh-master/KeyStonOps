@@ -242,6 +242,7 @@ response = await interface.process_message("如何優化？")
 - 對話管理
 
 ### 4. 擴充性設計
+
 - 語言適配器系統
 - 自訂診斷規則
 - 插件架構
