@@ -442,6 +442,7 @@ python examples/debug-examples/demo.py
 ## 🎓 學習路徑
 
 ### 初學者（1-2 小時）
+
 1. 閱讀快速入門指南
 2. 執行完整示範
 3. 嘗試基本命令
