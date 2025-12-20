@@ -9,7 +9,22 @@ import sys
 from pathlib import Path
 
 def _import_kebab_module(module_alias: str, file_name: str, legacy_alias: str | None = None):
-    """Import a module with a kebab-case filename and register namespaced aliases"""
+    """
+    Import a module from a kebab-case filename and register module aliases.
+
+    This helper loads a module object from ``file_name`` (e.g. ``"python-island.py"``)
+    and registers it in ``sys.modules`` under two possible names:
+
+    * ``qualified_name`` – the primary name, built as ``f"{__name__}.{module_alias}"``.
+      Here ``module_alias`` is the underscore-based short name of the island
+      (e.g. ``"python_island"``), not a full module path.
+    * ``legacy_alias`` – an optional fully qualified import path used for
+      backwards compatibility (e.g. ``"islands.python_island"``). When provided,
+      it is also mapped to the same module object in ``sys.modules``.
+
+    This ensures that both the new namespaced form (``qualified_name``) and any
+    older dotted-path aliases continue to resolve to the same module.
+    """
     module_path = Path(__file__).parent / file_name
     if not module_path.exists():
         raise ImportError(f"Module file not found: {module_path}")
