@@ -10,10 +10,10 @@ import hashlib
 import logging
 import secrets
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, Optional, Protocol
+from datetime import datetime, timedelta
+from typing import Any, Protocol
 from urllib.parse import urlencode, urlparse
-from uuid import UUID
+import jwt as pyjwt
 
 import jwt
 
@@ -33,7 +33,7 @@ class SSORepository(Protocol):
     async def save_sso_config(self, config: SSOConfig) -> SSOConfig:
         ...
 
-    async def get_sso_config(self, org_id: UUID) -> Optional[SSOConfig]:
+    async def get_sso_config(self, org_id: UUID) -> SSOConfig | None:
         ...
 
     async def update_sso_config(self, config: SSOConfig) -> SSOConfig:
@@ -46,12 +46,12 @@ class SSORepository(Protocol):
 class UserRepository(Protocol):
     """Repository interface for user operations"""
 
-    async def get_user_by_email(self, email: str) -> Optional[User]:
+    async def get_user_by_email(self, email: str) -> User | None:
         ...
 
     async def get_user_by_sso(
         self, sso_provider: str, sso_subject: str
-    ) -> Optional[User]:
+    ) -> User | None:
         ...
 
     async def save_user(self, user: User) -> User:
@@ -66,7 +66,7 @@ class MembershipRepository(Protocol):
 
     async def get_membership(
         self, org_id: UUID, user_id: UUID
-    ) -> Optional[Membership]:
+    ) -> Membership | None:
         ...
 
     async def save_membership(self, membership: Membership) -> Membership:
@@ -76,15 +76,15 @@ class MembershipRepository(Protocol):
 class HTTPClient(Protocol):
     """HTTP client interface for OIDC operations"""
 
-    async def get(self, url: str, headers: Dict[str, str] = None) -> Dict[str, Any]:
+    async def get(self, url: str, headers: dict[str, str] = None) -> dict[str, Any]:
         ...
 
     async def post(
         self,
         url: str,
-        data: Dict[str, Any] = None,
-        headers: Dict[str, str] = None
-    ) -> Dict[str, Any]:
+        data: dict[str, Any] = None,
+        headers: dict[str, str] = None
+    ) -> dict[str, Any]:
         ...
 
 
@@ -102,7 +102,7 @@ class OIDCTokens:
     """OIDC Token response"""
     access_token: str
     id_token: str
-    refresh_token: Optional[str] = None
+    refresh_token: str | None = None
     expires_in: int = 3600
     token_type: str = "Bearer"
 
@@ -113,11 +113,11 @@ class OIDCUserInfo:
     subject: str  # 'sub' claim
     email: str
     email_verified: bool = False
-    name: Optional[str] = None
-    given_name: Optional[str] = None
-    family_name: Optional[str] = None
-    picture: Optional[str] = None
-    raw_claims: Dict[str, Any] = None
+    name: str | None = None
+    given_name: str | None = None
+    family_name: str | None = None
+    picture: str | None = None
+    raw_claims: dict[str, Any] = None
 
     def __post_init__(self):
         if self.raw_claims is None:
@@ -142,7 +142,7 @@ class SSOManager:
     http_client: HTTPClient
 
     # State management (in production, use Redis/DB)
-    _pending_auth: Dict[str, Dict[str, Any]] = None
+    _pending_auth: dict[str, dict[str, Any]] = None
 
     def __post_init__(self):
         if self._pending_auth is None:
@@ -159,7 +159,7 @@ class SSOManager:
         client_id: str,
         client_secret: str,
         configured_by: UUID,
-        attribute_mapping: Optional[Dict[str, str]] = None,
+        attribute_mapping: dict[str, str] | None = None,
         jit_enabled: bool = True,
         default_role: Role = Role.MEMBER,
     ) -> SSOConfig:
@@ -222,7 +222,7 @@ class SSOManager:
 
         return config
 
-    async def get_sso_config(self, org_id: UUID) -> Optional[SSOConfig]:
+    async def get_sso_config(self, org_id: UUID) -> SSOConfig | None:
         """Get SSO configuration for an organization"""
         return await self.sso_repository.get_sso_config(org_id)
 
@@ -338,6 +338,8 @@ class SSOManager:
         nonce = pending["nonce"]
         code_verifier = pending["code_verifier"]
         redirect_uri = pending["redirect_uri"]
+        # TODO: Validate nonce against ID token for replay attack prevention
+        # nonce = pending["nonce"]
 
         # Clean up pending auth
         del self._pending_auth[state]
@@ -377,62 +379,19 @@ class SSOManager:
         # In production, implement full JWT signature verification using the OIDC
         # provider's JWKS endpoint to ensure token authenticity.
         try:
-            # Decode ID token to extract claims
-            id_token_claims = jwt.decode(
+            # Decode without verification to extract nonce claim
+            # SECURITY WARNING: Signature verification is disabled
+            id_token_claims = pyjwt.decode(
                 tokens.id_token,
-                options={"verify_signature": False}
+                key=signing_key.key,
+                algorithms=["RS256", "RS384", "RS512", "ES256", "ES384", "ES512"],
+                audience=config.client_id,
+                issuer=discovery.get("issuer"),
             )
-            
-            # Verify nonce exists and matches to prevent replay attacks
             token_nonce = id_token_claims.get("nonce")
-            if not token_nonce:
-                raise ValueError("Missing nonce claim in ID token")
             if token_nonce != nonce:
-                raise ValueError("Nonce mismatch in ID token - possible replay attack")
-            
-            # Verify issuer (iss) claim matches the configured issuer
-            token_issuer = id_token_claims.get("iss")
-            if not token_issuer:
-                raise ValueError("Missing issuer (iss) claim in ID token")
-            # Normalize issuer URLs for comparison (remove trailing slashes)
-            expected_issuer = config.issuer_url.rstrip('/')
-            actual_issuer = token_issuer.rstrip('/')
-            if actual_issuer != expected_issuer:
-                raise ValueError(
-                    f"Issuer mismatch: expected {expected_issuer}, got {actual_issuer}"
-                )
-            
-            # Verify audience (aud) claim matches the client ID
-            token_audience = id_token_claims.get("aud")
-            if not token_audience:
-                raise ValueError("Missing audience (aud) claim in ID token")
-            # Audience can be a string or a list of strings
-            if isinstance(token_audience, str):
-                audiences = [token_audience]
-            elif isinstance(token_audience, list):
-                audiences = token_audience
-            else:
-                raise ValueError(
-                    f"Invalid audience claim type: expected string or list, got {type(token_audience)}"
-                )
-            if config.client_id not in audiences:
-                raise ValueError(
-                    f"Audience mismatch: client_id {config.client_id} not in {audiences}"
-                )
-            
-            # Verify expiration (exp) claim - token must not be expired
-            token_exp = id_token_claims.get("exp")
-            if not token_exp:
-                raise ValueError("Missing expiration (exp) claim in ID token")
-            if not isinstance(token_exp, (int, float)):
-                raise ValueError(
-                    f"Invalid expiration claim type: expected number, got {type(token_exp)}"
-                )
-            current_timestamp = datetime.now(tz=timezone.utc).timestamp()
-            if current_timestamp > token_exp:
-                raise ValueError("ID token has expired")
-                
-        except jwt.DecodeError as e:
+                raise ValueError("ID token nonce does not match expected nonce")
+        except pyjwt.DecodeError as e:
             raise ValueError(f"Failed to decode ID token: {e}")
 
         # Get user info
@@ -552,7 +511,7 @@ class SSOManager:
         self,
         user: User,
         user_info: OIDCUserInfo,
-        mapping: Dict[str, str],
+        mapping: dict[str, str],
     ) -> None:
         """Apply attribute mapping from OIDC claims to user fields"""
         claim_values = {
@@ -577,7 +536,7 @@ class SSOManager:
     async def send_magic_link(
         self,
         email: str,
-        org_id: Optional[UUID] = None,
+        org_id: UUID | None = None,
     ) -> str:
         """
         Send a magic link for passwordless authentication
@@ -610,7 +569,7 @@ class SSOManager:
     async def verify_magic_link(
         self,
         token: str,
-    ) -> Optional[User]:
+    ) -> User | None:
         """
         Verify a magic link token
 
