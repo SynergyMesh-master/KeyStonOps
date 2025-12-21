@@ -15,6 +15,8 @@ from typing import Any, Protocol
 from urllib.parse import urlencode, urlparse
 import jwt as pyjwt
 
+import jwt
+
 from enterprise.iam.models import (
     Membership,
     Role,
@@ -333,6 +335,7 @@ class SSOManager:
             raise ValueError("Invalid or expired state parameter")
 
         org_id = UUID(pending["org_id"])
+        nonce = pending["nonce"]
         code_verifier = pending["code_verifier"]
         redirect_uri = pending["redirect_uri"]
         # TODO: Validate nonce against ID token for replay attack prevention
@@ -371,10 +374,10 @@ class SSOManager:
             expires_in=token_response.get("expires_in", 3600),
         )
 
-        # Validate ID token nonce to prevent replay attacks
-        # TODO: Implement full JWT signature verification with JWKS
-        # Currently only validating nonce claim without signature verification
-        # This is a security limitation that should be addressed before production
+        # Validate ID token and critical claims
+        # NOTE: This implementation decodes the JWT without signature verification.
+        # In production, implement full JWT signature verification using the OIDC
+        # provider's JWKS endpoint to ensure token authenticity.
         try:
             # Decode without verification to extract nonce claim
             # SECURITY WARNING: Signature verification is disabled
