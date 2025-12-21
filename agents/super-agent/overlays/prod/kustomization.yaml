@@ -1,0 +1,38 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../base
+
+namespace: axiom-system
+
+labels:
+- pairs:
+    environment: prod
+
+replicas:
+- name: super-agent
+  count: 3
+
+images:
+- name: axiom-system/super-agent
+  newTag: v1.0.0
+
+configMapGenerator:
+- name: super-agent-env
+  behavior: create
+  literals:
+  - LOG_LEVEL=INFO
+  - ENVIRONMENT=prod
+
+patches:
+- target:
+    kind: HorizontalPodAutoscaler
+    name: super-agent-hpa
+  patch: |-
+    - op: replace
+      path: /spec/minReplicas
+      value: 3
+    - op: replace
+      path: /spec/maxReplicas
+      value: 10

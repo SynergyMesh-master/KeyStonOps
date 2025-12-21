@@ -4,17 +4,45 @@
 set -euo pipefail
 
 # Configuration
-NAMESPACE="axiom-system"
+ENVIRONMENT="${1:-dev}"  # Default to dev environment
 IMAGE_NAME="axiom-system/super-agent"
-IMAGE_TAG="v1.0.0"
 DOCKERFILE="Dockerfile"
 
-echo "🚀 Deploying AAPS SuperAgent..."
+# Environment-specific configuration
+case $ENVIRONMENT in
+  dev)
+    NAMESPACE="axiom-system-dev"
+    IMAGE_TAG="${IMAGE_TAG:-dev-latest}"
+    ;;
+  staging)
+    NAMESPACE="axiom-system-staging"
+    IMAGE_TAG="${IMAGE_TAG:-staging-v1.0.0}"
+    ;;
+  prod)
+    NAMESPACE="axiom-system"
+    IMAGE_TAG="${IMAGE_TAG:-v1.0.0}"
+    ;;
+  *)
+    echo "❌ Invalid environment: $ENVIRONMENT"
+    echo "Usage: $0 [dev|staging|prod]"
+    exit 1
+    ;;
+esac
+
+echo "🚀 Deploying AAPS SuperAgent to $ENVIRONMENT environment..."
 
 # Check if kubectl is available
 if ! command -v kubectl &> /dev/null; then
     echo "❌ kubectl is not installed or not in PATH"
     exit 1
+fi
+
+# Check if kustomize is available
+if ! command -v kustomize &> /dev/null; then
+    echo "⚠️  kustomize is not installed, falling back to kubectl kustomize"
+    KUSTOMIZE_CMD="kubectl kustomize"
+else
+    KUSTOMIZE_CMD="kustomize build"
 fi
 
 # Check if Docker is available
@@ -87,8 +115,8 @@ echo "🏗️ Creating namespace..."
 kubectl create namespace ${NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -
 
 # Deploy to Kubernetes
-echo "🚀 Deploying to Kubernetes..."
-kubectl apply -f deployment.yaml
+echo "🚀 Deploying to Kubernetes using Kustomize..."
+$KUSTOMIZE_CMD overlays/${ENVIRONMENT} | kubectl apply -f -
 
 # Wait for deployment
 echo "⏳ Waiting for deployment to be ready..."
@@ -135,6 +163,7 @@ echo ""
 echo "🎉 SuperAgent deployment completed successfully!"
 echo ""
 echo "📋 Service Information:"
+echo "  Environment: ${ENVIRONMENT}"
 echo "  Namespace: ${NAMESPACE}"
 echo "  Image: ${IMAGE_NAME}:${IMAGE_TAG}"
 echo "  Service: super-agent.${NAMESPACE}.svc.cluster.local:8080"
@@ -144,5 +173,9 @@ echo "  Check pods: kubectl get pods -n ${NAMESPACE} -l app=super-agent"
 echo "  View logs: kubectl logs -n ${NAMESPACE} -l app=super-agent -f"
 echo "  Port forward: kubectl port-forward -n ${NAMESPACE} svc/super-agent 8080:8080"
 echo "  Test locally: python3 test_super_agent.py http://localhost:8080"
+echo ""
+echo "🔧 Kustomize Commands:"
+echo "  Preview changes: kustomize build overlays/${ENVIRONMENT}"
+echo "  Apply directly: kustomize build overlays/${ENVIRONMENT} | kubectl apply -f -"
 echo ""
 echo "📚 Documentation: ./README.md"

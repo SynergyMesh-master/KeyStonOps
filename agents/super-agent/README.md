@@ -38,6 +38,7 @@ OPEN → TRIAGE → RCA → PROPOSE → VERIFY → APPROVE → EXECUTE → VALID
 - Docker
 - Kubernetes cluster
 - kubectl configured
+- kustomize (optional, kubectl has built-in kustomize support)
 
 ### Local Development
 ```bash
@@ -53,29 +54,77 @@ python test_super_agent.py
 
 ### Docker Build & Test
 ```bash
-# Build image
-docker build -t axiom-system/super-agent:v1.0.0 .
+# Build image (with environment-specific tag)
+docker build -t axiom-system/super-agent:dev-latest .
 
 # Run container
-docker run -p 8080:8080 axiom-system/super-agent:v1.0.0
+docker run -p 8080:8080 axiom-system/super-agent:dev-latest
 
 # Test container
 python test_super_agent.py http://localhost:8080
 ```
 
 ### Kubernetes Deployment
+
+The SuperAgent uses **Kustomize** for environment-specific deployments, making version updates easier across dev, staging, and production environments.
+
+#### Quick Deployment
 ```bash
-# Deploy to Kubernetes
+# Deploy to dev environment (default)
 ./deploy.sh
 
-# Or manual deployment
-kubectl apply -f deployment.yaml
+# Deploy to staging
+./deploy.sh staging
+
+# Deploy to production
+./deploy.sh prod
+```
+
+#### Manual Kustomize Deployment
+```bash
+# Preview what will be deployed to dev
+kustomize build overlays/dev
+
+# Deploy to dev using kustomize
+kustomize build overlays/dev | kubectl apply -f -
+
+# Or using kubectl's built-in kustomize
+kubectl apply -k overlays/dev
+
+# Deploy to staging
+kubectl apply -k overlays/staging
+
+# Deploy to production
+kubectl apply -k overlays/prod
+```
+
+#### Traditional Deployment (without Kustomize)
+```bash
+# Deploy base configuration
+kubectl apply -f base/deployment.yaml
 
 # Port forward for local testing
 kubectl port-forward -n axiom-system svc/super-agent 8080:8080
 
 # Test deployed service
 python test_super_agent.py http://localhost:8080
+```
+
+#### Environment-Specific Configuration
+
+Each environment has different defaults:
+
+| Environment | Namespace | Image Tag | Replicas | Log Level |
+|------------|-----------|-----------|----------|-----------|
+| **dev** | axiom-system-dev | dev-latest | 1 | DEBUG |
+| **staging** | axiom-system-staging | staging-v1.0.0 | 2 | INFO |
+| **prod** | axiom-system | v1.0.0 | 3 (HPA: 3-10) | INFO |
+
+To override the image tag:
+```bash
+# Set custom image tag
+export IMAGE_TAG=v1.2.0
+./deploy.sh prod
 ```
 
 ## 📡 API Endpoints
@@ -248,12 +297,44 @@ python test_super_agent.py http://super-agent.axiom-system.svc.cluster.local:808
 - `LOG_LEVEL`: Logging level (default: "INFO")
 - `TRACE_EXPORTER`: Trace exporter (default: "jaeger")
 
+### Kustomize Structure
+
+The SuperAgent uses Kustomize for managing environment-specific configurations:
+
+```
+agents/super-agent/
+├── base/
+│   ├── deployment.yaml      # Base Kubernetes resources
+│   └── kustomization.yaml   # Base kustomization config
+└── overlays/
+    ├── dev/
+    │   └── kustomization.yaml    # Dev overrides
+    ├── staging/
+    │   └── kustomization.yaml    # Staging overrides
+    └── prod/
+        └── kustomization.yaml    # Production overrides
+```
+
+**Key benefits:**
+- ✅ **Version Management**: Image tags configured per environment
+- ✅ **Environment Isolation**: Separate namespaces and configs
+- ✅ **Easy Updates**: Change image version in one place
+- ✅ **GitOps Ready**: Compatible with ArgoCD and Flux
+
+**Customizing image versions:**
+```yaml
+# In overlays/prod/kustomization.yaml
+images:
+- name: axiom-system/super-agent
+  newTag: v1.2.0  # Update version here
+```
+
 ### Kubernetes Resources
 - **ServiceAccount**: `super-agent` with minimal required permissions
 - **ClusterRole**: Read permissions + limited write permissions
-- **Deployment**: 2 replicas with anti-affinity
+- **Deployment**: 2 replicas with anti-affinity (configurable per environment)
 - **Service**: ClusterIP service for internal communication
-- **HPA**: Horizontal pod autoscaling (2-5 replicas)
+- **HPA**: Horizontal pod autoscaling (2-5 replicas in base, 3-10 in prod)
 - **PDB**: Pod disruption budget (minAvailable: 1)
 
 ## 📊 Monitoring
