@@ -35,6 +35,7 @@ class CompatibilityLevel(Enum):
     NONE = "none"              # Not compatible
 
 
+@functools.total_ordering
 @dataclass
 class SemanticVersion:
     """Semantic version (SemVer)"""
