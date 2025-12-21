@@ -6,23 +6,21 @@ MVP can use email/password + magic link, but this module provides
 the backend interfaces for OIDC/SAML integration.
 """
 
+import hashlib
+import logging
+import secrets
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Optional, Dict, Any, Protocol
-from uuid import UUID
-import hashlib
-import secrets
-import logging
+from typing import Any, Dict, Optional, Protocol
 from urllib.parse import urlencode, urlparse
 import jwt as pyjwt
 
 from enterprise.iam.models import (
-    User,
-    SSOConfig,
     Membership,
     Role,
+    SSOConfig,
+    User,
 )
-
 
 logger = logging.getLogger(__name__)
 
