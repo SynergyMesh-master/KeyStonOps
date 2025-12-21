@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] - 2025-12-21
 
 ### Added
+
 - Initial AGENTS.md with status marker conventions for AI agents
 - CHANGELOG.md for tracking all project changes
 - RISK_ASSESSMENT.md for risk management framework
