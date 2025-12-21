@@ -72,6 +72,7 @@ deleted_files:
 ## 🔄 治理合約檢查
 
 ### 📋 根層治理遵循
+
 - [ ] ✅ 遵循 [`docs/governance/AGENT_DELIVERY_CONTRACT.md`](./docs/governance/AGENT_DELIVERY_CONTRACT.md)
 - [ ] ✅ 符合 [`ROOT_ARCHITECTURE.md`](./ROOT_ARCHITECTURE.md) 架構要求
 - [ ] ✅ 相容 [`root.governance.yaml`](./root.governance.yaml) 規則
