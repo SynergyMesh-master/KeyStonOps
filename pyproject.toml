@@ -128,7 +128,7 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["core", "core.*", "automation", "automation.*", "ai", "ai.*", "governance", "governance.*"]
+include = ["core", "core.*", "automation", "automation.*", "ai", "ai.*", "governance", "governance.*", "enterprise", "enterprise.*"]
 
 [tool.setuptools.package-data]
 "*" = ["py.typed", "*.yaml", "*.yml", "*.json", "*.txt"]
@@ -160,7 +160,7 @@ profile = "black"
 line_length = 100
 skip_gitignore = true
 skip = [".venv", "node_modules", "dist", "build"]
-known_first_party = ["machinenativeops", "core", "automation", "ai", "governance"]
+known_first_party = ["machinenativeops", "core", "automation", "ai", "governance", "enterprise"]
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
 
 # Ruff Configuration

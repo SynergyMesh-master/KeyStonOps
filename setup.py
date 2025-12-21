@@ -38,7 +38,7 @@ setup(
         "Source": "https://github.com/MachineNativeOps/MachineNativeOps",
         "Documentation": "https://github.com/MachineNativeOps/MachineNativeOps/tree/main/docs",
     },
-    packages=find_packages(include=["core", "core.*", "automation", "automation.*", "tools", "tools.*"]),
+    packages=find_packages(include=["core", "core.*", "automation", "automation.*", "tools", "tools.*", "enterprise", "enterprise.*"]),
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
