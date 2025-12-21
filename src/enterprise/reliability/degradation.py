@@ -165,7 +165,7 @@ class CircuitBreaker:
                 duration_ms=(time.monotonic() - start) * 1000,
             )
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             self._record_failure()
             error = f"Operation timed out after {self.timeout_seconds}s"
 
@@ -307,7 +307,7 @@ class HealthCheck:
                     message="Check returned false",
                 )
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             self._record_failure()
 
             return HealthCheckResult(
