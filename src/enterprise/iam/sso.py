@@ -18,7 +18,6 @@ from urllib.parse import urlencode, urlparse
 from enterprise.iam.models import (
     User,
     SSOConfig,
-    OIDCProvider,
     Membership,
     Role,
 )
@@ -187,10 +186,12 @@ class SSOManager:
         # Discover OIDC endpoints
         discovery_url = f"{issuer_url.rstrip('/')}/.well-known/openid-configuration"
         try:
-            await self.http_client.get(discovery_url)
+            discovery_response = await self.http_client.get(discovery_url)
         except Exception as e:
             raise ValueError(f"Failed to discover OIDC configuration: {e}")
 
+        if not discovery_response:
+            raise ValueError("Failed to discover OIDC configuration: empty response")
         # Hash client secret for storage
         secret_hash = hashlib.sha256(client_secret.encode()).hexdigest()
 

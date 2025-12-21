@@ -16,9 +16,6 @@ from enterprise.iam.models import (
     Organization,
     Project,
     Repository,
-    User,
-    Membership,
-    Role,
 )
 
 

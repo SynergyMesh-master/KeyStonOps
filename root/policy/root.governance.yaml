@@ -1,0 +1,174 @@
+# MachineNativeOps Root Layer Governance Configuration
+apiVersion: machinenativeops.io/v1
+kind: GovernanceConfig
+metadata:
+  name: root-governance
+  version: "1.0.0"
+  description: "Root layer governance and policy configuration"
+spec:
+  # Role-based access control (RBAC)
+  rbac:
+    # Roles definition
+    roles:
+      system-admin:
+        name: "system-admin"
+        description: "System administrator with full access"
+        permissions:
+          - "*:*"
+        restrictions: []
+      
+      config-admin:
+        name: "config-admin"
+        description: "Configuration administrator"
+        permissions:
+          - "config:*"
+          - "policy:read"
+        restrictions:
+          - "security:*"
+      
+      security-admin:
+        name: "security-admin"
+        description: "Security administrator"
+        permissions:
+          - "security:*"
+          - "trust:*"
+          - "integrity:*"
+        restrictions:
+          - "config:write"
+      
+      operator:
+        name: "operator"
+        description: "System operator"
+        permissions:
+          - "monitoring:read"
+          - "logging:read"
+          - "health:read"
+        restrictions:
+          - "config:*"
+          - "security:*"
+      
+      viewer:
+        name: "viewer"
+        description: "Read-only access"
+        permissions:
+          - "*:read"
+        restrictions:
+          - "config:*"
+          - "security:*"
+          - "trust:*"
+    
+    # User assignments
+    users:
+      superninja:
+        roles: ["system-admin"]
+        groups: ["admin-team"]
+      
+      admin-user:
+        roles: ["config-admin", "security-admin"]
+        groups: ["admin-team"]
+      
+      ops-user:
+        roles: ["operator"]
+        groups: ["ops-team"]
+
+  # Policy definitions
+  policies:
+    # Change management policy
+    change-management:
+      name: "change-management"
+      description: "Policy for managing system changes"
+      rules:
+        - name: "require-approval"
+          description: "All changes require approval"
+          condition: "change.type == 'critical'"
+          action: "require_approval"
+          approvers: ["system-admin"]
+        
+        - name: "require-validation"
+          description: "All configuration changes require validation"
+          condition: "change.target == 'config'"
+          action: "require_validation"
+          validator: "config-validator"
+    
+    # Security policy
+    security:
+      name: "security"
+      description: "Security and access control policies"
+      rules:
+        - name: "require-authentication"
+          description: "All operations require authentication"
+          condition: "operation.sensitive == true"
+          action: "require_authentication"
+          methods: ["mfa", "certificate"]
+        
+        - name: "audit-logging"
+          description: "All security operations must be logged"
+          condition: "operation.category == 'security'"
+          action: "log_audit"
+          retention: "365d"
+    
+    # Compliance policy
+    compliance:
+      name: "compliance"
+      description: "Regulatory compliance requirements"
+      rules:
+        - name: "data-retention"
+          description: "Audit logs must be retained for 1 year"
+          condition: "data.type == 'audit_log'"
+          action: "retain_data"
+          period: "365d"
+        
+        - name: "access-review"
+          description: "Quarterly access reviews required"
+          condition: "user.role != 'viewer'"
+          action: "schedule_review"
+          frequency: "quarterly"
+
+  # Audit and monitoring
+  audit:
+    # Audit logging configuration
+    logging:
+      enabled: true
+      level: "INFO"
+      format: "json"
+      outputs:
+        - type: "file"
+          path: "var/log/machine-native-ops/audit.log"
+          rotation: "daily"
+          retention: "365d"
+        - type: "syslog"
+          facility: "auth"
+          severity: "info"
+    
+    # Monitoring configuration
+    monitoring:
+      enabled: true
+      metrics:
+        - name: "policy_evaluations"
+          type: "counter"
+          description: "Number of policy evaluations"
+        - name: "access_denials"
+          type: "counter"
+          description: "Number of access denials"
+        - name: "authentication_failures"
+          type: "counter"
+          description: "Number of authentication failures"
+      
+      alerts:
+        - name: "high_access_denials"
+          condition: "access_denials.rate > 10/min"
+          severity: "warning"
+          action: "notify_admins"
+        
+        - name: "authentication_failure_spike"
+          condition: "authentication_failures.rate > 5/min"
+          severity: "critical"
+          action: "notify_security_team"
+
+status:
+  created: "2025-12-21T05:14:00Z"
+  updated: "2025-12-21T05:14:00Z"
+  version: "1.0.0"
+  total_roles: 5
+  total_policies: 3
+  validated: true

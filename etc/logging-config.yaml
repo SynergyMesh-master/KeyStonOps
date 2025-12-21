@@ -1,0 +1,221 @@
+# MachineNativeOps 日誌系統配置
+# 版本: v1.0.0
+# 用途: 統一日誌配置和輪轉策略
+
+apiVersion: machinenativeops.io/v1
+kind: LoggingConfig
+metadata:
+  name: machine-native-ops-logging
+  version: "1.0.0"
+  description: "MachineNativeOps 統一日誌配置"
+spec:
+  # 全域日誌設定
+  global:
+    # 日誌級別 (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    level: "INFO"
+    
+    # 日誌格式
+    format:
+      # 時間格式
+      timestamp: "%Y-%m-%d %H:%M:%S"
+      
+      # 日誌格式模板
+      template: "[{timestamp}] [{level}] [{service}] [{component}] {message}"
+      
+      # 是否包含調用資訊
+      include_caller: true
+      
+      # 是否包含進程ID
+      include_pid: true
+    
+    # 輸出設定
+    output:
+      # 控制台輸出
+      console:
+        enabled: true
+        color: true
+        level: "INFO"
+      
+      # 檔案輸出
+      file:
+        enabled: true
+        level: "DEBUG"
+        
+      # 系統日誌
+      syslog:
+        enabled: false
+        facility: "local0"
+        level: "WARNING"
+
+  # 服務特定日誌配置
+  services:
+    # AAPS 引擎日誌
+    engine:
+      level: "INFO"
+      file: "var/log/machine-native-ops/engine.log"
+      max_size: "100MB"
+      max_files: 10
+      rotation: "daily"
+      
+    # 監控服務日誌
+    monitoring:
+      level: "DEBUG"
+      file: "var/log/machine-native-ops/monitoring.log"
+      max_size: "50MB"
+      max_files: 7
+      rotation: "daily"
+      
+    # API Gateway 日誌
+    api-gateway:
+      level: "INFO"
+      file: "var/log/machine-native-ops/api-gateway.log"
+      max_size: "200MB"
+      max_files: 14
+      rotation: "daily"
+      
+    # 資料庫日誌
+    database:
+      level: "WARNING"
+      file: "var/log/machine-native-ops/database.log"
+      max_size: "100MB"
+      max_files: 7
+      rotation: "daily"
+
+  # 錯誤日誌配置
+  error_logging:
+    # 錯誤日誌檔案
+    file: "var/log/machine-native-ops/error.log"
+    
+    # 錯誤級別
+    level: "ERROR"
+    
+    # 是否包含堆疊追蹤
+    include_stacktrace: true
+    
+    # 錯誤通知設定
+    notifications:
+      email:
+        enabled: false
+        recipients: []
+        
+      webhook:
+        enabled: false
+        url: ""
+
+  # 日誌輪轉設定
+  rotation:
+    # 全域輪轉策略
+    global:
+      # 輪轉頻率 (hourly, daily, weekly, monthly)
+      frequency: "daily"
+      
+      # 最大檔案大小
+      max_size: "100MB"
+      
+      # 保留檔案數量
+      max_files: 30
+      
+      # 壓縮舊日誌
+      compress: true
+      
+      # 延遲壓縮
+      delaycompress: true
+      
+      # 是否輪轉空檔案
+      rotate_empty: false
+      
+      # 缺失日誌檔案處理
+      missingok: true
+      
+      # 輪轉後執行腳本
+      postrotate_script: "scripts/log-postrotate.sh"
+      
+      # 輪轉前執行腳本
+      prerotate_script: "scripts/log-prerotate.sh"
+
+  # 日誌監控設定
+  monitoring:
+    # 是否啟用日誌監控
+    enabled: true
+    
+    # 監控間隔 (秒)
+    interval: 300
+    
+    # 錯誤閾值設定
+    thresholds:
+      # 每分鐘錯誤數量閾值
+      errors_per_minute: 10
+      
+      # 每分鐘警告數量閾值
+      warnings_per_minute: 50
+      
+      # 日誌檔案大小閾值
+      file_size_threshold: "1GB"
+
+  # 日誌分析設定
+  analysis:
+    # 是否啟用日誌分析
+    enabled: false
+    
+    # 分析工具
+    tools:
+      # ELK Stack
+      elk:
+        enabled: false
+        elasticsearch_url: ""
+        kibana_url: ""
+        
+      # Splunk
+      splunk:
+        enabled: false
+        url: ""
+        token: ""
+        
+      # Graylog
+      graylog:
+        enabled: false
+        url: ""
+        token: ""
+
+  # 效能設定
+  performance:
+    # 緩衝區大小
+    buffer_size: 8192
+    
+    # 非同步寫入
+    async_write: true
+    
+    # 寫入間隔 (毫秒)
+    flush_interval: 1000
+    
+    # 最大佇列大小
+    max_queue_size: 10000
+
+  # 安全設定
+  security:
+    # 日誌檔案權限
+    file_permissions: "640"
+    
+    # 日誌目錄權限
+    directory_permissions: "750"
+    
+    # 日誌檔案所有者
+    owner: "root"
+    group: "machinenativeops"
+    
+    # 是否加密敏感資訊
+    encrypt_sensitive_data: true
+    
+    # 敏感資訊模式
+    sensitive_patterns:
+      - "password"
+      - "token"
+      - "secret"
+      - "key"
+      - "credential"
+
+status:
+  created: "2025-12-21T04:30:00Z"
+  updated: "2025-12-21T04:30:00Z"
+  version: "1.0.0"
+  validated: true

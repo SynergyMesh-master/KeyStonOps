@@ -386,7 +386,11 @@ class CheckRunWriter:
                 if attempt < self.max_retries - 1:
                     await asyncio.sleep(delay)
 
-        raise last_error
+        if last_error is not None:
+            raise last_error
+        raise RuntimeError(
+            f"Request failed without a captured exception after {self.max_retries} retries"
+        )
 
 
 @dataclass

@@ -1,0 +1,116 @@
+# MachineNativeOps Root Layer Naming Specifications
+apiVersion: machinenativeops.io/v1
+kind: NamingSpecification
+metadata:
+  name: root-naming-specs
+  version: "1.0.0"
+  description: "Root level naming conventions and validation rules"
+spec:
+  # File naming conventions
+  file_naming:
+    # Root configuration files
+    root_configs:
+      pattern: "^root\\.[a-zA-Z0-9-]+\\.yaml$"
+      examples:
+        - "root.config.yaml"
+        - "root.governance.yaml"
+        - "root.modules.yaml"
+      description: "Root level configuration files"
+    
+    # Specification files
+    spec_files:
+      pattern: "^root\\.specs\\.[a-zA-Z0-9-]+\\.yaml$"
+      examples:
+        - "root.specs.naming.yaml"
+        - "root.specs.logic.yaml"
+        - "root.specs.mapping.yaml"
+      description: "Root layer specification files"
+    
+    # Registry files
+    registry_files:
+      pattern: "^root\\.registry\\.[a-zA-Z0-9-]+\\.yaml$"
+      examples:
+        - "root.registry.modules.yaml"
+        - "root.registry.urns.yaml"
+      description: "Root layer registry files"
+    
+    # Policy files
+    policy_files:
+      pattern: "^root\\.[a-zA-Z0-9-]+\\.yaml$"
+      examples:
+        - "root.governance.yaml"
+        - "root.config.yaml"
+      description: "Root layer policy files"
+
+  # Key naming conventions
+  key_naming:
+    # Standard keys
+    standard_keys:
+      pattern: "^[a-z][a-zA-Z0-9_-]*$"
+      examples:
+        - "apiVersion"
+        - "kind"
+        - "metadata"
+        - "spec"
+        - "status"
+      description: "Standard YAML configuration keys"
+    
+    # Environment-specific keys
+    env_keys:
+      pattern: "^[a-z][a-zA-Z0-9_-]*_env$"
+      examples:
+        - "development_env"
+        - "production_env"
+      description: "Environment-specific configuration keys"
+
+  # Value naming conventions
+  value_naming:
+    # API versions
+    api_versions:
+      pattern: "^machinenativeops\\.io/v[0-9]+$"
+      examples:
+        - "machinenativeops.io/v1"
+        - "machinenativeops.io/v2"
+      description: "API version format"
+    
+    # Resource kinds
+    resource_kinds:
+      pattern: "^[A-Z][a-zA-Z0-9]*$"
+      examples:
+        - "NamingSpecification"
+        - "LogicSpecification"
+        - "MappingSpecification"
+      description: "Resource kind names"
+    
+    # Resource names
+    resource_names:
+      pattern: "^[a-z][a-zA-Z0-9-]*$"
+      examples:
+        - "root-naming-specs"
+        - "global-baseline"
+      description: "Resource names"
+
+  # Identifier naming conventions
+  identifier_naming:
+    # URN format
+    urn_format:
+      pattern: "^urn:machinenativeops:[a-zA-Z0-9-]+:[a-zA-Z0-9-]+(:[a-zA-Z0-9.-]+)?$"
+      examples:
+        - "urn:machinenativeops:spec:naming:v1.0.0"
+        - "urn:machinenativeops:module:engine:1.0.0"
+      description: "Universal Resource Name format"
+    
+    # Module identifiers
+    module_ids:
+      pattern: "^[a-z][a-zA-Z0-9-]*$"
+      examples:
+        - "engine"
+        - "governance"
+        - "monitoring"
+      description: "Module identifiers"
+
+status:
+  created: "2025-12-21T05:14:00Z"
+  updated: "2025-12-21T05:14:00Z"
+  version: "1.0.0"
+  validated: true

@@ -458,7 +458,7 @@ class SecretsManager:
                 },
             )
 
-        logger.info(f"Secret rotated: id={secret_id} version={secret.version}")
+        logger.info("Secret rotated: name=%s version=%s", secret.name, secret.version)
 
         return secret
 

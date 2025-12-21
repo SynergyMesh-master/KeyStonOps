@@ -1,0 +1,101 @@
+#!/bin/bash
+# MachineNativeOps 系統管理工具
+# 版本: v1.0.0
+# 用途: 提供系統管理功能的統一入口點
+
+set -euo pipefail
+
+# 腳本目錄
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
+# 顏色定義
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# 日誌函數
+log_info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+log_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+log_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# 顯示幫助資訊
+show_help() {
+    cat << EOF
+MachineNativeOps 系統管理工具 v1.0.0
+
+用法: mno-admin <命令> [選項]
+
+命令:
+    status      顯示系統狀態
+    health      執行健康檢查
+    config      配置管理
+    logs        查看日誌
+    backup      系統備份
+    restore     系統還原
+    validate    驗證配置
+    start       啟動服務
+    stop        停止服務
+    restart     重啟服務
+
+選項:
+    -h, --help      顯示此幫助資訊
+    -v, --verbose   詳細輸出
+    -q, --quiet     安靜模式
+
+範例:
+    mno-admin status
+    mno-admin health --detailed
+    mno-admin logs --service engine
+    mno-admin backup --full
+
+更多資訊請參考: docs/ADMINISTRATION.md
+EOF
+}
+
+# 主函數
+main() {
+    local command="${1:-}"
+    
+    case "$command" in
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        status)
+            log_info "檢查系統狀態..."
+            # TODO: 實作狀態檢查
+            ;;
+        health)
+            log_info "執行健康檢查..."
+            if [ -f "$PROJECT_ROOT/scripts/system-health-check.sh" ]; then
+                "$PROJECT_ROOT/scripts/system-health-check.sh" "$@"
+            else
+                log_error "健康檢查腳本不存在"
+                exit 1
+            fi
+            ;;
+        *)
+            log_error "未知命令: $command"
+            show_help
+            exit 1
+            ;;
+    esac
+}
+
+# 執行主函數
+main "$@"
