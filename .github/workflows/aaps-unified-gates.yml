@@ -8,6 +8,9 @@ on:
       - 'agents/**'
       - '.github/workflows/aaps-unified-gates.yml'
 
+permissions:
+  contents: read
+
 jobs:
   aaps-unified-gates:
     runs-on: ubuntu-latest
