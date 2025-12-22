@@ -78,6 +78,10 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "rich>=13.7.0",
     "click>=8.1.0",
+    "fastapi>=0.127.0",
+    "pydantic-settings>=2.12.0",
+    "uvicorn>=0.38.0",
+    "setuptools>=80.9.0",
 ]
 
 [project.optional-dependencies]

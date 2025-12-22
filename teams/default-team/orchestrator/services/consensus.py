@@ -368,8 +368,9 @@ class ConsensusManager:
                     await callback(request, result)
                 else:
                     callback(request, result)
-            except Exception:
-                pass
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(f"Consensus callback error: {e}")
 
     def on_consensus(self, callback: Callable) -> None:
         """Register a callback for when consensus is reached."""

@@ -322,8 +322,9 @@ class IncidentStateMachine:
                     await hook(incident, from_state, to_state)
                 else:
                     hook(incident, from_state, to_state)
-            except Exception:
-                pass  # Don't fail on post-hook errors
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(f"Post-hook error: {e}")
 
     async def _execute_on_enter(
         self,
@@ -338,8 +339,9 @@ class IncidentStateMachine:
                     await hook(incident, state)
                 else:
                     hook(incident, state)
-            except Exception:
-                pass
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(f"On-enter hook error: {e}")
 
     async def _execute_on_exit(
         self,
@@ -354,8 +356,9 @@ class IncidentStateMachine:
                     await hook(incident, state)
                 else:
                     hook(incident, state)
-            except Exception:
-                pass
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(f"On-exit hook error: {e}")
 
     def get_valid_transitions(self, state: IncidentState) -> List[IncidentState]:
         """Get valid transitions from a state."""
