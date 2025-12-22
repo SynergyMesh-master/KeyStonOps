@@ -75,46 +75,9 @@ class SuperAgentCore:
     """
 
     def __init__(self):
-        # Initialize core services
-        self.event_store = EventStore(
-            store_type=settings.event_store_type,
-            db_path=settings.event_store_path if settings.event_store_type == "sqlite" else None,
-            max_events=settings.event_store_max_events,
-        )
-        self.audit_trail = AuditTrail(max_entries=100000)
-
-        # Initialize state machine with event store and audit trail
-        self.state_machine = IncidentStateMachine(
-            event_store=self.event_store,
-            audit_trail=self.audit_trail,
-        )
-
-        # Initialize consensus manager
-        self.consensus = ConsensusManager(
-            event_store=self.event_store,
-            audit_trail=self.audit_trail,
-        )
-
-        # Initialize agent registry and client
-        self.agent_registry = AgentRegistry()
-        self.agent_client = AgentClient(
-            registry=self.agent_registry,
-            timeout=settings.agent_timeout,
-            max_retries=settings.agent_retry_attempts,
-            retry_delay=settings.agent_retry_delay,
-        )
-
-        # Initialize utilities
-        self.metrics = MetricsCollector()
-        self.circuit_breakers = CircuitBreakerRegistry(
-            default_failure_threshold=settings.circuit_breaker_failure_threshold,
-            default_recovery_timeout=settings.circuit_breaker_recovery_timeout,
-            default_half_open_requests=settings.circuit_breaker_half_open_requests,
-        )
-        self.backpressure = BackpressureController(rate=100.0, burst=200)
-
-        # Message handlers
-        self.message_handlers: Dict[MessageType, callable] = {
+        self.incidents: Dict[str, Incident] = {}
+        self.startup_time = datetime.now()
+        self.message_handlers = {
             MessageType.INCIDENT_SIGNAL: self.handle_incident_signal,
             MessageType.RCA_REPORT: self.handle_rca_report,
             MessageType.FIX_PROPOSAL: self.handle_fix_proposal,
@@ -130,6 +93,24 @@ class SuperAgentCore:
     def generate_span_id(self) -> str:
         """Generate unique span ID"""
         return str(uuid.uuid4())
+    
+    def get_uptime(self) -> str:
+        """Calculate uptime since startup"""
+        uptime_delta = datetime.now() - self.startup_time
+        total_seconds = int(uptime_delta.total_seconds())
+        days = total_seconds // 86400
+        hours = (total_seconds % 86400) // 3600
+        minutes = (total_seconds % 3600) // 60
+        seconds = total_seconds % 60
+        
+        if days > 0:
+            return f"{days}d {hours}h {minutes}m {seconds}s"
+        elif hours > 0:
+            return f"{hours}h {minutes}m {seconds}s"
+        elif minutes > 0:
+            return f"{minutes}m {seconds}s"
+        else:
+            return f"{seconds}s"
     
     def validate_message_envelope(self, envelope: MessageEnvelope) -> bool:
         """Validate message envelope structure and required fields"""
@@ -837,13 +818,14 @@ async def get_metrics():
     await super_agent.metrics.update_incidents_by_state(stats.get("by_state", {}))
 
     return {
-        "uptime_seconds": super_agent.metrics.get_uptime(),
-        "incidents": stats,
-        "consensus": await super_agent.consensus.get_statistics(),
-        "audit": await super_agent.audit_trail.get_statistics(),
-        "event_store": await super_agent.event_store.get_statistics(),
-        "circuit_breakers": await super_agent.circuit_breakers.get_all_statistics(),
-        "timestamp": datetime.now().isoformat(),
+        "total_incidents": len(super_agent.incidents),
+        "incidents_by_state": {
+            state.value: sum(1 for inc in super_agent.incidents.values() if inc.state == state)
+            for state in IncidentState
+        },
+        "message_types_supported": [mt.value for mt in MessageType],
+        "uptime": super_agent.get_uptime(),
+        "timestamp": datetime.now().isoformat()
     }
 
 
