@@ -17,7 +17,7 @@ export MACHINENATIVEOPS_VERSION="1.0.0"
 export MACHINENATIVEOPS_HOME="/opt/machinenativenops"
 export MACHINENATIVEOPS_ROOT="${MACHINENATIVEOPS_HOME}"
 export MACHINENATIVEOPS_USER="root"
-export MACHINENATIVEOPS_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export MACHINENATIVEOPS_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 
 # === 目錄結構定義 ===
 export MACHINENATIVEOPS_CONFIG="/etc/machinenativenops"
