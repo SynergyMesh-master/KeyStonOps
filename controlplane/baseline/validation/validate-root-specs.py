@@ -444,11 +444,223 @@ class RootSpecValidator:
         print(f"- controlplane.manifest.json")
         print("=" * 80)
 
+    def validate_naming_conventions(self) -> bool:
+        """Validate naming conventions using sub-validator"""
+        print(f"\n{'='*80}")
+        print(f"STAGE: Naming Conventions Validation")
+        print(f"{'='*80}")
+        
+        try:
+            # Import naming validator
+            sys.path.insert(0, str(self.baseline_root / "validation" / "validators"))
+            from validate_naming import validate_naming
+            
+            # Test cases for naming validation
+            test_cases = [
+                ("root.config.yaml", "file"),
+                ("validate-root-specs.py", "file"),
+                ("controlplane", "directory"),
+                ("workspace", "directory"),
+                ("core-validator", "identifier"),
+                ("v1.0.0", "version"),
+                ("urn:machinenativeops:module:core-validator:v1.0.0", "urn"),
+            ]
+            
+            passed = 0
+            failed = 0
+            for target, target_type in test_cases:
+                is_valid, errors, warnings = validate_naming(target, target_type)
+                
+                if is_valid:
+                    print(f"  ✓ Valid {target_type}: {target}")
+                    passed += 1
+                else:
+                    print(f"  ✗ Invalid {target_type}: {target}")
+                    for error in errors:
+                        print(f"    ERROR: {error}")
+                    failed += 1
+                
+                for warning in warnings:
+                    print(f"    WARNING: {warning}")
+            
+            print(f"\nNaming Validation: {passed} passed, {failed} failed")
+            return failed == 0
+        except Exception as e:
+            print(f"  ✗ Naming validation failed: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return False
+    
+    def validate_namespaces(self) -> bool:
+        """Validate namespaces using sub-validator"""
+        print(f"\n{'='*80}")
+        print(f"STAGE: Namespace Validation")
+        print(f"{'='*80}")
+        
+        try:
+            # Import namespace validator
+            sys.path.insert(0, str(self.baseline_root / "validation" / "validators"))
+            from validate_namespace import validate_namespace
+            
+            # Load registered namespaces
+            registry_path = self.baseline_root / "registries" / "root.registry.namespaces.yaml"
+            with open(registry_path, 'r') as f:
+                registry = yaml.safe_load(f)
+            
+            passed = 0
+            failed = 0
+            for ns_entry in registry['spec']['namespaces']:
+                namespace = ns_entry['name']
+                is_valid, errors, warnings = validate_namespace(namespace, check_registration=False)
+                
+                if is_valid:
+                    print(f"  ✓ Valid namespace: {namespace}")
+                    passed += 1
+                else:
+                    print(f"  ✗ Invalid namespace: {namespace}")
+                    for error in errors:
+                        print(f"    ERROR: {error}")
+                    failed += 1
+                
+                for warning in warnings:
+                    print(f"    WARNING: {warning}")
+            
+            print(f"\nNamespace Validation: {passed} passed, {failed} failed")
+            return failed == 0
+        except Exception as e:
+            print(f"  ✗ Namespace validation failed: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return False
+    
+    def validate_urns(self) -> bool:
+        """Validate URNs using sub-validator"""
+        print(f"\n{'='*80}")
+        print(f"STAGE: URN Validation")
+        print(f"{'='*80}")
+        
+        try:
+            # Import URN validator
+            sys.path.insert(0, str(self.baseline_root / "validation" / "validators"))
+            from validate_urn import validate_urn
+            
+            # Load registered URNs
+            registry_path = self.baseline_root / "registries" / "root.registry.urns.yaml"
+            with open(registry_path, 'r') as f:
+                registry = yaml.safe_load(f)
+            
+            passed = 0
+            failed = 0
+            for urn_entry in registry['spec']['urns']:
+                urn = urn_entry['urn']
+                is_valid, errors, warnings = validate_urn(urn, check_registration=False)
+                
+                if is_valid:
+                    print(f"  ✓ Valid URN: {urn}")
+                    passed += 1
+                else:
+                    print(f"  ✗ Invalid URN: {urn}")
+                    for error in errors:
+                        print(f"    ERROR: {error}")
+                    failed += 1
+                
+                for warning in warnings:
+                    print(f"    WARNING: {warning}")
+            
+            print(f"\nURN Validation: {passed} passed, {failed} failed")
+            return failed == 0
+        except Exception as e:
+            print(f"  ✗ URN validation failed: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return False
+    
+    def validate_paths(self) -> bool:
+        """Validate paths using sub-validator"""
+        print(f"\n{'='*80}")
+        print(f"STAGE: Path Validation")
+        print(f"{'='*80}")
+        
+        try:
+            # Import path validator
+            sys.path.insert(0, str(self.baseline_root / "validation" / "validators"))
+            from validate_paths import validate_path
+            
+            # Test critical paths
+            test_paths = [
+                "controlplane/baseline/config/root.config.yaml",
+                "controlplane/baseline/specifications/root.specs.naming.yaml",
+                "controlplane/baseline/validation/validate-root-specs.py",
+                "controlplane/overlay/evidence/validation.report.json",
+                "workspace/src/core/validator.py",
+                "workspace/src/tooling/validate.py",
+                "workspace/runtime/logs/app.log",
+            ]
+            
+            passed = 0
+            failed = 0
+            for path in test_paths:
+                is_valid, errors, warnings = validate_path(path, check_write_policy=True)
+                
+                if is_valid:
+                    print(f"  ✓ Valid path: {path}")
+                    passed += 1
+                else:
+                    print(f"  ✗ Invalid path: {path}")
+                    for error in errors:
+                        print(f"    ERROR: {error}")
+                    failed += 1
+                
+                for warning in warnings:
+                    print(f"    WARNING: {warning}")
+            
+            print(f"\nPath Validation: {passed} passed, {failed} failed")
+            return failed == 0
+        except Exception as e:
+            print(f"  ✗ Path validation failed: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return False
+
+
 def main():
     """Main entry point"""
     validator = RootSpecValidator()
+    
+    # Run all validation stages including new ones
+    print("\n" + "="*80)
+    print("ROOT SPECIFICATION VALIDATION")
+    print("="*80)
+    
+    # Run original validations
     success = validator.validate_all()
-    sys.exit(0 if success else 1)
+    
+    # Run new sub-validator validations
+    print("\n" + "="*80)
+    print("EXTENDED VALIDATION (Sub-Validators)")
+    print("="*80)
+    
+    naming_success = validator.validate_naming_conventions()
+    namespace_success = validator.validate_namespaces()
+    urn_success = validator.validate_urns()
+    path_success = validator.validate_paths()
+    
+    # Update overall success
+    overall_success = success and naming_success and namespace_success and urn_success and path_success
+    
+    # Print final summary
+    print("\n" + "="*80)
+    print("FINAL VALIDATION SUMMARY")
+    print("="*80)
+    print(f"Original Validation: {'✓ PASS' if success else '✗ FAIL'}")
+    print(f"Naming Validation: {'✓ PASS' if naming_success else '✗ FAIL'}")
+    print(f"Namespace Validation: {'✓ PASS' if namespace_success else '✗ FAIL'}")
+    print(f"URN Validation: {'✓ PASS' if urn_success else '✗ FAIL'}")
+    print(f"Path Validation: {'✓ PASS' if path_success else '✗ FAIL'}")
+    print(f"\nOverall Status: {'✓ PASS' if overall_success else '✗ FAIL'}")
+    print("="*80)
+    
+    sys.exit(0 if overall_success else 1)
 
 if __name__ == "__main__":
     main()

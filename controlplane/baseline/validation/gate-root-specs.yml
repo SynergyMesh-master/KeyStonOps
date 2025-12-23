@@ -245,3 +245,58 @@ validation_metadata:
   track_resource_usage: false
   log_level: info
   verbose: false
+# Extended Validation Checks (Namespace, URN, Path)
+extended_checks:
+  namespace_validation:
+    enabled: true
+    checks:
+      - name: "namespace_syntax_validation"
+        description: "Validate namespace syntax against specifications"
+        validator: "validators/validate_namespace.py"
+        
+      - name: "namespace_registration_check"
+        description: "Verify all namespaces are registered"
+        validator: "validators/validate_namespace.py"
+        registry: "controlplane/baseline/registries/root.registry.namespaces.yaml"
+  
+  urn_validation:
+    enabled: true
+    checks:
+      - name: "urn_format_validation"
+        description: "Validate URN format against specifications"
+        validator: "validators/validate_urn.py"
+        
+      - name: "urn_uniqueness_check"
+        description: "Verify all URNs are globally unique"
+        validator: "validators/validate_urn.py"
+        registry: "controlplane/baseline/registries/root.registry.urns.yaml"
+  
+  path_validation:
+    enabled: true
+    checks:
+      - name: "path_format_validation"
+        description: "Validate path format against specifications"
+        validator: "validators/validate_paths.py"
+        
+      - name: "path_write_policy_check"
+        description: "Verify paths follow write policy rules"
+        validator: "validators/validate_paths.py"
+        
+      - name: "root_structure_check"
+        description: "Verify root directory structure rules"
+        validator: "validators/validate_paths.py"
+  
+  naming_validation:
+    enabled: true
+    checks:
+      - name: "file_naming_validation"
+        description: "Validate file naming conventions"
+        validator: "validators/validate_naming.py"
+        
+      - name: "directory_naming_validation"
+        description: "Validate directory naming conventions"
+        validator: "validators/validate_naming.py"
+        
+      - name: "version_format_validation"
+        description: "Validate version format"
+        validator: "validators/validate_naming.py"

@@ -311,6 +311,301 @@ validation_metadata:
   warning_vectors: 15
   info_vectors: 15
   
+# Naming Convention Vectors
+naming_vectors:
+  
+  file_naming:
+    description: "Test file naming conventions"
+    test_cases:
+      - name: "valid_root_file"
+        input: "root.config.yaml"
+        expected: valid
+      
+      - name: "valid_baseline_file"
+        input: "validate-root-specs.py"
+        expected: valid
+      
+      - name: "invalid_uppercase_file"
+        input: "Root.Config.yaml"
+        expected: invalid
+      
+      - name: "invalid_underscore_file"
+        input: "validate_root_specs.py"
+        expected: invalid
+      
+      - name: "invalid_double_extension"
+        input: "config.backup.yaml"
+        expected: invalid
+  
+  directory_naming:
+    description: "Test directory naming conventions"
+    test_cases:
+      - name: "valid_directory"
+        input: "controlplane"
+        expected: valid
+      
+      - name: "valid_hyphenated_directory"
+        input: "my-project"
+        expected: valid
+      
+      - name: "invalid_uppercase_directory"
+        input: "ControlPlane"
+        expected: invalid
+      
+      - name: "invalid_underscore_directory"
+        input: "work_space"
+        expected: invalid
+      
+      - name: "invalid_space_directory"
+        input: "my project"
+        expected: invalid
+  
+  version_naming:
+    description: "Test version naming conventions"
+    test_cases:
+      - name: "valid_version"
+        input: "v1.0.0"
+        expected: valid
+      
+      - name: "valid_version_major"
+        input: "v10.5.2"
+        expected: valid
+      
+      - name: "invalid_no_prefix"
+        input: "1.0.0"
+        expected: invalid
+      
+      - name: "invalid_missing_patch"
+        input: "v1.0"
+        expected: invalid
+      
+      - name: "invalid_leading_zeros"
+        input: "v01.00.00"
+        expected: invalid
+
+# Namespace Vectors
+namespace_vectors:
+  
+  syntax_validation:
+    description: "Test namespace syntax validation"
+    test_cases:
+      - name: "valid_simple_namespace"
+        input: "machinenativeops"
+        expected: valid
+      
+      - name: "valid_hyphenated_namespace"
+        input: "machinenativeops-core"
+        expected: valid
+      
+      - name: "valid_with_numbers"
+        input: "namespace-v2"
+        expected: valid
+      
+      - name: "invalid_uppercase"
+        input: "MachineNativeOps"
+        expected: invalid
+      
+      - name: "invalid_underscore"
+        input: "machine_native_ops"
+        expected: invalid
+      
+      - name: "invalid_dot"
+        input: "machine.native.ops"
+        expected: invalid
+      
+      - name: "invalid_starts_with_hyphen"
+        input: "-machinenativeops"
+        expected: invalid
+      
+      - name: "invalid_ends_with_hyphen"
+        input: "machinenativeops-"
+        expected: invalid
+      
+      - name: "invalid_consecutive_hyphens"
+        input: "machine--native"
+        expected: invalid
+      
+      - name: "invalid_too_short"
+        input: "a"
+        expected: invalid
+  
+  hierarchy_validation:
+    description: "Test namespace hierarchy validation"
+    test_cases:
+      - name: "valid_root_level"
+        input: "machinenativeops"
+        depth: 1
+        expected: valid
+      
+      - name: "valid_domain_level"
+        input: "machinenativeops.core"
+        depth: 2
+        expected: valid
+      
+      - name: "valid_subdomain_level"
+        input: "machinenativeops.core.validation"
+        depth: 3
+        expected: valid
+      
+      - name: "invalid_exceeds_max_depth"
+        input: "a.b.c.d.e.f"
+        depth: 6
+        expected: invalid
+  
+  reserved_namespaces:
+    description: "Test reserved namespace detection"
+    test_cases:
+      - name: "reserved_root"
+        input: "root"
+        expected: reserved
+      
+      - name: "reserved_baseline"
+        input: "baseline"
+        expected: reserved
+      
+      - name: "reserved_overlay"
+        input: "overlay"
+        expected: reserved
+      
+      - name: "reserved_controlplane"
+        input: "controlplane"
+        expected: reserved
+
+# URN Vectors
+urn_vectors:
+  
+  format_validation:
+    description: "Test URN format validation"
+    test_cases:
+      - name: "valid_complete_urn"
+        input: "urn:machinenativeops:module:core-validator:v1.0.0"
+        expected: valid
+      
+      - name: "valid_urn_without_version"
+        input: "urn:machinenativeops:module:core-validator"
+        expected: valid
+      
+      - name: "valid_chatops_command"
+        input: "urn:chatops:command:autofix:v2.1.0"
+        expected: valid
+      
+      - name: "invalid_missing_scheme"
+        input: "machinenativeops:module:core:v1.0.0"
+        expected: invalid
+      
+      - name: "invalid_uppercase_namespace"
+        input: "urn:MachineNativeOps:module:core:v1.0.0"
+        expected: invalid
+      
+      - name: "invalid_uppercase_type"
+        input: "urn:machinenativeops:Module:core:v1.0.0"
+        expected: invalid
+      
+      - name: "invalid_underscore_identifier"
+        input: "urn:machinenativeops:module:core_validator:v1.0.0"
+        expected: invalid
+      
+      - name: "invalid_version_format"
+        input: "urn:machinenativeops:module:core:1.0.0"
+        expected: invalid
+  
+  component_validation:
+    description: "Test URN component validation"
+    test_cases:
+      - name: "valid_module_type"
+        input: "urn:machinenativeops:module:core-validator:v1.0.0"
+        resource_type: "module"
+        expected: valid
+      
+      - name: "valid_agent_type"
+        input: "urn:machinenativeops:agent:github-connector:v1.0.0"
+        resource_type: "agent"
+        expected: valid
+      
+      - name: "valid_service_type"
+        input: "urn:machinenativeops:service:validation-api:v1.0.0"
+        resource_type: "service"
+        expected: valid
+      
+      - name: "invalid_resource_type"
+        input: "urn:machinenativeops:invalid-type:core:v1.0.0"
+        resource_type: "invalid-type"
+        expected: invalid
+
+# Path Vectors
+path_vectors:
+  
+  format_validation:
+    description: "Test path format validation"
+    test_cases:
+      - name: "valid_controlplane_path"
+        input: "controlplane/baseline/config/root.config.yaml"
+        expected: valid
+      
+      - name: "valid_workspace_path"
+        input: "workspace/src/core/validator.py"
+        expected: valid
+      
+      - name: "valid_fhs_path"
+        input: "/var/log/system.log"
+        expected: valid
+      
+      - name: "invalid_space_in_path"
+        input: "workspace/my project/file.py"
+        expected: invalid
+      
+      - name: "invalid_uppercase_in_path"
+        input: "workspace/MyProject/file.py"
+        expected: invalid
+  
+  root_structure_validation:
+    description: "Test root structure rules"
+    test_cases:
+      - name: "valid_boot_pointer"
+        input: "root.bootstrap.yaml"
+        location: "root"
+        expected: valid
+      
+      - name: "valid_primary_directory"
+        input: "controlplane/"
+        location: "root"
+        expected: valid
+      
+      - name: "invalid_governance_in_root"
+        input: "root.governance.yaml"
+        location: "root"
+        expected: invalid
+        reason: "Governance files must be in controlplane/baseline/"
+      
+      - name: "invalid_source_in_root"
+        input: "main.py"
+        location: "root"
+        expected: invalid
+        reason: "Source code must be in workspace/src/"
+  
+  write_policy_validation:
+    description: "Test write policy enforcement"
+    test_cases:
+      - name: "immutable_baseline"
+        input: "controlplane/baseline/config/root.config.yaml"
+        policy: "immutable"
+        expected: readonly
+      
+      - name: "writable_workspace"
+        input: "workspace/src/core/validator.py"
+        policy: "writable"
+        expected: writable
+      
+      - name: "writable_overlay"
+        input: "controlplane/overlay/evidence/validation.json"
+        policy: "writable"
+        expected: writable
+      
+      - name: "writable_var"
+        input: "/var/log/app.log"
+        policy: "writable"
+        expected: writable
+
 # Test Execution
 execution:
   parallel: false
