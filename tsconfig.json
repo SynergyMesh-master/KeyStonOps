@@ -19,6 +19,6 @@
     },
     "jsx": "react-jsx"
   },
-  "include": ["client/src/**/*", "server/**/*", "shared/**/*", "db/**/*"],
+  "include": ["client/src/**/*", "server/**/*", "shared/**/*", "db/**/*", "vite.config.ts", "drizzle.config.ts"],
   "exclude": ["node_modules", "dist"]
 }
