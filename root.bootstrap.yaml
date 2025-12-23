@@ -122,7 +122,7 @@ spec:
       module: config-manager
       action: start_service
       parameters:
-        config_file: .root.config.yaml
+        config_file: controlplane/baseline/config/root.config.yaml
         validation_enabled: true
         auto_reload: true
       retry_policy:
@@ -264,7 +264,7 @@ spec:
       module: super-execution-engine
       action: initialize_modules
       parameters:
-        module_registry: .root.modules.yaml
+        module_registry: controlplane/baseline/config/root.modules.yaml
         start_order: dependency_based
         parallel_startup: false
         health_check_timeout: 30s
