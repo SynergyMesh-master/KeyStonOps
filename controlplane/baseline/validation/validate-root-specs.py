@@ -21,6 +21,7 @@ class RootSpecValidator:
         if workspace_root is None:
             workspace_root = os.environ.get("MACHINENATIVEOPS_WORKSPACE")
         if workspace_root is None:
+            # Default to repo root: controlplane/baseline/validation -> ../../..
             workspace_root = Path(__file__).resolve().parents[3]
         
         self.workspace_root = Path(workspace_root)
@@ -651,8 +652,9 @@ def main():
     urn_success = validator.validate_urns()
     path_success = validator.validate_paths()
     
+    extended_success = all([naming_success, namespace_success, urn_success, path_success])
     # Update overall success
-    overall_success = success and (not strict_extended or (naming_success and namespace_success and urn_success and path_success))
+    overall_success = success and (extended_success if strict_extended else True)
     
     # Print final summary
     print("\n" + "="*80)
