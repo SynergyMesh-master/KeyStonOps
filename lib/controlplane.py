@@ -4,10 +4,9 @@ Controlplane 配置讀取庫
 提供簡單的 API 讓其他 Python 腳本使用 controlplane 配置
 """
 
-import os
 import yaml
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Union
+from typing import Dict, Any, List, Optional, Tuple
 from functools import lru_cache
 
 class ControlplaneConfig:
@@ -40,10 +39,11 @@ class ControlplaneConfig:
         return Path.cwd()
     
     @lru_cache(maxsize=128)
-    def _load_yaml(self, file_path: Path) -> Dict[str, Any]:
+    def _load_yaml(self, file_path: str) -> Dict[str, Any]:
         """載入並緩存 YAML 文件"""
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            path = Path(file_path) if isinstance(file_path, str) else file_path
+            with open(path, 'r', encoding='utf-8') as f:
                 return yaml.safe_load(f) or {}
         except Exception as e:
             raise RuntimeError(f"Failed to load {file_path}: {e}")
@@ -59,7 +59,7 @@ class ControlplaneConfig:
             配置字典
         """
         config_file = self.baseline_path / "config" / config_name
-        return self._load_yaml(config_file)
+        return self._load_yaml(str(config_file))
     
     def get_specification(self, spec_name: str) -> Dict[str, Any]:
         """
@@ -72,7 +72,7 @@ class ControlplaneConfig:
             規範字典
         """
         spec_file = self.baseline_path / "specifications" / spec_name
-        return self._load_yaml(spec_file)
+        return self._load_yaml(str(spec_file))
     
     def get_registry(self, registry_name: str) -> Dict[str, Any]:
         """
@@ -85,7 +85,7 @@ class ControlplaneConfig:
             註冊表字典
         """
         registry_file = self.baseline_path / "registries" / registry_name
-        return self._load_yaml(registry_file)
+        return self._load_yaml(str(registry_file))
     
     def get_modules(self) -> List[Dict[str, Any]]:
         """獲取所有模組列表"""
@@ -118,7 +118,7 @@ class ControlplaneConfig:
         """獲取完整性策略"""
         return self.get_baseline_config("root.integrity.yaml")
     
-    def validate_name(self, name: str, name_type: str = "file") -> tuple[bool, Optional[str]]:
+    def validate_name(self, name: str, name_type: str = "file") -> Tuple[bool, Optional[str]]:
         """
         驗證名稱是否符合命名規範
         
@@ -130,9 +130,6 @@ class ControlplaneConfig:
             (是否有效, 錯誤訊息)
         """
         import re
-        
-        naming_rules = self.get_naming_rules()
-        rules = naming_rules.get('spec', {}).get('naming_rules', {})
         
         # 根據類型獲取規則
         if name_type == "file":
@@ -146,10 +143,10 @@ class ControlplaneConfig:
             if not re.match(pattern, name):
                 return False, f"File name must be kebab-case: {name}"
             
-            # 檢查雙重擴展名
+            # 檢查雙重擴展名（排除已允許的特例）
             if name.count('.') > 1:
-                parts = name.split('.')
-                if len(parts) > 2:
+                # 允許 root.*.(yaml|yml|map|sh) 這類三段式名稱
+                if not (name.startswith("root.") and len(name.split('.')) == 3):
                     return False, f"File has double extension: {name}"
         
         elif name_type == "directory":
@@ -211,7 +208,7 @@ class ControlplaneConfig:
     def get_validation_vectors(self) -> Dict[str, Any]:
         """獲取驗證向量"""
         vectors_file = self.baseline_path / "validation" / "vectors" / "root.validation.vectors.yaml"
-        return self._load_yaml(vectors_file)
+        return self._load_yaml(str(vectors_file))
     
     def create_overlay_extension(self, name: str, extends: str, config: Dict[str, Any]) -> Path:
         """
@@ -246,6 +243,17 @@ class ControlplaneConfig:
     
     def synthesize_active(self):
         """合成 active 視圖"""
+        
+        def deep_merge(base: Dict[str, Any], overlay: Dict[str, Any]) -> Dict[str, Any]:
+            """深度合併字典"""
+            result = base.copy()
+            for key, value in overlay.items():
+                if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+                    result[key] = deep_merge(result[key], value)
+                else:
+                    result[key] = value
+            return result
+        
         # 創建 active 目錄
         self.active_path.mkdir(parents=True, exist_ok=True)
         
@@ -255,14 +263,14 @@ class ControlplaneConfig:
             baseline_configs = list(baseline_config_dir.glob("*.yaml"))
             
             for baseline_file in baseline_configs:
-                baseline_data = self._load_yaml(baseline_file)
+                baseline_data = self._load_yaml(str(baseline_file))
                 
                 # 檢查是否有對應的 overlay
                 overlay_file = self.overlay_path / "config" / baseline_file.name
                 if overlay_file.exists():
-                    overlay_data = self._load_yaml(overlay_file)
-                    # 簡單合併
-                    merged_data = {**baseline_data, **overlay_data}
+                    overlay_data = self._load_yaml(str(overlay_file))
+                    # 深度合併
+                    merged_data = deep_merge(baseline_data, overlay_data)
                 else:
                     merged_data = baseline_data
                 
@@ -290,7 +298,7 @@ def get_namespaces() -> List[Dict[str, Any]]:
     """快速獲取命名空間列表"""
     return get_config().get_namespaces()
 
-def validate_name(name: str, name_type: str = "file") -> tuple[bool, Optional[str]]:
+def validate_name(name: str, name_type: str = "file") -> Tuple[bool, Optional[str]]:
     """快速驗證名稱"""
     return get_config().validate_name(name, name_type)
 

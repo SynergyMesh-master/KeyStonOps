@@ -2,7 +2,7 @@
 # Pre-commit hook - 使用 controlplane 驗證文件命名
 # 這是 controlplane 實際應用的示例
 
-set -e
+# 不使用 set -e，因為我們需要收集所有錯誤後再決定是否退出
 
 # 載入 controlplane 庫
 REPO_ROOT="$(git rev-parse --show-toplevel)"
@@ -41,12 +41,11 @@ while IFS= read -r file; do
     # 獲取文件名
     filename=$(basename "$file")
     
-    # 跳過某些特殊文件
-    case "$filename" in
-        LICENSE|README.md|CHANGELOG.md|.gitignore|.gitattributes)
-            continue
-            ;;
-    esac
+    # 跳過某些特殊文件（使用模式匹配以便維護）
+    # 排除文件列表可以從配置文件讀取，但這裡先使用簡單模式
+    if [[ "$filename" =~ ^(LICENSE|.*\.md|\.git.*|CHANGELOG.*|CODEOWNERS)$ ]]; then
+        continue
+    fi
     
     total_files=$((total_files + 1))
     

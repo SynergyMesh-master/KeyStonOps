@@ -80,9 +80,9 @@ cp_get_yaml_value() {
         python3 -c "
 import yaml, sys
 try:
-    with open('$yaml_file', 'r') as f:
+    with open('${yaml_file}', 'r') as f:
         data = yaml.safe_load(f)
-    keys = '$key_path'.split('.')
+    keys = '${key_path}'.split('.')
     value = data
     for key in keys:
         if isinstance(value, dict):
@@ -90,9 +90,9 @@ try:
         else:
             value = None
             break
-    print(value if value is not None else '$default_value')
+    print(value if value is not None else '${default_value}')
 except:
-    print('$default_value')
+    print('${default_value}')
 "
         return 0
     fi
@@ -162,8 +162,10 @@ cp_validate_name() {
             # 檢查雙重擴展名
             local dot_count=$(echo "$name" | tr -cd '.' | wc -c)
             if [[ $dot_count -gt 1 ]]; then
-                local parts=(${name//./ })
-                if [[ ${#parts[@]} -gt 2 ]]; then
+                # 允許 root.*.yaml 和 root.*.yml 和 root.*.map 和 root.*.sh 這類三段式名稱
+                if [[ "$name" =~ ^root\.[a-z][a-z0-9-]*\.(yaml|yml|map|sh)$ ]]; then
+                    : # 允許此格式
+                else
                     cp_log_error "File has double extension: $name"
                     return 1
                 fi
@@ -281,7 +283,15 @@ cp_synthesize_active() {
     
     # 複製 baseline 配置
     if [[ -d "$CP_BASELINE_PATH/config" ]]; then
-        cp -r "$CP_BASELINE_PATH/config/"*.yaml "$CP_ACTIVE_PATH/" 2>/dev/null || true
+        # 使用 nullglob 確保沒有匹配時不會把萬用字元當成字串傳給 cp
+        shopt -s nullglob
+        local yaml_files=("$CP_BASELINE_PATH"/config/*.yaml)
+        if ((${#yaml_files[@]} > 0)); then
+            cp -r "${yaml_files[@]}" "$CP_ACTIVE_PATH/"
+        else
+            cp_log_info "No baseline YAML config files found in $CP_BASELINE_PATH/config"
+        fi
+        shopt -u nullglob
     fi
     
     # TODO: 合併 overlay 配置 (需要更複雜的邏輯)

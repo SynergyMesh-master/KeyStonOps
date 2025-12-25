@@ -233,10 +233,10 @@ Controlplane 強制執行以下命名規範：
 ### 文件名
 
 - ✅ `my-file.yaml` (kebab-case)
-- ✅ `root.config.yaml` (單一擴展名)
+- ✅ `root.config.yaml` (符合 `root.*.yaml` 特例模式)
 - ❌ `MyFile.yaml` (不是 kebab-case)
 - ❌ `my_file.yaml` (使用下劃線)
-- ❌ `my.file.backup.yaml` (雙重擴展名)
+- ❌ `my.file.backup.yaml` (不屬於 `root.*.yaml` 允許模式的雙重擴展名，例如備份副檔名)
 
 ### 目錄名
 

@@ -40,13 +40,19 @@ jobs:
           cp_show_status
 
       - name: Validate file naming conventions
+        shell: bash
         run: |
           source lib/controlplane.sh
           
           echo "🔍 Validating file naming conventions..."
           
-          # 獲取所有 YAML 文件
-          files=$(find . -name "*.yaml" -o -name "*.yml" | grep -v ".git" | grep -v "node_modules" || true)
+          # 獲取所有 YAML 文件，檢查是否有結果
+          files=$(find . -name "*.yaml" -o -name "*.yml" 2>/dev/null | grep -v ".git" | grep -v "node_modules" || true)
+          
+          if [[ -z "$files" ]]; then
+            echo "No YAML files found to validate"
+            exit 0
+          fi
           
           total=0
           invalid=0
@@ -132,6 +138,7 @@ jobs:
           pip install pyyaml
 
       - name: Test Python library
+        shell: bash
         run: |
           python3 << 'EOF'
           import sys
@@ -210,11 +217,14 @@ jobs:
             const fs = require('fs');
             const reportPath = 'controlplane/overlay/evidence/validation/validation.report.md';
             
+            // GitHub comments typically allow up to ~65,536 characters; keep a safety margin.
+            const MAX_COMMENT_LENGTH = 60000;
+            
             let summary = '⚠️ Validation report not found';
             if (fs.existsSync(reportPath)) {
               summary = fs.readFileSync(reportPath, 'utf8');
-              if (summary.length > 12000) {
-                summary = summary.slice(0, 12000) + '\n\n...(truncated, see artifact for full report)';
+              if (summary.length > MAX_COMMENT_LENGTH) {
+                summary = summary.slice(0, MAX_COMMENT_LENGTH) + '\n\n...(truncated, see artifact for full report)';
               }
             }
             
