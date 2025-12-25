@@ -42,16 +42,16 @@ jobs:
 
           errors = []
           for path in yaml_files:
-            if ".git" in path.parts or "node_modules" in path.parts:
+            if ".git" in path.parts or "node_modules" in path.parts or "archive" in path.parts:
               continue
             try:
               content = path.read_text()
-              yaml.safe_load(content)
+              list(yaml.safe_load_all(content))
             except Exception as exc:
               errors.append(f"YAML error in {path}: {exc}")
 
           for path in json_files:
-            if ".git" in path.parts or "node_modules" in path.parts:
+            if ".git" in path.parts or "node_modules" in path.parts or "archive" in path.parts:
               continue
             try:
               content = path.read_text()
