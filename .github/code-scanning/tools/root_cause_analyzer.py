@@ -11,8 +11,8 @@ Root Cause Analysis Engine
 """
 
 import json
-from typing import Dict, List, Tuple
-from dataclasses import dataclass, asdict
+from typing import Dict, List
+from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from collections import defaultdict
@@ -491,7 +491,7 @@ class RootCauseAnalyzer:
             ]
         elif risk_level == 'medium':
             return [
-                "在下次迭代的計劃修復",
+                "計劃在下次迭代中修復",
                 "建立定期掃描機制"
             ]
         else:

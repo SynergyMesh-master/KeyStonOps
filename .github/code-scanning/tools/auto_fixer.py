@@ -13,7 +13,6 @@ One-Click Auto Fix System
 import os
 import json
 import re
-import ast
 from typing import Dict, List, Tuple
 from dataclasses import dataclass, asdict
 from pathlib import Path
@@ -68,11 +67,21 @@ class HardcodedPasswordFixer(VulnerabilityFixer):
             line_num = vulnerability.get('line_number', 1) - 1
             original_line = lines[line_num] if line_num < len(lines) else ""
             
-            # 將硬編碼密碼替換為環境變量
+            # 將硬編碼密碼替換為基於變量名的環境變量
+            def _replace_password(match: re.Match) -> str:
+                lhs = match.group(1)
+                var_name = match.group('var')
+                # 將變量名轉換為環境變量名，例如 api_password -> API_PASSWORD
+                env_name = re.sub(r'\W+', '_', var_name).upper()
+                if not env_name or env_name == '_':
+                    env_name = 'PASSWORD'
+                return f"{lhs}os.environ.get('{env_name}')"
+            
             fixed_line = re.sub(
-                r'(password\s*=\s*)["\'][^"\']+["\']',
-                r"\1os.environ.get('DB_PASSWORD')",
-                original_line
+                r'((?P<var>\w*password\w*)\s*=\s*)["\'][^"\']+["\']',
+                _replace_password,
+                original_line,
+                flags=re.IGNORECASE
             )
             
             # 檢查是否需要添加 import
@@ -87,11 +96,45 @@ class HardcodedPasswordFixer(VulnerabilityFixer):
                         break
                 
                 if needs_import:
-                    # 在文件頂部添加 import os
+                    # 在文件適當位置添加 import os，遵循 PEP 8
                     insert_pos = 0
-                    for i, line in enumerate(lines):
-                        if line.startswith('import ') or line.startswith('from '):
-                            insert_pos = i + 1
+                    
+                    # 跳過 shebang
+                    if lines and lines[0].startswith('#!'):
+                        insert_pos = 1
+                    
+                    # 跳過模組 docstring（單行或多行）
+                    if insert_pos < len(lines):
+                        line = lines[insert_pos].lstrip()
+                        if line.startswith(('"""', "'''")):
+                            docstring_delim = line[:3]
+                            if line.count(docstring_delim) >= 2:
+                                # 單行 docstring
+                                insert_pos += 1
+                            else:
+                                # 多行 docstring
+                                insert_pos += 1
+                                while insert_pos < len(lines) and docstring_delim not in lines[insert_pos]:
+                                    insert_pos += 1
+                                if insert_pos < len(lines):
+                                    insert_pos += 1
+                    
+                    # 跳過 from __future__ imports
+                    while insert_pos < len(lines) and lines[insert_pos].lstrip().startswith('from __future__ import'):
+                        insert_pos += 1
+                    
+                    # 找到標準庫導入的位置（在其他導入之前）
+                    # 如果已有標準庫導入，插入到它們之後
+                    found_stdlib_import = False
+                    for i in range(insert_pos, len(lines)):
+                        if lines[i].startswith('import ') or lines[i].startswith('from '):
+                            if not lines[i].startswith(('import os', 'from os ')):
+                                found_stdlib_import = True
+                                insert_pos = i
+                        elif found_stdlib_import and lines[i].strip() and not lines[i].startswith(('#', 'import', 'from')):
+                            # 找到第一個非導入、非空、非註釋行，說明導入區結束
+                            break
+                    
                     lines.insert(insert_pos, 'import os\n')
                 
                 # 寫入文件
@@ -164,9 +207,9 @@ class UnpinnedDependencyFixer(VulnerabilityFixer):
             # 提取包名
             package_name = original_line.strip().split('>=')[0].split('==')[0].split('~=')[0].strip()
             
-            # 嘗試獲取最新版本（這裡簡化處理，實際應該使用 API）
-            # 添加固定版本號
-            fixed_line = f"{package_name}>=1.0.0  # TODO: 檢查並固定具體版本\n"
+            # 不自動添加版本號，而是標記為需要人工審查
+            # 因為不同包的版本方案差異很大，自動添加可能導致問題
+            fixed_line = f"{package_name}  # TODO: 添加版本固定，例如 =={'{最新穩定版本}'}\n"
             
             lines[line_num] = fixed_line
             
@@ -191,6 +234,12 @@ class LongLineFixer(VulnerabilityFixer):
         return vuln_type == 'long line'
     
     def fix(self, file_path: str, vulnerability: Dict) -> Tuple[bool, str, str]:
+        """
+        修復過長代碼行
+        
+        注意：此修復器使用簡單的啟發式方法，可能不適用於所有情況。
+        建議使用 black 或 autopep8 等專業工具進行代碼格式化。
+        """
         try:
             with open(file_path, 'r') as f:
                 lines = f.readlines()
@@ -201,25 +250,31 @@ class LongLineFixer(VulnerabilityFixer):
             if len(original_line) <= 120:
                 return False, original_line, "行長度已符合要求"
             
-            # 簡單的拆分策略（實際需要更智能的 AST 分析）
-            # 在逗號或操作符處拆分
+            # 檢查是否為字符串字面量或註釋（不適合自動拆分）
+            stripped = original_line.lstrip()
+            if stripped.startswith('#') or ('"' in stripped or "'" in stripped):
+                return False, original_line, "此行包含字符串或註釋，需要人工檢查"
+            
+            # 檢測縮進
+            indent = len(original_line) - len(stripped)
+            indent_str = original_line[:indent]
+            
+            # 簡單的拆分策略：在逗號或操作符處拆分
             fixed_lines = []
             remaining = original_line.rstrip('\n')
             
             while len(remaining) > 120:
-                # 嘗試在逗號處拆分
+                # 嘗試在逗號後拆分（適合參數列表）
                 split_pos = remaining[:120].rfind(',')
-                if split_pos == -1:
-                    # 在空格處拆分
-                    split_pos = remaining[:120].rfind(' ')
-                
-                if split_pos == -1:
-                    break
-                
-                fixed_lines.append(remaining[:split_pos + 1] + '\n')
-                remaining = '    ' + remaining[split_pos + 1:]
+                if split_pos != -1:
+                    fixed_lines.append(remaining[:split_pos + 1] + '\n')
+                    remaining = indent_str + '    ' + remaining[split_pos + 1:].lstrip()
+                else:
+                    # 無法安全拆分
+                    return False, original_line, "無法找到安全的拆分點，建議人工檢查或使用專業格式化工具"
             
-            fixed_lines.append(remaining + '\n')
+            if remaining.strip():
+                fixed_lines.append(remaining + '\n')
             
             lines[line_num:line_num + 1] = fixed_lines
             
@@ -471,11 +526,11 @@ def main() -> None:
     fixer = AutoFixer()
     
     if dry_run:
-        print("🔍 干運行模式 - 不會實際修改文件")
-        print("⚠️  干運行模式尚未完全實現，將跳過文件寫入操作")
-        # Note: 完整的干運行模式需要在各個修復器中添加dry_run參數支持
+        print("🔍 試運行模式 - 不會實際修改文件")
+        print("⚠️  試運行模式尚未完全實現，將跳過文件寫入操作")
+        # Note: 完整的試運行模式需要在各個修復器中添加dry_run參數支持
     else:
-        report = fixer.auto_fix_all(scan_results)
+        fixer.auto_fix_all(scan_results)
 
 if __name__ == "__main__":
     main()

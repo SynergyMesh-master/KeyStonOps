@@ -15,13 +15,16 @@ from pathlib import Path
 import json
 import os
 from datetime import datetime
-from typing import Dict, List
-
-app = Flask(__name__)
+from typing import Dict
 
 # 配置
 REPORTS_DIR = Path(".github/code-scanning/reports")
 TEMPLATE_DIR = Path(".github/code-scanning/templates")
+
+# 確保模板目錄存在
+TEMPLATE_DIR.mkdir(parents=True, exist_ok=True)
+
+app = Flask(__name__, template_folder=str(TEMPLATE_DIR))
 
 class DashboardData:
     """儀表板數據管理"""
@@ -146,8 +149,11 @@ def download_report(filename):
         # Invalid path (e.g., contains characters not allowed by the OS)
         return jsonify({'error': 'Report not found'}), 404
 
-    # Prevent directory traversal by ensuring the resolved path is under REPORTS_DIR
-    if report_path == base_path or base_path not in report_path.parents:
+    # Prevent directory traversal by ensuring the resolved path is within REPORTS_DIR
+    try:
+        report_path.relative_to(base_path)
+    except ValueError:
+        # Path is not relative to base_path (i.e., outside REPORTS_DIR)
         return jsonify({'error': 'Report not found'}), 404
 
     if report_path.exists():
@@ -179,7 +185,13 @@ def main() -> None:
     # 啟動服務器
     print("🚀 啟動高階代碼掃描儀表板...")
     print("📊 訪問 http://localhost:5000 查看儀表板")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    
+    # 安全配置：從環境變量讀取或使用安全默認值
+    debug_mode = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
+    host = os.environ.get('FLASK_HOST', '127.0.0.1')  # 默認只綁定到 localhost
+    port = int(os.environ.get('FLASK_PORT', '5000'))
+    
+    app.run(debug=debug_mode, host=host, port=port)
 
 def create_default_template(template_path: Path) -> None:
     """
