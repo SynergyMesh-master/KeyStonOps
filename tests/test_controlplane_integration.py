@@ -30,6 +30,8 @@ class Colors:
     BLUE = '\033[94m'
     RESET = '\033[0m'
 
+DEFAULT_TIMEOUT = 120
+
 def log_test(name):
     print(f"\n{Colors.BLUE}🧪 Testing: {name}{Colors.RESET}")
 
@@ -62,14 +64,15 @@ class ControlplaneIntegrationTests:
     
     def run_command(self, cmd, cwd=None):
         """運行命令並返回結果"""
+        timeout_value = DEFAULT_TIMEOUT
         try:
             # 允許透過環境變數 CONTROLPLANE_CMD_TIMEOUT 調整逾時秒數
             timeout_env = os.getenv("CONTROLPLANE_CMD_TIMEOUT")
             try:
-                timeout_value = int(timeout_env) if timeout_env else 120
+                timeout_value = int(timeout_env) if timeout_env else timeout_value
             except ValueError:
                 # 如果環境變數不是合法整數，回落到較寬鬆的預設值
-                timeout_value = 120
+                timeout_value = DEFAULT_TIMEOUT
             
             result = subprocess.run(
                 cmd,
@@ -80,19 +83,14 @@ class ControlplaneIntegrationTests:
                 timeout=timeout_value
             )
             return result.returncode == 0, result.stdout, result.stderr
-        except subprocess.TimeoutExpired:
-            return False, "", f"Command timed out after {timeout_value} seconds"
-        except Exception as e:
         except subprocess.TimeoutExpired as e:
-            logger.error(f"Command timed out after 30s: {cmd}", exc_info=True)
+            logger.error(f"Command timed out after {timeout_value} seconds: {cmd}", exc_info=True)
             return False, "", f"Timeout: {str(e)}"
         except (OSError, subprocess.SubprocessError) as e:
             logger.error(f"Subprocess error running command '{cmd}': {e}", exc_info=True)
-        except subprocess.SubprocessError as e:
-            logger.error(f"Subprocess error running command '{cmd}': {e}", exc_info=True)
             return False, "", str(e)
-        except OSError as e:
-            logger.error(f"OS error running command '{cmd}': {e}", exc_info=True)
+        except Exception as e:
+            logger.error(f"Unexpected error running command '{cmd}': {e}", exc_info=True)
             return False, "", str(e)
     
     def assert_true(self, condition, message):
@@ -148,12 +146,8 @@ class ControlplaneIntegrationTests:
             is_valid, _ = validate_name("test-file.yaml", "file")
             self.assert_true(is_valid, "Convenience function works")
             
-        except FileNotFoundError as e:
-            self.assert_true(False, f"Python library test failed - file not found: {e}")
-        except Exception as e:
         except (FileNotFoundError, RuntimeError, KeyError, AttributeError) as e:
             logger.error(f"Python library test failed with expected error: {e}", exc_info=True)
-            logger.error(f"Python library test failed: {e}", exc_info=True)
             self.assert_true(False, f"Python library test failed: {e}")
         except Exception as e:
             logger.error(f"Python library test failed with unexpected error: {e}", exc_info=True)

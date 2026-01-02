@@ -5,7 +5,7 @@ apiVersion: machinenativeops.io/v2
 kind: Specification
 metadata:
   name: root-specs-context
-  namespace: machinenativenops
+  namespace: machinenativeops
   labels:
     machinenativeops.io/component: controlplane
     machinenativeops.io/layer: baseline
@@ -45,9 +45,9 @@ spec:
   
   # 應用上下文
   applicationContext:
-    name: "MachineNativeOps AAPS"
+    name: "MachineNativeOps"
     version: "v1.0.0"
-    namespace: "machinenativenops"
+    namespace: "machinenativeops"
     
     components:
       - controlplane

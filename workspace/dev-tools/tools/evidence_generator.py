@@ -69,7 +69,7 @@ def main():
 
     now = datetime.now(timezone.utc).isoformat()
     provenance = {
-        "system": "aaps",
+        "system": "machinenativeops",
         "repo": os.getenv("GITHUB_REPOSITORY", "machine-native-ops"),
         "commit": os.getenv("GITHUB_SHA", "local"),
         "run_id": os.getenv("GITHUB_RUN_ID", "local"),
@@ -98,16 +98,16 @@ def main():
         "spdxVersion": "SPDX-2.3",
         "dataLicense": "CC0-1.0",
         "SPDXID": "SPDXRef-DOCUMENT",
-        "name": "aaps-phase1-sbom",
-        "documentNamespace": f"https://example.local/spdx/aaps/{provenance['commit']}",
+        "name": "machinenativeops-phase1-sbom",
+        "documentNamespace": f"https://example.local/spdx/machinenativeops/{provenance['commit']}",
         "creationInfo": {
             "created": now,
-            "creators": ["Tool: aaps-evidence-generator"]
+            "creators": ["Tool: machinenativeops-evidence-generator"]
         },
         "packages": [
             {
-                "SPDXID": "SPDXRef-Package-AAPS-Rootfs",
-                "name": "aaps-rootfs",
+                "SPDXID": "SPDXRef-Package-MNO-Rootfs",
+                "name": "machinenativeops-rootfs",
                 "versionInfo": provenance["commit"],
                 "checksums": [{"algorithm": "SHA3-512", "checksumValue": rootfs_hash["sha3-512"]}] if rootfs_hash["sha3-512"] else []
             }

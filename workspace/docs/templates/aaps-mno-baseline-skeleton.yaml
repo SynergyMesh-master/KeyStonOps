@@ -2,18 +2,18 @@ apiVersion: machinenativeops.io/v2
 kind: MachineNativeOpsGlobalBaseline
 metadata:
   annotations:
-    machinenativeops.io/description: Stage 0 完整自包含部署配置（AAPS Profile）
+    machinenativeops.io/description: Stage 0 完整自包含部署配置（MachineNativeOps Profile）
     machinenativeops.io/urn: urn:machinenativeops:baseline:stage0:bootstrap:v1
     machinenativeops.io/version: v1.0.0
   labels:
     machinenativeops.io/component: core
     machinenativeops.io/layer: L0
-    machinenativeops.io/managed-by: aaps-controller
-    machinenativeops.io/platform: AAPS
+    machinenativeops.io/managed-by: machinenativeops-controller
+    machinenativeops.io/platform: MachineNativeOps
     machinenativeops.io/profile: bootstrap-baseline
     machinenativeops.io/stage: '0'
   name: mno-stage0-bootstrap-baseline
-  namespace: machinenativenops
+  namespace: machinenativeops
 spec:
   architecture:
     kubernetesFoundation:
@@ -114,15 +114,15 @@ spec:
   documentMetadata:
     actualFilename: mno-stage0-bootstrap-complete.yaml
     creationInfo:
-      createdBy: AapsBot
+      createdBy: MachineNativeOpsBot
       createdDate: '2025-01-09'
       targetSystem: MachineNativeOps
       timestamp: '2025-01-09T10:30:00Z'
-    description: Stage 0 完整自包含部署配置（AAPS Profile）
+    description: Stage 0 完整自包含部署配置（MachineNativeOps Profile）
     encoding: UTF-8
     formatType: mno_yaml
     parseMode: enhanced
-    uniqueId: AAPS-STAGE0-L0-BOOTSTRAP-BASELINE-v1.0.0
+    uniqueId: MNO-STAGE0-L0-BOOTSTRAP-BASELINE-v1.0.0
     version: v1.0.0
   enterpriseIntegration:
     apiGateway:

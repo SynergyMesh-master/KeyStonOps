@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Structure Validation Script for MachineNativeOps AAPS
+Structure Validation Script for MachineNativeOps
 Validates FHS compliance and file integrity
 """
 

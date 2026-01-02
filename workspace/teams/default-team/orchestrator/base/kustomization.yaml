@@ -11,9 +11,9 @@ images:
 - name: machinenativeops/super-agent
   newTag: v1.0.0
 
-labels:
-- pairs:
-    app.kubernetes.io/name: super-agent
-    app.kubernetes.io/component: control-plane
-    app.kubernetes.io/part-of: aaps-multi-agent
-  includeSelectors: false
+  labels:
+  - pairs:
+      app.kubernetes.io/name: super-agent
+      app.kubernetes.io/component: control-plane
+      app.kubernetes.io/part-of: machinenativeops-multi-agent
+    includeSelectors: false

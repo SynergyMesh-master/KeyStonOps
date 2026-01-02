@@ -2,7 +2,7 @@
 
 ## 🎯 Overview
 
-This PR provides a clean implementation of FHS (Filesystem Hierarchy Standard) 3.0 compliance for MachineNativeOps AAPS, replacing the problematic PR #735.
+This PR provides a clean implementation of FHS (Filesystem Hierarchy Standard) 3.0 compliance for MachineNativeOps, replacing the problematic PR #735.
 
 ## 🔍 Problem Analysis
 

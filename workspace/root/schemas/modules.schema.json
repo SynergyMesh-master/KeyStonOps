@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "AAPS Modules Registry Schema (Phase 1)",
+  "title": "MachineNativeOps Modules Registry Schema (Phase 1)",
   "type": "object",
   "required": ["version", "hash_policy", "modules"],
   "properties": {

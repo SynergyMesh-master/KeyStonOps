@@ -5,7 +5,7 @@ services:
     build:
       context: .
       target: production
-    image: aaps/super-agent:latest
+    image: machinenativeops/super-agent:latest
     container_name: super-agent
     ports:
       - "8080:8080"
@@ -29,7 +29,7 @@ services:
       start_period: 10s
     restart: unless-stopped
     networks:
-      - aaps-network
+      - machinenativeops-network
     deploy:
       resources:
         limits:
@@ -44,7 +44,7 @@ services:
     build:
       context: .
       target: development
-    image: aaps/super-agent:dev
+    image: machinenativeops/super-agent:dev
     container_name: super-agent-dev
     ports:
       - "8080:8080"
@@ -59,14 +59,14 @@ services:
     profiles:
       - dev
     networks:
-      - aaps-network
+      - machinenativeops-network
 
   # Test runner
   test-runner:
     build:
       context: .
       target: development
-    image: aaps/super-agent:test
+    image: machinenativeops/super-agent:test
     container_name: super-agent-test
     command: ["pytest", "-v", "--cov=.", "--cov-report=term-missing"]
     environment:
@@ -77,7 +77,7 @@ services:
     profiles:
       - test
     networks:
-      - aaps-network
+      - machinenativeops-network
 
 volumes:
   super-agent-data:
@@ -88,6 +88,6 @@ volumes:
     name: super-agent-dev-data
 
 networks:
-  aaps-network:
-    name: aaps-network
+  machinenativeops-network:
+    name: machinenativeops-network
     driver: bridge

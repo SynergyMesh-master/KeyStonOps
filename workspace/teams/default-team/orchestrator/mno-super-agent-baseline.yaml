@@ -4,30 +4,30 @@ metadata:
   name: mno-agent-super-orchestrator-baseline
   namespace: machinenativeops
   labels:
-    machinenativeops.io/platform: AAPS
+    machinenativeops.io/platform: MachineNativeOps
     machinenativeops.io/stage: '1'
     machinenativeops.io/layer: L2
     machinenativeops.io/profile: super-orchestrator
     machinenativeops.io/component: agents
     machinenativeops.io/subcomponent: super-agent
-    machinenativeops.io/managed-by: aaps-controller
+    machinenativeops.io/managed-by: machinenativeops-controller
   annotations:
     machinenativeops.io/urn: urn:machinenativeops:agent:super:orchestrator:v2.0.0
-    machinenativeops.io/description: SuperAgent 多代理協調器基線配置（AAPS Profile）
+    machinenativeops.io/description: SuperAgent 多代理協調器基線配置（MachineNativeOps Profile）
     machinenativeops.io/version: v2.0.0
 spec:
   documentMetadata:
-    uniqueId: AAPS-STAGE1-L2-SUPER-ORCHESTRATOR-BASELINE-v2.0.0
+    uniqueId: MNO-STAGE1-L2-SUPER-ORCHESTRATOR-BASELINE-v2.0.0
     actualFilename: mno-super-agent-baseline.yaml
     version: v2.0.0
     formatType: mno_yaml
     encoding: UTF-8
     parseMode: enhanced
-    description: SuperAgent 多代理協調器基線配置（AAPS Profile）
+    description: SuperAgent 多代理協調器基線配置（MachineNativeOps Profile）
     creationInfo:
       createdDate: '2025-01-09'
       timestamp: '2025-01-09T10:30:00Z'
-      createdBy: AapsBot
+      createdBy: MachineNativeOpsBot
       targetSystem: MachineNativeOps
   governance:
     classification: autonomous-agent-orchestrator-core
@@ -172,7 +172,7 @@ spec:
         within5Minutes: coordination_performance_issues
         within30Minutes: agent_efficiency_degradation
   integrationPoints:
-    aapsSystemIntegration:
+    machinenativeopsSystemIntegration:
       configManager:
         endpoint: http://config-manager:8080
         protocol: http

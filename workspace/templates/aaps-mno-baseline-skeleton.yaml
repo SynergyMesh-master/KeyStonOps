@@ -7,30 +7,30 @@ metadata:
   name: mno-stage0-bootstrap-baseline
   namespace: machinenativeops
   labels:
-    machinenativeops.io/platform: "AAPS"
+    machinenativeops.io/platform: "MachineNativeOps"
     machinenativeops.io/stage: "0"
     machinenativeops.io/layer: "L0"
     machinenativeops.io/profile: "bootstrap-baseline"
     machinenativeops.io/component: "core"
-    machinenativeops.io/managed-by: "aaps-controller"
+    machinenativeops.io/managed-by: "machinenativeops-controller"
   annotations:
     machinenativeops.io/urn: "urn:machinenativeops:baseline:stage0:bootstrap:v1"
-    machinenativeops.io/description: "Stage 0 完整自包含部署配置（AAPS Profile）"
+    machinenativeops.io/description: "Stage 0 完整自包含部署配置（MachineNativeOps Profile）"
     machinenativeops.io/version: "v1.0.0"
 
 spec:
   documentMetadata:
-    uniqueId: "AAPS-STAGE0-L0-BOOTSTRAP-BASELINE-v1.0.0"
+    uniqueId: "MNO-STAGE0-L0-BOOTSTRAP-BASELINE-v1.0.0"
     actualFilename: "mno-stage0-bootstrap-complete.yaml"
     version: "v1.0.0"
     formatType: "mno_yaml"
     encoding: "UTF-8"
     parseMode: "enhanced"
-    description: "Stage 0 完整自包含部署配置（AAPS Profile）"
+    description: "Stage 0 完整自包含部署配置（MachineNativeOps Profile）"
     creationInfo:
       createdDate: "2025-01-09"
       timestamp: "2025-01-09T10:30:00Z"
-      createdBy: "AapsBot"
+      createdBy: "MachineNativeOpsBot"
       targetSystem: "MachineNativeOps"
 
   governance:

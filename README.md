@@ -1,6 +1,6 @@
-# MachineNativeOps AAPS
+# MachineNativeOps
 
-**Autonomous Agent Platform System** - A minimal system skeleton with immutable
+**MachineNativeOps Platform** - A minimal system skeleton with immutable
 governance and self-healing capabilities.
 
 ## 🏗️ Architecture

@@ -694,6 +694,8 @@ Examples:
         incorrect_patterns = [
             r'docker\.io/machine-native-ops-aaps',
             r'ghcr\.io/machine-native-ops-aaps',
+            r'docker\.io/machine-native-ops-apps',
+            r'ghcr\.io/machine-native-ops-apps',
         ]
         
         for pattern in incorrect_patterns:
@@ -716,6 +718,7 @@ Examples:
         incorrect_paths = [
             r'/etc/machine-native-ops',
             r'/etc/aaps',
+            r'/etc/apps',
         ]
         
         for pattern in incorrect_paths:

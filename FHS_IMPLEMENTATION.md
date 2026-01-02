@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the Filesystem Hierarchy Standard (FHS) 3.0 implementation in MachineNativeOps AAPS.
+This document describes the Filesystem Hierarchy Standard (FHS) 3.0 implementation in MachineNativeOps.
 
 ## Architecture
 

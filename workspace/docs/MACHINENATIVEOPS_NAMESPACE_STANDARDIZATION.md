@@ -111,12 +111,12 @@ annotations:
 ### 標籤規範
 ```yaml
 labels:
-  machinenativeops.io/platform: "AAPS"
+  machinenativeops.io/platform: "MachineNativeOps"
   machinenativeops.io/stage: "0"
   machinenativeops.io/layer: "L0"
   machinenativeops.io/profile: "bootstrap-baseline"
   machinenativeops.io/component: "core"
-  machinenativeops.io/managed-by: "aaps-controller"
+  machinenativeops.io/managed-by: "machinenativeops-controller"
 ```
 
 ## 🔒 治理與驗證
