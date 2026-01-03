@@ -14,7 +14,33 @@ def now_iso():
     return datetime.now(timezone.utc).isoformat()
 
 
+def _extract_yaml_metadata(text: str):
+    """Extract kind and name from YAML text."""
+    kind = None
+    name = None
+    for line in text.splitlines():
+        s = line.strip()
+        if s.startswith("kind:"):
+            kind = s.split(":", 1)[1].strip()
+        if s.startswith("name:") and name is None:
+            name = s.split(":", 1)[1].strip().strip('"').strip("'")
+    return kind, name
+
+
+def _calculate_summary(items):
+    """Calculate compliance summary for discovered resources."""
+    total = len(items)
+    compliant = len([x for x in items if x["compliant"]])
+    return {
+        "total": total,
+        "compliant": compliant,
+        "noncompliant": total - compliant,
+        "compliance_rate": round((compliant / total) * 100, 2) if total else 100.0,
+    }
+
+
 def discovery(root: Path):
+    """Discover and validate Kubernetes resources in directory."""
     items = []
     if not root.exists():
         return {
@@ -26,31 +52,25 @@ def discovery(root: Path):
                 "compliant": 0,
                 "noncompliant": 0,
                 "compliance_rate": 100.0}}
+
     for p in root.rglob("*.y*ml"):
         try:
             text = p.read_text(encoding="utf-8")
         except Exception:
             continue
-        kind = None
-        name = None
-        for line in text.splitlines():
-            s = line.strip()
-            if s.startswith("kind:"):
-                kind = s.split(":", 1)[1].strip()
-            if s.startswith("name:") and name is None:
-                name = s.split(":", 1)[1].strip().strip('"').strip("'")
+
+        kind, name = _extract_yaml_metadata(text)
         if kind and name:
             ok = bool(NAME_PATTERN.match(name))
-            items.append({"file": str(p), "kind": kind, "name": name, "pattern": NAME_PATTERN.pattern, "compliant": ok})
+            items.append({
+                "file": str(p),
+                "kind": kind,
+                "name": name,
+                "pattern": NAME_PATTERN.pattern,
+                "compliant": ok
+            })
 
-    total = len(items)
-    compliant = len([x for x in items if x["compliant"]])
-    summary = {
-        "total": total,
-        "compliant": compliant,
-        "noncompliant": total - compliant,
-        "compliance_rate": round((compliant / total) * 100, 2) if total else 100.0,
-    }
+    summary = _calculate_summary(items)
     return {"ts": now_iso(), "root": str(root), "resources": items, "summary": summary}
 
 
