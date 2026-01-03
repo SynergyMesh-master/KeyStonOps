@@ -1,3 +1,0 @@
-# Conftest configuration (chatops)
-# Note: conftest itself is executed in CI; local runners can install conftest binary.
-output = "table"

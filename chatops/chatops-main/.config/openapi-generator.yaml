@@ -1,3 +1,0 @@
-generatorName: go
-outputDir: apps/my-app/internal/delivery/http
-inputSpec: apps/my-app/repo/contracts/openapi.yaml

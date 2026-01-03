@@ -1,5 +1,0 @@
-extends:
-  - "spectral:oas"
-rules:
-  operation-description: true
-  info-contact: true
