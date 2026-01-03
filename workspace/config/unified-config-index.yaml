@@ -508,7 +508,7 @@ unified_capabilities:
       provider: "monitoring/"
     cloudflare_workers:
       provider: "workspace/config/wrangler.toml"
-      description: "Cloudflare Workers 部署配置（KV/D1/R2/Durable Objects）"
+      description: "Cloudflare Workers deployment configuration (KV/D1/R2/Durable Objects) | Cloudflare Workers 部署配置（KV/D1/R2/Durable Objects）"
       symlink: "wrangler.toml"
       environments:
         - development
