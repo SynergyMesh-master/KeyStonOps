@@ -12,6 +12,7 @@
 
 - Commit: c82116af489eb36593d93694b1a6e13b4a862ce6 (chore: implement acceptance automation)
 - 檔案結構快照：
+
 ```
 controlplane/
 ├── CONTROLPLANE_USAGE.md
@@ -669,7 +670,7 @@ MachineNativeOps/
 
 - **格式**: `root.<category>.<ext>`
 - **範例**: `root.config.yaml`, `root.devices.map`
-- **規則**: 
+- **規則**:
   - 必須小寫
   - 使用 `.yaml` 而非 `.yml`
   - 不可包含空白或大寫
@@ -678,7 +679,7 @@ MachineNativeOps/
 
 - **格式**: `root.specs.<category>.yaml`
 - **範例**: `root.specs.naming.yaml`
-- **規則**: 
+- **規則**:
   - 必須在 root.specs. 命名空間下
   - category 使用 kebab-case
 
@@ -686,7 +687,7 @@ MachineNativeOps/
 
 - **格式**: `root.registry.<type>.yaml`
 - **範例**: `root.registry.modules.yaml`
-- **規則**: 
+- **規則**:
   - 必須在 root.registry. 命名空間下
   - 作為 SSOT，不可重複定義
 
@@ -1147,6 +1148,7 @@ jobs:
 - ✅ 完成完整文檔系統
 
 - 🔄 修復 monitoring-service 不一致問題 (2025-12-21 02:13:25)
+
 ### v1.1.0 (計劃中)
 
 - 📋 實現自動記憶更新
