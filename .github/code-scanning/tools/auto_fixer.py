@@ -275,6 +275,12 @@ class LongLineFixer(VulnerabilityFixer):
             spaces = len(line) - len(stripped)
             if spaces > 0:
                 space_indents.append(spaces)
+            if spaces % 8 == 0 and spaces > 0:
+                indent_counts[8] += 1
+            elif spaces % 4 == 0 and spaces > 0:
+                indent_counts[4] += 1
+            elif spaces % 2 == 0 and spaces > 0:
+                indent_counts[2] += 1
         
         # 如果主要使用 tab，返回 tab
         if tab_count > len(space_indents):
