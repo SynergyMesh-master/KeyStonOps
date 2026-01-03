@@ -234,7 +234,7 @@ echo "your_secret" | wrangler secret put GITHUB_WEBHOOK_SECRET --env production
 | Secret | 您生成的 webhook secret |
 | SSL verification | Enable |
 
-1. 選擇事件：
+4. 選擇事件：
    - Push events
    - Pull requests
    - Issues
