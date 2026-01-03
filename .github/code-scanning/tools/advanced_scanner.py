@@ -180,6 +180,10 @@ class AdvancedCodeScanner:
         python_files = list(self.repo_path.rglob("*.py"))
         
         for file_path in python_files:
+            # 跳過測試/示例代碼文件
+            if any(marker in str(file_path).lower() for marker in ['test', 'example', 'demo', 'sample']):
+                continue
+            
             try:
                 # 跳過測試/示例代碼文件（移到外層以提高效能）
                 if any(marker in str(file_path).lower() for marker in ['test', 'example', 'demo', 'sample']):
