@@ -123,7 +123,7 @@ class AdvancedCodeScanner:
             with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as tmp_file:
                 bandit_output_path = tmp_file.name
             
-            result = subprocess.run(
+            subprocess.run(
                 ["bandit", "-r", str(self.repo_path), "-f", "json", "-o", bandit_output_path],
                 capture_output=True,
                 text=True,
@@ -180,18 +180,101 @@ class AdvancedCodeScanner:
         python_files = list(self.repo_path.rglob("*.py"))
         
         for file_path in python_files:
+            # 跳過測試/示例代碼文件
+            if any(marker in str(file_path).lower() for marker in ['test', 'example', 'demo', 'sample']):
+                continue
+            
             try:
+                # 跳過測試/示例代碼文件（移到外層以提高效能）
+                if any(marker in str(file_path).lower() for marker in ['test', 'example', 'demo', 'sample']):
+                    continue
+                
                 with open(file_path, 'r', encoding='utf-8') as f:
                     lines = f.readlines()
                 
                 for line_num, line in enumerate(lines, 1):
                     line_lower = line.lower()
+                    line_stripped = line.strip()
+                    
+                    # 跳過註釋
+                    if line_stripped.startswith("#"):
+                        continue
+                    
+                    # Skip comments
+                    stripped = line.strip()
+                    if stripped.startswith("#"):
+                        continue
+                    
+                    # Skip test files
+                    if any(test_marker in str(file_path).lower() for test_marker in ['test_', '_test.', 'tests/']):
+                        continue
                     
                     # 檢查硬編碼憑證
                     for key_type, keywords in patterns.items():
                         for keyword in keywords:
+                            # 檢查變量賦值或字典鍵
+                            if (f"{keyword} = " in line_lower or f'"{keyword}": ' in line_lower or 
+                                f"'{keyword}': " in line_lower or f"{keyword}=" in line_lower):
+                                # 確保是字符串賦值（有引號），而不是變量引用或函數調用
+                                if '=' in line:
+                                    # 查找等號後的內容
+                                    after_equals = line.split('=', 1)[1]
+                                    # 檢查是否為非空字符串字面量（不是 None, '', "", 變量名等）
+                                    if any(pattern in after_equals for pattern in ['"', "'"]):
+                                        # 排除明顯的佔位符和測試值
+                                        exclude_patterns = [
+                                            'your_', 'example', 'test', 'dummy', 'fake', 'placeholder',
+                                            'xxx', '***', 'TODO', 'FIXME', 'changeme', 'sample'
+                                        ]
+                                        if any(excl.lower() in after_equals.lower() for excl in exclude_patterns):
+                                            continue
+                                        
+                                        # 排除空字符串或明顯的環境變量引用
+                                        if ('""' in after_equals or "''" in after_equals or 
+                                            'os.environ' in after_equals or 'getenv' in after_equals):
+                                            continue
+                                        
+                                # 查找等號後的內容
+                                after_equals = line.split('=', 1)[1] if '=' in line else ''
+                                # 檢查是否為非空字符串字面量（不是 None, '', "", 變量名等）
+                                if any(pattern in after_equals for pattern in ['"', "'"]):
+                                    # 排除明顯的佔位符和測試值
+                                    exclude_patterns = [
+                                        'your_', 'example', 'test', 'dummy', 'fake', 'placeholder',
+                                        'xxx', '***', 'TODO', 'FIXME', 'changeme', 'sample'
+                                    ]
+                                    if any(excl.lower() in after_equals.lower() for excl in exclude_patterns):
+                                        continue
+                                    
+                                    # 排除空字符串或明顯的環境變量引用
+                                    if ('""' in after_equals or "''" in after_equals or 
+                                        'os.environ' in after_equals or 'getenv' in after_equals):
+                                        continue
+                                    
+                                    findings.append({
+                                        "severity": "high",
+                                        "type": "Hardcoded Credential",
+                                        "location": f"{file_path}:{line_num}",
+                                        "file_path": str(file_path),
+                                        "line_number": line_num,
+                                        "code_snippet": line.strip(),
+                                        "cwe_id": "CWE-798",
+                                        "description": f"檢測到可能的硬編碼 {key_type}",
+                                        "recommendation": "使用環境變量或密鑰管理服務存儲敏感信息",
+                                        "tool": "custom",
+                                        "confidence": 0.7
+                                    })
                             if f"{keyword} = " in line_lower or f'"{keyword}": ' in line_lower:
                                 if '=' in line and any(c in line for c in ['"', "'"]):
+                                    # Extract the value to check for placeholders
+                                    value_match = re.search(r'["\']([^"\']+)["\']', line)
+                                    if value_match:
+                                        value = value_match.group(1)
+                                        # Skip placeholders and environment variables
+                                        if value in ['', 'your_password_here', 'your_api_key_here', 'changeme', 'TODO', 'FIXME']:
+                                            continue
+                                        if value.startswith(('$', 'os.environ', 'os.getenv', 'env.')):
+                                            continue
                                     if not line.strip().startswith("#"):
                                         findings.append({
                                             "severity": "high",
@@ -206,6 +289,36 @@ class AdvancedCodeScanner:
                                             "tool": "custom",
                                             "confidence": 0.7
                                         })
+                                # 查找等號後的內容
+                                after_equals = line.split('=', 1)[1] if '=' in line else ''
+                                # 檢查是否為非空字符串字面量（不是 None, '', "", 變量名等）
+                                if any(pattern in after_equals for pattern in ['"', "'"]):
+                                    # 排除明顯的佔位符和測試值
+                                    exclude_patterns = [
+                                        'your_', 'example', 'test', 'dummy', 'fake', 'placeholder',
+                                        'xxx', '***', 'TODO', 'FIXME', 'changeme', 'sample'
+                                    ]
+                                    if any(excl.lower() in after_equals.lower() for excl in exclude_patterns):
+                                        continue
+                                    
+                                    # 排除空字符串或明顯的環境變量引用
+                                    if ('""' in after_equals or "''" in after_equals or 
+                                        'os.environ' in after_equals or 'getenv' in after_equals):
+                                        continue
+                                    
+                                    findings.append({
+                                        "severity": "high",
+                                        "type": "Hardcoded Credential",
+                                        "location": f"{file_path}:{line_num}",
+                                        "file_path": str(file_path),
+                                        "line_number": line_num,
+                                        "code_snippet": line.strip(),
+                                        "cwe_id": "CWE-798",
+                                        "description": f"檢測到可能的硬編碼 {key_type}",
+                                        "recommendation": "使用環境變量或密鑰管理服務存儲敏感信息",
+                                        "tool": "custom",
+                                        "confidence": 0.7
+                                    })
             
             except Exception as e:
                 continue
@@ -245,7 +358,22 @@ class AdvancedCodeScanner:
                             "confidence": 0.9
                         })
             
+            except (IOError, OSError, UnicodeDecodeError) as e:
+                print(f"  ⚠️ 讀取 {req_file} 時發生錯誤: {e}")
+            except FileNotFoundError as e:
+                print(f"  ⚠️ 找不到依賴文件 {req_file}: {e}")
+                continue
+            except PermissionError as e:
+                print(f"  ⚠️ 沒有權限讀取依賴文件 {req_file}: {e}")
+                continue
+            except UnicodeDecodeError as e:
+                print(f"  ⚠️ 依賴文件 {req_file} 包含無效的編碼: {e}")
+                continue
+            except OSError as e:
+                print(f"  ⚠️ 訪問依賴文件 {req_file} 時發生系統錯誤: {e}")
+                continue
             except Exception as e:
+                print(f"  ⚠️ 處理依賴文件 {req_file} 時發生未預期錯誤: {e}")
                 continue
         
         return findings
@@ -298,7 +426,8 @@ class AdvancedCodeScanner:
                             "confidence": 1.0
                         })
             
-            except Exception:
+            except (IOError, OSError, UnicodeDecodeError) as e:
+                print(f"  ⚠️ 讀取 {file_path} 時發生錯誤: {e}")
                 continue
         
         return findings
@@ -435,14 +564,10 @@ class AdvancedCodeScanner:
 def main() -> None:
     """
     主執行函數
-    
+    ㄚ
     從命令行參數讀取儲存庫路徑並執行掃描。
     如果發現嚴重或高嚴重性問題，將以非零狀態碼退出。
     """
-    if len(sys.argv) > 1:
-        repo_path = sys.argv[1]
-    else:
-        repo_path = "."
     import argparse
     
     parser = argparse.ArgumentParser(description='高階深度代碼掃描工具')
@@ -454,13 +579,15 @@ def main() -> None:
     
     args = parser.parse_args()
     
+    # 優先使用位置參數，如果沒有則使用命名參數
+    repo_path = args.repo_path or args.repo
     # 優先使用命名參數，如果沒有則使用位置參數
     repo_path = args.repo if args.repo_path is None else args.repo_path
     # 優先使用位置參數，如果沒有則使用命名參數
     repo_path = args.repo_path if args.repo_path is not None else args.repo
     output_dir = args.output_dir
     
-    scanner = AdvancedCodeScanner(repo_path)
+    scanner = AdvancedCodeScanner(repo_path, output_dir)
     results = scanner.deep_scan()
     
     # 返回適當的退出代碼
