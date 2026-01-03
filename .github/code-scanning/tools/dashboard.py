@@ -33,6 +33,8 @@ app = Flask(__name__, template_folder=str(TEMPLATE_DIR))
 # WARNING: If FLASK_SECRET_KEY is not set, a random key is generated on each restart,
 # which will invalidate existing sessions. Always set FLASK_SECRET_KEY in production.
 app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY') or secrets.token_hex(32)
+# Flask security configuration
+app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', os.urandom(32))
 
 class DashboardData:
     """儀表板數據管理"""
@@ -151,8 +153,6 @@ def download_report(filename):
         return jsonify({'error': 'Invalid filename'}), 400
     
     # Construct the safe path within REPORTS_DIR
-    report_path = REPORTS_DIR / safe_filename
-    
     # Ensure the resolved path is still within REPORTS_DIR (defense in depth)
     try:
         base_path = REPORTS_DIR.resolve()
@@ -172,6 +172,21 @@ def download_report(filename):
         return send_file(report_path, as_attachment=True)
     
     return jsonify({'error': 'Report not found'}), 404
+        resolved_path = (REPORTS_DIR / safe_filename).resolve()
+        
+        # Prevent directory traversal by ensuring the resolved path is within REPORTS_DIR
+        report_path.relative_to(base_path)
+        
+        # Ensure it's not the base directory itself and is a file
+        if report_path == base_path or not report_path.is_file():
+            return jsonify({'error': 'Report not found'}), 404
+            
+    except (OSError, ValueError):
+        # Invalid path, path outside base directory, or file doesn't exist
+        return jsonify({'error': 'Report not found'}), 404
+    
+    # Return the safe file
+    return send_file(report_path, as_attachment=True)
 
 @app.route('/dashboard')
 def dashboard():
