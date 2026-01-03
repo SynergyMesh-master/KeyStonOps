@@ -13,6 +13,7 @@ One-Click Auto Fix System
 import os
 import json
 import re
+import math
 from typing import Dict, List, Tuple
 from dataclasses import dataclass, asdict
 from pathlib import Path
@@ -253,38 +254,62 @@ class LongLineFixer(VulnerabilityFixer):
         Returns:
             縮進字符串（'    ' 表示4空格，'  ' 表示2空格，'\t' 表示tab）
         """
-        indent_counts = {2: 0, 4: 0, 8: 0, 'tab': 0}
+        tab_count = 0
+        space_indents = []
         
         for line in lines:
             if not line.strip():
                 continue
             
+            # 檢查是否為 tab
+            if line.startswith('\t'):
+                tab_count += 1
+                continue
+            
             # 計算前導空格
             stripped = line.lstrip(' ')
             if stripped == line:
-                # 檢查是否為 tab
-                if line.startswith('\t'):
-                    indent_counts['tab'] += 1
+                # 沒有前導空格
                 continue
             
             spaces = len(line) - len(stripped)
-            # 只統計精確為 2/4/8 個空格的縮進，避免將多級縮進誤判為基本縮進風格
-            if spaces == 8:
-                indent_counts[8] += 1
-            elif spaces == 4:
-                indent_counts[4] += 1
-            elif spaces == 2:
-                indent_counts[2] += 1
+            if spaces > 0:
+                space_indents.append(spaces)
         
-        # 返回最常用的縮進風格
-        if indent_counts['tab'] > max(indent_counts[2], indent_counts[4], indent_counts[8]):
+        # 如果主要使用 tab，返回 tab
+        if tab_count > len(space_indents):
             return '\t'
-        elif indent_counts[8] > max(indent_counts[2], indent_counts[4]):
-            return ' ' * 8
-        elif indent_counts[4] > indent_counts[2]:
-            return ' ' * 4
-        else:
+        
+        # 如果沒有空格縮進，返回默認值
+        if not space_indents:
             return '  '  # 默認2空格
+        
+        # 使用 GCD 算法找出基本縮進單位
+        # 這樣可以正確處理多級縮進（例如 4, 8, 12, 16 空格都會檢測為 4 空格基本單位）
+        indent_gcd = space_indents[0]
+        for indent in space_indents[1:]:
+            indent_gcd = math.gcd(indent_gcd, indent)
+            if indent_gcd == 1:
+                # GCD 為 1 意味著沒有一致的縮進模式，使用默認值
+                break
+        
+        # 確保檢測到合理的縮進值（2, 4, 8 是常見的）
+        if indent_gcd in [2, 4, 8]:
+            return ' ' * indent_gcd
+        elif indent_gcd > 8:
+            # 如果 GCD 太大，可能是錯誤檢測，降級為常見值
+            return ' ' * 4
+        elif indent_gcd == 1:
+            # GCD 為 1，使用默認值
+            return '  '
+        else:
+            # 其他情況（如 3, 5, 6, 7），四捨五入到最接近的常見值
+            if indent_gcd >= 6:
+                return ' ' * 8
+            elif indent_gcd >= 3:
+                return ' ' * 4
+            else:
+                return '  '
     
     def fix(self, file_path: str, vulnerability: Dict) -> Tuple[bool, str, str]:
         try:
