@@ -161,6 +161,20 @@ def download_report(filename):
     # Ensure the resolved path is still within REPORTS_DIR (defense in depth)
     try:
         base_path = REPORTS_DIR.resolve()
+        report_path = (REPORTS_DIR / safe_filename).resolve()
+    except OSError:
+        # Invalid path (e.g., contains characters not allowed by the OS)
+        return jsonify({'error': 'Report not found'}), 404
+
+    # Prevent directory traversal by ensuring the resolved path is within REPORTS_DIR
+    try:
+        report_path.relative_to(base_path)
+    except ValueError:
+        # Path is not relative to base_path (i.e., outside REPORTS_DIR)
+        return jsonify({'error': 'Report not found'}), 404
+
+    if report_path.exists():
+        return send_file(report_path, as_attachment=True)
         resolved_path = report_path.resolve()
         
         # Validate path is within base directory - raises ValueError if outside
@@ -222,7 +236,7 @@ def main() -> None:
         except ValueError:
             # 不是有效的 IP 地址，可能是主機名
             # 允許常見的特殊值
-            if host not in ('0.0.0.0', '::', 'localhost'):
+            if host not in ('0.0.0.0', '::'):
                 print(f"⚠️  警告：無效的 DASHBOARD_HOST 值，使用預設值 {DEFAULT_HOST}")
                 host = DEFAULT_HOST
     

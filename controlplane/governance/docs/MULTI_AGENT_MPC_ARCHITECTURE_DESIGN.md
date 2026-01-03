@@ -14,6 +14,7 @@
 **次要**：密碼學 MPC（跨部門資料隔離場景）
 
 **實施策略**：
+
 - Phase 1：協同決策（加權仲裁 + 失敗保守）
 - Phase 2：引入密碼學 MPC（資安/法務敏感資料隔離）
 - Phase 3：零知識證明（跨組織驗證而不揭露資料）
@@ -21,6 +22,7 @@
 ### 2) 事件入口：多源異構事件聚合
 
 **主要入口**：
+
 ```yaml
 primary_sources:
 
@@ -64,6 +66,7 @@ secondary_sources:
 ### 4) 簽名/Attestation 工具鏈現狀
 
 **已實施**：
+
 ```bash
 ✅ Cosign: 圖像簽名驗證
 ✅ SBOM: CycloneDX 生成
@@ -73,6 +76,7 @@ secondary_sources:
 ```
 
 **需要加強**：
+
 - Attestation 策略引擎
 - 密碼學 MPC 基礎設施
 - 跨組織 PKI 信任鏈
@@ -86,6 +90,7 @@ secondary_sources:
 ### 6) 自動修復權限邊界
 
 **安全邊界**：
+
 ```yaml
 allowed_auto_actions:
 
@@ -155,6 +160,7 @@ require_human_approval:
 ```
 
 **代理實施順序**：
+
 1. **SuperAgent** - 任務編排，狀態機管理
 2. **MonitoringAgent** - 事件聚合，異常偵測
 3. **ProblemSolverAgent** - RCA，修復方案生成
