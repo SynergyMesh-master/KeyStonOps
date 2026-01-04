@@ -70,6 +70,17 @@ jobs:
 
       - name: Scan for high-risk patterns
         run: |
+          # Using git grep with -i flag for case-insensitive matching
+          # This preserves pattern flexibility while matching case variations
+          set +e  # Don't fail on grep matches
+          patterns=(
+            'aws[_-]?access[_-]?key[_-]?id'
+            'aws[_-]?secret[_-]?access[_-]?key'
+            'ghp_[A-Za-z0-9]{36}'
+            'github_pat_[A-Za-z0-9_]{80,}'
+            'api[_-]?key'
+            'secret[_-]?key'
+            'private[_-]?key'
           # Note: Using case-insensitive grep with -i flag
           # instead of (?i) PCRE syntax
           # git grep -E doesn't support Perl regex features
@@ -91,6 +102,10 @@ jobs:
             'xox[baprs]-[A-Za-z0-9-]{10,}'
           )
 
+          found=0
+          if git grep -niE "$regex" -- . ':!node_modules' ':!.git' ':!.github/workflows/security.yml' 2>/dev/null; then
+            echo "⚠️ Potential secrets detected. Please review the matches above."
+            found=1
           high_confidence_found=0
           low_confidence_found=0
 
