@@ -81,7 +81,7 @@ def check_root_structure(path: str, spec: Dict[str, Any]) -> Tuple[List[str], Li
     
     root_structure = spec['spec']['rootStructure']
     
-    normalized_path = path[2:] if path.startswith('./') else path
+    normalized_path = Path(path).as_posix().lstrip("./")
     # Check if path is in root (no directory prefix)
     if '/' not in normalized_path:
         # This is a root-level file

@@ -9,11 +9,19 @@ import yaml
 from pathlib import Path
 from typing import Dict, List, Tuple, Any
 
+_compiled_patterns: Dict[str, re.Pattern] = {}
+
 def load_naming_spec() -> Dict[str, Any]:
     """Load naming specification from baseline."""
     spec_path = Path(__file__).parent.parent.parent / "specifications" / "root.specs.naming.yaml"
     with open(spec_path, 'r') as f:
         return yaml.safe_load(f)
+
+def _get_compiled_pattern(pattern: str) -> re.Pattern:
+    """Return a cached compiled regex pattern."""
+    if pattern not in _compiled_patterns:
+        _compiled_patterns[pattern] = re.compile(pattern)
+    return _compiled_patterns[pattern]
 
 def validate_naming(target: str, target_type: str) -> Tuple[bool, List[str], List[str]]:
     """
@@ -60,7 +68,8 @@ def validate_file_name(filename: str, spec: Dict[str, Any]) -> Tuple[List[str], 
     root_match = False
     if root_pattern:
         try:
-            if re.match(root_pattern, filename):
+            compiled_root = _get_compiled_pattern(root_pattern)
+            if compiled_root.match(filename):
                 root_match = True
         except re.error as exc:
             errors.append(f"Invalid root pattern '{root_pattern}' for '{filename}': {exc}")

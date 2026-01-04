@@ -74,7 +74,7 @@ def validate_namespace_syntax(namespace: str, spec: Dict[str, Any]) -> Tuple[Lis
     
     # Allow hierarchical namespaces using the configured separator
     hierarchical_pattern = None
-    if separator and separator.strip():
+    if separator.strip():
         sep_escaped = re.escape(separator)
         hierarchical_pattern = rf"^[a-z][a-z0-9-]*(?:{sep_escaped}[a-z][a-z0-9-]*)*$"
     
@@ -113,7 +113,7 @@ def validate_namespace_syntax(namespace: str, spec: Dict[str, Any]) -> Tuple[Lis
                 errors.append(f"Namespace '{namespace}' contains underscores")
         elif char_type == "dots (.)":
             if '.' in namespace and separator != '.':
-                errors.append(f"Namespace '{namespace}' contains dots (use hyphens for hierarchy)")
+                errors.append(f"Namespace '{namespace}' contains dots but separator is '{separator}' (use configured separator)")
         elif char_type == "spaces":
             if ' ' in namespace:
                 errors.append(f"Namespace '{namespace}' contains spaces")
