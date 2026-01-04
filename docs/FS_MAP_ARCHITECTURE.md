@@ -1,38 +1,57 @@
-# Filesystem Mapping Architecture (fs.map)
+# Filesystem Mapping Architecture (fs.map + fs.index)
 
 ## 概述
 
-MachineNativeOps 採用**層次化自動生成**的 fs.map 架構，實現目錄結構的全面治理，同時**最小化手動維護負擔**。
+MachineNativeOps 採用**層次化自動生成**的 fs.map + fs.index 架構，實現目錄結構的全面治理，同時**100% 自動化維護 = 0% 手動負擔**。
 
 ## 架構設計
 
+### 雙層架構：fs.map + fs.index
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                     root.fs.map (精簡版)                         │
-│  - FHS 系統目錄 (/bin, /etc, /var...)                           │
-│  - 頂層模組入口                                                   │
-│  - 生產安裝路徑 (/opt/machinenativenops/...)                     │
-└───────────────────────────┬─────────────────────────────────────┘
-                            │
-                            ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     root.fs.index (索引)                         │
+│                     root.fs.index (頂層聚合)                      │
+│  - 聚合所有子 fs.index                                           │
 │  - 聚合所有子 fs.map                                             │
-│  - 定義生成規則                                                   │
-│  - 驗證配置                                                       │
+│  - 定義驗證規則                                                   │
 └───────────────────────────┬─────────────────────────────────────┘
                             │
-            ┌───────────────┼───────────────┐
-            ▼               ▼               ▼
-┌───────────────┐  ┌───────────────┐  ┌───────────────┐
-│ controlplane/ │  │  workspace/   │  │   chatops/    │
-│   fs.map      │  │    fs.map     │  │    fs.map     │
-│ (14 entries)  │  │ (自動生成)    │  │ (128 entries) │
-└───────┬───────┘  └───────┬───────┘  └───────┬───────┘
-        │                  │                  │
-        ▼                  ▼                  ▼
-    [子模組]           [子模組]           [子模組]
-    fs.map             fs.map             fs.map
+     ┌──────────────────────┼──────────────────────┐
+     ▼                      ▼                      ▼
+┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+│controlplane/│      │ workspace/  │      │  chatops/   │
+│  fs.index   │      │  fs.index   │      │  fs.index   │
+│  fs.map     │      │  fs.map     │      │  fs.map     │
+└──────┬──────┘      └──────┬──────┘      └──────┬──────┘
+       │                    │                    │
+       │         ┌──────────┼──────────┐         │
+       │         ▼          ▼          ▼         │
+       │   ┌──────────┐ ┌───────┐ ┌────────┐     │
+       │   │  src/    │ │config/│ │ docs/  │     │
+       │   │fs.index  │ │fs.idx │ │fs.map  │     │
+       │   │ fs.map   │ │fs.map │ │        │     │
+       │   └────┬─────┘ └───────┘ └────────┘     │
+       │        │                                │
+       ▼        ▼                                ▼
+   [子模組]  [子模組]                         [子模組]
+   fs.map    fs.map                          fs.map
+```
+
+### 生成的檔案結構
+
+```
+root.fs.index                    ← 頂層聚合（9個子索引）
+├── controlplane/fs.index        ← 自動生成
+├── workspace/fs.index           ← 自動生成
+│   ├── workspace/config/fs.index
+│   └── workspace/src/fs.index
+├── chatops/fs.index             ← 自動生成
+│   ├── chatops/deploy/fs.index
+│   └── chatops/services/fs.index
+└── web/fs.index                 ← 自動生成
+
++ 635 個 fs.map 檔案（自動生成）
++ 4,646 個目錄映射條目
 ```
 
 ## 核心組件

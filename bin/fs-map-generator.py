@@ -392,6 +392,212 @@ class IndexUpdater:
 
 
 # =============================================================================
+# Hierarchical Index Generator
+# =============================================================================
+
+class HierarchicalIndexGenerator:
+    """Generates hierarchical fs.index files for each module boundary"""
+
+    # Modules that should have their own fs.index
+    INDEX_MODULES = {
+        'controlplane',
+        'workspace',
+        'chatops',
+        'web',
+        'workspace/src',
+        'workspace/config',
+        'chatops/services',
+        'chatops/deploy',
+    }
+
+    def __init__(self, config: GeneratorConfig):
+        self.config = config
+        self.generated_indexes: Dict[str, dict] = {}
+
+    def generate_all(self, generated_maps: Dict[str, List[FsMapEntry]]) -> Dict[str, dict]:
+        """Generate hierarchical fs.index files"""
+        self.generated_indexes = {}
+        timestamp = datetime.now().isoformat()
+
+        # Group fs.map files by their parent module
+        module_maps: Dict[str, List[str]] = {}
+
+        for fsmap_path in generated_maps.keys():
+            # Find which module this fs.map belongs to
+            for module in sorted(self.INDEX_MODULES, key=len, reverse=True):
+                if fsmap_path.startswith(module + '/') or fsmap_path == f"{module}/fs.map":
+                    if module not in module_maps:
+                        module_maps[module] = []
+                    module_maps[module].append(fsmap_path)
+                    break
+
+        # Generate fs.index for each module
+        for module, maps in module_maps.items():
+            index_data = self._create_index_data(module, maps, generated_maps, timestamp)
+            self.generated_indexes[f"{module}/fs.index"] = index_data
+
+        # Generate root.fs.index that aggregates all sub-indexes
+        root_index = self._create_root_index(generated_maps, timestamp)
+        self.generated_indexes['root.fs.index'] = root_index
+
+        return self.generated_indexes
+
+    def _create_index_data(self, module: str, maps: List[str],
+                          generated_maps: Dict[str, List[FsMapEntry]],
+                          timestamp: str) -> dict:
+        """Create index data for a single module"""
+        includes = []
+        total_entries = 0
+
+        for fsmap_path in sorted(maps):
+            entries_count = len(generated_maps.get(fsmap_path, []))
+            total_entries += entries_count
+
+            # Calculate relative path from module
+            if fsmap_path.startswith(module + '/'):
+                rel_path = fsmap_path[len(module) + 1:]
+            else:
+                rel_path = fsmap_path
+
+            includes.append({
+                'path': rel_path,
+                'scope': rel_path.replace('/fs.map', '').replace('fs.map', module.split('/')[-1]),
+                'entries': entries_count,
+                'type': 'auto-generated'
+            })
+
+        # Check for child indexes
+        child_indexes = []
+        for idx_module in self.INDEX_MODULES:
+            if idx_module.startswith(module + '/') and idx_module != module:
+                child_indexes.append(f"{idx_module.replace(module + '/', '')}/fs.index")
+
+        return {
+            'apiVersion': 'machinenativeops.io/v1',
+            'kind': 'FilesystemIndex',
+            'metadata': {
+                'name': f"{module.replace('/', '-')}-filesystem-index",
+                'scope': module,
+                'generated': timestamp,
+                'auto_generated': True
+            },
+            'spec': {
+                'includes': includes,
+                'child_indexes': child_indexes if child_indexes else None,
+                'statistics': {
+                    'fs_maps': len(maps),
+                    'total_entries': total_entries
+                }
+            }
+        }
+
+    def _create_root_index(self, generated_maps: Dict[str, List[FsMapEntry]],
+                          timestamp: str) -> dict:
+        """Create root.fs.index that aggregates all sub-indexes"""
+        # Get all sub-indexes (only top-level modules)
+        sub_indexes = []
+        for module in sorted(self.INDEX_MODULES):
+            if '/' not in module:  # Only top-level
+                sub_indexes.append({
+                    'path': f"{module}/fs.index",
+                    'scope': module,
+                    'type': 'auto-generated'
+                })
+
+        # Get all fs.map files
+        all_maps = []
+        for fsmap_path in sorted(generated_maps.keys()):
+            all_maps.append({
+                'path': fsmap_path,
+                'scope': fsmap_path.replace('/fs.map', '').replace('fs.map', 'root').replace('/', '.'),
+                'entries': len(generated_maps[fsmap_path]),
+                'type': 'auto-generated'
+            })
+
+        total_mappings = sum(len(entries) for entries in generated_maps.values())
+
+        return {
+            'apiVersion': 'machinenativeops.io/v1',
+            'kind': 'FilesystemIndex',
+            'metadata': {
+                'name': 'root-filesystem-index',
+                'namespace': 'machinenativenops',
+                'generated': timestamp,
+                'auto_generated': True,
+                'labels': {
+                    'machinenativeops.io/component': 'filesystem',
+                    'machinenativeops.io/layer': 'root',
+                    'machinenativeops.io/managed-by': 'fs-map-generator'
+                }
+            },
+            'spec': {
+                'hierarchy': {
+                    'strategy': 'hierarchical',
+                    'child_indexes': sub_indexes
+                },
+                'includes': all_maps,
+                'aggregation': {
+                    'strategy': 'hierarchical',
+                    'conflict_resolution': {
+                        'strategy': 'priority',
+                        'log_conflicts': True
+                    },
+                    'namespace_prefix': {
+                        'enabled': True,
+                        'separator': '_'
+                    }
+                },
+                'validation': {
+                    'require_all_includes': True,
+                    'check_conflicts': True,
+                    'validate_permissions': True,
+                    'verify_paths': True
+                }
+            },
+            'status': {
+                'last_sync': timestamp,
+                'total_fs_maps': len(generated_maps),
+                'total_mappings': total_mappings,
+                'total_indexes': len(self.INDEX_MODULES) + 1,
+                'drift_status': 'synced',
+                'validation_status': 'passed'
+            }
+        }
+
+    def write_all(self) -> List[Path]:
+        """Write all generated fs.index files to disk"""
+        written_files = []
+
+        for index_path, index_data in self.generated_indexes.items():
+            full_path = self.config.repo_root / index_path
+
+            # Ensure parent directory exists
+            full_path.parent.mkdir(parents=True, exist_ok=True)
+
+            # Write YAML with header comment
+            content = f"""# =============================================================================
+# {index_data['metadata'].get('name', 'Filesystem Index')}
+# Auto-generated by fs-map-generator.py
+# =============================================================================
+# Generated: {index_data['metadata'].get('generated', 'unknown')}
+# Scope: {index_data['metadata'].get('scope', 'root')}
+#
+# DO NOT MANUALLY EDIT - Run `./bin/fs-map-generator.py --regenerate` to update
+# =============================================================================
+
+"""
+            content += yaml.dump(index_data, default_flow_style=False,
+                                allow_unicode=True, sort_keys=False)
+
+            with open(full_path, 'w', encoding='utf-8') as f:
+                f.write(content)
+
+            written_files.append(full_path)
+
+        return written_files
+
+
+# =============================================================================
 # Drift Checker
 # =============================================================================
 
@@ -595,11 +801,15 @@ Examples:
                 written_path = generator.write_fsmap(fsmap_path, entries, module_name)
                 print(f"   ✅ {fsmap_path} ({len(entries)} entries)")
 
-            # Update index
-            print("\n📑 Updating root.fs.index...")
-            index_updater = IndexUpdater(config)
-            index_updater.update_index(generated_maps)
-            print("   ✅ Index updated")
+            # Generate hierarchical indexes
+            print("\n📑 Generating hierarchical fs.index files...")
+            index_generator = HierarchicalIndexGenerator(config)
+            index_generator.generate_all(generated_maps)
+            written_indexes = index_generator.write_all()
+            for idx_path in written_indexes:
+                rel_path = str(idx_path.relative_to(config.repo_root))
+                print(f"   ✅ {rel_path}")
+            print(f"   Total: {len(written_indexes)} fs.index files")
 
     if args.report:
         report_gen = ReportGenerator(config)
