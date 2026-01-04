@@ -703,11 +703,7 @@ docker-compose ps
 - 📖 Documentation: [docs/](../)
 - 🐛 Bug Reports: [GitHub Issues](https://github.com/synergymesh/issues)
 - 💬 Discussions: [GitHub Discussions](https://github.com/synergymesh/discussions)
-<<<<<<< HEAD
-- 📧 Email: support@synergymesh.io
-=======
 - 📧 Email: <support@synergymesh.io>
->>>>>>> origin/copilot/sub-pr-402
 
 ### Contributing | 貢獻
 

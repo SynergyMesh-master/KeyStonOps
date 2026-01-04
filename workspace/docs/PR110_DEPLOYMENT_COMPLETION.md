@@ -349,10 +349,6 @@ argocd app list | grep gac-
 - **[tests/deploy-local.sh](../src/governance/00-vision-strategy/tests/deploy-local.sh)** - Local validation script
 - **[tests/generate-resources.sh](../src/governance/00-vision-strategy/tests/generate-resources.sh)** - Resource generator
 - **[tests/validate-all.sh](../src/governance/00-vision-strategy/tests/validate-all.sh)** - Validation script
-<<<<<<< HEAD
->>>>>>> origin/alert-autofix-37
-=======
->>>>>>> origin/copilot/sub-pr-402
 
 ---
 
