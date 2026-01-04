@@ -57,15 +57,16 @@ def validate_file_name(filename: str, spec: Dict[str, Any]) -> Tuple[List[str], 
     
     # Allow root-prefixed files that follow the documented root pattern (e.g., root.config.yaml)
     root_pattern = file_conventions.get('root', {}).get('pattern')
+    root_match = False
     if root_pattern:
         try:
             if re.match(root_pattern, filename):
-                return errors, warnings
+                root_match = True
         except re.error as exc:
             errors.append(f"Invalid root pattern '{root_pattern}': {exc}")
     
     # Check for double extensions
-    if filename.count('.') > 1:
+    if filename.count('.') > 1 and not root_match:
         errors.append(f"File '{filename}' has double extension (rule: no-double-extensions)")
     
     # Check for lowercase only
@@ -82,7 +83,7 @@ def validate_file_name(filename: str, spec: Dict[str, Any]) -> Tuple[List[str], 
     
     # Check kebab-case format (excluding extension)
     name_without_ext = filename.rsplit('.', 1)[0] if '.' in filename else filename
-    if not re.match(r'^[a-z][a-z0-9-]*$', name_without_ext):
+    if not root_match and not re.match(r'^[a-z][a-z0-9-]*$', name_without_ext):
         errors.append(f"File name '{name_without_ext}' must follow kebab-case format (rule: kebab-case-format)")
     
     # Check for consecutive hyphens
