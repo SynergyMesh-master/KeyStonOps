@@ -89,7 +89,7 @@ jobs:
           # High-confidence patterns that always fail (very specific formats)
           high_confidence_patterns=(
             'ghp_[A-Za-z0-9]{36}'
-            'github_pat_[A-Za-z0-9_]{80,}'
+            'github_pat_[A-Za-z0-9_]{20,}'
           )
 
           # Lower-confidence patterns (more generic)
@@ -109,30 +109,46 @@ jobs:
           high_confidence_found=0
           low_confidence_found=0
 
-          # Check high-confidence patterns
-          high_confidence_regex="($(printf '%s|' \
-            "${high_confidence_patterns[@]}" | sed 's/|$//'))"
+          # Build regex pattern safely using a loop instead of printf/sed
+          high_confidence_regex=""
+          for pattern in "${high_confidence_patterns[@]}"; do
+            if [ -z "$high_confidence_regex" ]; then
+              high_confidence_regex="$pattern"
+            else
+              high_confidence_regex="$high_confidence_regex|$pattern"
+            fi
+          done
+
           echo "🔍 Scanning for high-confidence secret patterns..."
+          # WARNING: Workflow files are intentionally excluded from scanning.
+          # This is a known security trade-off. If you need to scan workflow files,
+          # remove the ':!.github/workflows/*.yml' and ':!.github/workflows/*.yaml' exclusions.
           if git grep -nE "$high_confidence_regex" -- . \
              ':!node_modules' ':!.git' ':!*.md' \
              ':!.github/workflows/*.yml' ':!.github/workflows/*.yaml' \
+             2>/dev/null || false; then
              2>/dev/null; then
-            echo "::error::❌ HIGH-CONFIDENCE secrets detected" \
-              "(GitHub tokens with specific formats)." \
-              "These will always fail the workflow."
+            echo "::error::❌ HIGH-CONFIDENCE secrets detected (GitHub tokens with specific formats). These will always fail the workflow."
             high_confidence_found=1
           fi
 
-          # Check low-confidence patterns
-          low_confidence_regex="($(printf '%s|' \
-            "${low_confidence_patterns[@]}" | sed 's/|$//'))"
+          # Build low-confidence regex pattern safely
+          low_confidence_regex=""
+          for pattern in "${low_confidence_patterns[@]}"; do
+            if [ -z "$low_confidence_regex" ]; then
+              low_confidence_regex="$pattern"
+            else
+              low_confidence_regex="$low_confidence_regex|$pattern"
+            fi
+          done
+
           echo "🔍 Scanning for lower-confidence secret patterns..."
           if git grep -nE "$low_confidence_regex" -- . \
              ':!node_modules' ':!.git' ':!*.md' \
              ':!.github/workflows/*.yml' ':!.github/workflows/*.yaml' \
+             2>/dev/null || false; then
              2>/dev/null; then
-            echo "::warning::⚠️ Potential secrets detected" \
-              "(generic patterns). Please review the matches above."
+            echo "::warning::⚠️ Potential secrets detected (generic patterns). Please review the matches above."
             low_confidence_found=1
           fi
 
@@ -140,17 +156,14 @@ jobs:
           FAIL_ON_SECRETS="${{ inputs.fail_on_secrets || 'false' }}"
 
           if [ $high_confidence_found -eq 1 ]; then
-            echo "::error::Build failed due to" \
-              "high-confidence secret detection"
+            echo "::error::Build failed due to high-confidence secret detection"
             exit 1
           elif [ $low_confidence_found -eq 1 ] && \
                [ "$FAIL_ON_SECRETS" = "true" ]; then
-            echo "::error::Build failed due to secrets detection" \
-              "(fail_on_secrets=true)"
+            echo "::error::Build failed due to secrets detection (fail_on_secrets=true)"
             exit 1
           elif [ $low_confidence_found -eq 1 ]; then
-            echo "::notice::Secrets scan completed with warnings" \
-              "(fail_on_secrets=false)"
+            echo "::notice::Secrets scan completed with warnings (fail_on_secrets=false)"
             exit 0
           else
             echo "✅ No secrets found."
