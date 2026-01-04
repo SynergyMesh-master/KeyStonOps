@@ -1,0 +1,1321 @@
+🔍 Scanning repository structure...
+   Found 1966 directories
+   Detected 633 module boundaries
+   Generated 633 fs.map configurations
+
+# Filesystem Mapping Report
+# Generated: 2026-01-04T13:56:22.928005
+
+## Summary
+
+| Metric | Value |
+|--------|-------|
+| Total Directories Scanned | 1966 |
+| Module Boundaries Detected | 633 |
+| fs.map Files Generated | 633 |
+| Total Mappings | 4614 |
+| Coverage | 97.97% |
+
+## Module Boundaries
+
+| Path | Marker | Subdirs | Files |
+|------|--------|---------|-------|
+| . | README.md | 20 | 28 |
+| .github/code-scanning | fs.map | 1 | 3 |
+| .github/private | fs.map | 3 | 2 |
+| .github/profile | fs.map | 0 | 2 |
+| .github/scripts | fs.map | 1 | 12 |
+| bin | fs.map | 0 | 5 |
+| chatops | force_module | 17 | 39 |
+| chatops/apps/auto-fix-bot | fs.map | 1 | 3 |
+| chatops/apps/my-app | fs.map | 3 | 4 |
+| chatops/deploy | force_module | 8 | 2 |
+| chatops/deploy/kubernetes/external-secrets | fs.map | 0 | 6 |
+| chatops/deploy/ops | fs.map | 4 | 2 |
+| chatops/deploy/ops/on-call | fs.map | 0 | 2 |
+| chatops/deploy/terraform | fs.map | 2 | 2 |
+| chatops/docs/api | fs.map | 1 | 3 |
+| chatops/proto | fs.map | 3 | 3 |
+| chatops/scripts | force_module | 13 | 29 |
+| chatops/scripts/naming/playbook | fs.map | 0 | 2 |
+| chatops/services | force_module | 2 | 3 |
+| chatops/services/engine-python | fs.map | 3 | 4 |
+| chatops/services/engine-python/engine | fs.map | 0 | 3 |
+| chatops/services/engine-python/src | fs.map | 0 | 3 |
+| chatops/services/engine-python/tests | fs.map | 0 | 4 |
+| chatops/services/gateway-ts | fs.map | 1 | 4 |
+| chatops/tests/e2e | fs.map | 3 | 4 |
+| chatops/tests/e2e/contract | fs.map | 2 | 2 |
+| chatops/tests/e2e/load | fs.map | 1 | 2 |
+| chatops/tests/policy | fs.map | 0 | 3 |
+| controlplane | force_module | 2 | 3 |
+| docs | fs.map | 0 | 6 |
+| engine/chatops | fs.map | 2 | 3 |
+| engine/chatops/engine-python | fs.map | 3 | 4 |
+| engine/chatops/engine-python/engine | fs.map | 0 | 3 |
+| engine/chatops/engine-python/src | fs.map | 0 | 3 |
+| engine/chatops/engine-python/tests | fs.map | 0 | 4 |
+| engine/chatops/gateway-ts | fs.map | 1 | 4 |
+| engine/config-manager | fs.map | 1 | 2 |
+| engine/config-manager/src/config_manager | fs.map | 0 | 3 |
+| engine/machinenativenops-auto-monitor | setup.py | 3 | 6 |
+| engine/machinenativenops-auto-monitor/src/machinenativenops_auto_monitor | fs.map | 0 | 9 |
+| etc | fs.map | 0 | 2 |
+| governance | setup.py | 53 | 40 |
+| governance/00-vision-strategy | fs.map | 7 | 24 |
+| governance/01-architecture | fs.map | 2 | 14 |
+| governance/02-decision | fs.map | 1 | 14 |
+| governance/03-change | fs.map | 0 | 14 |
+| governance/04-risk | fs.map | 0 | 14 |
+| governance/05-compliance | fs.map | 2 | 14 |
+| governance/06-security | fs.map | 2 | 14 |
+| governance/07-audit | fs.map | 0 | 16 |
+| governance/08-process | fs.map | 0 | 14 |
+| governance/09-performance | fs.map | 3 | 14 |
+| governance/10-policy | fs.map | 1 | 6 |
+| governance/11-tools-systems | fs.map | 0 | 15 |
+| governance/12-culture-capability | fs.map | 0 | 13 |
+| governance/13-metrics-reporting | fs.map | 0 | 15 |
+| governance/14-improvement | fs.map | 0 | 15 |
+| governance/15-economic | fs.map | 2 | 4 |
+| governance/16-psychological | fs.map | 0 | 4 |
+| governance/17-sociological | fs.map | 0 | 4 |
+| governance/18-complex-system | fs.map | 0 | 4 |
+| governance/19-evolutionary | fs.map | 0 | 4 |
+| governance/20-intent | fs.map | 0 | 5 |
+| governance/21-ecological | fs.map | 0 | 4 |
+| governance/22-aesthetic | fs.map | 0 | 4 |
+| governance/23-policies | fs.map | 5 | 15 |
+| governance/23-policies/conftest/matechat-integration | fs.map | 0 | 4 |
+| governance/24-registry | fs.map | 1 | 8 |
+| governance/28-tests/e2e | fs.map | 0 | 3 |
+| governance/28-tests/integration | fs.map | 0 | 4 |
+| governance/28-tests/unit | fs.map | 0 | 5 |
+| governance/29-docs | fs.map | 6 | 69 |
+| governance/30-agents | fs.map | 5 | 8 |
+| governance/33-common | fs.map | 2 | 4 |
+| governance/35-scripts | fs.map | 0 | 9 |
+| governance/36-modules | fs.map | 0 | 5 |
+| governance/37-behavior-contracts | fs.map | 0 | 15 |
+| governance/39-automation | fs.map | 2 | 13 |
+| governance/39-automation/coordinator | fs.map | 0 | 4 |
+| governance/39-automation/engines | fs.map | 0 | 4 |
+| governance/40-self-healing | fs.map | 5 | 4 |
+| governance/60-contracts | fs.map | 1 | 5 |
+| governance/70-audit | fs.map | 0 | 5 |
+| governance/80-feedback | fs.map | 0 | 5 |
+| governance/_legacy | fs.map | 1 | 3 |
+| governance/_legacy/20-information | fs.map | 0 | 3 |
+| governance/_scratch | fs.map | 0 | 4 |
+| governance/dimensions/81-auto-comment/scripts | fs.map | 0 | 8 |
+| governance/dimensions/82-stakeholder | fs.map | 0 | 14 |
+| governance/dimensions/99-metadata | fs.map | 3 | 8 |
+| governance/dimensions/99-naming-convention | fs.map | 3 | 6 |
+| governance/index | fs.map | 2 | 10 |
+| governance/scripts | fs.map | 0 | 9 |
+| home | fs.map | 17 | 3 |
+| home/chatops-assistant | fs.map | 0 | 2 |
+| home/config | fs.map | 19 | 44 |
+| home/config/agents | fs.map | 3 | 3 |
+| home/config/conftest | fs.map | 0 | 3 |
+| home/config/dev | fs.map | 6 | 28 |
+| home/config/etc | fs.map | 4 | 3 |
+| home/config/integrations | fs.map | 1 | 7 |
+| home/deploy | fs.map | 6 | 3 |
+| home/deploy/cloudflare/workers | fs.map | 1 | 4 |
+| home/deploy/deploy | fs.map | 4 | 3 |
+| home/docs | fs.map | 31 | 251 |
+| home/docs/api/examples | fs.map | 0 | 7 |
+| home/docs/architecture | fs.map | 3 | 34 |
+| home/docs/architecture/api-evolution | fs.map | 0 | 5 |
+| home/docs/architecture/configuration | fs.map | 6 | 6 |
+| home/docs/ci-cd | fs.map | 0 | 7 |
+| home/docs/evolution | fs.map | 0 | 6 |
+| home/docs/examples | fs.map | 2 | 4 |
+| home/docs/examples/configuration | fs.map | 6 | 6 |
+| home/docs/governance | fs.map | 0 | 21 |
+| home/docs/knowledge | fs.map | 0 | 5 |
+| home/docs/project-reports | fs.map | 0 | 53 |
+| home/docs/refactor_playbooks | fs.map | 6 | 20 |
+| home/docs/refactor_playbooks/01_deconstruction | fs.map | 1 | 6 |
+| home/docs/refactor_playbooks/02_integration | fs.map | 2 | 7 |
+| home/docs/refactor_playbooks/03_refactor | fs.map | 13 | 11 |
+| home/docs/reports/refactor-evolution | fs.map | 1 | 4 |
+| home/docs/scratch | fs.map | 0 | 4 |
+| home/docs/tutorials/namespace | fs.map | 4 | 4 |
+| home/ops | fs.map | 7 | 4 |
+| home/ops/governance | fs.map | 5 | 3 |
+| home/ops/ops | fs.map | 3 | 4 |
+| home/private/.github-private | fs.map | 3 | 2 |
+| home/projects | setup.py | 1 | 18 |
+| home/projects/chatops | fs.map | 17 | 39 |
+| home/projects/chatops/deploy | fs.map | 8 | 2 |
+| home/projects/chatops/proto | fs.map | 3 | 3 |
+| home/projects/chatops/scripts | fs.map | 13 | 29 |
+| home/projects/chatops/services | fs.map | 2 | 3 |
+| home/src | fs.map | 34 | 6 |
+| home/src/ai | fs.map | 4 | 7 |
+| home/src/ai/agents | fs.map | 13 | 5 |
+| home/src/apps | fs.map | 2 | 3 |
+| home/src/apps/_scratch | fs.map | 0 | 4 |
+| home/src/automation | fs.map | 4 | 5 |
+| home/src/automation/_scratch | fs.map | 0 | 4 |
+| home/src/automation/architect | fs.map | 8 | 6 |
+| home/src/automation/architecture-skeletons | fs.map | 0 | 5 |
+| home/src/automation/hyperautomation | fs.map | 4 | 5 |
+| home/src/autonomous | fs.map | 4 | 3 |
+| home/src/autonomous/agents | fs.map | 11 | 16 |
+| home/src/autonomous/core | fs.map | 0 | 3 |
+| home/src/autonomous/deployment | fs.map | 3 | 5 |
+| home/src/autonomous/infrastructure | fs.map | 12 | 4 |
+| home/src/bin | fs.map | 0 | 5 |
+| home/src/bridges | fs.map | 1 | 4 |
+| home/src/bridges/language-islands | fs.map | 1 | 10 |
+| home/src/business | fs.map | 0 | 7 |
+| home/src/canonical | fs.map | 0 | 5 |
+| home/src/contracts | fs.map | 0 | 4 |
+| home/src/core | fs.map | 26 | 13 |
+| home/src/core/_scratch | fs.map | 0 | 4 |
+| home/src/core/advisory-database | fs.map | 1 | 8 |
+| home/src/core/ai_constitution | fs.map | 0 | 9 |
+| home/src/core/ci_error_handler | fs.map | 0 | 7 |
+| home/src/core/cloud_agent_delegation | fs.map | 0 | 7 |
+| home/src/core/contract_service | fs.map | 2 | 3 |
+| home/src/core/contracts | fs.map | 2 | 4 |
+| home/src/core/engine | fs.map | 0 | 18 |
+| home/src/core/instant_generation | fs.map | 4 | 4 |
+| home/src/core/integrations | fs.map | 0 | 17 |
+| home/src/core/island_ai_runtime | fs.map | 0 | 10 |
+| home/src/core/main_system | fs.map | 0 | 7 |
+| home/src/core/monitoring | fs.map | 0 | 9 |
+| home/src/core/new | fs.map | 6 | 3 |
+| home/src/core/orchestrators | fs.map | 0 | 8 |
+| home/src/core/phase4 | fs.map | 7 | 3 |
+| home/src/core/plugins | fs.map | 14 | 4 |
+| home/src/core/project_factory | fs.map | 0 | 10 |
+| home/src/core/safety | fs.map | 0 | 14 |
+| home/src/core/slsa_provenance | fs.map | 1 | 7 |
+| home/src/core/tech_stack | fs.map | 0 | 7 |
+| home/src/core/training_system | fs.map | 0 | 6 |
+| home/src/core/validators | fs.map | 0 | 7 |
+| home/src/core/virtual_experts | fs.map | 0 | 6 |
+| home/src/core/yaml_module_system | fs.map | 0 | 9 |
+| home/src/docker-templates | fs.map | 0 | 5 |
+| home/src/enterprise | fs.map | 6 | 2 |
+| home/src/enterprise/data | fs.map | 0 | 6 |
+| home/src/enterprise/events | fs.map | 0 | 6 |
+| home/src/enterprise/execution | fs.map | 0 | 6 |
+| home/src/enterprise/iam | fs.map | 0 | 7 |
+| home/src/enterprise/integrations | fs.map | 0 | 5 |
+| home/src/enterprise/reliability | fs.map | 0 | 6 |
+| home/src/frontend/ui | fs.map | 7 | 14 |
+| home/src/governance | setup.py | 53 | 40 |
+| home/src/governance/00-vision-strategy | fs.map | 7 | 24 |
+| home/src/governance/01-architecture | fs.map | 2 | 14 |
+| home/src/governance/02-decision | fs.map | 1 | 14 |
+| home/src/governance/03-change | fs.map | 0 | 14 |
+| home/src/governance/04-risk | fs.map | 0 | 14 |
+| home/src/governance/05-compliance | fs.map | 2 | 14 |
+| home/src/governance/06-security | fs.map | 2 | 14 |
+| home/src/governance/07-audit | fs.map | 0 | 16 |
+| home/src/governance/08-process | fs.map | 0 | 14 |
+| home/src/governance/09-performance | fs.map | 3 | 14 |
+| home/src/governance/10-policy | fs.map | 1 | 6 |
+| home/src/governance/11-tools-systems | fs.map | 0 | 15 |
+| home/src/governance/12-culture-capability | fs.map | 0 | 13 |
+| home/src/governance/13-metrics-reporting | fs.map | 0 | 15 |
+| home/src/governance/14-improvement | fs.map | 0 | 15 |
+| home/src/governance/15-economic | fs.map | 2 | 4 |
+| home/src/governance/16-psychological | fs.map | 0 | 4 |
+| home/src/governance/17-sociological | fs.map | 0 | 4 |
+| home/src/governance/18-complex-system | fs.map | 0 | 4 |
+| home/src/governance/19-evolutionary | fs.map | 0 | 4 |
+| home/src/governance/20-intent | fs.map | 0 | 5 |
+| home/src/governance/21-ecological | fs.map | 0 | 4 |
+| home/src/governance/22-aesthetic | fs.map | 0 | 4 |
+| home/src/governance/23-policies | fs.map | 5 | 15 |
+| home/src/governance/24-registry | fs.map | 1 | 8 |
+| home/src/governance/29-docs | fs.map | 6 | 69 |
+| home/src/governance/30-agents | fs.map | 5 | 8 |
+| home/src/governance/33-common | fs.map | 2 | 4 |
+| home/src/governance/35-scripts | fs.map | 0 | 9 |
+| home/src/governance/36-modules | fs.map | 0 | 5 |
+| home/src/governance/37-behavior-contracts | fs.map | 0 | 15 |
+| home/src/governance/39-automation | fs.map | 2 | 13 |
+| home/src/governance/40-self-healing | fs.map | 5 | 4 |
+| home/src/governance/60-contracts | fs.map | 1 | 5 |
+| home/src/governance/70-audit | fs.map | 0 | 5 |
+| home/src/governance/80-feedback | fs.map | 0 | 5 |
+| home/src/governance/_legacy | fs.map | 1 | 3 |
+| home/src/governance/_scratch | fs.map | 0 | 4 |
+| home/src/governance/index | fs.map | 2 | 10 |
+| home/src/governance/scripts | fs.map | 0 | 9 |
+| home/src/mcp-servers | fs.map | 1 | 19 |
+| home/src/next_gen | fs.map | 1 | 3 |
+| home/src/next_gen/architecture | fs.map | 0 | 3 |
+| home/src/runtime | fs.map | 1 | 3 |
+| home/src/runtime/mind_matrix | fs.map | 0 | 5 |
+| home/src/scripts | fs.map | 15 | 10 |
+| home/src/services | fs.map | 10 | 9 |
+| home/src/services/_scratch | fs.map | 0 | 4 |
+| home/src/services/agents | fs.map | 7 | 4 |
+| home/src/services/api-gateway | fs.map | 1 | 8 |
+| home/src/services/mcp | fs.map | 1 | 10 |
+| home/src/services/scheduler | fs.map | 1 | 7 |
+| home/src/services/watchdog | fs.map | 0 | 5 |
+| home/src/shared | fs.map | 4 | 6 |
+| home/src/shared/config | fs.map | 0 | 4 |
+| home/src/shared/constants | fs.map | 0 | 4 |
+| home/src/shared/utils | fs.map | 0 | 4 |
+| home/src/supply-chain | fs.map | 1 | 3 |
+| home/src/tests | fs.map | 5 | 6 |
+| home/src/tooling | fs.map | 0 | 3 |
+| home/src/web/admin | fs.map | 5 | 9 |
+| home/src/代码圣殿 | fs.map | 8 | 3 |
+| home/src/代码圣殿/基础示例 | fs.map | 0 | 3 |
+| home/src/代码圣殿/故障排除 | fs.map | 0 | 3 |
+| home/src/代码圣殿/最佳实践 | fs.map | 0 | 3 |
+| home/src/代码圣殿/配置示例 | fs.map | 0 | 3 |
+| home/src/代码圣殿/集成示例 | fs.map | 0 | 3 |
+| home/src/代码圣殿/高级用法 | fs.map | 0 | 3 |
+| home/tests | fs.map | 5 | 9 |
+| home/tests/tests | fs.map | 4 | 9 |
+| sbin | fs.map | 0 | 2 |
+| tools | fs.map | 14 | 52 |
+| tools/_scratch | fs.map | 0 | 4 |
+| tools/ai | fs.map | 0 | 4 |
+| tools/automation | fs.map | 1 | 7 |
+| tools/automation/engines | fs.map | 0 | 8 |
+| tools/cli | fs.map | 2 | 8 |
+| tools/docs | fs.map | 0 | 11 |
+| tools/generators | fs.map | 0 | 8 |
+| tools/path_tools | fs.map | 0 | 7 |
+| tools/refactor | fs.map | 0 | 12 |
+| tools/scripts | fs.map | 3 | 20 |
+| usr | fs.map | 17 | 3 |
+| usr/chatops-assistant | fs.map | 0 | 2 |
+| usr/config | fs.map | 19 | 44 |
+| usr/config/agents | fs.map | 3 | 3 |
+| usr/config/conftest | fs.map | 0 | 3 |
+| usr/config/dev | fs.map | 6 | 28 |
+| usr/config/etc | fs.map | 4 | 3 |
+| usr/config/integrations | fs.map | 1 | 7 |
+| usr/deploy | fs.map | 6 | 3 |
+| usr/deploy/cloudflare/workers | fs.map | 1 | 4 |
+| usr/deploy/deploy | fs.map | 4 | 3 |
+| usr/docs | fs.map | 31 | 251 |
+| usr/docs/api/examples | fs.map | 0 | 7 |
+| usr/docs/architecture | fs.map | 3 | 34 |
+| usr/docs/architecture/api-evolution | fs.map | 0 | 5 |
+| usr/docs/architecture/configuration | fs.map | 6 | 6 |
+| usr/docs/ci-cd | fs.map | 0 | 7 |
+| usr/docs/evolution | fs.map | 0 | 6 |
+| usr/docs/examples | fs.map | 2 | 4 |
+| usr/docs/examples/configuration | fs.map | 6 | 6 |
+| usr/docs/governance | fs.map | 0 | 21 |
+| usr/docs/knowledge | fs.map | 0 | 5 |
+| usr/docs/project-reports | fs.map | 0 | 53 |
+| usr/docs/refactor_playbooks | fs.map | 6 | 20 |
+| usr/docs/refactor_playbooks/01_deconstruction | fs.map | 1 | 6 |
+| usr/docs/refactor_playbooks/02_integration | fs.map | 2 | 7 |
+| usr/docs/refactor_playbooks/03_refactor | fs.map | 13 | 11 |
+| usr/docs/reports/refactor-evolution | fs.map | 1 | 4 |
+| usr/docs/scratch | fs.map | 0 | 4 |
+| usr/docs/tutorials/namespace | fs.map | 4 | 4 |
+| usr/ops | fs.map | 7 | 4 |
+| usr/ops/governance | fs.map | 5 | 3 |
+| usr/ops/ops | fs.map | 3 | 4 |
+| usr/private/.github-private | fs.map | 3 | 2 |
+| usr/projects | setup.py | 1 | 18 |
+| usr/projects/chatops | fs.map | 17 | 39 |
+| usr/projects/chatops/deploy | fs.map | 8 | 2 |
+| usr/projects/chatops/proto | fs.map | 3 | 3 |
+| usr/projects/chatops/scripts | fs.map | 13 | 29 |
+| usr/projects/chatops/services | fs.map | 2 | 3 |
+| usr/src | fs.map | 34 | 6 |
+| usr/src/ai | fs.map | 4 | 7 |
+| usr/src/ai/agents | fs.map | 13 | 5 |
+| usr/src/apps | fs.map | 2 | 3 |
+| usr/src/apps/_scratch | fs.map | 0 | 4 |
+| usr/src/automation | fs.map | 4 | 5 |
+| usr/src/automation/_scratch | fs.map | 0 | 4 |
+| usr/src/automation/architect | fs.map | 8 | 6 |
+| usr/src/automation/architecture-skeletons | fs.map | 0 | 5 |
+| usr/src/automation/hyperautomation | fs.map | 4 | 5 |
+| usr/src/autonomous | fs.map | 4 | 3 |
+| usr/src/autonomous/agents | fs.map | 11 | 16 |
+| usr/src/autonomous/core | fs.map | 0 | 3 |
+| usr/src/autonomous/deployment | fs.map | 3 | 5 |
+| usr/src/autonomous/infrastructure | fs.map | 12 | 4 |
+| usr/src/bin | fs.map | 0 | 5 |
+| usr/src/bridges | fs.map | 1 | 4 |
+| usr/src/bridges/language-islands | fs.map | 1 | 10 |
+| usr/src/business | fs.map | 0 | 7 |
+| usr/src/canonical | fs.map | 0 | 5 |
+| usr/src/contracts | fs.map | 0 | 4 |
+| usr/src/core | fs.map | 26 | 13 |
+| usr/src/core/_scratch | fs.map | 0 | 4 |
+| usr/src/core/advisory-database | fs.map | 1 | 8 |
+| usr/src/core/ai_constitution | fs.map | 0 | 9 |
+| usr/src/core/ci_error_handler | fs.map | 0 | 7 |
+| usr/src/core/cloud_agent_delegation | fs.map | 0 | 7 |
+| usr/src/core/contract_service | fs.map | 2 | 3 |
+| usr/src/core/contracts | fs.map | 2 | 4 |
+| usr/src/core/engine | fs.map | 0 | 18 |
+| usr/src/core/instant_generation | fs.map | 4 | 4 |
+| usr/src/core/integrations | fs.map | 0 | 17 |
+| usr/src/core/island_ai_runtime | fs.map | 0 | 10 |
+| usr/src/core/main_system | fs.map | 0 | 7 |
+| usr/src/core/monitoring | fs.map | 0 | 9 |
+| usr/src/core/new | fs.map | 6 | 3 |
+| usr/src/core/orchestrators | fs.map | 0 | 8 |
+| usr/src/core/phase4 | fs.map | 7 | 3 |
+| usr/src/core/plugins | fs.map | 14 | 4 |
+| usr/src/core/project_factory | fs.map | 0 | 10 |
+| usr/src/core/safety | fs.map | 0 | 14 |
+| usr/src/core/slsa_provenance | fs.map | 1 | 7 |
+| usr/src/core/tech_stack | fs.map | 0 | 7 |
+| usr/src/core/training_system | fs.map | 0 | 6 |
+| usr/src/core/validators | fs.map | 0 | 7 |
+| usr/src/core/virtual_experts | fs.map | 0 | 6 |
+| usr/src/core/yaml_module_system | fs.map | 0 | 9 |
+| usr/src/docker-templates | fs.map | 0 | 5 |
+| usr/src/enterprise | fs.map | 6 | 2 |
+| usr/src/enterprise/data | fs.map | 0 | 6 |
+| usr/src/enterprise/events | fs.map | 0 | 6 |
+| usr/src/enterprise/execution | fs.map | 0 | 6 |
+| usr/src/enterprise/iam | fs.map | 0 | 7 |
+| usr/src/enterprise/integrations | fs.map | 0 | 5 |
+| usr/src/enterprise/reliability | fs.map | 0 | 6 |
+| usr/src/frontend/ui | fs.map | 7 | 14 |
+| usr/src/governance | setup.py | 53 | 40 |
+| usr/src/governance/00-vision-strategy | fs.map | 7 | 24 |
+| usr/src/governance/01-architecture | fs.map | 2 | 14 |
+| usr/src/governance/02-decision | fs.map | 1 | 14 |
+| usr/src/governance/03-change | fs.map | 0 | 14 |
+| usr/src/governance/04-risk | fs.map | 0 | 14 |
+| usr/src/governance/05-compliance | fs.map | 2 | 14 |
+| usr/src/governance/06-security | fs.map | 2 | 14 |
+| usr/src/governance/07-audit | fs.map | 0 | 16 |
+| usr/src/governance/08-process | fs.map | 0 | 14 |
+| usr/src/governance/09-performance | fs.map | 3 | 14 |
+| usr/src/governance/10-policy | fs.map | 1 | 6 |
+| usr/src/governance/11-tools-systems | fs.map | 0 | 15 |
+| usr/src/governance/12-culture-capability | fs.map | 0 | 13 |
+| usr/src/governance/13-metrics-reporting | fs.map | 0 | 15 |
+| usr/src/governance/14-improvement | fs.map | 0 | 15 |
+| usr/src/governance/15-economic | fs.map | 2 | 4 |
+| usr/src/governance/16-psychological | fs.map | 0 | 4 |
+| usr/src/governance/17-sociological | fs.map | 0 | 4 |
+| usr/src/governance/18-complex-system | fs.map | 0 | 4 |
+| usr/src/governance/19-evolutionary | fs.map | 0 | 4 |
+| usr/src/governance/20-intent | fs.map | 0 | 5 |
+| usr/src/governance/21-ecological | fs.map | 0 | 4 |
+| usr/src/governance/22-aesthetic | fs.map | 0 | 4 |
+| usr/src/governance/23-policies | fs.map | 5 | 15 |
+| usr/src/governance/24-registry | fs.map | 1 | 8 |
+| usr/src/governance/29-docs | fs.map | 6 | 69 |
+| usr/src/governance/30-agents | fs.map | 5 | 8 |
+| usr/src/governance/33-common | fs.map | 2 | 4 |
+| usr/src/governance/35-scripts | fs.map | 0 | 9 |
+| usr/src/governance/36-modules | fs.map | 0 | 5 |
+| usr/src/governance/37-behavior-contracts | fs.map | 0 | 15 |
+| usr/src/governance/39-automation | fs.map | 2 | 13 |
+| usr/src/governance/40-self-healing | fs.map | 5 | 4 |
+| usr/src/governance/60-contracts | fs.map | 1 | 5 |
+| usr/src/governance/70-audit | fs.map | 0 | 5 |
+| usr/src/governance/80-feedback | fs.map | 0 | 5 |
+| usr/src/governance/_legacy | fs.map | 1 | 3 |
+| usr/src/governance/_scratch | fs.map | 0 | 4 |
+| usr/src/governance/index | fs.map | 2 | 10 |
+| usr/src/governance/scripts | fs.map | 0 | 9 |
+| usr/src/mcp-servers | fs.map | 1 | 19 |
+| usr/src/next_gen | fs.map | 1 | 3 |
+| usr/src/next_gen/architecture | fs.map | 0 | 3 |
+| usr/src/runtime | fs.map | 1 | 3 |
+| usr/src/runtime/mind_matrix | fs.map | 0 | 5 |
+| usr/src/scripts | fs.map | 15 | 10 |
+| usr/src/services | fs.map | 10 | 9 |
+| usr/src/services/_scratch | fs.map | 0 | 4 |
+| usr/src/services/agents | fs.map | 7 | 4 |
+| usr/src/services/api-gateway | fs.map | 1 | 8 |
+| usr/src/services/mcp | fs.map | 1 | 10 |
+| usr/src/services/scheduler | fs.map | 1 | 7 |
+| usr/src/services/watchdog | fs.map | 0 | 5 |
+| usr/src/shared | fs.map | 4 | 6 |
+| usr/src/shared/config | fs.map | 0 | 4 |
+| usr/src/shared/constants | fs.map | 0 | 4 |
+| usr/src/shared/utils | fs.map | 0 | 4 |
+| usr/src/supply-chain | fs.map | 1 | 3 |
+| usr/src/tests | fs.map | 5 | 6 |
+| usr/src/tooling | fs.map | 0 | 3 |
+| usr/src/web/admin | fs.map | 5 | 9 |
+| usr/src/代码圣殿 | fs.map | 8 | 3 |
+| usr/src/代码圣殿/基础示例 | fs.map | 0 | 3 |
+| usr/src/代码圣殿/故障排除 | fs.map | 0 | 3 |
+| usr/src/代码圣殿/最佳实践 | fs.map | 0 | 3 |
+| usr/src/代码圣殿/配置示例 | fs.map | 0 | 3 |
+| usr/src/代码圣殿/集成示例 | fs.map | 0 | 3 |
+| usr/src/代码圣殿/高级用法 | fs.map | 0 | 3 |
+| usr/tests | fs.map | 5 | 9 |
+| usr/tests/tests | fs.map | 4 | 9 |
+| web | force_module | 3 | 10 |
+| web/agentic-ai | fs.map | 0 | 4 |
+| workspace | force_module | 28 | 39 |
+| workspace/chatops-assistant | fs.map | 0 | 2 |
+| workspace/cloudflare/workers | fs.map | 1 | 9 |
+| workspace/config | force_module | 19 | 44 |
+| workspace/config/agents | fs.map | 3 | 3 |
+| workspace/config/conftest | fs.map | 0 | 3 |
+| workspace/config/dev | fs.map | 6 | 28 |
+| workspace/config/etc | fs.map | 4 | 3 |
+| workspace/config/integrations | fs.map | 1 | 7 |
+| workspace/deploy | fs.map | 6 | 3 |
+| workspace/deploy/cloudflare/workers | fs.map | 1 | 4 |
+| workspace/deploy/deploy | fs.map | 4 | 3 |
+| workspace/docs | force_module | 31 | 251 |
+| workspace/docs/api/examples | fs.map | 0 | 7 |
+| workspace/docs/architecture | fs.map | 3 | 34 |
+| workspace/docs/architecture/api-evolution | fs.map | 0 | 5 |
+| workspace/docs/architecture/configuration | fs.map | 6 | 6 |
+| workspace/docs/ci-cd | fs.map | 0 | 7 |
+| workspace/docs/evolution | fs.map | 0 | 6 |
+| workspace/docs/examples | fs.map | 2 | 4 |
+| workspace/docs/examples/configuration | fs.map | 6 | 6 |
+| workspace/docs/governance | fs.map | 0 | 21 |
+| workspace/docs/knowledge | fs.map | 0 | 5 |
+| workspace/docs/project-reports | fs.map | 0 | 53 |
+| workspace/docs/refactor_playbooks | fs.map | 6 | 20 |
+| workspace/docs/refactor_playbooks/01_deconstruction | fs.map | 1 | 6 |
+| workspace/docs/refactor_playbooks/02_integration | fs.map | 2 | 7 |
+| workspace/docs/refactor_playbooks/03_refactor | fs.map | 13 | 11 |
+| workspace/docs/reports/refactor-evolution | fs.map | 1 | 4 |
+| workspace/docs/scratch | fs.map | 0 | 4 |
+| workspace/docs/tutorials/namespace | fs.map | 4 | 4 |
+| workspace/engine/chatops | fs.map | 2 | 3 |
+| workspace/engine/chatops/engine-python | fs.map | 3 | 4 |
+| workspace/engine/chatops/gateway-ts | fs.map | 1 | 4 |
+| workspace/engine/config-manager | fs.map | 1 | 2 |
+| workspace/engine/machinenativenops-auto-monitor | setup.py | 3 | 6 |
+| workspace/examples | fs.map | 4 | 4 |
+| workspace/examples/debug-examples | fs.map | 0 | 6 |
+| workspace/governance | fs.map | 5 | 3 |
+| workspace/ops | fs.map | 7 | 4 |
+| workspace/ops/governance | fs.map | 5 | 3 |
+| workspace/ops/ops | fs.map | 3 | 4 |
+| workspace/private/.github-private | fs.map | 3 | 2 |
+| workspace/projects | setup.py | 1 | 18 |
+| workspace/projects/chatops | fs.map | 17 | 39 |
+| workspace/projects/chatops/deploy | fs.map | 8 | 2 |
+| workspace/projects/chatops/proto | fs.map | 3 | 3 |
+| workspace/projects/chatops/scripts | fs.map | 13 | 29 |
+| workspace/projects/chatops/services | fs.map | 2 | 3 |
+| workspace/scripts | fs.map | 16 | 10 |
+| workspace/scripts/chatops | fs.map | 13 | 29 |
+| workspace/scripts/ops/migration | fs.map | 2 | 5 |
+| workspace/src | force_module | 34 | 6 |
+| workspace/src/ai | fs.map | 4 | 7 |
+| workspace/src/ai/agents | fs.map | 13 | 5 |
+| workspace/src/apps | fs.map | 2 | 3 |
+| workspace/src/apps/_scratch | fs.map | 0 | 4 |
+| workspace/src/automation | fs.map | 4 | 5 |
+| workspace/src/automation/_scratch | fs.map | 0 | 4 |
+| workspace/src/automation/architect | fs.map | 8 | 6 |
+| workspace/src/automation/architecture-skeletons | fs.map | 0 | 5 |
+| workspace/src/automation/hyperautomation | fs.map | 4 | 5 |
+| workspace/src/autonomous | fs.map | 4 | 3 |
+| workspace/src/autonomous/agents | fs.map | 11 | 16 |
+| workspace/src/autonomous/core | fs.map | 0 | 3 |
+| workspace/src/autonomous/deployment | fs.map | 3 | 5 |
+| workspace/src/autonomous/infrastructure | fs.map | 12 | 4 |
+| workspace/src/bin | fs.map | 0 | 5 |
+| workspace/src/bridges | fs.map | 1 | 4 |
+| workspace/src/bridges/language-islands | fs.map | 1 | 10 |
+| workspace/src/business | fs.map | 0 | 7 |
+| workspace/src/canonical | fs.map | 0 | 5 |
+| workspace/src/contracts | fs.map | 0 | 4 |
+| workspace/src/core | fs.map | 26 | 13 |
+| workspace/src/core/_scratch | fs.map | 0 | 4 |
+| workspace/src/core/advisory-database | fs.map | 1 | 8 |
+| workspace/src/core/ai_constitution | fs.map | 0 | 9 |
+| workspace/src/core/ci_error_handler | fs.map | 0 | 7 |
+| workspace/src/core/cloud_agent_delegation | fs.map | 0 | 7 |
+| workspace/src/core/contract_service | fs.map | 2 | 3 |
+| workspace/src/core/contracts | fs.map | 2 | 4 |
+| workspace/src/core/engine | fs.map | 0 | 18 |
+| workspace/src/core/instant_generation | fs.map | 4 | 4 |
+| workspace/src/core/integrations | fs.map | 0 | 17 |
+| workspace/src/core/island_ai_runtime | fs.map | 0 | 10 |
+| workspace/src/core/main_system | fs.map | 0 | 7 |
+| workspace/src/core/monitoring | fs.map | 0 | 9 |
+| workspace/src/core/new | fs.map | 6 | 3 |
+| workspace/src/core/orchestrators | fs.map | 0 | 8 |
+| workspace/src/core/phase4 | fs.map | 7 | 3 |
+| workspace/src/core/plugins | fs.map | 14 | 4 |
+| workspace/src/core/project_factory | fs.map | 0 | 10 |
+| workspace/src/core/safety | fs.map | 0 | 14 |
+| workspace/src/core/slsa_provenance | fs.map | 1 | 7 |
+| workspace/src/core/tech_stack | fs.map | 0 | 7 |
+| workspace/src/core/training_system | fs.map | 0 | 6 |
+| workspace/src/core/validators | fs.map | 0 | 7 |
+| workspace/src/core/virtual_experts | fs.map | 0 | 6 |
+| workspace/src/core/yaml_module_system | fs.map | 0 | 9 |
+| workspace/src/docker-templates | fs.map | 0 | 5 |
+| workspace/src/enterprise | fs.map | 6 | 2 |
+| workspace/src/enterprise/data | fs.map | 0 | 6 |
+| workspace/src/enterprise/events | fs.map | 0 | 6 |
+| workspace/src/enterprise/execution | fs.map | 0 | 6 |
+| workspace/src/enterprise/iam | fs.map | 0 | 7 |
+| workspace/src/enterprise/integrations | fs.map | 0 | 5 |
+| workspace/src/enterprise/reliability | fs.map | 0 | 6 |
+| workspace/src/frontend/ui | fs.map | 7 | 14 |
+| workspace/src/governance | setup.py | 53 | 40 |
+| workspace/src/governance/00-vision-strategy | fs.map | 7 | 24 |
+| workspace/src/governance/01-architecture | fs.map | 2 | 14 |
+| workspace/src/governance/02-decision | fs.map | 1 | 14 |
+| workspace/src/governance/03-change | fs.map | 0 | 14 |
+| workspace/src/governance/04-risk | fs.map | 0 | 14 |
+| workspace/src/governance/05-compliance | fs.map | 2 | 14 |
+| workspace/src/governance/06-security | fs.map | 2 | 14 |
+| workspace/src/governance/07-audit | fs.map | 0 | 16 |
+| workspace/src/governance/08-process | fs.map | 0 | 14 |
+| workspace/src/governance/09-performance | fs.map | 3 | 14 |
+| workspace/src/governance/10-policy | fs.map | 1 | 6 |
+| workspace/src/governance/11-tools-systems | fs.map | 0 | 15 |
+| workspace/src/governance/12-culture-capability | fs.map | 0 | 13 |
+| workspace/src/governance/13-metrics-reporting | fs.map | 0 | 15 |
+| workspace/src/governance/14-improvement | fs.map | 0 | 15 |
+| workspace/src/governance/15-economic | fs.map | 2 | 4 |
+| workspace/src/governance/16-psychological | fs.map | 0 | 4 |
+| workspace/src/governance/17-sociological | fs.map | 0 | 4 |
+| workspace/src/governance/18-complex-system | fs.map | 0 | 4 |
+| workspace/src/governance/19-evolutionary | fs.map | 0 | 4 |
+| workspace/src/governance/20-intent | fs.map | 0 | 5 |
+| workspace/src/governance/21-ecological | fs.map | 0 | 4 |
+| workspace/src/governance/22-aesthetic | fs.map | 0 | 4 |
+| workspace/src/governance/23-policies | fs.map | 5 | 15 |
+| workspace/src/governance/24-registry | fs.map | 1 | 8 |
+| workspace/src/governance/29-docs | fs.map | 6 | 69 |
+| workspace/src/governance/30-agents | fs.map | 5 | 8 |
+| workspace/src/governance/33-common | fs.map | 2 | 4 |
+| workspace/src/governance/35-scripts | fs.map | 0 | 9 |
+| workspace/src/governance/36-modules | fs.map | 0 | 5 |
+| workspace/src/governance/37-behavior-contracts | fs.map | 0 | 15 |
+| workspace/src/governance/39-automation | fs.map | 2 | 13 |
+| workspace/src/governance/40-self-healing | fs.map | 5 | 4 |
+| workspace/src/governance/60-contracts | fs.map | 1 | 5 |
+| workspace/src/governance/70-audit | fs.map | 0 | 5 |
+| workspace/src/governance/80-feedback | fs.map | 0 | 5 |
+| workspace/src/governance/_legacy | fs.map | 1 | 3 |
+| workspace/src/governance/_scratch | fs.map | 0 | 4 |
+| workspace/src/governance/index | fs.map | 2 | 10 |
+| workspace/src/governance/scripts | fs.map | 0 | 9 |
+| workspace/src/mcp-servers | fs.map | 1 | 19 |
+| workspace/src/next_gen | fs.map | 1 | 3 |
+| workspace/src/next_gen/architecture | fs.map | 0 | 3 |
+| workspace/src/runtime | fs.map | 1 | 3 |
+| workspace/src/runtime/mind_matrix | fs.map | 0 | 5 |
+| workspace/src/scripts | fs.map | 15 | 10 |
+| workspace/src/services | fs.map | 10 | 9 |
+| workspace/src/services/_scratch | fs.map | 0 | 4 |
+| workspace/src/services/agents | fs.map | 7 | 4 |
+| workspace/src/services/api-gateway | fs.map | 1 | 8 |
+| workspace/src/services/mcp | fs.map | 1 | 10 |
+| workspace/src/services/scheduler | fs.map | 1 | 7 |
+| workspace/src/services/watchdog | fs.map | 0 | 5 |
+| workspace/src/shared | fs.map | 4 | 6 |
+| workspace/src/shared/config | fs.map | 0 | 4 |
+| workspace/src/shared/constants | fs.map | 0 | 4 |
+| workspace/src/shared/utils | fs.map | 0 | 4 |
+| workspace/src/supply-chain | fs.map | 1 | 3 |
+| workspace/src/tests | fs.map | 5 | 6 |
+| workspace/src/tooling | fs.map | 0 | 3 |
+| workspace/src/web/admin | fs.map | 5 | 9 |
+| workspace/src/代码圣殿 | fs.map | 8 | 3 |
+| workspace/src/代码圣殿/基础示例 | fs.map | 0 | 3 |
+| workspace/src/代码圣殿/故障排除 | fs.map | 0 | 3 |
+| workspace/src/代码圣殿/最佳实践 | fs.map | 0 | 3 |
+| workspace/src/代码圣殿/配置示例 | fs.map | 0 | 3 |
+| workspace/src/代码圣殿/集成示例 | fs.map | 0 | 3 |
+| workspace/src/代码圣殿/高级用法 | fs.map | 0 | 3 |
+| workspace/teams | fs.map | 1 | 3 |
+| workspace/teams/default-team/orchestrator | fs.map | 7 | 14 |
+| workspace/tests | fs.map | 5 | 9 |
+| workspace/tests/tests | fs.map | 4 | 9 |
+| workspace/tools | fs.map | 14 | 52 |
+| workspace/tools/_scratch | fs.map | 0 | 4 |
+| workspace/tools/ai | fs.map | 0 | 4 |
+| workspace/tools/automation | fs.map | 1 | 7 |
+| workspace/tools/automation/engines | fs.map | 0 | 8 |
+| workspace/tools/cli | fs.map | 2 | 8 |
+| workspace/tools/docs | fs.map | 0 | 11 |
+| workspace/tools/generators | fs.map | 0 | 8 |
+| workspace/tools/path_tools | fs.map | 0 | 7 |
+| workspace/tools/refactor | fs.map | 0 | 12 |
+| workspace/tools/scripts | fs.map | 3 | 20 |
+
+## Generated fs.map Files
+
+| File | Entries |
+|------|---------|
+| .github/code-scanning/fs.map | 2 |
+| .github/private/fs.map | 4 |
+| .github/profile/fs.map | 1 |
+| .github/scripts/fs.map | 2 |
+| bin/fs.map | 1 |
+| chatops/apps/auto-fix-bot/fs.map | 2 |
+| chatops/apps/my-app/fs.map | 4 |
+| chatops/deploy/fs.map | 20 |
+| chatops/deploy/kubernetes/external-secrets/fs.map | 1 |
+| chatops/deploy/ops/fs.map | 5 |
+| chatops/deploy/ops/on-call/fs.map | 1 |
+| chatops/deploy/terraform/fs.map | 3 |
+| chatops/docs/api/fs.map | 2 |
+| chatops/fs.map | 118 |
+| chatops/proto/fs.map | 6 |
+| chatops/scripts/fs.map | 15 |
+| chatops/scripts/naming/playbook/fs.map | 1 |
+| chatops/services/engine-python/engine/fs.map | 1 |
+| chatops/services/engine-python/fs.map | 4 |
+| chatops/services/engine-python/src/fs.map | 1 |
+| chatops/services/engine-python/tests/fs.map | 1 |
+| chatops/services/fs.map | 7 |
+| chatops/services/gateway-ts/fs.map | 2 |
+| chatops/tests/e2e/contract/fs.map | 1 |
+| chatops/tests/e2e/fs.map | 4 |
+| chatops/tests/e2e/load/fs.map | 1 |
+| chatops/tests/policy/fs.map | 1 |
+| controlplane/fs.map | 14 |
+| docs/fs.map | 1 |
+| engine/chatops/engine-python/engine/fs.map | 1 |
+| engine/chatops/engine-python/fs.map | 4 |
+| engine/chatops/engine-python/src/fs.map | 1 |
+| engine/chatops/engine-python/tests/fs.map | 1 |
+| engine/chatops/fs.map | 7 |
+| engine/chatops/gateway-ts/fs.map | 2 |
+| engine/config-manager/fs.map | 3 |
+| engine/config-manager/src/config_manager/fs.map | 1 |
+| engine/machinenativenops-auto-monitor/fs.map | 7 |
+| engine/machinenativenops-auto-monitor/src/machinenativenops_auto_monitor/fs.map | 1 |
+| etc/fs.map | 1 |
+| governance/00-vision-strategy/fs.map | 10 |
+| governance/01-architecture/fs.map | 3 |
+| governance/02-decision/fs.map | 4 |
+| governance/03-change/fs.map | 1 |
+| governance/04-risk/fs.map | 1 |
+| governance/05-compliance/fs.map | 3 |
+| governance/06-security/fs.map | 3 |
+| governance/07-audit/fs.map | 1 |
+| governance/08-process/fs.map | 1 |
+| governance/09-performance/fs.map | 6 |
+| governance/10-policy/fs.map | 2 |
+| governance/11-tools-systems/fs.map | 1 |
+| governance/12-culture-capability/fs.map | 1 |
+| governance/13-metrics-reporting/fs.map | 1 |
+| governance/14-improvement/fs.map | 1 |
+| governance/15-economic/fs.map | 3 |
+| governance/16-psychological/fs.map | 1 |
+| governance/17-sociological/fs.map | 1 |
+| governance/18-complex-system/fs.map | 1 |
+| governance/19-evolutionary/fs.map | 1 |
+| governance/20-intent/fs.map | 1 |
+| governance/21-ecological/fs.map | 1 |
+| governance/22-aesthetic/fs.map | 1 |
+| governance/23-policies/conftest/matechat-integration/fs.map | 1 |
+| governance/23-policies/fs.map | 7 |
+| governance/24-registry/fs.map | 2 |
+| governance/28-tests/e2e/fs.map | 1 |
+| governance/28-tests/integration/fs.map | 1 |
+| governance/28-tests/unit/fs.map | 1 |
+| governance/29-docs/fs.map | 9 |
+| governance/30-agents/fs.map | 6 |
+| governance/33-common/fs.map | 3 |
+| governance/35-scripts/fs.map | 1 |
+| governance/36-modules/fs.map | 1 |
+| governance/37-behavior-contracts/fs.map | 1 |
+| governance/39-automation/coordinator/fs.map | 1 |
+| governance/39-automation/engines/fs.map | 1 |
+| governance/39-automation/fs.map | 3 |
+| governance/40-self-healing/fs.map | 6 |
+| governance/60-contracts/fs.map | 3 |
+| governance/70-audit/fs.map | 1 |
+| governance/80-feedback/fs.map | 1 |
+| governance/_legacy/20-information/fs.map | 1 |
+| governance/_legacy/fs.map | 2 |
+| governance/_scratch/fs.map | 1 |
+| governance/dimensions/81-auto-comment/scripts/fs.map | 1 |
+| governance/dimensions/82-stakeholder/fs.map | 1 |
+| governance/dimensions/99-metadata/fs.map | 4 |
+| governance/dimensions/99-naming-convention/fs.map | 4 |
+| governance/fs.map | 305 |
+| governance/index/fs.map | 3 |
+| governance/scripts/fs.map | 1 |
+| home/chatops-assistant/fs.map | 1 |
+| home/config/agents/fs.map | 4 |
+| home/config/conftest/fs.map | 1 |
+| home/config/dev/fs.map | 7 |
+| home/config/etc/fs.map | 5 |
+| home/config/fs.map | 49 |
+| home/config/integrations/fs.map | 2 |
+| home/deploy/cloudflare/workers/fs.map | 1 |
+| home/deploy/deploy/fs.map | 5 |
+| home/deploy/fs.map | 21 |
+| home/docs/api/examples/fs.map | 1 |
+| home/docs/architecture/api-evolution/fs.map | 1 |
+| home/docs/architecture/configuration/fs.map | 1 |
+| home/docs/architecture/fs.map | 4 |
+| home/docs/ci-cd/fs.map | 1 |
+| home/docs/evolution/fs.map | 1 |
+| home/docs/examples/configuration/fs.map | 1 |
+| home/docs/examples/fs.map | 3 |
+| home/docs/fs.map | 65 |
+| home/docs/governance/fs.map | 1 |
+| home/docs/knowledge/fs.map | 1 |
+| home/docs/project-reports/fs.map | 1 |
+| home/docs/refactor_playbooks/01_deconstruction/fs.map | 1 |
+| home/docs/refactor_playbooks/02_integration/fs.map | 1 |
+| home/docs/refactor_playbooks/03_refactor/fs.map | 1 |
+| home/docs/refactor_playbooks/fs.map | 7 |
+| home/docs/reports/refactor-evolution/fs.map | 1 |
+| home/docs/scratch/fs.map | 1 |
+| home/docs/tutorials/namespace/fs.map | 1 |
+| home/fs.map | 435 |
+| home/ops/fs.map | 21 |
+| home/ops/governance/fs.map | 6 |
+| home/ops/ops/fs.map | 4 |
+| home/private/.github-private/fs.map | 4 |
+| home/projects/chatops/deploy/fs.map | 1 |
+| home/projects/chatops/fs.map | 18 |
+| home/projects/chatops/proto/fs.map | 1 |
+| home/projects/chatops/scripts/fs.map | 1 |
+| home/projects/chatops/services/fs.map | 1 |
+| home/projects/fs.map | 19 |
+| home/src/ai/agents/fs.map | 1 |
+| home/src/ai/fs.map | 5 |
+| home/src/apps/_scratch/fs.map | 1 |
+| home/src/apps/fs.map | 3 |
+| home/src/automation/_scratch/fs.map | 1 |
+| home/src/automation/architect/fs.map | 1 |
+| home/src/automation/architecture-skeletons/fs.map | 1 |
+| home/src/automation/fs.map | 5 |
+| home/src/automation/hyperautomation/fs.map | 1 |
+| home/src/autonomous/agents/fs.map | 1 |
+| home/src/autonomous/core/fs.map | 1 |
+| home/src/autonomous/deployment/fs.map | 1 |
+| home/src/autonomous/fs.map | 5 |
+| home/src/autonomous/infrastructure/fs.map | 1 |
+| home/src/bin/fs.map | 1 |
+| home/src/bridges/fs.map | 2 |
+| home/src/bridges/language-islands/fs.map | 1 |
+| home/src/business/fs.map | 1 |
+| home/src/canonical/fs.map | 1 |
+| home/src/contracts/fs.map | 1 |
+| home/src/core/_scratch/fs.map | 1 |
+| home/src/core/advisory-database/fs.map | 1 |
+| home/src/core/ai_constitution/fs.map | 1 |
+| home/src/core/ci_error_handler/fs.map | 1 |
+| home/src/core/cloud_agent_delegation/fs.map | 1 |
+| home/src/core/contract_service/fs.map | 1 |
+| home/src/core/contracts/fs.map | 1 |
+| home/src/core/engine/fs.map | 1 |
+| home/src/core/fs.map | 27 |
+| home/src/core/instant_generation/fs.map | 1 |
+| home/src/core/integrations/fs.map | 1 |
+| home/src/core/island_ai_runtime/fs.map | 1 |
+| home/src/core/main_system/fs.map | 1 |
+| home/src/core/monitoring/fs.map | 1 |
+| home/src/core/new/fs.map | 1 |
+| home/src/core/orchestrators/fs.map | 1 |
+| home/src/core/phase4/fs.map | 1 |
+| home/src/core/plugins/fs.map | 1 |
+| home/src/core/project_factory/fs.map | 1 |
+| home/src/core/safety/fs.map | 1 |
+| home/src/core/slsa_provenance/fs.map | 1 |
+| home/src/core/tech_stack/fs.map | 1 |
+| home/src/core/training_system/fs.map | 1 |
+| home/src/core/validators/fs.map | 1 |
+| home/src/core/virtual_experts/fs.map | 1 |
+| home/src/core/yaml_module_system/fs.map | 1 |
+| home/src/docker-templates/fs.map | 1 |
+| home/src/enterprise/data/fs.map | 1 |
+| home/src/enterprise/events/fs.map | 1 |
+| home/src/enterprise/execution/fs.map | 1 |
+| home/src/enterprise/fs.map | 7 |
+| home/src/enterprise/iam/fs.map | 1 |
+| home/src/enterprise/integrations/fs.map | 1 |
+| home/src/enterprise/reliability/fs.map | 1 |
+| home/src/frontend/ui/fs.map | 1 |
+| home/src/fs.map | 214 |
+| home/src/governance/00-vision-strategy/fs.map | 1 |
+| home/src/governance/01-architecture/fs.map | 1 |
+| home/src/governance/02-decision/fs.map | 1 |
+| home/src/governance/03-change/fs.map | 1 |
+| home/src/governance/04-risk/fs.map | 1 |
+| home/src/governance/05-compliance/fs.map | 1 |
+| home/src/governance/06-security/fs.map | 1 |
+| home/src/governance/07-audit/fs.map | 1 |
+| home/src/governance/08-process/fs.map | 1 |
+| home/src/governance/09-performance/fs.map | 1 |
+| home/src/governance/10-policy/fs.map | 1 |
+| home/src/governance/11-tools-systems/fs.map | 1 |
+| home/src/governance/12-culture-capability/fs.map | 1 |
+| home/src/governance/13-metrics-reporting/fs.map | 1 |
+| home/src/governance/14-improvement/fs.map | 1 |
+| home/src/governance/15-economic/fs.map | 1 |
+| home/src/governance/16-psychological/fs.map | 1 |
+| home/src/governance/17-sociological/fs.map | 1 |
+| home/src/governance/18-complex-system/fs.map | 1 |
+| home/src/governance/19-evolutionary/fs.map | 1 |
+| home/src/governance/20-intent/fs.map | 1 |
+| home/src/governance/21-ecological/fs.map | 1 |
+| home/src/governance/22-aesthetic/fs.map | 1 |
+| home/src/governance/23-policies/fs.map | 1 |
+| home/src/governance/24-registry/fs.map | 1 |
+| home/src/governance/29-docs/fs.map | 1 |
+| home/src/governance/30-agents/fs.map | 1 |
+| home/src/governance/33-common/fs.map | 1 |
+| home/src/governance/35-scripts/fs.map | 1 |
+| home/src/governance/36-modules/fs.map | 1 |
+| home/src/governance/37-behavior-contracts/fs.map | 1 |
+| home/src/governance/39-automation/fs.map | 1 |
+| home/src/governance/40-self-healing/fs.map | 1 |
+| home/src/governance/60-contracts/fs.map | 1 |
+| home/src/governance/70-audit/fs.map | 1 |
+| home/src/governance/80-feedback/fs.map | 1 |
+| home/src/governance/_legacy/fs.map | 1 |
+| home/src/governance/_scratch/fs.map | 1 |
+| home/src/governance/fs.map | 54 |
+| home/src/governance/index/fs.map | 1 |
+| home/src/governance/scripts/fs.map | 1 |
+| home/src/mcp-servers/fs.map | 2 |
+| home/src/next_gen/architecture/fs.map | 1 |
+| home/src/next_gen/fs.map | 2 |
+| home/src/runtime/fs.map | 2 |
+| home/src/runtime/mind_matrix/fs.map | 1 |
+| home/src/scripts/fs.map | 16 |
+| home/src/services/_scratch/fs.map | 1 |
+| home/src/services/agents/fs.map | 1 |
+| home/src/services/api-gateway/fs.map | 1 |
+| home/src/services/fs.map | 11 |
+| home/src/services/mcp/fs.map | 1 |
+| home/src/services/scheduler/fs.map | 1 |
+| home/src/services/watchdog/fs.map | 1 |
+| home/src/shared/config/fs.map | 1 |
+| home/src/shared/constants/fs.map | 1 |
+| home/src/shared/fs.map | 5 |
+| home/src/shared/utils/fs.map | 1 |
+| home/src/supply-chain/fs.map | 2 |
+| home/src/tests/fs.map | 6 |
+| home/src/tooling/fs.map | 1 |
+| home/src/web/admin/fs.map | 1 |
+| home/src/代码圣殿/fs.map | 9 |
+| home/src/代码圣殿/基础示例/fs.map | 1 |
+| home/src/代码圣殿/故障排除/fs.map | 1 |
+| home/src/代码圣殿/最佳实践/fs.map | 1 |
+| home/src/代码圣殿/配置示例/fs.map | 1 |
+| home/src/代码圣殿/集成示例/fs.map | 1 |
+| home/src/代码圣殿/高级用法/fs.map | 1 |
+| home/tests/fs.map | 19 |
+| home/tests/tests/fs.map | 5 |
+| root.fs.map | 1 |
+| sbin/fs.map | 1 |
+| tools/_scratch/fs.map | 1 |
+| tools/ai/fs.map | 1 |
+| tools/automation/engines/fs.map | 1 |
+| tools/automation/fs.map | 2 |
+| tools/cli/fs.map | 3 |
+| tools/docs/fs.map | 1 |
+| tools/fs.map | 25 |
+| tools/generators/fs.map | 1 |
+| tools/path_tools/fs.map | 1 |
+| tools/refactor/fs.map | 1 |
+| tools/scripts/fs.map | 4 |
+| usr/chatops-assistant/fs.map | 1 |
+| usr/config/agents/fs.map | 4 |
+| usr/config/conftest/fs.map | 1 |
+| usr/config/dev/fs.map | 7 |
+| usr/config/etc/fs.map | 5 |
+| usr/config/fs.map | 49 |
+| usr/config/integrations/fs.map | 2 |
+| usr/deploy/cloudflare/workers/fs.map | 1 |
+| usr/deploy/deploy/fs.map | 5 |
+| usr/deploy/fs.map | 21 |
+| usr/docs/api/examples/fs.map | 1 |
+| usr/docs/architecture/api-evolution/fs.map | 1 |
+| usr/docs/architecture/configuration/fs.map | 1 |
+| usr/docs/architecture/fs.map | 4 |
+| usr/docs/ci-cd/fs.map | 1 |
+| usr/docs/evolution/fs.map | 1 |
+| usr/docs/examples/configuration/fs.map | 1 |
+| usr/docs/examples/fs.map | 3 |
+| usr/docs/fs.map | 65 |
+| usr/docs/governance/fs.map | 1 |
+| usr/docs/knowledge/fs.map | 1 |
+| usr/docs/project-reports/fs.map | 1 |
+| usr/docs/refactor_playbooks/01_deconstruction/fs.map | 1 |
+| usr/docs/refactor_playbooks/02_integration/fs.map | 1 |
+| usr/docs/refactor_playbooks/03_refactor/fs.map | 1 |
+| usr/docs/refactor_playbooks/fs.map | 7 |
+| usr/docs/reports/refactor-evolution/fs.map | 1 |
+| usr/docs/scratch/fs.map | 1 |
+| usr/docs/tutorials/namespace/fs.map | 1 |
+| usr/fs.map | 435 |
+| usr/ops/fs.map | 21 |
+| usr/ops/governance/fs.map | 6 |
+| usr/ops/ops/fs.map | 4 |
+| usr/private/.github-private/fs.map | 4 |
+| usr/projects/chatops/deploy/fs.map | 1 |
+| usr/projects/chatops/fs.map | 18 |
+| usr/projects/chatops/proto/fs.map | 1 |
+| usr/projects/chatops/scripts/fs.map | 1 |
+| usr/projects/chatops/services/fs.map | 1 |
+| usr/projects/fs.map | 19 |
+| usr/src/ai/agents/fs.map | 1 |
+| usr/src/ai/fs.map | 5 |
+| usr/src/apps/_scratch/fs.map | 1 |
+| usr/src/apps/fs.map | 3 |
+| usr/src/automation/_scratch/fs.map | 1 |
+| usr/src/automation/architect/fs.map | 1 |
+| usr/src/automation/architecture-skeletons/fs.map | 1 |
+| usr/src/automation/fs.map | 5 |
+| usr/src/automation/hyperautomation/fs.map | 1 |
+| usr/src/autonomous/agents/fs.map | 1 |
+| usr/src/autonomous/core/fs.map | 1 |
+| usr/src/autonomous/deployment/fs.map | 1 |
+| usr/src/autonomous/fs.map | 5 |
+| usr/src/autonomous/infrastructure/fs.map | 1 |
+| usr/src/bin/fs.map | 1 |
+| usr/src/bridges/fs.map | 2 |
+| usr/src/bridges/language-islands/fs.map | 1 |
+| usr/src/business/fs.map | 1 |
+| usr/src/canonical/fs.map | 1 |
+| usr/src/contracts/fs.map | 1 |
+| usr/src/core/_scratch/fs.map | 1 |
+| usr/src/core/advisory-database/fs.map | 1 |
+| usr/src/core/ai_constitution/fs.map | 1 |
+| usr/src/core/ci_error_handler/fs.map | 1 |
+| usr/src/core/cloud_agent_delegation/fs.map | 1 |
+| usr/src/core/contract_service/fs.map | 1 |
+| usr/src/core/contracts/fs.map | 1 |
+| usr/src/core/engine/fs.map | 1 |
+| usr/src/core/fs.map | 27 |
+| usr/src/core/instant_generation/fs.map | 1 |
+| usr/src/core/integrations/fs.map | 1 |
+| usr/src/core/island_ai_runtime/fs.map | 1 |
+| usr/src/core/main_system/fs.map | 1 |
+| usr/src/core/monitoring/fs.map | 1 |
+| usr/src/core/new/fs.map | 1 |
+| usr/src/core/orchestrators/fs.map | 1 |
+| usr/src/core/phase4/fs.map | 1 |
+| usr/src/core/plugins/fs.map | 1 |
+| usr/src/core/project_factory/fs.map | 1 |
+| usr/src/core/safety/fs.map | 1 |
+| usr/src/core/slsa_provenance/fs.map | 1 |
+| usr/src/core/tech_stack/fs.map | 1 |
+| usr/src/core/training_system/fs.map | 1 |
+| usr/src/core/validators/fs.map | 1 |
+| usr/src/core/virtual_experts/fs.map | 1 |
+| usr/src/core/yaml_module_system/fs.map | 1 |
+| usr/src/docker-templates/fs.map | 1 |
+| usr/src/enterprise/data/fs.map | 1 |
+| usr/src/enterprise/events/fs.map | 1 |
+| usr/src/enterprise/execution/fs.map | 1 |
+| usr/src/enterprise/fs.map | 7 |
+| usr/src/enterprise/iam/fs.map | 1 |
+| usr/src/enterprise/integrations/fs.map | 1 |
+| usr/src/enterprise/reliability/fs.map | 1 |
+| usr/src/frontend/ui/fs.map | 1 |
+| usr/src/fs.map | 214 |
+| usr/src/governance/00-vision-strategy/fs.map | 1 |
+| usr/src/governance/01-architecture/fs.map | 1 |
+| usr/src/governance/02-decision/fs.map | 1 |
+| usr/src/governance/03-change/fs.map | 1 |
+| usr/src/governance/04-risk/fs.map | 1 |
+| usr/src/governance/05-compliance/fs.map | 1 |
+| usr/src/governance/06-security/fs.map | 1 |
+| usr/src/governance/07-audit/fs.map | 1 |
+| usr/src/governance/08-process/fs.map | 1 |
+| usr/src/governance/09-performance/fs.map | 1 |
+| usr/src/governance/10-policy/fs.map | 1 |
+| usr/src/governance/11-tools-systems/fs.map | 1 |
+| usr/src/governance/12-culture-capability/fs.map | 1 |
+| usr/src/governance/13-metrics-reporting/fs.map | 1 |
+| usr/src/governance/14-improvement/fs.map | 1 |
+| usr/src/governance/15-economic/fs.map | 1 |
+| usr/src/governance/16-psychological/fs.map | 1 |
+| usr/src/governance/17-sociological/fs.map | 1 |
+| usr/src/governance/18-complex-system/fs.map | 1 |
+| usr/src/governance/19-evolutionary/fs.map | 1 |
+| usr/src/governance/20-intent/fs.map | 1 |
+| usr/src/governance/21-ecological/fs.map | 1 |
+| usr/src/governance/22-aesthetic/fs.map | 1 |
+| usr/src/governance/23-policies/fs.map | 1 |
+| usr/src/governance/24-registry/fs.map | 1 |
+| usr/src/governance/29-docs/fs.map | 1 |
+| usr/src/governance/30-agents/fs.map | 1 |
+| usr/src/governance/33-common/fs.map | 1 |
+| usr/src/governance/35-scripts/fs.map | 1 |
+| usr/src/governance/36-modules/fs.map | 1 |
+| usr/src/governance/37-behavior-contracts/fs.map | 1 |
+| usr/src/governance/39-automation/fs.map | 1 |
+| usr/src/governance/40-self-healing/fs.map | 1 |
+| usr/src/governance/60-contracts/fs.map | 1 |
+| usr/src/governance/70-audit/fs.map | 1 |
+| usr/src/governance/80-feedback/fs.map | 1 |
+| usr/src/governance/_legacy/fs.map | 1 |
+| usr/src/governance/_scratch/fs.map | 1 |
+| usr/src/governance/fs.map | 54 |
+| usr/src/governance/index/fs.map | 1 |
+| usr/src/governance/scripts/fs.map | 1 |
+| usr/src/mcp-servers/fs.map | 2 |
+| usr/src/next_gen/architecture/fs.map | 1 |
+| usr/src/next_gen/fs.map | 2 |
+| usr/src/runtime/fs.map | 2 |
+| usr/src/runtime/mind_matrix/fs.map | 1 |
+| usr/src/scripts/fs.map | 16 |
+| usr/src/services/_scratch/fs.map | 1 |
+| usr/src/services/agents/fs.map | 1 |
+| usr/src/services/api-gateway/fs.map | 1 |
+| usr/src/services/fs.map | 11 |
+| usr/src/services/mcp/fs.map | 1 |
+| usr/src/services/scheduler/fs.map | 1 |
+| usr/src/services/watchdog/fs.map | 1 |
+| usr/src/shared/config/fs.map | 1 |
+| usr/src/shared/constants/fs.map | 1 |
+| usr/src/shared/fs.map | 5 |
+| usr/src/shared/utils/fs.map | 1 |
+| usr/src/supply-chain/fs.map | 2 |
+| usr/src/tests/fs.map | 6 |
+| usr/src/tooling/fs.map | 1 |
+| usr/src/web/admin/fs.map | 1 |
+| usr/src/代码圣殿/fs.map | 9 |
+| usr/src/代码圣殿/基础示例/fs.map | 1 |
+| usr/src/代码圣殿/故障排除/fs.map | 1 |
+| usr/src/代码圣殿/最佳实践/fs.map | 1 |
+| usr/src/代码圣殿/配置示例/fs.map | 1 |
+| usr/src/代码圣殿/集成示例/fs.map | 1 |
+| usr/src/代码圣殿/高级用法/fs.map | 1 |
+| usr/tests/fs.map | 19 |
+| usr/tests/tests/fs.map | 5 |
+| web/agentic-ai/fs.map | 1 |
+| web/fs.map | 4 |
+| workspace/chatops-assistant/fs.map | 1 |
+| workspace/cloudflare/workers/fs.map | 2 |
+| workspace/config/agents/fs.map | 4 |
+| workspace/config/conftest/fs.map | 1 |
+| workspace/config/dev/fs.map | 7 |
+| workspace/config/etc/fs.map | 5 |
+| workspace/config/fs.map | 49 |
+| workspace/config/integrations/fs.map | 2 |
+| workspace/deploy/cloudflare/workers/fs.map | 1 |
+| workspace/deploy/deploy/fs.map | 5 |
+| workspace/deploy/fs.map | 21 |
+| workspace/docs/api/examples/fs.map | 1 |
+| workspace/docs/architecture/api-evolution/fs.map | 1 |
+| workspace/docs/architecture/configuration/fs.map | 1 |
+| workspace/docs/architecture/fs.map | 4 |
+| workspace/docs/ci-cd/fs.map | 1 |
+| workspace/docs/evolution/fs.map | 1 |
+| workspace/docs/examples/configuration/fs.map | 1 |
+| workspace/docs/examples/fs.map | 3 |
+| workspace/docs/fs.map | 65 |
+| workspace/docs/governance/fs.map | 1 |
+| workspace/docs/knowledge/fs.map | 1 |
+| workspace/docs/project-reports/fs.map | 1 |
+| workspace/docs/refactor_playbooks/01_deconstruction/fs.map | 1 |
+| workspace/docs/refactor_playbooks/02_integration/fs.map | 1 |
+| workspace/docs/refactor_playbooks/03_refactor/fs.map | 1 |
+| workspace/docs/refactor_playbooks/fs.map | 7 |
+| workspace/docs/reports/refactor-evolution/fs.map | 1 |
+| workspace/docs/scratch/fs.map | 1 |
+| workspace/docs/tutorials/namespace/fs.map | 1 |
+| workspace/engine/chatops/engine-python/fs.map | 1 |
+| workspace/engine/chatops/fs.map | 3 |
+| workspace/engine/chatops/gateway-ts/fs.map | 1 |
+| workspace/engine/config-manager/fs.map | 2 |
+| workspace/engine/machinenativenops-auto-monitor/fs.map | 4 |
+| workspace/examples/debug-examples/fs.map | 1 |
+| workspace/examples/fs.map | 11 |
+| workspace/fs.map | 559 |
+| workspace/governance/fs.map | 17 |
+| workspace/ops/fs.map | 21 |
+| workspace/ops/governance/fs.map | 6 |
+| workspace/ops/ops/fs.map | 4 |
+| workspace/private/.github-private/fs.map | 4 |
+| workspace/projects/chatops/deploy/fs.map | 1 |
+| workspace/projects/chatops/fs.map | 18 |
+| workspace/projects/chatops/proto/fs.map | 1 |
+| workspace/projects/chatops/scripts/fs.map | 1 |
+| workspace/projects/chatops/services/fs.map | 1 |
+| workspace/projects/fs.map | 19 |
+| workspace/scripts/chatops/fs.map | 14 |
+| workspace/scripts/fs.map | 35 |
+| workspace/scripts/ops/migration/fs.map | 1 |
+| workspace/src/ai/agents/fs.map | 1 |
+| workspace/src/ai/fs.map | 5 |
+| workspace/src/apps/_scratch/fs.map | 1 |
+| workspace/src/apps/fs.map | 3 |
+| workspace/src/automation/_scratch/fs.map | 1 |
+| workspace/src/automation/architect/fs.map | 1 |
+| workspace/src/automation/architecture-skeletons/fs.map | 1 |
+| workspace/src/automation/fs.map | 5 |
+| workspace/src/automation/hyperautomation/fs.map | 1 |
+| workspace/src/autonomous/agents/fs.map | 1 |
+| workspace/src/autonomous/core/fs.map | 1 |
+| workspace/src/autonomous/deployment/fs.map | 1 |
+| workspace/src/autonomous/fs.map | 5 |
+| workspace/src/autonomous/infrastructure/fs.map | 1 |
+| workspace/src/bin/fs.map | 1 |
+| workspace/src/bridges/fs.map | 2 |
+| workspace/src/bridges/language-islands/fs.map | 1 |
+| workspace/src/business/fs.map | 1 |
+| workspace/src/canonical/fs.map | 1 |
+| workspace/src/contracts/fs.map | 1 |
+| workspace/src/core/_scratch/fs.map | 1 |
+| workspace/src/core/advisory-database/fs.map | 1 |
+| workspace/src/core/ai_constitution/fs.map | 1 |
+| workspace/src/core/ci_error_handler/fs.map | 1 |
+| workspace/src/core/cloud_agent_delegation/fs.map | 1 |
+| workspace/src/core/contract_service/fs.map | 1 |
+| workspace/src/core/contracts/fs.map | 1 |
+| workspace/src/core/engine/fs.map | 1 |
+| workspace/src/core/fs.map | 27 |
+| workspace/src/core/instant_generation/fs.map | 1 |
+| workspace/src/core/integrations/fs.map | 1 |
+| workspace/src/core/island_ai_runtime/fs.map | 1 |
+| workspace/src/core/main_system/fs.map | 1 |
+| workspace/src/core/monitoring/fs.map | 1 |
+| workspace/src/core/new/fs.map | 1 |
+| workspace/src/core/orchestrators/fs.map | 1 |
+| workspace/src/core/phase4/fs.map | 1 |
+| workspace/src/core/plugins/fs.map | 1 |
+| workspace/src/core/project_factory/fs.map | 1 |
+| workspace/src/core/safety/fs.map | 1 |
+| workspace/src/core/slsa_provenance/fs.map | 1 |
+| workspace/src/core/tech_stack/fs.map | 1 |
+| workspace/src/core/training_system/fs.map | 1 |
+| workspace/src/core/validators/fs.map | 1 |
+| workspace/src/core/virtual_experts/fs.map | 1 |
+| workspace/src/core/yaml_module_system/fs.map | 1 |
+| workspace/src/docker-templates/fs.map | 1 |
+| workspace/src/enterprise/data/fs.map | 1 |
+| workspace/src/enterprise/events/fs.map | 1 |
+| workspace/src/enterprise/execution/fs.map | 1 |
+| workspace/src/enterprise/fs.map | 7 |
+| workspace/src/enterprise/iam/fs.map | 1 |
+| workspace/src/enterprise/integrations/fs.map | 1 |
+| workspace/src/enterprise/reliability/fs.map | 1 |
+| workspace/src/frontend/ui/fs.map | 1 |
+| workspace/src/fs.map | 214 |
+| workspace/src/governance/00-vision-strategy/fs.map | 1 |
+| workspace/src/governance/01-architecture/fs.map | 1 |
+| workspace/src/governance/02-decision/fs.map | 1 |
+| workspace/src/governance/03-change/fs.map | 1 |
+| workspace/src/governance/04-risk/fs.map | 1 |
+| workspace/src/governance/05-compliance/fs.map | 1 |
+| workspace/src/governance/06-security/fs.map | 1 |
+| workspace/src/governance/07-audit/fs.map | 1 |
+| workspace/src/governance/08-process/fs.map | 1 |
+| workspace/src/governance/09-performance/fs.map | 1 |
+| workspace/src/governance/10-policy/fs.map | 1 |
+| workspace/src/governance/11-tools-systems/fs.map | 1 |
+| workspace/src/governance/12-culture-capability/fs.map | 1 |
+| workspace/src/governance/13-metrics-reporting/fs.map | 1 |
+| workspace/src/governance/14-improvement/fs.map | 1 |
+| workspace/src/governance/15-economic/fs.map | 1 |
+| workspace/src/governance/16-psychological/fs.map | 1 |
+| workspace/src/governance/17-sociological/fs.map | 1 |
+| workspace/src/governance/18-complex-system/fs.map | 1 |
+| workspace/src/governance/19-evolutionary/fs.map | 1 |
+| workspace/src/governance/20-intent/fs.map | 1 |
+| workspace/src/governance/21-ecological/fs.map | 1 |
+| workspace/src/governance/22-aesthetic/fs.map | 1 |
+| workspace/src/governance/23-policies/fs.map | 1 |
+| workspace/src/governance/24-registry/fs.map | 1 |
+| workspace/src/governance/29-docs/fs.map | 1 |
+| workspace/src/governance/30-agents/fs.map | 1 |
+| workspace/src/governance/33-common/fs.map | 1 |
+| workspace/src/governance/35-scripts/fs.map | 1 |
+| workspace/src/governance/36-modules/fs.map | 1 |
+| workspace/src/governance/37-behavior-contracts/fs.map | 1 |
+| workspace/src/governance/39-automation/fs.map | 1 |
+| workspace/src/governance/40-self-healing/fs.map | 1 |
+| workspace/src/governance/60-contracts/fs.map | 1 |
+| workspace/src/governance/70-audit/fs.map | 1 |
+| workspace/src/governance/80-feedback/fs.map | 1 |
+| workspace/src/governance/_legacy/fs.map | 1 |
+| workspace/src/governance/_scratch/fs.map | 1 |
+| workspace/src/governance/fs.map | 54 |
+| workspace/src/governance/index/fs.map | 1 |
+| workspace/src/governance/scripts/fs.map | 1 |
+| workspace/src/mcp-servers/fs.map | 2 |
+| workspace/src/next_gen/architecture/fs.map | 1 |
+| workspace/src/next_gen/fs.map | 2 |
+| workspace/src/runtime/fs.map | 2 |
+| workspace/src/runtime/mind_matrix/fs.map | 1 |
+| workspace/src/scripts/fs.map | 16 |
+| workspace/src/services/_scratch/fs.map | 1 |
+| workspace/src/services/agents/fs.map | 1 |
+| workspace/src/services/api-gateway/fs.map | 1 |
+| workspace/src/services/fs.map | 11 |
+| workspace/src/services/mcp/fs.map | 1 |
+| workspace/src/services/scheduler/fs.map | 1 |
+| workspace/src/services/watchdog/fs.map | 1 |
+| workspace/src/shared/config/fs.map | 1 |
+| workspace/src/shared/constants/fs.map | 1 |
+| workspace/src/shared/fs.map | 5 |
+| workspace/src/shared/utils/fs.map | 1 |
+| workspace/src/supply-chain/fs.map | 2 |
+| workspace/src/tests/fs.map | 6 |
+| workspace/src/tooling/fs.map | 1 |
+| workspace/src/web/admin/fs.map | 1 |
+| workspace/src/代码圣殿/fs.map | 9 |
+| workspace/src/代码圣殿/基础示例/fs.map | 1 |
+| workspace/src/代码圣殿/故障排除/fs.map | 1 |
+| workspace/src/代码圣殿/最佳实践/fs.map | 1 |
+| workspace/src/代码圣殿/配置示例/fs.map | 1 |
+| workspace/src/代码圣殿/集成示例/fs.map | 1 |
+| workspace/src/代码圣殿/高级用法/fs.map | 1 |
+| workspace/teams/default-team/orchestrator/fs.map | 1 |
+| workspace/teams/fs.map | 5 |
+| workspace/tests/fs.map | 19 |
+| workspace/tests/tests/fs.map | 5 |
+| workspace/tools/_scratch/fs.map | 1 |
+| workspace/tools/ai/fs.map | 1 |
+| workspace/tools/automation/engines/fs.map | 1 |
+| workspace/tools/automation/fs.map | 2 |
+| workspace/tools/cli/fs.map | 3 |
+| workspace/tools/docs/fs.map | 1 |
+| workspace/tools/fs.map | 24 |
+| workspace/tools/generators/fs.map | 1 |
+| workspace/tools/path_tools/fs.map | 1 |
+| workspace/tools/refactor/fs.map | 1 |
+| workspace/tools/scripts/fs.map | 4 |
+
+## Drift: New Directories
+
+- .
+- .github
+- .github/ISSUE_TEMPLATE
+- .github/agents
+- .github/codeql
+- .github/codeql/custom-queries
+- .github/docs
+- .github/healing-knowledge
+- .github/policies
+- .github/secret-scanning
+- .github/workflows
+- .github/workflows/chatops
+- bin
+- chatops
+- chatops/.config
+- chatops/.config/alerts
+- chatops/.config/auto-fix
+- chatops/.config/checkov
+- chatops/.config/codeql
+- chatops/.config/conftest
+- ... and 442 more
+
+
+✨ Summary: 633 fs.map files, 4614 total mappings
+⚠️  Drift detected. Run with --fix-drift to auto-fix.

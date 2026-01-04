@@ -88,9 +88,9 @@ Successfully reorganized the entire project structure, moving **60+ files** from
 
 ### 2. Reports → controlplane/governance/reports/ (21 files)
 
-- AAPS_INTEGRATION_SUMMARY.md
-- AAPS_PHASE1_COMPLETION_SUMMARY.md
-- AAPS_UNIFIED_GATES_OPTIMIZATION.md
+- MachineNativeOps_INTEGRATION_SUMMARY.md
+- MachineNativeOps_PHASE1_COMPLETION_SUMMARY.md
+- MachineNativeOps_UNIFIED_GATES_OPTIMIZATION.md
 - AUTOMATED_MEMORY_SYSTEM_COMPLETE.md
 - CI_FIX_SUMMARY.md
 - CI_ISSUES_FIX_REPORT.md
@@ -118,7 +118,7 @@ Successfully reorganized the entire project structure, moving **60+ files** from
 
 ### 4. Project Files → workspace/projects/ (7 files)
 
-- AAPS_MARKETPLACE_INTEGRATION_PLAN.md
+- MachineNativeOps_MARKETPLACE_INTEGRATION_PLAN.md
 - CONVERSATION_LOG.md
 - IMMEDIATE_TASKS.md
 - INTEGRATION_TODO.md

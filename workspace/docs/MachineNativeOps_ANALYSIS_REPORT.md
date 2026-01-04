@@ -293,8 +293,8 @@
 
 ### 分析的文件清單
 
-1. `AAPS_MARKETPLACE_INTEGRATION_PLAN.md` - 核心整合計畫
-2. `AAPS_PHASE1_COMPLETION_SUMMARY.md` - Phase 1 完成報告
+1. `MachineNativeOps_MARKETPLACE_INTEGRATION_PLAN.md` - 核心整合計畫
+2. `MachineNativeOps_PHASE1_COMPLETION_SUMMARY.md` - Phase 1 完成報告
 3. `MULTI_AGENT_MPC_ARCHITECTURE_DESIGN.md` - 多代理架構設計
 4. `IMPLEMENTATION_ROADMAP.md` - 實施路線圖
 5. `ROOT_ARCHITECTURE.md` - 根層架構說明

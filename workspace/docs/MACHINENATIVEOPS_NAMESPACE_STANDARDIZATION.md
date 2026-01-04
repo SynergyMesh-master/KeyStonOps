@@ -230,7 +230,7 @@ echo "✅ 命名空間驗證通過"
 ### 文檔
 
 - `ROOT_ARCHITECTURE.md` - Root Layer 架構
-- `AAPS_INTEGRATION_SUMMARY.md` - MachineNativeOps 整合摘要
+- `MachineNativeOps_INTEGRATION_SUMMARY.md` - MachineNativeOps 整合摘要
 - `docs/AUTO_MONITOR_INTEGRATION.md` - Auto-Monitor 整合指南
 
 ## 🔄 持續改進

@@ -125,7 +125,7 @@ workspace/
 │   └── deploy/
 ├── docs/
 │   ├── 00-VISION-STRATEGY-ANALYSIS.md
-│   ├── AAPS_ANALYSIS_REPORT.md
+│   ├── MachineNativeOps_ANALYSIS_REPORT.md
 │   ├── ADMIN_COPILOT_CLI.md
 │   ├── ADVANCED_ESCALATION_SYSTEM.md
 │   ├── ADVANCED_FEATURES_SUMMARY.md
@@ -411,7 +411,7 @@ workspace/
 ├── package.json
 ├── private/
 ├── projects/
-│   ├── AAPS_MARKETPLACE_INTEGRATION_PLAN.md
+│   ├── MachineNativeOps_MARKETPLACE_INTEGRATION_PLAN.md
 │   ├── CONVERSATION_LOG.md
 │   ├── Cargo.toml
 │   ├── IMMEDIATE_TASKS.md

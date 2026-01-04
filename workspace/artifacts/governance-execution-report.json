@@ -72337,21 +72337,21 @@
                 "severity": "CRITICAL"
               },
               {
-                "file": "AAPS_INTEGRATION_SUMMARY.md",
+                "file": "MachineNativeOps_INTEGRATION_SUMMARY.md",
                 "line": 290,
                 "type": "aws_secret_key",
                 "content": "sudo cp rootfs/etc/systemd/system/machinenativenops-auto-monitor.service /etc/systemd/system/",
                 "severity": "CRITICAL"
               },
               {
-                "file": "AAPS_INTEGRATION_SUMMARY.md",
+                "file": "MachineNativeOps_INTEGRATION_SUMMARY.md",
                 "line": 337,
                 "type": "password",
                 "content": "- Redis password (if configured)",
                 "severity": "HIGH"
               },
               {
-                "file": "AAPS_INTEGRATION_SUMMARY.md",
+                "file": "MachineNativeOps_INTEGRATION_SUMMARY.md",
                 "line": 426,
                 "type": "aws_secret_key",
                 "content": "**Architecture Hash**: `e7f8a9b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9`",
