@@ -61,7 +61,7 @@ jobs:
 
       - name: Scan for high-risk patterns
         run: |
-          # Note: Using case-insensitive grep with -i flag instead of (?i) PCRE syntax
+          # Note: Using explicit character class patterns for case-insensitive matching instead of (?i) PCRE syntax
           # git grep -E doesn't support Perl regex features
           set +e  # Don't fail on grep matches
           patterns=(
