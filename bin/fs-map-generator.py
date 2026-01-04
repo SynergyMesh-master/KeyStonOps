@@ -31,6 +31,26 @@ from pathlib import Path
 from typing import Dict, List, Set, Tuple, Optional
 from dataclasses import dataclass, field
 
+
+def normalize_physical_path(physical_path: str) -> str:
+    """Normalize physical paths for consistent coverage calculations.
+
+    Example:
+        normalize_physical_path("./") -> "."
+        normalize_physical_path("/abs/path") -> "abs/path"
+    """
+    normalized = physical_path.strip()
+
+    if normalized in {'', '.'}:
+        return '.'
+
+    if normalized.startswith('./'):
+        normalized = normalized[2:]
+    elif normalized.startswith('/'):
+        normalized = normalized[1:]
+
+    return normalized or '.'
+
 # =============================================================================
 # Configuration
 # =============================================================================
@@ -99,6 +119,27 @@ class FsMapEntry:
 
     def to_line(self) -> str:
         return f"{self.logical_name}:{self.physical_path}:{self.fs_type}:{self.mount_options}:{self.permissions}:{self.description}"
+
+
+def get_mapped_directories(generated_maps: Dict[str, List[FsMapEntry]]) -> Set[str]:
+    """Return normalized, deduplicated directory paths from generated maps.
+
+    Example:
+        {"module": [FsMapEntry(physical_path="./a"), FsMapEntry(physical_path="./a")]} -> {"a"}
+    """
+    return {
+        normalize_physical_path(entry.physical_path)
+        for entries in generated_maps.values()
+        for entry in entries
+    }
+
+
+def compute_coverage_percentage(total_dirs: int, mapped_count: int) -> float:
+    """Compute coverage percentage using a shared calculation."""
+    if total_dirs == 0:
+        return 100.0
+
+    return round((mapped_count / total_dirs) * 100, 2)
 
 
 # =============================================================================
@@ -383,12 +424,14 @@ class IndexUpdater:
 
     def _calculate_coverage(self, generated_maps: Dict[str, List[FsMapEntry]]) -> float:
         """Calculate coverage percentage"""
-        total_dirs = len([d for d in self.config.repo_root.rglob('*')
-                         if d.is_dir() and not any(p in str(d) for p in self.config.exclude_patterns)])
-        mapped_dirs = sum(len(entries) for entries in generated_maps.values())
-        if total_dirs == 0:
-            return 100.0
-        return round((mapped_dirs / total_dirs) * 100, 2)
+        total_dirs = len([
+            d for d in self.config.repo_root.rglob('*')
+            if d.is_dir() and not any(p in str(d) for p in self.config.exclude_patterns)
+        ])
+
+        mapped_dirs = get_mapped_directories(generated_maps)
+
+        return compute_coverage_percentage(total_dirs, len(mapped_dirs))
 
 
 # =============================================================================
@@ -638,7 +681,7 @@ class DriftChecker:
                         if line and not line.startswith('#') and ':' in line:
                             parts = line.split(':')
                             if len(parts) >= 2:
-                                path = parts[1].lstrip('./')
+                                path = normalize_physical_path(parts[1])
                                 if path:
                                     mapped.add(path)
             except Exception:
@@ -672,6 +715,8 @@ class ReportGenerator:
         total_dirs = len(scanner.directories)
         module_boundaries = len([d for d in scanner.directories.values() if d.is_module_boundary])
         total_mappings = sum(len(entries) for entries in generator.generated_maps.values())
+        mapped_dirs = get_mapped_directories(generator.generated_maps)
+        coverage_percentage = compute_coverage_percentage(total_dirs, len(mapped_dirs))
 
         report = f"""# Filesystem Mapping Report
 # Generated: {timestamp}
@@ -684,7 +729,7 @@ class ReportGenerator:
 | Module Boundaries Detected | {module_boundaries} |
 | fs.map Files Generated | {len(generator.generated_maps)} |
 | Total Mappings | {total_mappings} |
-| Coverage | {round((total_mappings / total_dirs * 100) if total_dirs else 0, 2)}% |
+| Coverage | {coverage_percentage}% |
 
 ## Module Boundaries
 
