@@ -283,19 +283,50 @@ class GateEnforcer:
         )
 
     def validate_naming_convention(self, _gate_def: dict) -> GateResult:
-        """驗證命名規範"""
+        """驗證命名規範
+        
+        Aligns with project naming policy (root.naming-policy.yaml):
+        - Base rule: kebab-case (lowercase with hyphens)
+        - Standard exceptions: README.md, LICENSE, etc.
+        - Config file patterns: Chart.yaml, Taskfile.yml, etc.
+        - Report/state patterns: *_REPORT.json, *_STATE.yaml, etc.
+        """
         if not self.changed_files:
             self.get_changed_files()
 
         violations = []
         for f in self.changed_files:
             basename = Path(f).name
-            # 檢查大寫字母（排除特定檔案）
+            
+            # 檢查大寫字母（排除特定檔案和模式）
             if re.search(r'[A-Z]', basename):
-                # 排除允許大寫的檔案
-                allowed = ['README.md', 'LICENSE', 'Dockerfile', 'Makefile',
-                          'CHANGELOG.md', 'CONTRIBUTING.md', 'CODEOWNERS']
-                if basename not in allowed:
+                # 排除允許大寫的檔案（標準專案檔案）
+                allowed_files = [
+                    'README.md', 'LICENSE', 'Dockerfile', 'Makefile',
+                    'CHANGELOG.md', 'CONTRIBUTING.md', 'CODEOWNERS',
+                    'FUNDING.yml', 'PULL_REQUEST_TEMPLATE.md'
+                ]
+                
+                # 排除允許大寫的模式
+                allowed_patterns = [
+                    r'\.md$',  # Markdown files (can contain uppercase)
+                    r'^Chart\.yaml$',  # Helm Chart.yaml
+                    r'^Taskfile\.yml$',  # Task Taskfile.yml
+                    r'_REPORT\.(json|yaml|yml)$',  # Report files
+                    r'_STATE\.(json|yaml|yml)$',  # State files
+                    r'_CONFIG\.(json|yaml|yml)$',  # Config files with uppercase
+                    r'_MANIFEST\.(json|yaml|yml)$',  # Manifest files
+                    r'_MAP\.(json|yaml|yml)$',  # Map files
+                    r'_VALIDATION\.(json|yaml|yml)$',  # Validation files
+                    r'^[A-Z][A-Z0-9_-]*\.(yaml|yml|json)$',  # All-caps config files
+                ]
+                
+                # Check if basename matches any allowed pattern
+                is_allowed = basename in allowed_files or any(
+                    re.search(pattern, basename) for pattern in allowed_patterns
+                )
+                
+                if not is_allowed:
                     violations.append(f)
 
         if violations:
