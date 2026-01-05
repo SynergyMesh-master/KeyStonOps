@@ -1,0 +1,366 @@
+# Naming Governance Change Request Template
+# 命名治理變更請求模板
+#
+# Version: 1.0.0
+# Status: Active
+# Last Updated: 2025-01-05
+# Dimension: 03-change
+
+$schema: "https://schema.machinenativeops.io/governance/naming-change-request/v1"
+version: "1.0.0"
+dimension: "03-change"
+status: "active"
+template_type: "change-request"
+
+# ============================================================================
+# Change Request Header | 變更請求標頭
+# ============================================================================
+header:
+  request_id: "{{request-id}}"
+  rfc_reference: "{{rfc-id}}"
+  status: "{{status}}"
+  priority: "{{priority}}"
+  created_date: "{{created-date}}"
+  
+  requester:
+    name: "{{requester-name}}"
+    email: "{{requester-email}}"
+    team: "{{requester-team}}"
+    role: "{{requester-role}}"
+
+# ============================================================================
+# Change Request Classification | 變更請求分類
+# ============================================================================
+classification:
+  change_type:
+    - "Standard Proposal (SP)"
+    - "Standard Modification (SM)"
+    - "Resource Type Addition (RT)"
+    - "Naming Exception (NE)"
+    - "Policy Update (PU)"
+    - "Process Improvement (PI)"
+    - "Bug Fix (BF)"
+  
+  risk_assessment:
+    impact_scope: "{{impact-scope}}"
+    technical_complexity: "{{technical-complexity}}"
+    migration_effort: "{{migration-effort}}"
+    dependencies: "{{dependencies}}"
+    
+    overall_risk: "{{overall-risk}}"
+    risk_level: "Low | Medium | High"
+
+# ============================================================================
+# Change Description | 變更描述
+# ============================================================================
+change_description:
+  title: "{{change-title}}"
+  
+  abstract: |
+    {{abstract-text}}
+  
+  motivation:
+    problem_statement: |
+      {{problem-statement}}
+    
+    current_situation: |
+      {{current-situation}}
+    
+    proposed_solution: |
+      {{proposed-solution}}
+    
+    benefits:
+      - "{{benefit-1}}"
+      - "{{benefit-2}}"
+      - "{{benefit-3}}"
+
+# ============================================================================
+# Proposed Changes | 提議變更
+# ============================================================================
+proposed_changes:
+  naming_standards:
+    - standard:
+        resource_type: "{{resource-type}}"
+        current_standard: "{{current-standard}}"
+        proposed_standard: "{{proposed-standard}}"
+        justification: "{{justification}}"
+        
+        validation_rules:
+          - rule: "{{rule-name}}"
+            pattern: "{{pattern}}"
+            examples:
+              valid: ["{{example-1}}", "{{example-2}}"]
+              invalid: ["{{example-3}}"]
+  
+  version_control:
+    - change:
+        aspect: "{{version-aspect}}"
+        current: "{{current-version}}"
+        proposed: "{{proposed-version}}"
+        rationale: "{{rationale}}"
+  
+  templates:
+    - template:
+        name: "{{template-name}}"
+        location: "{{template-location}}"
+        changes: "{{changes-description}}"
+  
+  documentation:
+    - document:
+        name: "{{document-name}}"
+        location: "{{document-location}}"
+        updates_required: "{{updates-required}}"
+
+# ============================================================================
+# Impact Analysis | 影響分析
+# ============================================================================
+impact_analysis:
+  existing_resources:
+    affected_resources: "{{affected-resources-count}}"
+    migration_required: "{{migration-required}}"
+    breaking_changes: "{{breaking-changes}}"
+    
+    resource_inventory:
+      - type: "{{resource-type}}"
+        count: "{{count}}"
+        migration_strategy: "{{migration-strategy}}"
+        estimated_effort: "{{estimated-effort}}"
+  
+  cicd_pipelines:
+    affected_pipelines:
+      - pipeline: "{{pipeline-name}}"
+        impact: "{{impact-description}}"
+        required_changes: "{{required-changes}}"
+    
+    workflow_modifications:
+      - workflow: "{{workflow-name}}"
+        modifications: "{{modifications}}"
+  
+  team_workflows:
+    affected_teams:
+      - team: "{{team-name}}"
+        impact: "{{impact-description}}"
+        training_required: "{{training-required}}"
+        adoption_timeline: "{{adoption-timeline}}"
+  
+  compliance:
+    regulatory_impact: "{{regulatory-impact}}"
+    audit_implications: "{{audit-implications}}"
+    risk_mitigation: "{{risk-mitigation}}"
+
+# ============================================================================
+# Migration Strategy | 遷移策略
+# ============================================================================
+migration_strategy:
+  phases:
+    - phase: "{{phase-name}}"
+      duration: "{{duration}}"
+      description: "{{phase-description}}"
+      
+      tasks:
+        - task: "{{task-name}}"
+          owner: "{{task-owner}}"
+          due_date: "{{due-date}}"
+          dependencies: "{{dependencies}}"
+          status: "{{task-status}}"
+      
+      success_criteria:
+        - "{{criterion-1}}"
+        - "{{criterion-2}}"
+  
+  rollback_plan:
+    trigger_conditions:
+      - "{{condition-1}}"
+      - "{{condition-2}}"
+    
+    rollback_steps:
+      - step: "{{step-description}}"
+        responsible: "{{responsible-party}}"
+        estimated_time: "{{estimated-time}}"
+    
+    verification_procedures:
+      - "{{verification-procedure}}"
+
+# ============================================================================
+# Implementation Plan | 實施計劃
+# ============================================================================
+implementation_plan:
+  timeline:
+    start_date: "{{start-date}}"
+    target_completion: "{{target-completion-date}}"
+    
+    milestones:
+      - milestone: "{{milestone-name}}"
+        date: "{{milestone-date}}"
+        deliverables:
+          - "{{deliverable-1}}"
+          - "{{deliverable-2}}"
+  
+  resources_required:
+    personnel:
+      - role: "{{role-name}}"
+        allocation: "{{allocation-percentage}}"
+        responsibilities: "{{responsibilities}}"
+    
+    tools_and_systems:
+      - tool: "{{tool-name}}"
+        purpose: "{{purpose}}"
+        configuration: "{{configuration}}"
+    
+    budget:
+      - item: "{{budget-item}}"
+        estimated_cost: "{{estimated-cost}}"
+  
+  risks_and_mitigations:
+    - risk:
+        description: "{{risk-description}}"
+        likelihood: "{{likelihood}}"
+        impact: "{{impact}}"
+        mitigation_strategy: "{{mitigation-strategy}}"
+        owner: "{{risk-owner}}"
+
+# ============================================================================
+# Testing Plan | 測試計劃
+# ============================================================================
+testing_plan:
+  test_types:
+    - type: "{{test-type}}"
+      description: "{{test-description}}"
+      scope: "{{test-scope}}"
+      criteria: "{{success-criteria}}"
+  
+  test_cases:
+    - case:
+        name: "{{test-case-name}}"
+        description: "{{test-case-description}}"
+        steps:
+          - "{{step-1}}"
+          - "{{step-2}}"
+        expected_result: "{{expected-result}}"
+        actual_result: "{{actual-result}}"
+        status: "{{test-status}}"
+  
+  validation_checks:
+    - check: "{{check-name}}"
+      tool: "{{validation-tool}}"
+      criteria: "{{validation-criteria}}"
+      result: "{{validation-result}}"
+
+# ============================================================================
+# Approval Workflow | 審批工作流程
+# ============================================================================
+approval_workflow:
+  required_approvals:
+    - level: "{{approval-level}}"
+      approver: "{{approver-name}}"
+      role: "{{approver-role}}"
+      criteria: "{{approval-criteria}}"
+      status: "{{approval-status}}"
+      decision: "{{decision}}"
+      comments: "{{comments}}"
+      approved_date: "{{approved-date}}"
+  
+  approval_history:
+    - event:
+        date: "{{event-date}}"
+        action: "{{action-taken}}"
+        actor: "{{actor-name}}"
+        notes: "{{event-notes}}"
+
+# ============================================================================
+# Open Questions | 待解決問題
+# ============================================================================
+open_questions:
+  - question:
+      id: "Q{{question-number}}"
+      question: "{{question-text}}"
+      priority: "{{priority}}"
+      assignee: "{{assignee}}"
+      status: "{{status}}"
+      target_resolution: "{{target-resolution-date}}"
+
+# ============================================================================
+# References | 參考資料
+# ============================================================================
+references:
+  - type: "{{reference-type}}"
+    title: "{{reference-title}}"
+    url: "{{reference-url}}"
+    description: "{{reference-description}}"
+  
+  related_rfc:
+    - "RFC-{{year}}-{{sequence}}"
+
+# ============================================================================
+# Appendices | 附錄
+# ============================================================================
+appendices:
+  appendices_a_glossary:
+    - term: "{{term}}"
+      definition: "{{definition}}"
+  
+  appendices_b_acronyms:
+    - acronym: "{{acronym}}"
+      full_form: "{{full-form}}"
+  
+  appendices_c_change_log:
+    - entry:
+        date: "{{change-date}}"
+        author: "{{change-author}}"
+        description: "{{change-description}}"
+
+# ============================================================================
+# Change Request Status | 變更請求狀態
+# ============================================================================
+status_tracking:
+  current_status: "{{current-status}}"
+  
+  status_history:
+    - status:
+        value: "{{status-value}}"
+        date: "{{status-date}}"
+        updated_by: "{{updated-by}}"
+        notes: "{{status-notes}}"
+
+# ============================================================================
+# Sign-off | 簽署
+# ============================================================================
+sign_off:
+  requester:
+    name: "{{requester-name}}"
+    signature: "{{digital-signature}}"
+    date: "{{sign-off-date}}"
+  
+  technical_reviewer:
+    name: "{{reviewer-name}}"
+    signature: "{{digital-signature}}"
+    date: "{{sign-off-date}}"
+  
+  governance_board:
+    name: "{{board-representative}}"
+    signature: "{{digital-signature}}"
+    date: "{{sign-off-date}}"
+
+# ============================================================================
+# Template Usage Instructions | 模板使用說明
+# ============================================================================
+usage_instructions:
+  1. "複製此模板並重命名為 change-request-YYYYMMDD-{{title-slug}}.yaml"
+  2. "將所有 {{placeholder}} 替換為實際值"
+  3. "填寫所有必填欄位"
+  4. "提交至治理團隊審查"
+  5. "跟蹤審批狀態並根據反饋更新"
+  
+  required_fields:
+    - "requester"
+    - "change_description.title"
+    - "change_description.abstract"
+    - "proposed_changes"
+    - "impact_analysis"
+    - "implementation_plan"
+    - "approval_workflow"
+  
+  optional_fields:
+    - "open_questions"
+    - "appendices"
+    - "sign_off"

@@ -1,0 +1,371 @@
+# Naming Validation Patterns
+# 命名驗證正則表達式
+#
+# Version: 1.0.0
+# Status: Active
+# Last Updated: 2025-01-05
+# Dimension: 35-scripts
+
+$schema: "https://schema.machinenativeops.io/governance/naming-patterns/v1"
+version: "1.0.0"
+dimension: "35-scripts"
+status: "active"
+
+# ============================================================================
+# Pattern Definitions | 模式定義
+# ============================================================================
+patterns:
+  # Naming Convention Patterns
+  kebab_case:
+    name: "kebab-case"
+    description: "Lowercase letters, numbers, and hyphens"
+    regex: "^[a-z0-9](-?[a-z0-9])*$"
+    examples:
+      valid: ["api-server", "user-auth-service", "config-redis"]
+      invalid: ["API-Server", "api_server", "api--server", "-api-server", "api-server-"]
+  
+  snake_case:
+    name: "snake_case"
+    description: "Lowercase letters, numbers, and underscores"
+    regex: "^[a-z][a-z0-9_]*$"
+    examples:
+      valid: ["api_server", "user_auth", "config_redis"]
+      invalid: ["API_Server", "api-server", "__api_server", "api__server"]
+  
+  camel_case:
+    name: "camelCase"
+    description: "First letter lowercase, rest can be uppercase"
+    regex: "^[a-z][a-zA-Z0-9]*$"
+    examples:
+      valid: ["apiServer", "userAuthService", "configRedis"]
+      invalid: ["ApiServer", "api_server", "api-server"]
+  
+  pascal_case:
+    name: "PascalCase"
+    description: "First letter uppercase, rest can be mixed"
+    regex: "^[A-Z][a-zA-Z0-9]*$"
+    examples:
+      valid: ["ApiServer", "UserAuthService", "ConfigRedis"]
+      invalid: ["apiServer", "API_SERVER", "Api-Server"]
+  
+  screaming_snake_case:
+    name: "SCREAMING_SNAKE_CASE"
+    description: "Uppercase letters, numbers, and underscores"
+    regex: "^[A-Z][A-Z0-9_]*$"
+    examples:
+      valid: ["API_SERVER", "USER_AUTH", "CONFIG_REDIS"]
+      invalid: ["api_server", "API-Server", "__API_SERVER"]
+  
+  # Kubernetes Specific Patterns
+  kubernetes_label_value:
+    name: "Kubernetes Label Value"
+    description: "Valid Kubernetes label value"
+    regex: "^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$"
+    max_length: 63
+    examples:
+      valid: ["value", "valid_value", "valid-value"]
+      invalid: ["", "invalid value", "invalid@value"]
+  
+  kubernetes_annotation_value:
+    name: "Kubernetes Annotation Value"
+    description: "Valid Kubernetes annotation value"
+    regex: ".*"
+    max_length: 262144
+  
+  # Version Patterns
+  semver:
+    name: "Semantic Versioning"
+    description: "SemVer 2.0.0 format"
+    regex: "^v[0-9]+\\.[0-9]+\\.[0-9]+(-[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*)?(\\+[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*)?$"
+    examples:
+      valid: ["v1.0.0", "v2.1.3-beta.1", "v1.0.0+build.123"]
+      invalid: ["1.0.0", "v1.0", "v1.0.0.0", "v1.0.x"]
+  
+  # Resource Type Patterns
+  pod_name:
+    name: "Pod Name"
+    description: "Valid Kubernetes pod name"
+    regex: "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+    max_length: 253
+    pattern: "{service-name}-{type}-{instance-id}"
+    examples:
+      valid: ["api-server-main-001", "worker-processing-042"]
+      invalid: ["API-Server", "api_server", "api--server"]
+  
+  deployment_name:
+    name: "Deployment Name"
+    description: "Valid Kubernetes deployment name"
+    regex: "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+    max_length: 63
+    examples:
+      valid: ["api-server", "auth-service"]
+      invalid: ["API-Server", "api_server"]
+  
+  service_name:
+    name: "Service Name"
+    description: "Valid Kubernetes service name"
+    regex: "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+    max_length: 63
+    examples:
+      valid: ["api-server", "web-frontend"]
+      invalid: ["API-Server", "api_server"]
+  
+  configmap_name:
+    name: "ConfigMap Name"
+    description: "Valid ConfigMap name"
+    regex: "^config-[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+    max_length: 253
+    examples:
+      valid: ["config-api-server", "config-database"]
+      invalid: ["api-server-config", "config-API-Server"]
+  
+  secret_name:
+    name: "Secret Name"
+    description: "Valid Secret name"
+    regex: "^secret-[a-z0-9]+(-[a-z0-9]+)*$"
+    max_length: 253
+    examples:
+      valid: ["secret-database-api-server", "secret-api-key-external"]
+      invalid: ["api-server-secret", "secret-API-Server"]
+  
+  # Database Patterns
+  database_name:
+    name: "Database Name"
+    description: "Valid PostgreSQL database name"
+    regex: "^[a-z][a-z0-9_]*$"
+    max_length: 128
+    pattern: "{environment}_{project}_{purpose}"
+    examples:
+      valid: ["prod_ecommerce_orders", "dev_user_management_main"]
+      invalid: ["prod-ecommerce-orders", "PROD_ECOMMERCE_ORDERS"]
+  
+  table_name:
+    name: "Table Name"
+    description: "Valid database table name"
+    regex: "^[a-z][a-z0-9_]*$"
+    max_length: 128
+    examples:
+      valid: ["users", "order_items", "product_categories"]
+      invalid: ["Users", "order-items", "__users"]
+  
+  column_name:
+    name: "Column Name"
+    description: "Valid database column name"
+    regex: "^[a-z][a-z0-9_]*$"
+    examples:
+      valid: ["user_id", "created_at", "total_amount"]
+      invalid: ["UserId", "created-at", "__user_id"]
+  
+  # Environment Patterns
+  environment_name:
+    name: "Environment Name"
+    description: "Valid environment identifier"
+    regex: "^(dev|staging|prod)$"
+    examples:
+      valid: ["dev", "staging", "prod"]
+      invalid: ["development", "production", "test"]
+  
+  # Microservice Patterns
+  microservice_name:
+    name: "Microservice Name"
+    description: "Valid microservice name"
+    regex: "^[a-z0-9]+(-[a-z0-9]+)*$"
+    max_length: 63
+    pattern: "{domain}-{service}"
+    examples:
+      valid: ["user-auth-service", "order-processing-service"]
+      invalid: ["user_auth_service", "UserAuthService"]
+  
+  # API Patterns
+  api_endpoint:
+    name: "API Endpoint"
+    description: "Valid REST API endpoint"
+    regex: "^/[a-z0-9]+(/[a-z0-9]+)*(/[a-z0-9-]+)?$"
+    examples:
+      valid: ["/api/users", "/api/v1/orders", "/api/v1/orders/{id}"]
+      invalid: ["/API/users", "/api/Users", "/api/users//orders"]
+  
+  # File Patterns
+  yaml_file:
+    name: "YAML File"
+    description: "Valid YAML configuration filename"
+    regex: "^[a-z0-9-]+\\.(yaml|yml)$"
+    examples:
+      valid: ["config.yaml", "api-server-prod.yaml"]
+      invalid: ["config.YAML", "API-Server.yaml"]
+  
+  json_file:
+    name: "JSON File"
+    description: "Valid JSON configuration filename"
+    regex: "^[a-z0-9-]+\\.json$"
+    examples:
+      valid: ["config.json", "api-server-prod.json"]
+      invalid: ["config.JSON", "API-Server.json"]
+  
+  # Git Patterns
+  git_branch:
+    name: "Git Branch"
+    description: "Valid git branch name"
+    regex: "^[a-zA-Z0-9-]+(/[a-zA-Z0-9-]+)*$"
+    max_length: 255
+    examples:
+      valid: ["main", "develop", "feature/new-api", "hotfix/fix-bug"]
+      invalid: ["main_", "feature@new", "feature new api"]
+  
+  git_tag:
+    name: "Git Tag"
+    description: "Valid git tag name"
+    regex: "^[a-zA-Z0-9-_.]+$"
+    max_length: 255
+    examples:
+      valid: ["v1.0.0", "release-1.0", "hotfix-1.0.1"]
+      invalid: ["v1.0.0@", "release@1.0"]
+
+# ============================================================================
+# Validation Rules | 驗證規則
+# ============================================================================
+validation_rules:
+  common_rules:
+    - rule: "no_special_characters"
+      description: "No special characters except allowed separators"
+      applies_to: ["kebab_case", "snake_case"]
+    
+    - rule: "max_length"
+      description: "Respect maximum length constraints"
+      applies_to: ["all"]
+    
+    - rule: "lowercase_only"
+      description: "Use lowercase only for certain naming conventions"
+      applies_to: ["kebab_case", "snake_case"]
+  
+  kubernetes_rules:
+    - rule: "dns_subdomain"
+      description: "Valid DNS subdomain name"
+      applies_to: ["pod", "deployment", "service"]
+    
+    - rule: "label_key"
+      description: "Valid label key format"
+      applies_to: ["labels"]
+    
+    - rule: "annotation_key"
+      description: "Valid annotation key format"
+      applies_to: ["annotations"]
+  
+  database_rules:
+    - rule: "sql_identifier"
+      description: "Valid SQL identifier"
+      applies_to: ["table", "column"]
+    
+    - rule: "no_reserved_keywords"
+      description: "Avoid SQL reserved keywords"
+      applies_to: ["table", "column"]
+
+# ============================================================================
+# Predefined Patterns for Tools | 工具預定義模式
+# ============================================================================
+tool_patterns:
+  gatekeeper:
+    - name: "naming-constraint"
+      pattern: "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+      description: "Gatekeeper naming constraint pattern"
+    
+    - name: "label-constraint"
+      pattern: "^app\\.kubernetes\\.io/[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+      description: "Gatekeeper label constraint pattern"
+  
+  kustomize:
+    - name: "kustomization-name"
+      pattern: "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+      description: "Kustomization name pattern"
+  
+  helm:
+    - name: "release-name"
+      pattern: "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+      description: "Helm release name pattern"
+    
+    - name: "chart-name"
+      pattern: "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+      description: "Helm chart name pattern"
+  
+  conftest:
+    - name: "policy-name"
+      pattern: "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+      description: "Conftest policy name pattern"
+
+# ============================================================================
+# Reserved Keywords | 保留關鍵字
+# ============================================================================
+reserved_keywords:
+  kubernetes:
+    - "kubernetes"
+    - "kubelet"
+    - "kube-proxy"
+    - "kube-apiserver"
+    - "kube-scheduler"
+    - "kube-controller-manager"
+  
+  database:
+    postgresql:
+      - "all"
+      - "analyse"
+      - "analyze"
+      - "and"
+      - "any"
+      - "array"
+      - "as"
+      - "asc"
+      - "asymmetric"
+      - "authorization"
+      - "authorization_identifier"
+  
+  system:
+    - "system"
+    - "default"
+    - "admin"
+    - "root"
+    - "test"
+    - "null"
+    - "undefined"
+
+# ============================================================================
+# Best Practices | 最佳實踐
+# ============================================================================
+best_practices:
+  naming_conventions:
+    - practice: "Use descriptive names"
+      description: "Names should clearly describe what the resource does"
+      examples:
+        good: ["user-authentication-service", "order-processor"]
+        bad: ["service-1", "processor"]
+    
+    - practice: "Keep names short but meaningful"
+      description: "Balance brevity with clarity"
+      examples:
+        good: ["auth-service", "user-api"]
+        bad: ["authentication-service-for-users"]
+    
+    - practice: "Use consistent prefixes/suffixes"
+      description: "Standard prefixes help identify resource types"
+      examples:
+        configmap: ["config-"]
+        secret: ["secret-"]
+        ingress: ["ingress-"]
+    
+    - practice: "Avoid abbreviations"
+      description: "Use full words unless abbreviation is well-known"
+      examples:
+        good: ["authentication", "configuration"]
+        bad: ["auth", "cfg"]
+  
+  versioning:
+    - practice: "Follow SemVer strictly"
+      description: "Use semantic versioning for all releases"
+      examples:
+        good: ["v1.0.0", "v2.1.3"]
+        bad: ["v1", "1.0", "v1.0.0.0"]
+    
+    - practice: "Use pre-release tags appropriately"
+      description: "Use alpha, beta, rc for development releases"
+      examples:
+        good: ["v1.0.0-alpha.1", "v1.0.0-beta.2", "v1.0.0-rc.1"]
+        bad: ["v1.0.0-dev", "v1.0.0-wip"]

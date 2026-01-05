@@ -1,0 +1,699 @@
+# Naming Governance Templates
+# 命名治理模板
+#
+# Version: 1.0.0
+# Status: Active
+# Last Updated: 2025-01-05
+# Dimension: 27-templates
+
+$schema: "https://schema.machinenativeops.io/governance/naming-templates/v1"
+version: "1.0.0"
+dimension: "27-templates"
+status: "active"
+
+# ============================================================================
+# Template Overview | 模板概覽
+# ============================================================================
+overview:
+  purpose: |
+    提供可重複使用的命名模板，確保所有資源命名的一致性與標準化。
+  
+  usage: "Copy and customize templates for specific use cases"
+
+# ============================================================================
+# Kubernetes Resource Templates | Kubernetes 資源模板
+# ============================================================================
+kubernetes_templates:
+  # Pod Template
+  pod:
+    template: |
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: {{service-name}}-{{pod-type}}-{{instance-id}}
+        namespace: {{namespace}}
+        labels:
+          app.kubernetes.io/name: {{service-name}}
+          app.kubernetes.io/component: {{pod-type}}
+          app.kubernetes.io/instance: {{instance-id}}
+          app.kubernetes.io/version: {{version}}
+      spec:
+        containers:
+        - name: {{service-name}}
+          image: {{image}}:{{tag}}
+          env:
+          - name: ENVIRONMENT
+            value: "{{environment}}"
+          resources:
+            requests:
+              memory: "{{memory-request}}"
+              cpu: "{{cpu-request}}"
+            limits:
+              memory: "{{memory-limit}}"
+              cpu: "{{cpu-limit}}"
+    
+    variables:
+      - name: service-name
+        type: string
+        required: true
+        description: "Lowercase, hyphens only, max 50 chars"
+      - name: pod-type
+        type: enum
+        required: true
+        values: [main, worker, sidecar, init]
+      - name: instance-id
+        type: string
+        required: true
+        pattern: "^[0-9]{3}$"
+      - name: namespace
+        type: string
+        required: true
+      - name: version
+        type: string
+        required: true
+      - name: image
+        type: string
+        required: true
+      - name: tag
+        type: string
+        required: true
+      - name: environment
+        type: enum
+        required: true
+        values: [dev, staging, prod]
+  
+  # Deployment Template
+  deployment:
+    template: |
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: {{service-name}}
+        namespace: {{namespace}}
+        labels:
+          app.kubernetes.io/name: {{service-name}}
+          app.kubernetes.io/component: deployment
+          app.kubernetes.io/version: {{version}}
+      spec:
+        replicas: {{replicas}}
+        selector:
+          matchLabels:
+            app.kubernetes.io/name: {{service-name}}
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/name: {{service-name}}
+              app.kubernetes.io/component: pod
+          spec:
+            containers:
+            - name: {{service-name}}
+              image: {{image}}:{{tag}}
+              ports:
+              - containerPort: {{port}}
+              env:
+              - name: ENVIRONMENT
+                value: "{{environment}}"
+              resources:
+                requests:
+                  memory: "{{memory-request}}"
+                  cpu: "{{cpu-request}}"
+                limits:
+                  memory: "{{memory-limit}}"
+                  cpu: "{{cpu-limit}}"
+    
+    variables:
+      - name: service-name
+        type: string
+        required: true
+      - name: namespace
+        type: string
+        required: true
+      - name: version
+        type: string
+        required: true
+      - name: replicas
+        type: integer
+        required: true
+      - name: image
+        type: string
+        required: true
+      - name: tag
+        type: string
+        required: true
+      - name: port
+        type: integer
+        required: true
+      - name: environment
+        type: enum
+        required: true
+        values: [dev, staging, prod]
+  
+  # Service Template
+  service:
+    template: |
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: {{service-name}}
+        namespace: {{namespace}}
+        labels:
+          app.kubernetes.io/name: {{service-name}}
+      spec:
+        type: {{service-type}}
+        selector:
+          app.kubernetes.io/name: {{service-name}}
+        ports:
+        - name: {{port-name}}
+          port: {{port}}
+          targetPort: {{target-port}}
+          protocol: TCP
+    
+    variables:
+      - name: service-name
+        type: string
+        required: true
+      - name: namespace
+        type: string
+        required: true
+      - name: service-type
+        type: enum
+        required: true
+        values: [ClusterIP, NodePort, LoadBalancer]
+      - name: port-name
+        type: string
+        required: true
+      - name: port
+        type: integer
+        required: true
+      - name: target-port
+        type: integer
+        required: true
+  
+  # ConfigMap Template
+  configmap:
+    template: |
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: config-{{service-name}}
+        namespace: {{namespace}}
+        labels:
+          app.kubernetes.io/name: {{service-name}}
+      data:
+        application.yaml: |
+          {{config-content}}
+    
+    variables:
+      - name: service-name
+        type: string
+        required: true
+      - name: namespace
+        type: string
+        required: true
+      - name: config-content
+        type: string
+        required: true
+  
+  # Secret Template
+  secret:
+    template: |
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: secret-{{purpose}}-{{service-name}}
+        namespace: {{namespace}}
+        labels:
+          app.kubernetes.io/name: {{service-name}}
+      type: Opaque
+      data:
+        {{secret-key}}: {{secret-value-base64}}
+    
+    variables:
+      - name: purpose
+        type: enum
+        required: true
+        values: [database, api-key, certificate, token]
+      - name: service-name
+        type: string
+        required: true
+      - name: namespace
+        type: string
+        required: true
+      - name: secret-key
+        type: string
+        required: true
+      - name: secret-value-base64
+        type: string
+        required: true
+        description: "Base64 encoded secret value"
+
+# ============================================================================
+# Microservice Templates | 微服務模板
+# ============================================================================
+microservice_templates:
+  # Service Template
+  service:
+    template: |
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: {{domain}}-{{service}}
+        namespace: {{namespace}}
+        labels:
+          app.kubernetes.io/name: {{domain}}-{{service}}
+          app.kubernetes.io/component: service
+      spec:
+        type: ClusterIP
+        selector:
+          app.kubernetes.io/name: {{domain}}-{{service}}
+        ports:
+        - name: http
+          port: 80
+          targetPort: http
+          protocol: TCP
+    
+    variables:
+      - name: domain
+        type: enum
+        required: true
+        values: [user, order, payment, inventory, analytics]
+      - name: service
+        type: string
+        required: true
+      - name: namespace
+        type: string
+        required: true
+  
+  # Deployment Template
+  deployment:
+    template: |
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: {{domain}}-{{service}}
+        namespace: {{namespace}}
+        labels:
+          app.kubernetes.io/name: {{domain}}-{{service}}
+      spec:
+        replicas: {{replicas}}
+        selector:
+          matchLabels:
+            app.kubernetes.io/name: {{domain}}-{{service}}
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/name: {{domain}}-{{service}}
+          spec:
+            containers:
+            - name: {{domain}}-{{service}}
+              image: {{image}}:{{tag}}
+              ports:
+              - name: http
+                containerPort: 8080
+              env:
+              - name: ENVIRONMENT
+                value: "{{environment}}"
+              - name: DOMAIN
+                value: "{{domain}}"
+              - name: SERVICE
+                value: "{{service}}"
+    
+    variables:
+      - name: domain
+        type: enum
+        required: true
+        values: [user, order, payment, inventory, analytics]
+      - name: service
+        type: string
+        required: true
+      - name: namespace
+        type: string
+        required: true
+      - name: replicas
+        type: integer
+        required: true
+      - name: image
+        type: string
+        required: true
+      - name: tag
+        type: string
+        required: true
+      - name: environment
+        type: enum
+        required: true
+        values: [dev, staging, prod]
+
+# ============================================================================
+# Database Templates | 資料庫模板
+# ============================================================================
+database_templates:
+  # PostgreSQL Database Template
+  postgresql:
+    template: |
+      -- Database Creation
+      CREATE DATABASE {{environment}}_{{project}}_{{purpose}};
+      
+      -- Schema
+      \c {{environment}}_{{project}}_{{purpose}}
+      
+      -- Table Template
+      CREATE TABLE {{table_name}} (
+        id SERIAL PRIMARY KEY,
+        {{column_name}} {{data_type}} NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+      
+      -- Index
+      CREATE INDEX idx_{{table_name}}_{{column_name}} ON {{table_name}}({{column_name}});
+    
+    variables:
+      - name: environment
+        type: enum
+        required: true
+        values: [dev, staging, prod]
+      - name: project
+        type: string
+        required: true
+      - name: purpose
+        type: enum
+        required: true
+        values: [main, analytics, cache, logs]
+      - name: table_name
+        type: string
+        required: true
+        pattern: "^[a-z][a-z0-9_]*$"
+      - name: column_name
+        type: string
+        required: true
+        pattern: "^[a-z][a-z0-9_]*$"
+      - name: data_type
+        type: enum
+        required: true
+        values: [VARCHAR, INTEGER, TEXT, BOOLEAN, TIMESTAMP]
+
+# ============================================================================
+# Configuration File Templates | 配置文件模板
+# ============================================================================
+configuration_templates:
+  # YAML Configuration Template
+  yaml_config:
+    template: |
+      {{service-name}}-{{environment}}.yaml:
+        service:
+          name: {{service-name}}
+          version: {{version}}
+          environment: {{environment}}
+        
+        database:
+          host: {{database-host}}
+          port: {{database-port}}
+          name: {{database-name}}
+        
+        api:
+          host: {{api-host}}
+          port: {{api-port}}
+          version: v{{api-version}}
+    
+    variables:
+      - name: service-name
+        type: string
+        required: true
+      - name: environment
+        type: enum
+        required: true
+        values: [dev, staging, prod]
+      - name: version
+        type: string
+        required: true
+        pattern: "^v[0-9]+.[0-9]+.[0-9]+$"
+      - name: database-host
+        type: string
+        required: true
+      - name: database-port
+        type: integer
+        required: true
+      - name: database-name
+        type: string
+        required: true
+      - name: api-host
+        type: string
+        required: true
+      - name: api-port
+        type: integer
+        required: true
+      - name: api-version
+        type: integer
+        required: true
+  
+  # JSON Configuration Template
+  json_config:
+    template: |
+      {
+        "service": {
+          "name": "{{service-name}}",
+          "version": "{{version}}",
+          "environment": "{{environment}}"
+        },
+        "database": {
+          "host": "{{database-host}}",
+          "port": {{database-port}},
+          "name": "{{database-name}}"
+        },
+        "api": {
+          "host": "{{api-host}}",
+          "port": {{api-port}},
+          "version": "v{{api-version}}"
+        }
+      }
+    
+    variables:
+      - name: service-name
+        type: string
+        required: true
+      - name: environment
+        type: enum
+        required: true
+        values: [dev, staging, prod]
+      - name: version
+        type: string
+        required: true
+      - name: database-host
+        type: string
+        required: true
+      - name: database-port
+        type: integer
+        required: true
+      - name: database-name
+        type: string
+        required: true
+      - name: api-host
+        type: string
+        required: true
+      - name: api-port
+        type: integer
+        required: true
+      - name: api-version
+        type: integer
+        required: true
+
+# ============================================================================
+# Documentation Templates | 文檔模板
+# ============================================================================
+documentation_templates:
+  # API Documentation Template
+  api_docs:
+    template: |
+      # {{title}} API Documentation
+      
+      **Version:** v{{version}}
+      **Last Updated:** {{date}}
+      
+      ## Overview
+      {{overview}}
+      
+      ## Endpoints
+      
+      ### {{endpoint-name}}
+      
+      **Method:** {{method}}
+      **Path:** /{{path}}
+      
+      **Description:** {{description}}
+      
+      **Parameters:**
+      {{parameters-table}}
+      
+      **Response:**
+      {{response-example}}
+    
+    variables:
+      - name: title
+        type: string
+        required: true
+      - name: version
+        type: string
+        required: true
+        pattern: "^v[0-9]+.[0-9]+.[0-9]+$"
+      - name: date
+        type: date
+        required: true
+      - name: overview
+        type: text
+        required: true
+      - name: endpoint-name
+        type: string
+        required: true
+      - name: method
+        type: enum
+        required: true
+        values: [GET, POST, PUT, DELETE, PATCH]
+      - name: path
+        type: string
+        required: true
+      - name: description
+        type: text
+        required: true
+      - name: parameters-table
+        type: markdown
+        required: true
+      - name: response-example
+        type: json
+        required: true
+
+# ============================================================================
+# Exception Request Template | 例外申請模板
+# ============================================================================
+exception_templates:
+  naming_exception:
+    template: |
+      apiVersion: governance.machinenativeops.io/v1
+      kind: NamingExceptionRequest
+      metadata:
+        name: exception-{{resource-name}}-{{timestamp}}
+        namespace: {{namespace}}
+      spec:
+        resourceType: {{resource-type}}
+        resourceName: {{resource-name}}
+        requestedName: {{requested-name}}
+        justification: |
+          {{justification}}
+        businessImpact: |
+          {{business-impact}}
+        proposedTimeline: "{{proposed-timeline}}"
+        requestedBy:
+          name: {{requester-name}}
+          email: {{requester-email}}
+        technicalReview:
+          reviewedBy: {{reviewer-name}}
+          reviewDate: "{{review-date}}"
+          recommendation: {{recommendation}}
+        approval:
+          approvedBy: {{approver-name}}
+          approvalDate: "{{approval-date}}"
+          expiryDate: "{{expiry-date}}"
+    
+    variables:
+      - name: resource-name
+        type: string
+        required: true
+      - name: timestamp
+        type: datetime
+        required: true
+      - name: namespace
+        type: string
+        required: true
+      - name: resource-type
+        type: enum
+        required: true
+        values: [Pod, Deployment, Service, ConfigMap, Secret]
+      - name: requested-name
+        type: string
+        required: true
+      - name: justification
+        type: text
+        required: true
+      - name: business-impact
+        type: text
+        required: true
+      - name: proposed-timeline
+        type: string
+        required: true
+        description: "e.g., 6 months"
+      - name: requester-name
+        type: string
+        required: true
+      - name: requester-email
+        type: email
+        required: true
+      - name: reviewer-name
+        type: string
+        required: true
+      - name: review-date
+        type: date
+        required: true
+      - name: recommendation
+        type: enum
+        required: true
+        values: [approved, rejected, needs-review]
+      - name: approver-name
+        type: string
+        required: true
+      - name: approval-date
+        type: date
+        required: true
+      - name: expiry-date
+        type: date
+        required: true
+
+# ============================================================================
+# Version Tag Templates | 版本標籤模板
+# ============================================================================
+version_templates:
+  # Git Tag Template
+  git_tag:
+    template: "v{{major}}.{{minor}}.{{patch}}"
+    description: "Standard Git version tag"
+    variables:
+      - name: major
+        type: integer
+        required: true
+      - name: minor
+        type: integer
+        required: true
+      - name: patch
+        type: integer
+        required: true
+  
+  # Docker Image Tag Template
+  docker_tag:
+    template: "{{image-name}}:v{{major}}.{{minor}}.{{patch}}"
+    description: "Docker image version tag"
+    variables:
+      - name: image-name
+        type: string
+        required: true
+      - name: major
+        type: integer
+        required: true
+      - name: minor
+        type: integer
+        required: true
+      - name: patch
+        type: integer
+        required: true
+  
+  # Helm Chart Version Template
+  helm_chart:
+    template: "v{{major}}.{{minor}}.{{patch}}"
+    description: "Helm chart version"
+    variables:
+      - name: major
+        type: integer
+        required: true
+      - name: minor
+        type: integer
+        required: true
+      - name: patch
+        type: integer
+        required: true

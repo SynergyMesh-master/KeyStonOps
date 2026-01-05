@@ -1,0 +1,460 @@
+# Naming Governance Policy
+# 命名治理政策
+#
+# Version: 1.0.0
+# Status: Active
+# Last Updated: 2025-01-05
+# Dimension: 10-policy
+
+$schema: "https://schema.machinenativeops.io/governance/naming-policy/v1"
+version: "1.0.0"
+dimension: "10-policy"
+status: "active"
+policy_type: "naming-governance"
+
+# ============================================================================
+# Policy Overview | 政策概覽
+# ============================================================================
+overview:
+  purpose: |
+    建立涵蓋命名標準、版本控制規範、自動化驗證與執行的完整治理政策，
+    確保專案中所有資源命名的一致性與標準化。
+  
+  scope:
+    - "所有資源類型命名（Kubernetes、微服務、數據庫、文件、配置等）"
+    - "版本標籤與發布命名"
+    - "環境與部署資源命名"
+    - "API 端點與服務命名"
+  
+  compliance_level: "mandatory"
+
+# ============================================================================
+# Multi-layered Naming Strategy | 多層次命名策略
+# ============================================================================
+naming_strategy:
+  layers:
+    - layer: "semantic"
+      description: "語義層 - 確保名稱具有明確含義"
+      rules:
+        - "使用清晰、描述性的名稱"
+        - "避免縮寫與行話"
+        - "使用標準術語"
+        - "保持名稱簡潔但完整"
+    
+    - layer: "syntactic"
+      description: "語法層 - 確保名稱符合約定格式"
+      rules:
+        - "使用小寫字母與連字符（kebab-case）"
+        - "使用標準前綴/後綴"
+        - "遵守命名長度限制"
+        - "使用數字表示版本或實例"
+    
+    - layer: "hierarchical"
+      description: "層次層 - 確保名稱反映結構關係"
+      rules:
+        - "使用命名空間分隔不同層級"
+        - "反映服務依賴關係"
+        - "標記環境上下文"
+        - "表示資源類型"
+
+# ============================================================================
+# Resource Type Naming Rules | 資源類型命名規則
+# ============================================================================
+resource_types:
+  kubernetes_resources:
+    naming_convention: "kebab-case"
+    max_length: 253
+    pattern: "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
+    
+    types:
+      - type: "pod"
+        prefix: ""
+        format: "{service-name}-{pod-type}-{instance-id}"
+        examples:
+          - "api-server-main-001"
+          - "worker-processing-042"
+        validation:
+          - "service-name": "lowercase, hyphens only, max 50 chars"
+          - "pod-type": "main|worker|sidecar|init"
+          - "instance-id": "3-digit numeric, 000-999"
+      
+      - type: "deployment"
+        prefix: ""
+        format: "{service-name}"
+        examples:
+          - "api-server"
+          - "auth-service"
+        validation:
+          - "service-name": "lowercase, hyphens only, max 50 chars"
+      
+      - type: "service"
+        prefix: ""
+        format: "{service-name}"
+        examples:
+          - "api-server"
+          - "web-frontend"
+        validation:
+          - "service-name": "lowercase, hyphens only, max 50 chars"
+      
+      - type: "configmap"
+        prefix: "config-"
+        format: "config-{service-name}"
+        examples:
+          - "config-api-server"
+          - "config-database"
+        validation:
+          - "service-name": "lowercase, hyphens only, max 50 chars"
+      
+      - type: "secret"
+        prefix: "secret-"
+        format: "secret-{purpose}-{service-name}"
+        examples:
+          - "secret-database-api-server"
+          - "secret-api-key-external-service"
+        validation:
+          - "purpose": "database|api-key|certificate|token"
+          - "service-name": "lowercase, hyphens only, max 50 chars"
+      
+      - type: "ingress"
+        prefix: "ingress-"
+        format: "ingress-{service-name}"
+        examples:
+          - "ingress-api-server"
+          - "ingress-web-frontend"
+        validation:
+          - "service-name": "lowercase, hyphens only, max 50 chars"
+      
+      - type: "persistentvolumeclaim"
+        prefix: "pvc-"
+        format: "pvc-{service-name}-{data-type}"
+        examples:
+          - "pvc-api-server-data"
+          - "pvc-database-logs"
+        validation:
+          - "service-name": "lowercase, hyphens only, max 50 chars"
+          - "data-type": "data|logs|cache|temp"
+  
+  microservices:
+    naming_convention: "kebab-case"
+    max_length: 63
+    pattern: "^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$"
+    
+    components:
+      - component: "service"
+        format: "{domain}-{service}"
+        examples:
+          - "user-auth-service"
+          - "order-processing-service"
+        validation:
+          - "domain": "user|order|payment|inventory|analytics"
+          - "service": "lowercase, hyphens only, max 30 chars"
+      
+      - component: "api"
+        format: "api-{version}"
+        examples:
+          - "api-v1"
+          - "api-v2"
+        validation:
+          - "version": "v[0-9]+"
+      
+      - component: "gateway"
+        format: "gateway-{type}"
+        examples:
+          - "gateway-api"
+          - "gateway-internal"
+        validation:
+          - "type": "api|internal|external"
+  
+  databases:
+    naming_convention: "snake_case"
+    max_length: 128
+    
+    objects:
+      - object: "database"
+        format: "{environment}_{project}_{purpose}"
+        examples:
+          - "prod_ecommerce_orders"
+          - "dev_user_management_main"
+        validation:
+          - "environment": "dev|staging|prod"
+          - "project": "lowercase, underscores only"
+          - "purpose": "main|analytics|cache|logs"
+      
+      - object: "table"
+        format: "{table_name}"
+        examples:
+          - "users"
+          - "order_items"
+          - "product_categories"
+        validation:
+          - "table_name": "lowercase, underscores, plural if collection"
+      
+      - object: "column"
+        format: "{column_name}"
+        examples:
+          - "user_id"
+          - "created_at"
+          - "total_amount"
+        validation:
+          - "column_name": "lowercase, underscores"
+  
+  files_and_documents:
+    naming_convention: "kebab-case"
+    max_length: 255
+    
+    types:
+      - type: "documentation"
+        format: "{title}-{version}.{ext}"
+        examples:
+          - "api-guide-v1.2.md"
+          - "deployment-manual-v2.0.pdf"
+        validation:
+          - "title": "lowercase, hyphens only"
+          - "version": "v[0-9]+.[0-9]+"
+      
+      - type: "configuration"
+        format: "{service}-{environment}.{ext}"
+        examples:
+          - "api-server-prod.yaml"
+          - "database-staging.json"
+        validation:
+          - "service": "lowercase, hyphens only"
+          - "environment": "dev|staging|prod"
+          - "ext": "yaml|json|toml|ini"
+  
+  environments:
+    naming_convention: "lowercase"
+    
+    levels:
+      - level: "development"
+        names: ["dev", "development"]
+        purpose: "Local development"
+      
+      - level: "staging"
+        names: ["staging", "stage"]
+        purpose: "Pre-production testing"
+      
+      - level: "production"
+        names: ["prod", "production"]
+        purpose: "Live production environment"
+
+# ============================================================================
+# Version Control Rules (SemVer) | 版本控制規範
+# ============================================================================
+version_control:
+  standard: "Semantic Versioning 2.0.0 (SemVer)"
+  format: "MAJOR.MINOR.PATCH"
+  
+  components:
+    - component: "MAJOR"
+      increment_when:
+        - "Breaking API changes"
+        - "Incompatible changes"
+        - "Major feature removal"
+      example: "1.0.0 → 2.0.0"
+    
+    - component: "MINOR"
+      increment_when:
+        - "Backwards compatible features"
+        - "New functionality"
+        - "Enhancements"
+      example: "1.0.0 → 1.1.0"
+    
+    - component: "PATCH"
+      increment_when:
+        - "Bug fixes"
+        - "Patches"
+        - "Minor corrections"
+      example: "1.0.0 → 1.0.1"
+  
+  prerelease_tags:
+    - "alpha"
+    - "beta"
+    - "rc" (release candidate)
+    - "dev" (development)
+  
+  build_metadata:
+    - "git.commit"
+    - "build.number"
+    - "timestamp"
+  
+  examples:
+    - "1.0.0"
+    - "1.1.0"
+    - "2.0.0-alpha.1"
+    - "1.2.3-rc.2+build.123"
+
+# ============================================================================
+# Validation Rules | 驗證規則
+# ============================================================================
+validation:
+  automated_checks:
+    - check: "naming_convention"
+      enabled: true
+      severity: "error"
+      description: "Enforce naming convention compliance"
+    
+    - check: "length_limit"
+      enabled: true
+      severity: "error"
+      description: "Enforce maximum length constraints"
+    
+    - check: "pattern_match"
+      enabled: true
+      severity: "error"
+      description: "Validate against regex patterns"
+    
+    - check: "reserved_words"
+      enabled: true
+      severity: "warning"
+      description: "Check for reserved keywords"
+    
+    - check: "uniqueness"
+      enabled: true
+      severity: "error"
+      description: "Ensure naming uniqueness within scope"
+  
+  regex_patterns:
+    - name: "kebab-case"
+      pattern: "^[a-z0-9](-?[a-z0-9])*$"
+      description: "Lowercase letters, numbers, and hyphens"
+    
+    - name: "snake_case"
+      pattern: "^[a-z][a-z0-9_]*$"
+      description: "Lowercase letters, numbers, and underscores"
+    
+    - name: "camelCase"
+      pattern: "^[a-z][a-zA-Z0-9]*$"
+      description: "First letter lowercase, rest can be uppercase"
+    
+    - name: "PascalCase"
+      pattern: "^[A-Z][a-zA-Z0-9]*$"
+      description: "First letter uppercase, rest can be mixed"
+    
+    - name: "SCREAMING_SNAKE_CASE"
+      pattern: "^[A-Z][A-Z0-9_]*$"
+      description: "Uppercase letters, numbers, and underscores"
+
+# ============================================================================
+# Enforcement Mechanisms | 執行機制
+# ============================================================================
+enforcement:
+  pre_commit_hooks:
+    - hook: "naming-linter"
+      enabled: true
+      tools: ["yamllint", "kubectl"]
+    
+    - hook: "pattern-validator"
+      enabled: true
+      tools: ["custom-validator"]
+    
+    - hook: "length-checker"
+      enabled: true
+      tools: ["bash-script"]
+  
+  ci_cd_integration:
+    - stage: "validate"
+      jobs:
+        - "naming-compliance-check"
+        - "pattern-validation"
+        - "length-validation"
+    
+    - stage: "test"
+      jobs:
+        - "integration-naming-test"
+        - "environment-specific-validation"
+    
+    - stage: "deploy"
+      jobs:
+        - "pre-deploy-naming-verification"
+        - "post-deploy-naming-audit"
+  
+  gatekeeper_constraints:
+    - constraint: "naming-convention"
+      kind: "ConstraintTemplate"
+      enforcement: "dryrun"
+      parameters:
+        - "pattern"
+        - "resourceType"
+        - "maxLength"
+    
+    - constraint: "label-requirements"
+      kind: "Constraint"
+      enforcement: "warn"
+      parameters:
+        - "requiredLabels"
+        - "matchLabels"
+
+# ============================================================================
+# Exception Management | 例外管理
+# ============================================================================
+exception_management:
+  request_process:
+    - step: "Submit Exception Request"
+      form: "exception-request.yaml"
+      required_fields:
+        - "resource_name"
+        - "requested_name"
+        - "justification"
+        - "business_impact"
+        - "proposed_timeline"
+    
+    - step: "Technical Review"
+      reviewer: "Naming Gatekeeper"
+      criteria:
+        - "Valid business reason"
+        - "No viable alternative"
+        - "Temporary measure only"
+    
+    - step: "Approval"
+      approver: "Governance Board"
+      timeline: "5 business days"
+    
+    - step: "Documentation"
+      action: "Record in exception registry"
+      retention: "2 years"
+  
+  expiration_policy:
+    - duration: "6 months"
+    - review_required: true
+    - auto_renewal: false
+  
+  audit_trail:
+    enabled: true
+    fields:
+      - "requester"
+      - "timestamp"
+      - "justification"
+      - "approver"
+      - "expiry_date"
+
+# ============================================================================
+# Policy Evolution | 政策演化
+# ============================================================================
+evolution:
+  review_cycle: "quarterly"
+  versioning: true
+  
+  update_triggers:
+    - "New resource types"
+    - "Industry standards changes"
+    - "Security requirements"
+    - "Team feedback"
+  
+  deprecation_policy:
+    - notice_period: "90 days"
+    - migration_path: required
+    - support_window: "180 days"
+
+# ============================================================================
+# References | 參考資料
+# ============================================================================
+references:
+  - title: "Kubernetes Naming Conventions"
+    url: "https://kubernetes.io/docs/concepts/overview/working-with-objects/names/"
+  
+  - title: "Semantic Versioning 2.0.0"
+    url: "https://semver.org/"
+  
+  - title: "RFC 1035 - Domain Names"
+    url: "https://tools.ietf.org/html/rfc1035"

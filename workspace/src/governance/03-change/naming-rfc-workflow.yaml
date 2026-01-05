@@ -1,0 +1,515 @@
+# RFC Workflow for Naming Governance
+# 命名治理 RFC 工作流程
+#
+# Version: 1.0.0
+# Status: Active
+# Last Updated: 2025-01-05
+# Dimension: 03-change
+
+$schema: "https://schema.machinenativeops.io/governance/naming-rfc/v1"
+version: "1.0.0"
+dimension: "03-change"
+status: "active"
+workflow_type: "request-for-comments"
+
+# ============================================================================
+# RFC Workflow Overview | RFC 工作流程概覽
+# ============================================================================
+overview:
+  purpose: |
+    建立標準化的 RFC（Request for Comments）工作流程，用於命名標準變更、
+    新增資源類型、例外申請等治理相關變更。
+  
+  scope:
+    - "命名標準提案與修改"
+    - "新資源類型定義"
+    - "命名例外申請"
+    - "政策更新建議"
+    - "流程改進建議"
+  
+  objectives:
+    - "確保所有變更經過充分審查"
+    - "提供透明的審批流程"
+    - "記錄所有決策與理由"
+    - "促進團隊協作與知識分享"
+
+# ============================================================================
+# RFC Lifecycle | RFC 生命週期
+# ============================================================================
+lifecycle:
+  phases:
+    - phase: "Draft"
+      description: "RFC 草案階段"
+      actions:
+        - "起草 RFC 文檔"
+        - "徵求初步反饋"
+        - "完善內容"
+      duration: "1-2 weeks"
+      responsible: "Requester"
+    
+    - phase: "Review"
+      description: "RFC 審查階段"
+      actions:
+        - "提交正式審查"
+        - "技術審查"
+        - "利害關係人審查"
+      duration: "2-3 weeks"
+      responsible: "Naming Gatekeeper"
+    
+    - phase: "Discussion"
+      description: "討論與修訂階段"
+      actions:
+        - "收集反饋"
+        - "開展討論"
+        - "修訂草案"
+      duration: "1-2 weeks"
+      responsible: "All Stakeholders"
+    
+    - phase: "Decision"
+      description: "決策階段"
+      actions:
+        - "治理委員會審議"
+        - "正式投票"
+        - "記錄決策"
+      duration: "1 week"
+      responsible: "Governance Board"
+    
+    - phase: "Implementation"
+      description: "實施階段"
+      actions:
+        - "制定實施計劃"
+        - "更新文檔"
+        - "培訓團隊"
+        - "部署變更"
+      duration: "Variable"
+      responsible: "Implementation Team"
+    
+    - phase: "Closed"
+      description: "結案階段"
+      actions:
+        - "記錄結果"
+        - "歸檔文檔"
+        - "分享學習"
+      duration: "Immediate"
+      responsible: "Governance Team"
+
+# ============================================================================
+# RFC Classification | RFC 分類
+# ============================================================================
+classification:
+  categories:
+    - category: "Standard Proposal"
+      code: "SP"
+      description: "新命名標準提案"
+      risk_level: "Medium"
+      approval_required: ["Technical Review", "Governance Board"]
+      timeline: "4-6 weeks"
+    
+    - category: "Standard Modification"
+      code: "SM"
+      description: "現有標準修改"
+      risk_level: "Medium"
+      approval_required: ["Technical Review", "Governance Board"]
+      timeline: "3-4 weeks"
+    
+    - category: "Resource Type Addition"
+      code: "RT"
+      description: "新增資源類型"
+      risk_level: "High"
+      approval_required: ["Technical Review", "Architecture Review", "Governance Board"]
+      timeline: "6-8 weeks"
+    
+    - category: "Naming Exception"
+      code: "NE"
+      description: "命名例外申請"
+      risk_level: "Low"
+      approval_required: ["Technical Review"]
+      timeline: "1-2 weeks"
+    
+    - category: "Policy Update"
+      code: "PU"
+      description: "政策更新建議"
+      risk_level: "High"
+      approval_required: ["Technical Review", "Governance Board"]
+      timeline: "4-6 weeks"
+    
+    - category: "Process Improvement"
+      code: "PI"
+      description: "流程改進建議"
+      risk_level: "Low"
+      approval_required: ["Process Owner"]
+      timeline: "2-3 weeks"
+    
+    - category: "Bug Fix"
+      code: "BF"
+      description: "命名標準錯誤修正"
+      risk_level: "Low"
+      approval_required: ["Technical Review"]
+      timeline: "1 week"
+
+# ============================================================================
+# RFC Template | RFC 模板
+# ============================================================================
+template:
+  header:
+    title: "{{rfc-title}}"
+    rfc_id: "RFC-{{year}}-{{sequence}}"
+    status: "{{status}}"
+    category: "{{category}}"
+    created: "{{date}}"
+    author:
+      name: "{{author-name}}"
+      email: "{{author-email}}"
+      team: "{{author-team}}"
+  
+  sections:
+    - section: "Abstract"
+      required: true
+      description: "簡要描述 RFC 的目的與範圍"
+      content_type: "text"
+    
+    - section: "Motivation"
+      required: true
+      description: "為什麼需要這個變更"
+      content_type: "text"
+      subsections:
+        - "Problem Statement"
+        - "Proposed Solution"
+        - "Benefits"
+    
+    - section: "Proposed Changes"
+      required: true
+      description: "詳細描述提議的變更"
+      content_type: "structured"
+      subsections:
+        - "Naming Standards"
+        - "Version Control"
+        - "Validation Rules"
+        - "Templates"
+        - "Documentation"
+    
+    - section: "Impact Analysis"
+      required: true
+      description: "分析變更的影響"
+      content_type: "structured"
+      subsections:
+        - "Existing Resources"
+        - "CI/CD Pipelines"
+        - "Team Workflows"
+        - "Migration Strategy"
+        - "Rollback Plan"
+    
+    - section: "Alternatives Considered"
+      required: false
+      description: "考慮過的替代方案"
+      content_type: "list"
+    
+    - section: "Implementation Plan"
+      required: true
+      description: "實施計劃與時間表"
+      content_type: "structured"
+      subsections:
+        - "Phases"
+        - "Timeline"
+        - "Resources Required"
+        - "Risks and Mitigations"
+    
+    - section: "Open Questions"
+      required: false
+      description: "待解決的問題"
+      content_type: "list"
+    
+    - section: "References"
+      required: false
+      description: "參考資料"
+      content_type: "list"
+
+# ============================================================================
+# RFC Approval Process | RFC 審批流程
+# ============================================================================
+approval_process:
+  levels:
+    - level: "Technical Review"
+      approver: "Naming Gatekeeper"
+      criteria:
+        - "技術可行性"
+        - "與現有標準的一致性"
+        - "命名約定的正確性"
+      timeline: "3-5 business days"
+      decision_options: ["Approve", "Request Changes", "Reject"]
+    
+    - level: "Architecture Review"
+      approver: "Architecture Team"
+      criteria:
+        - "系統架構影響"
+        - "擴展性考量"
+        - "技術債務評估"
+      timeline: "5-7 business days"
+      decision_options: ["Approve", "Request Changes", "Reject"]
+    
+    - level: "Governance Board"
+      approver: "Governance Board"
+      criteria:
+        - "戰略對齊"
+        - "資源影響"
+        - "風險接受度"
+      timeline: "5-10 business days"
+      decision_options: ["Approve", "Request Changes", "Reject"]
+    
+    - level: "Process Owner"
+      approver: "Process Owner"
+      criteria:
+        - "流程影響"
+        - "實施可行性"
+        - "團隊接受度"
+      timeline: "3-5 business days"
+      decision_options: ["Approve", "Request Changes", "Reject"]
+  
+  escalation:
+    - trigger: "審批超時"
+      action: "自動提醒 + 上級審批"
+      timeframe: "7 days overdue"
+    
+    - trigger: "反覆請求修改"
+      action: "治理委員會介入"
+      threshold: "3 cycles"
+    
+    - trigger: "意見分歧"
+      action: "調解會議"
+      condition: "審批者之間意見不一致"
+
+# ============================================================================
+# RFC Metadata | RFC 元數據
+# ============================================================================
+metadata:
+  required_fields:
+    - field: "rfc_id"
+      type: "string"
+      format: "RFC-YYYY-NNNN"
+      description: "RFC 唯一標識符"
+    
+    - field: "title"
+      type: "string"
+      max_length: 200
+      description: "RFC 標題"
+    
+    - field: "category"
+      type: "enum"
+      values: ["SP", "SM", "RT", "NE", "PU", "PI", "BF"]
+      description: "RFC 類別"
+    
+    - field: "status"
+      type: "enum"
+      values: ["Draft", "Review", "Discussion", "Decision", "Implementation", "Closed"]
+      description: "RFC 狀態"
+    
+    - field: "priority"
+      type: "enum"
+      values: ["Critical", "High", "Medium", "Low"]
+      description: "RFC 優先級"
+    
+    - field: "author"
+      type: "object"
+      required_subfields: ["name", "email", "team"]
+      description: "RFC 作者"
+    
+    - field: "created_date"
+      type: "date"
+      description: "創建日期"
+    
+    - field: "target_completion"
+      type: "date"
+      description: "目標完成日期"
+    
+    - field: "related_rfc"
+      type: "array"
+      items:
+        type: "string"
+      description: "相關 RFC ID"
+    
+    - field: "labels"
+      type: "array"
+      items:
+        type: "string"
+      description: "RFC 標籤"
+
+# ============================================================================
+# RFC Automation | RFC 自動化
+# ============================================================================
+automation:
+  creation:
+    - action: "自動生成 RFC ID"
+      tool: "Python Script"
+      format: "RFC-{year}-{sequence}"
+    
+    - action: "創建 RFC Issue"
+      tool: "GitHub API"
+      template: "rfc-issue-template.md"
+    
+    - action: "通知利害關係人"
+      tool: "Email / Slack"
+      recipients: "Based on category"
+  
+  workflow:
+    - action: "自動狀態轉換"
+      trigger: "Approval received"
+      next_state: "Implementation"
+    
+    - action: "自動提醒"
+      trigger: "Inactivity for 5 days"
+      action: "Send reminder to author"
+    
+    - action: "自動過期"
+      trigger: "Draft for > 30 days"
+      action: "Mark as stale"
+  
+  notification:
+    - event: "RFC Created"
+      channels: ["Slack", "Email"]
+      recipients: ["Governance Team", "Relevant Teams"]
+    
+    - event: "Status Change"
+      channels: ["Slack"]
+      recipients: ["Author", "Approvers"]
+    
+    - event: "Comment Added"
+      channels: ["Slack"]
+      recipients: ["Author", "Commenters"]
+    
+    - event: "Decision Made"
+      channels: ["Email", "Slack"]
+      recipients: ["All Stakeholders"]
+
+# ============================================================================
+# RFC Storage | RFC 儲存
+# ============================================================================
+storage:
+  location: "workspace/src/governance/03-change/rfcs/"
+  structure:
+    - "active/"
+    - "closed/"
+    - "archived/"
+  
+  naming_convention:
+    pattern: "RFC-{year}-{sequence}-{title-slug}.md"
+    example: "RFC-2025-0001-add-azure-support.md"
+  
+  retention:
+    active: "Indefinite"
+    closed: "2 years"
+    archived: "5 years"
+
+# ============================================================================
+# RFC Metrics | RFC 指標
+# ============================================================================
+metrics:
+  lifecycle:
+    - metric: "Average RFC Completion Time"
+      target: "< 6 weeks"
+      measurement: "From creation to close"
+    
+    - metric: "RFC Approval Rate"
+      target: "> 80%"
+      measurement: "Approved / Total submitted"
+    
+    - metric: "RFC Implementation Rate"
+      target: "> 90%"
+      measurement: "Implemented / Approved"
+  
+  quality:
+    - metric: "RFC Completeness Score"
+      target: "> 90%"
+      measurement: "Required fields filled / Total required fields"
+    
+    - metric: "Review Participation Rate"
+      target: "> 70%"
+      measurement: "Reviewers / Total stakeholders"
+    
+    - metric: "RFC Rejection Rate"
+      target: "< 10%"
+      measurement: "Rejected / Total submitted"
+
+# ============================================================================
+# RFC Best Practices | RFC 最佳實踐
+# ============================================================================
+best_practices:
+  creation:
+    - practice: "Clear Problem Statement"
+      description: "明確說明問題與解決方案"
+    
+    - practice: "Comprehensive Impact Analysis"
+      description: "全面分析變更影響"
+    
+    - practice: "Realistic Timeline"
+      description: "設定實際可行的時間表"
+    
+    - practice: "Early Stakeholder Engagement"
+      description: "早期與利害關係人溝通"
+  
+  review:
+    - practice: "Constructive Feedback"
+      description: "提供建設性反饋"
+    
+    - practice: "Timely Response"
+      description: "及時回應 RFC"
+    
+    - practice: "Evidence-based Decisions"
+      description: "基於證據做出決策"
+    
+    - practice: "Documentation of Rationale"
+      description: "記錄決策理由"
+  
+  implementation:
+    - practice: "Phased Rollout"
+      description: "分階段實施"
+    
+    - practice: "Backward Compatibility"
+      description: "保持向後兼容"
+    
+    - practice: "Comprehensive Testing"
+      description: "全面測試"
+    
+    - practice: "Communication and Training"
+      description: "溝通與培訓"
+
+# ============================================================================
+# RFC Risk Assessment | RFC 風險評估
+# ============================================================================
+risk_assessment:
+  factors:
+    - factor: "Impact Scope"
+      levels:
+        - "Low": "Limited to single team"
+        - "Medium": "Multiple teams"
+        - "High": "Organization-wide"
+    
+    - factor: "Technical Complexity"
+      levels:
+        - "Low": "Simple changes"
+        - "Medium": "Moderate complexity"
+        - "High": "Complex implementation"
+    
+    - factor: "Migration Effort"
+      levels:
+        - "Low": "Minimal migration"
+        - "Medium": "Some migration required"
+        - "High": "Extensive migration"
+    
+    - factor: "Dependencies"
+      levels:
+        - "Low": "No dependencies"
+        - "Medium": "Some dependencies"
+        - "High": "Many dependencies"
+  
+  risk_matrix:
+    - risk_level: "Low"
+      approval: "Technical Review"
+      timeline: "1-2 weeks"
+    
+    - risk_level: "Medium"
+      approval: "Technical Review + Governance Board"
+      timeline: "3-4 weeks"
+    
+    - risk_level: "High"
+      approval: "Technical Review + Architecture Review + Governance Board"
+      timeline: "6-8 weeks"
