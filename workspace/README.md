@@ -84,6 +84,7 @@ npm run docs:lint
 
 ## Package Management
 
+This `workspace/` directory is itself an npm workspace root. See `./package.json` in this directory (i.e., `workspace/package.json` from the repository root) for the complete and authoritative list of workspace packages. The main packages (paths are relative to this directory) include:
 This directory is an npm workspace. The workspace packages include:
 This `workspace/` directory is itself an npm workspace root. See `./package.json` in this directory (i.e., `workspace/package.json` from the repository root) for the complete and authoritative list of workspace packages. 
 
