@@ -4,8 +4,12 @@
   "description": "MachineNativeOps - Enterprise-grade orchestration platform (root workspace)",
   "private": true,
   "workspaces": [
-    "workspace/src/mcp-servers/*",
-    "workspace/src/core/contract_service/contracts-L1/contracts"
+    "workspace/src/mcp-servers",
+    "workspace/src/core/contract_service/contracts-L1/contracts",
+    "workspace/src/core/advisory-database",
+    "workspace/src/apps/web",
+    "workspace/src/ai/src/ai",
+    "workspace/archive/unmanned-engineer-ceo/80-skeleton-configs",
   ],
   "scripts": {
     "lint": "npm run lint --workspaces --if-present",
