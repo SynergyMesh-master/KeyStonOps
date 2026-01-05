@@ -699,26 +699,6 @@ class KubernetesCollector:
         # Placeholder for Kubernetes integration
         return []
 
-"""
-Metrics collectors for system, quantum, and Kubernetes monitoring
-"""
-
-import os
-import psutil
-import time
-import logging
-import requests
-from typing import Dict, Any, Optional, List
-from datetime import datetime
-from dataclasses import dataclass
-
-try:
-    from kubernetes import client, config
-    KUBERNETES_AVAILABLE = True
-except ImportError:
-    KUBERNETES_AVAILABLE = False
-
-from .config import QuantumConfig, ServicesConfig
 
 @dataclass
 class SystemMetrics:
