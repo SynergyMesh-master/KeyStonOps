@@ -71,11 +71,15 @@ npm run dev:stack --workspace=workspace
 ### Documentation
 
 ```bash
-# Generate knowledge graph
+# Generate knowledge graph (from repository root)
 make -C workspace all-kg
+# Or, if already in workspace directory:
+make all-kg
 
-# Lint documentation
+# Lint documentation (from repository root)
 npm run docs:lint --workspace=workspace
+# Or, if already in workspace directory:
+npm run docs:lint
 ```
 
 ## Package Management
