@@ -45,34 +45,42 @@ All damaged files show evidence of **incomplete merge conflict resolution** with
 - **Fix**: Removed orphaned docstring text (lines 18-23)
 - **Status**: ✅ Fixed - Syntax valid
 
-## Files with Remaining Issues
+## Files Partially Fixed (Commit: 3f022d1, 8e26e54)
 
-The following files in the auto-monitor module have **complex nested merge conflicts** requiring manual resolution:
+The following files in the auto-monitor module had duplicate code removed but **still have syntax errors** requiring additional work:
 
-### 1. `workspace/engine/machinenativenops-auto-monitor/src/machinenativenops_auto_monitor/__main__.py`
-- **Error**: `SyntaxError: unterminated triple-quoted string literal (line 419)`
-- **Issue**: Missing closing quotes and possibly nested duplicates
+### 7. `workspace/engine/machinenativenops-auto-monitor/src/machinenativenops_auto_monitor/__main__.py`
+- **Original Issue**: Duplicate code and unterminated string literals
+- **Partial Fix Applied**: Removed duplicate Examples section and shebang line
+- **Current Error**: `SyntaxError: unterminated triple-quoted string literal (line 419)`
+- **Status**: ⚠️ Partially Fixed - Still has syntax errors
 - **Impact**: Non-critical (experimental module in workspace/engine/)
 
-### 2. `workspace/engine/machinenativenops-auto-monitor/src/machinenativenops_auto_monitor/alerts.py`
-- **Error**: `SyntaxError: invalid syntax (line 35)`
-- **Issue**: Multiple duplicate Alert/AlertSeverity class definitions (lines 14, 47, etc.)
+### 8. `workspace/engine/machinenativenops-auto-monitor/src/machinenativenops_auto_monitor/alerts.py`
+- **Original Issue**: Multiple duplicate Alert/AlertSeverity class definitions
+- **Partial Fix Applied**: Removed duplicate module docstring
+- **Current Error**: `SyntaxError: invalid syntax (line 35)`
+- **Status**: ⚠️ Partially Fixed - Still has syntax errors
 - **Impact**: Non-critical (experimental module)
 
-### 3. `workspace/engine/machinenativenops-auto-monitor/src/machinenativenops_auto_monitor/app.py`
-- **Error**: `IndentationError: unexpected indent (line 28)`
-- **Issue**: Indentation corruption from merge
+### 9. `workspace/engine/machinenativenops-auto-monitor/src/machinenativenops_auto_monitor/app.py`
+- **Original Issue**: Indentation corruption and duplicate code
+- **Partial Fix Applied**: Fixed docstring formatting and indentation
+- **Current Error**: `SyntaxError: invalid syntax (line 176)`
+- **Status**: ⚠️ Partially Fixed - Still has syntax errors
 - **Impact**: Non-critical (experimental module)
 
-### 4. `workspace/engine/machinenativenops-auto-monitor/src/machinenativenops_auto_monitor/collectors.py`
-- **Error**: `SyntaxError: unterminated triple-quoted string literal (line 1072)`
-- **Issue**: Missing quotes and possible nested duplicates
+### 10. `workspace/engine/machinenativenops-auto-monitor/src/machinenativenops_auto_monitor/collectors.py`
+- **Original Issue**: Duplicate code and unterminated string literals
+- **Partial Fix Applied**: Removed duplicate module docstring
+- **Current Error**: `SyntaxError: unterminated triple-quoted string literal (line 1072)`
+- **Status**: ⚠️ Partially Fixed - Still has syntax errors
 - **Impact**: Non-critical (experimental module)
 
 ## Recommendations
 
 1. **Immediate**: The critical files have been fixed. Core functionality should not be impacted.
-2. **Short-term**: Manually review and fix the 4 remaining auto-monitor files OR restore them from a known-good commit before PR #958.
+2. **Short-term**: Complete the fixes for the 4 auto-monitor files (which have been partially repaired) OR restore them from a known-good commit before PR #958.
 3. **Long-term**: Implement better merge conflict detection in CI to prevent similar issues:
    - Add Python syntax validation to pre-commit hooks
    - Add merge conflict marker detection (`<<<<<<<`, `=======`, `>>>>>>>`)
@@ -81,7 +89,7 @@ The following files in the auto-monitor module have **complex nested merge confl
 ## Impact Assessment
 
 - **Critical Files Fixed**: 6 files - all syntax errors resolved
-- **Non-Critical Files Remaining**: 4 files - all in experimental auto-monitor module
+- **Non-Critical Files Partially Fixed**: 4 files - duplicate code removed, syntax errors remain
 - **Build Impact**: Minimal - core platform files are intact
 - **Security Impact**: None identified - no security-critical files affected
 
@@ -94,13 +102,15 @@ The following files in the auto-monitor module have **complex nested merge confl
 ## Next Steps
 
 The user should decide whether to:
-- Accept the current fixes and defer auto-monitor repairs
+- Complete the partial fixes to the 4 auto-monitor files
 - Restore auto-monitor files from pre-PR#958 state  
-- Manually fix the remaining 4 files
+- Accept current state and defer complete auto-monitor repairs
 
 ---
 
 **Report Generated**: 2026-01-04  
-**Commits**: 51690fe, 3f022d1  
-**Total Files Fixed**: 6/10 (60%)  
+**Commits**: 51690fe, 3f022d1, 8e26e54  
+**Total Files Addressed**: 10/10 (100%)  
+**Fully Fixed**: 6/10 (60%)  
+**Partially Fixed**: 4/10 (40%)  
 **Critical Issues Resolved**: 100%
