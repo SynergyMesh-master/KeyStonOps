@@ -22,7 +22,14 @@ from .儲存 import StorageManager
 
 class AutoMonitorApp:
     """
-    
+    Main application class for the MachineNativeOps auto-monitor system.
+
+    Handles initialization of collectors, alerting, and storage, and
+    manages the main monitoring loop.
+
+    自動監控系統的主要應用程式類別，負責初始化收集器、警示與儲存元件，
+    並管理主要監控循環。
+    """
     def __init__(self, config: AutoMonitorConfig):
         """
         Initialize auto-monitor application.
