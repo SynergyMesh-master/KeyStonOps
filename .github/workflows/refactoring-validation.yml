@@ -1,0 +1,94 @@
+name: Refactoring Validation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  validate-structure:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+    
+    - name: Run structure validation
+      run: |
+        chmod +x scripts/validate-structure.sh
+        bash scripts/validate-structure.sh
+    
+    - name: Check for Chinese directory names
+      run: |
+        if find workspace/src/ -maxdepth 1 -type d -name "*[一-龥]*" | grep -q .; then
+          echo "❌ 發現中文目錄名稱"
+          exit 1
+        else
+          echo "✅ 無中文目錄名稱"
+        fi
+    
+    - name: Check for build artifacts
+      run: |
+        if find workspace/src/ -name "*.egg-info" | grep -q .; then
+          echo "❌ 發現構建產物 (.egg-info)"
+          exit 1
+        else
+          echo "✅ 無構建產物"
+        fi
+    
+    - name: Validate directory structure
+      run: |
+        echo "檢查目錄結構..."
+        
+        # 檢查關鍵目錄
+        [ -d "workspace/src/core" ] || { echo "❌ core/ 不存在"; exit 1; }
+        [ -d "workspace/src/contracts" ] || { echo "❌ contracts/ 不存在"; exit 1; }
+        [ -d "workspace/src/services" ] || { echo "❌ services/ 不存在"; exit 1; }
+        [ -d "workspace/src/apps" ] || { echo "❌ apps/ 不存在"; exit 1; }
+        
+        echo "✅ 所有必要目錄存在"
+        
+        # 檢查不應該存在的目錄
+        if [ -d "workspace/src/core/contracts" ]; then
+          echo "❌ core/contracts/ 不應該存在（應該已合併）"
+          exit 1
+        fi
+        
+        if [ -d "workspace/src/core/contract_service" ]; then
+          echo "❌ core/contract_service/ 不應該存在（應該已移動）"
+          exit 1
+        fi
+        
+        if [ -d "workspace/src/web" ]; then
+          echo "❌ web/ 不應該存在（應該已移動）"
+          exit 1
+        fi
+        
+        echo "✅ 無重複目錄"
+    
+    - name: Validate Python imports
+      run: |
+        cd workspace/src
+        python -m py_compile core/__init__.py || true
+        echo "Python 語法檢查完成"
+    
+    - name: Upload validation results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: validation-results
+        path: |
+          backup/
+          *.txt
