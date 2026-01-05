@@ -8,7 +8,7 @@ Handles alert rules, alert generation, and alert routing for MachineNativeOps mo
 
 import logging
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any, Callable
+from typing import Dict, List, Optional, Any
 from datetime import datetime
 from enum import Enum
 
