@@ -7,7 +7,7 @@ Validates that all resources comply with MachineNativeOps namespace standards.
 Usage:
     python namespace-validator.py [--verbose] [--strict] <path>
 
-Version: 2.0.0
+Version: 1.0.1
 Author: MachineNativeOps Platform Team
 """
 
