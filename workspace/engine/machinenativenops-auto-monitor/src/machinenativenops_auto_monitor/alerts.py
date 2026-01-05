@@ -243,6 +243,8 @@ class AlertRule:
         elif '=' in self.condition:
             return value == self.threshold
         elif '!=' in self.condition:
+            return value != self.threshold
+        else:
             return False
 
 
