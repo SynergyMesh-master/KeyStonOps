@@ -27,7 +27,7 @@ MachineNativeOps/
 ├── root.fs.map                   # 系統層級目錄映射
 └── root.env.sh                   # Root 使用者殼層環境
 ```
-> `controlplane/config` 在運行時維持唯讀，所有 root.* 配置（含 devices/kernel 映射）均透過 CI/CD 或受控變更流程更新，以避免散落的映射破壞治理一致性；`workspace/root/policy/` 與 `workspace/root/spec/` 僅保留為舊版工具的同步鏡像，仍以 controlplane 內容為準。
+> `controlplane/config` 在運行時維持唯讀，所有 root.* 配置（含 devices/kernel 映射）均透過 CI/CD 或受控變更流程更新，以避免散落的映射破壞治理一致性；`workspace/root/policy/` 與 `workspace/root/spec/` 僅保留為舊版工具的同步鏡像，由發布流水線同步（若鏡像缺檔仍以 controlplane 為準）。
 
 ### 標準 FHS 目錄
 ```
@@ -234,10 +234,10 @@ MachineNativeOps/
 ```
 
 ### 變更內容
-1. ✅ 所有 `root.*` 配置集中於 `controlplane/config/`（唯讀）
-2. ✅ 建立標準 FHS 目錄結構
-3. ✅ 治理文檔移至 `docs/governance/`
-4. ✅ 歷史文檔歸檔至 `archive/legacy-root-files/`
+1. 現狀：所有 `root.*` 配置集中於 `controlplane/config/`（唯讀）
+2. 已建立標準 FHS 目錄結構
+3. 治理文檔移至 `docs/governance/`
+4. 歷史文檔歸檔至 `archive/legacy-root-files/`
 
 ---
 
@@ -266,6 +266,7 @@ MachineNativeOps/
 - **安全配置**: `controlplane/config/root.trust.yaml`
 - **命名規範**: `controlplane/config/root.naming-policy.yaml`（鏡像：`workspace/root/spec/root.specs.naming.yaml`）
 - **初始化**: `init.d/` 目錄
+> 目前僅治理（policy）與命名規範（spec）保留 workspace 鏡像，其餘 root.* 沒有 workspace 副本。
 
 ### 文檔位置
 - **治理文檔**: `docs/governance/`
