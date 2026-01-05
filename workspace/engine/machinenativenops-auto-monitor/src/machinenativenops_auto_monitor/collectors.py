@@ -11,11 +11,9 @@ Collects various metrics from the system and services.
 import logging
 import platform
 import psutil
-import subprocess
 import requests
 import subprocess
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict, List, Optional
