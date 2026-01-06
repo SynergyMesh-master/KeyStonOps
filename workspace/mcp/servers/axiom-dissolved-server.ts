@@ -25,20 +25,29 @@ import { DISSOLVED_TOOLS } from "./tools/index.js";
 import type { ToolDefinition, ResourceDefinition, PromptDefinition as BasePromptDefinition } from "./tools/types.js";
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// TYPE DEFINITIONS - MCP Aligned
+// EXTENDED PROMPT DEFINITION WITH TEMPLATE
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // Extend PromptDefinition with template function for server implementation
 interface PromptDefinition extends BasePromptDefinition {
+// Using imported types from ./tools/types.js
+// ToolDefinition, ResourceDefinition, PromptDefinition are imported above
+
+interface PromptDefinitionWithTemplate extends PromptDefinition {
+interface ExtendedPromptDefinition extends PromptDefinition {
   template: (args?: Record<string, unknown>) => string;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // DISSOLVED AXIOM TOOLS REGISTRY
-// All 59 modules as MCP tools
+// All 59 modules imported from modular structure in ./tools/
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const DISSOLVED_TOOLS: ToolDefinition[] = [
+// DISSOLVED_TOOLS is imported from ./tools/index.js
+// Previously defined inline here - now using modular structure
+
+/*
+const DISSOLVED_TOOLS_INLINE_REMOVED: ToolDefinition[] = [
   // Layer L00: Infrastructure & Bootstrap
   {
     name: "bootstrap_core",
@@ -1099,6 +1108,7 @@ const DISSOLVED_TOOLS: ToolDefinition[] = [
     priority: 59,
   },
 ];
+*/
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // MCP RESOURCES REGISTRY
@@ -1109,107 +1119,134 @@ const DISSOLVED_RESOURCES: ResourceDefinition[] = [
     uri: "axiom://layers/l00-infrastructure",
     name: "Infrastructure & Bootstrap Layer",
     description: "Immutable foundation with quantum-hardened bootstrap",
-    mimeType: "application/json",
+    mime_type: "application/json",
     metadata: { layer: "L00", module_count: 5, quantumEnabled: true },
+    mimeType: "application/json",
+    metadata: { layer: "L00", moduleCount: 5, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l01-language",
     name: "Language Processing Layer",
     description: "Quantum-enhanced NLP with transformer models",
-    mimeType: "application/json",
+    mime_type: "application/json",
     metadata: { layer: "L01", module_count: 2, quantumEnabled: true },
+    mimeType: "application/json",
+    metadata: { layer: "L01", moduleCount: 2, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l02-input",
     name: "Input Processing Layer",
     description: "Quantum state preparation and multimodal processing",
-    mimeType: "application/json",
+    mime_type: "application/json",
     metadata: { layer: "L02", module_count: 3, quantumEnabled: true },
+    mimeType: "application/json",
+    metadata: { layer: "L02", moduleCount: 3, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l03-network",
     name: "Network & Routing Layer",
     description: "ML-based intelligent routing with circuit breakers",
-    mimeType: "application/json",
+    mime_type: "application/json",
     metadata: { layer: "L03", module_count: 3, quantumEnabled: true },
+    mimeType: "application/json",
+    metadata: { layer: "L03", moduleCount: 3, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l04-cognitive",
     name: "Cognitive Processing Layer",
     description: "Deep cognitive processing with transformer architectures",
-    mimeType: "application/json",
+    mime_type: "application/json",
     metadata: { layer: "L04", module_count: 4, quantumEnabled: true },
+    mimeType: "application/json",
+    metadata: { layer: "L04", moduleCount: 4, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l05-ethics",
     name: "Ethics & Governance Layer",
     description: "Policy evaluation and bias detection",
-    mimeType: "application/json",
+    mime_type: "application/json",
     metadata: { layer: "L05", module_count: 3, quantumEnabled: false },
+    mimeType: "application/json",
+    metadata: { layer: "L05", moduleCount: 3, quantumEnabled: false },
   },
   {
     uri: "axiom://layers/l06-integration",
     name: "Integration & Orchestration Layer",
     description: "Multi-agent orchestration and workflow engine",
-    mimeType: "application/json",
+    mime_type: "application/json",
     metadata: { layer: "L06", module_count: 3, quantumEnabled: true },
+    mimeType: "application/json",
+    metadata: { layer: "L06", moduleCount: 3, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l07-reasoning",
     name: "Reasoning & Knowledge Layer",
     description: "Neural-symbolic reasoning with knowledge graphs",
-    mimeType: "application/json",
+    mime_type: "application/json",
     metadata: { layer: "L07", module_count: 3, quantumEnabled: true },
+    mimeType: "application/json",
+    metadata: { layer: "L07", moduleCount: 3, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l08-emotion",
     name: "Emotional Intelligence Layer",
     description: "Emotion classification and empathy modeling",
-    mimeType: "application/json",
+    mime_type: "application/json",
     metadata: { layer: "L08", module_count: 3, quantumEnabled: true },
+    mimeType: "application/json",
+    metadata: { layer: "L08", moduleCount: 3, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l09-output",
     name: "Output Optimization Layer",
     description: "Quality scoring and format optimization",
-    mimeType: "application/json",
+    mime_type: "application/json",
     metadata: { layer: "L09", module_count: 3, quantumEnabled: true },
+    mimeType: "application/json",
+    metadata: { layer: "L09", moduleCount: 3, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l10-governance",
     name: "System Governance Layer",
     description: "Policy enforcement and compliance monitoring",
-    mimeType: "application/json",
+    mime_type: "application/json",
     metadata: { layer: "L10", module_count: 5, quantumEnabled: false },
+    mimeType: "application/json",
+    metadata: { layer: "L10", moduleCount: 5, quantumEnabled: false },
   },
   {
     uri: "axiom://layers/l11-optimization",
     name: "Performance Optimization Layer",
     description: "System-wide optimization with genetic algorithms",
-    mimeType: "application/json",
+    mime_type: "application/json",
     metadata: { layer: "L11", module_count: 4, quantumEnabled: true },
+    mimeType: "application/json",
+    metadata: { layer: "L11", moduleCount: 4, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l12-metacognition",
     name: "Metacognitive & Strategic Layer",
     description: "Multi-objective optimization and emergence detection",
-    mimeType: "application/json",
+    mime_type: "application/json",
     metadata: { layer: "L12", module_count: 3, quantumEnabled: true },
+    mimeType: "application/json",
+    metadata: { layer: "L12", moduleCount: 3, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l13-quantum",
     name: "Quantum Specialized Layer",
     description: "Domain-specific quantum computing applications",
-    mimeType: "application/json",
+    mime_type: "application/json",
     metadata: { layer: "L13", module_count: 15, quantumEnabled: true, fallbackEnabled: true },
+    mimeType: "application/json",
+    metadata: { layer: "L13", moduleCount: 15, quantumEnabled: true, fallbackEnabled: true },
   },
 ];
 
-// ═══════════════════════════════════════════════════════════════════════════════
 // MCP PROMPTS REGISTRY
-// ═══════════════════════════════════════════════════════════════════════════════
 
-const DISSOLVED_PROMPTS: PromptDefinition[] = [
+const DISSOLVED_PROMPTS: PromptDefinitionWithTemplate[] = [
+const DISSOLVED_PROMPTS: ExtendedPromptDefinition[] = [
   {
     name: "quantum_optimization",
     description: "Prompt for quantum optimization tasks using dissolved AXIOM tools",
@@ -1266,9 +1303,7 @@ This evaluation will use:
   },
 ];
 
-// ═══════════════════════════════════════════════════════════════════════════════
 // VALIDATION HELPERS
-// ═══════════════════════════════════════════════════════════════════════════════
 
 /**
  * Validates arguments against a JSON Schema
@@ -1385,9 +1420,7 @@ function validateProperty(
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
 // TOOL EXECUTION HANDLERS
-// ═══════════════════════════════════════════════════════════════════════════════
 
 // Metrics for tracking quantum fallback frequency
 const quantumFallbackMetrics = {
@@ -1460,10 +1493,10 @@ function buildToolResult(
 ): Record<string, unknown> {
   return {
     tool: toolName,
-    source_module: sourceModule,
+    sourceModule: sourceModule,
     args,
-    execution_timestamp: new Date().toISOString(),
-    quantum_executed: quantumExecuted,
+    executionTimestamp: new Date().toISOString(),
+    quantumExecuted: quantumExecuted,
     ...additionalData,
   };
 }
@@ -1474,13 +1507,13 @@ function buildToolResult(
 async function executeDissolvedTool(
   toolName: string,
   args: Record<string, unknown>
-): Promise<{ success: boolean; result: unknown; execution_method?: string; error_type?: string }> {
+): Promise<{ success: boolean; result: unknown; executionMethod?: string; errorType?: string }> {
   const tool = DISSOLVED_TOOLS.find((t) => t.name === toolName);
   if (!tool) {
     return { 
       success: false, 
       result: { error: `Unknown tool: ${toolName}` },
-      error_type: "tool_not_found",
+      errorType: "tool_not_found",
     };
   }
 
@@ -1493,13 +1526,11 @@ async function executeDissolvedTool(
       result: {
         error: `Validation failed: ${error instanceof Error ? error.message : String(error)}`,
       },
-      error_type: "validation_error",
+      errorType: "validation_error",
     };
   }
 
   // Simulate tool execution based on quantum capability
-  if (tool.quantumEnabled && tool.fallbackEnabled) {
-    // Try quantum execution, fallback to classical if needed
   // For quantum-enabled tools with fallback support
   if (tool.quantumEnabled && tool.fallbackEnabled) {
     try {
@@ -1509,6 +1540,7 @@ async function executeDissolvedTool(
         success: true,
         result: buildToolResult(toolName, tool.sourceModule, args, true, quantumResult),
         execution_method: "quantum",
+        executionMethod: "quantum",
       };
     } catch (error) {
       // Log the quantum execution failure for debugging
@@ -1517,14 +1549,20 @@ async function executeDissolvedTool(
         {
           tool: toolName,
           sourceModule: tool.sourceModule,
+          source_module: tool.source_module,
           args,
+          execution_method: "quantum",
           execution_timestamp: new Date().toISOString(),
           quantum_executed: true,
+          execution_method: "quantum",
+          executionTimestamp: new Date().toISOString(),
+          quantumExecuted: true,
+          executionMethod: "quantum",
         },
         execution_method: "quantum",
+        executionMethod: "quantum",
           source_module: tool.sourceModule,
           error: error instanceof Error ? error.message : String(error),
-          timestamp: new Date().toISOString(),
         }
       );
 
@@ -1539,10 +1577,12 @@ async function executeDissolvedTool(
         success: true,
         result: buildToolResult(toolName, tool.sourceModule, args, false, {
           fallback_used: true,
+          fallbackUsed: true,
+          fallbackReason: error instanceof Error ? error.message : "Quantum execution failed",
           fallback_reason: error instanceof Error ? error.message : "Quantum execution failed",
           ...classicalResult,
         }),
-        execution_method: "classical_fallback",
+        executionMethod: "classical_fallback",
       };
     }
   }
@@ -1556,6 +1596,7 @@ async function executeDissolvedTool(
         success: true,
         result: buildToolResult(toolName, tool.sourceModule, args, true, quantumResult),
         execution_method: "quantum",
+        executionMethod: "quantum",
       };
     } catch (error) {
       return {
@@ -1563,11 +1604,15 @@ async function executeDissolvedTool(
         result: {
           error: error instanceof Error ? error.message : "Quantum execution failed",
           tool: toolName,
-          sourceModule: tool.sourceModule,
+          source_module: tool.source_module,
           args,
           execution_timestamp: new Date().toISOString(),
           quantum_executed: false,
-          fallback_used: true,
+          fallback_used: false,
+          executionTimestamp: new Date().toISOString(),
+          quantumExecuted: false,
+          fallbackUsed: true,
+          errorMessage: error instanceof Error ? error.message : String(error),
           error_message: error instanceof Error ? error.message : String(error),
         },
       };
@@ -1578,16 +1623,23 @@ async function executeDissolvedTool(
   const classicalResult = await executeClassicalTool(toolName, args, tool);
   return {
     success: true,
+    result: buildToolResult(toolName, tool.source_module, args, false, classicalResult),
+    execution_method: "classical",
+    result: buildToolResult(toolName, tool.sourceModule, args, false, classicalResult),
+    execution_method: "classical",
     result: {
       tool: toolName,
       sourceModule: tool.sourceModule,
       args,
-      execution_timestamp: new Date().toISOString(),
+      executionTimestamp: new Date().toISOString(),
       quantumEnabled: tool.quantumEnabled,
     },
     execution_method: tool.quantumEnabled ? "quantum" : "classical",
     result: buildToolResult(toolName, tool.sourceModule, args, false, classicalResult),
     execution_method: "classical",
+    executionMethod: tool.quantumEnabled ? "quantum" : "classical",
+    result: buildToolResult(toolName, tool.sourceModule, args, false, classicalResult),
+    executionMethod: "classical",
   };
 }
 
@@ -1776,9 +1828,7 @@ function extractErrorMessage(
     : defaultMessage;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
 // MCP SERVER IMPLEMENTATION
-// ═══════════════════════════════════════════════════════════════════════════════
 
 const server = new Server(
   {
@@ -1800,7 +1850,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: DISSOLVED_TOOLS.map((tool) => ({
       name: tool.name,
       description: tool.description,
-      inputSchema: tool.inputSchema,
+      inputSchema: tool.input_schema,
     })),
   };
 });
@@ -1856,7 +1906,7 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
       uri: resource.uri,
       name: resource.name,
       description: resource.description,
-      mimeType: resource.mimeType,
+      mimeType: resource.mime_type,
     })),
   };
 });
@@ -1885,7 +1935,9 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   }
   
   const tools = DISSOLVED_TOOLS.filter((t) => {
+    const layerMatch = t.source_module.match(/L(\d{2})/);
     const layerMatch = t.sourceModule.match(/L(\d{2})/);
+    const resourceLayerMatch = layerId.match(/l(\d{2})/);
     const resourceLayerMatch = layerId?.match(/l(\d{2})/);
     return layerMatch && resourceLayerMatch && layerMatch[1] === resourceLayerMatch[1];
   });
@@ -1893,14 +1945,14 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
     contents: [
       {
         uri: resource.uri,
-        mimeType: resource.mimeType,
+        mimeType: resource.mime_type,
         text: JSON.stringify(
           {
             ...resource,
             tools: tools.map((t) => ({
               name: t.name,
               description: t.description,
-              quantum_enabled: t.quantum_enabled,
+              quantum_enabled: t.quantumEnabled,
             })),
           },
           null,
@@ -1946,9 +1998,7 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
   };
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
 // SERVER STARTUP
-// ═══════════════════════════════════════════════════════════════════════════════
 
 async function main() {
   try {
