@@ -14,9 +14,9 @@
 ## 1. 架構設計理念分析
 - **核心架構模式**: INSTANT Execution 架構（事件驅動、零人工、<3 分鐘全堆疊），在 `workspace/mcp/README.md` 以分層 mermaid 圖呈現，並以 `unified-pipeline-config.yaml` 描述各層。
 - **技術棧選擇與優勢**  
-  - **YAML/JSON Schema** 驗證：`pipelines/unified-pipeline-config.yaml` + `schemas/unified-pipeline.schema.json` 提供嚴格配置與向後相容度。  
-  - **TypeScript 型別**：`types/unifiedPipeline.ts` 提供編譯期守衛與 runtime 常數，用於 MCP 端工具及前後端共享。  
-  - **Python 載入/驗證**：`tools/load_unified_pipeline.py` 以 dataclass、runtime 守衛（如 `InstantPipeline.humanIntervention` 強制 0）與自適應欄位過濾。  
+  - **YAML/JSON Schema** 驗證：`pipelines/unified-pipeline-config.yaml` + `schemas/unified-pipeline.schema.json` 提供嚴格配置與向後相容性。  
+  - **TypeScript 型別**：`types/unifiedPipeline.ts` 提供編譯期守衛與執行期常數，用於 MCP 端工具及前後端共享。  
+  - **Python 載入/驗證**：`tools/load_unified_pipeline.py` 以 dataclass、執行期守衛（如 `InstantPipeline.humanIntervention` 強制 0）與自適應欄位過濾。  
   - **MCP Servers (JS)**：`workspace/src/mcp-servers/*.js` 提供代碼分析、測試生成、安全掃描等工具，與 manifest 中的 `mcpIntegration.toolAdapters` 對應。
 - **模組化關係**  
   - **Pipeline spec** → **Types/Loader** → **MCP tool adapters**：Manifest 定義執行/即時管線，TypeScript/Python 保證載入一致性，MCP 伺服器透過 `toolAdapters` 被 orchestrator 調用。  
@@ -24,7 +24,7 @@
   - **治理層標註**：`governanceValidation` 區塊將未來驗證腳本（vision-tracker.py 等）標為 `planned`，避免混淆已實作與待實作。
 - **可擴展性／維護性考量**  
   - 自動擴縮（max 256 agents、metrics 驅動）、並行代理池（64–256）配置集中在 manifest，易於調優。  
-  - YAML/TS/Python 三套型別與載入層提供前後一致性與 forward-compatibility（未知欄位警告而不崩潰）。  
+  - YAML/TS/Python 三套型別與載入層提供前後一致性與向前相容性（未知欄位警告而不崩潰）。  
   - Instant pipelines 以分階段延遲目標（分析/生成/驗證/部署）支持分層優化。
 
 **小結**: 架構以「即時、零人工」為核心，透過 manifest + 型別雙軌鎖定一致性；治理與 MCP 工具以引用方式鬆耦合，兼顧擴展與回溯相容。
