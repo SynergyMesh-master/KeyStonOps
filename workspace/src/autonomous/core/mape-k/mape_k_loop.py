@@ -16,6 +16,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from datetime import datetime, timezone
 import asyncio
+import logging
 
 
 class LoopState(Enum):
@@ -99,6 +100,7 @@ class MAPEKLoop:
         self._planners: List[Callable] = []
         self._executors: List[Callable] = []
         self._running = False
+        self.logger = logging.getLogger(f"{__name__}.{self.__class__.__name__}")
 
     async def start(self) -> None:
         """Start the MAPE-K loop."""
@@ -150,8 +152,8 @@ class MAPEKLoop:
                 else:
                     metrics.append(result)
             except Exception as e:
-                # Log error but continue monitoring
-                pass
+                # Log error but continue monitoring other monitors
+                self.logger.warning(f"Monitor failed: {e}", exc_info=True)
         return metrics
 
     async def _analyze(self, metrics: List[SystemMetric]) -> List[Anomaly]:
@@ -162,7 +164,11 @@ class MAPEKLoop:
                 result = await analyzer(metrics)
                 if result:
                     anomalies.extend(result if isinstance(result, list) else [result])
+            except Exception as e:
+                # Log analyzer failure but continue with other analyzers
+                self.logger.warning(f"Analyzer failed: {e}", exc_info=True)
             except Exception:
+                # Silently ignore analyzer failures to allow other analyzers to run
                 pass
         return anomalies
 
@@ -176,7 +182,12 @@ class MAPEKLoop:
                     if plan:
                         plans.append(plan)
                         break  # One plan per anomaly
+                except Exception as e:
+                    # Log planner failure but try next planner for this anomaly
+                    anomaly_id = getattr(anomaly, 'id', 'unknown')
+                    self.logger.warning(f"Planner failed for anomaly {anomaly_id}: {e}", exc_info=True)
                 except Exception:
+                    # Silently ignore planner failures and try next planner
                     pass
         return plans
 
@@ -194,6 +205,9 @@ class MAPEKLoop:
                     results.append(result)
                     break
                 except Exception as e:
+                    # Log executor failure and record in results
+                    plan_id = getattr(plan, 'id', 'unknown')
+                    self.logger.warning(f"Executor failed for plan {plan_id}: {e}", exc_info=True)
                     results.append(ExecutionResult(
                         plan_id=plan.id,
                         success=False,
