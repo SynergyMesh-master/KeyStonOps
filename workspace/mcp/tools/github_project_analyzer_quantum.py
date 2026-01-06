@@ -187,17 +187,25 @@ class WorkspaceValidator:
                 result["warnings"].append("Potential duplicate interface declarations found")
 
             # 檢查重複的 import 語句
-            imports = re.findall(r'^import\s+.*from\s+["\']([^"\']+)["\']', content, re.MULTILINE)
+            # 一般 import（排除 type-only import）
+            imports = re.findall(r'^import\s+(?!type\b).*from\s+["\']([^"\']+)["\']', content, re.MULTILINE)
+            # type-only import
             type_imports = re.findall(r'^import\s+type\s+.*from\s+["\']([^"\']+)["\']', content, re.MULTILINE)
-            all_imports = imports + type_imports
 
-            # 檢查是否有重複導入同一模組
-            seen_imports = {}
-            for imp in all_imports:
-                if imp in seen_imports:
+            # 僅在相同種類（一般或 type-only）多次從同一模組導入時發出警告
+            seen_regular_imports = set()
+            for imp in imports:
+                if imp in seen_regular_imports:
                     result["warnings"].append(f"Duplicate import from module: {imp}")
-                seen_imports[imp] = True
+                else:
+                    seen_regular_imports.add(imp)
 
+            seen_type_imports = set()
+            for imp in type_imports:
+                if imp in seen_type_imports:
+                    result["warnings"].append(f"Duplicate type import from module: {imp}")
+                else:
+                    seen_type_imports.add(imp)
         except Exception as e:
             result["valid"] = False
             result["errors"].append(f"Error reading file: {str(e)}")
