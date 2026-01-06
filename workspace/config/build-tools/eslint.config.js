@@ -11,7 +11,7 @@ const baseConfig = {
   root: true,
   env: {
     browser: true,
-    es2022: true,
+    es2021: true,
     node: true,
     jest: true,
   },
