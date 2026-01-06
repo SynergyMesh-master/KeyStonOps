@@ -87,6 +87,7 @@ class GeneticOptimizer:
         self._initialize_population()
 
         fitness_history = []
+        generation = 0
 
         for generation in range(self.config.generations):
             # Evaluate fitness
