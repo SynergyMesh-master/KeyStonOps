@@ -21,7 +21,6 @@ import {
   ErrorCode,
   McpError,
 } from "@modelcontextprotocol/sdk/types.js";
-import { z } from "zod";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // TYPE DEFINITIONS - MCP Aligned
@@ -1336,9 +1335,22 @@ function validateProperty(
     let expectedType = type;
     if (type === "integer") {
       expectedType = "number";
-      if (actualType === "number" && !Number.isInteger(value as number)) {
-        throw new Error(`Invalid type for ${key}: expected integer, got ${value}`);
+      // Handle both number and string representations of integers
+      if (actualType === "number") {
+        if (!Number.isInteger(value as number)) {
+          throw new Error(`Invalid type for ${key}: expected integer, got ${value}`);
+        }
+      } else if (actualType === "string") {
+        const numValue = Number(value);
+        if (isNaN(numValue) || !Number.isInteger(numValue)) {
+          throw new Error(`Invalid type for ${key}: expected integer, got ${value}`);
+        }
+      } else {
+        throw new Error(
+          `Invalid type for ${key}: expected integer, got ${actualType}`
+        );
       }
+      return; // Type validated, no need for further type checks
     }
 
     if (actualType !== expectedType) {
@@ -1363,10 +1375,14 @@ function validateProperty(
 async function executeDissolvedTool(
   toolName: string,
   args: Record<string, unknown>
-): Promise<{ success: boolean; result: unknown; execution_method?: string }> {
+): Promise<{ success: boolean; result: unknown; execution_method?: string; error_type?: string }> {
   const tool = DISSOLVED_TOOLS.find((t) => t.name === toolName);
   if (!tool) {
-    return { success: false, result: { error: `Unknown tool: ${toolName}` } };
+    return { 
+      success: false, 
+      result: { error: `Unknown tool: ${toolName}` },
+      error_type: "tool_not_found",
+    };
   }
 
   // Validate input arguments against the tool's input schema
@@ -1378,6 +1394,7 @@ async function executeDissolvedTool(
       result: {
         error: `Validation failed: ${error instanceof Error ? error.message : String(error)}`,
       },
+      error_type: "validation_error",
     };
   }
 
@@ -1461,11 +1478,18 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     const result = await executeDissolvedTool(name, args || {});
     
-    // If execution failed due to validation or other errors, throw MCP error
-    if (!result.success && result.result && typeof result.result === "object" && "error" in result.result) {
-      const errorMessage = String((result.result as any).error);
-      if (errorMessage.startsWith("Validation failed:")) {
+    // If execution failed with a validation error, throw appropriate MCP error
+    if (!result.success) {
+      if (result.error_type === "validation_error") {
+        const errorMessage = result.result && typeof result.result === "object" && "error" in result.result
+          ? String((result.result as any).error)
+          : "Validation failed";
         throw new McpError(ErrorCode.InvalidParams, errorMessage);
+      } else if (result.error_type === "tool_not_found") {
+        const errorMessage = result.result && typeof result.result === "object" && "error" in result.result
+          ? String((result.result as any).error)
+          : "Tool not found";
+        throw new McpError(ErrorCode.MethodNotFound, errorMessage);
       }
     }
 
