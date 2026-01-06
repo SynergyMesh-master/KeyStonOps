@@ -1274,8 +1274,8 @@ function validateToolArguments(
   const { type, properties, required } = schema;
 
   // Validate type
-  if (type === "object" && typeof args !== "object") {
-    throw new Error(`Expected arguments to be an object, got ${typeof args}`);
+  if (type === "object" && (typeof args !== "object" || args === null)) {
+    throw new Error(`Expected arguments to be an object, got ${args === null ? "null" : typeof args}`);
   }
 
   // Validate required fields
@@ -1344,6 +1344,10 @@ function validateProperty(
         const numValue = Number(value);
         if (isNaN(numValue) || !Number.isInteger(numValue)) {
           throw new Error(`Invalid type for ${key}: expected integer, got ${value}`);
+        }
+        // Check for safe integer range to avoid precision loss
+        if (!Number.isSafeInteger(numValue)) {
+          throw new Error(`Invalid type for ${key}: integer value ${value} is outside safe range`);
         }
       } else {
         throw new Error(
@@ -1442,6 +1446,21 @@ async function executeDissolvedTool(
   };
 }
 
+/**
+ * Extracts error message from execution result
+ * @param result - Execution result object
+ * @param defaultMessage - Default message if extraction fails
+ * @returns Extracted error message
+ */
+function extractErrorMessage(
+  result: { result: unknown },
+  defaultMessage: string
+): string {
+  return result.result && typeof result.result === "object" && "error" in result.result
+    ? String((result.result as any).error)
+    : defaultMessage;
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // MCP SERVER IMPLEMENTATION
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1481,15 +1500,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     // If execution failed with a validation error, throw appropriate MCP error
     if (!result.success) {
       if (result.error_type === "validation_error") {
-        const errorMessage = result.result && typeof result.result === "object" && "error" in result.result
-          ? String((result.result as any).error)
-          : "Validation failed";
-        throw new McpError(ErrorCode.InvalidParams, errorMessage);
+        throw new McpError(
+          ErrorCode.InvalidParams,
+          extractErrorMessage(result, "Validation failed")
+        );
       } else if (result.error_type === "tool_not_found") {
-        const errorMessage = result.result && typeof result.result === "object" && "error" in result.result
-          ? String((result.result as any).error)
-          : "Tool not found";
-        throw new McpError(ErrorCode.MethodNotFound, errorMessage);
+        throw new McpError(
+          ErrorCode.MethodNotFound,
+          extractErrorMessage(result, "Tool not found")
+        );
       }
     }
 
