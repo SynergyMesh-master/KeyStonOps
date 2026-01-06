@@ -1477,12 +1477,17 @@ This evaluation will use:
 // ═══════════════════════════════════════════════════════════════════════════════
 
 async function main() {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  console.log("AXIOM Dissolved MCP Server running on stdio");
-  console.log(`Loaded ${DISSOLVED_TOOLS.length} tools from dissolved AXIOM architecture`);
-  console.log(`Loaded ${DISSOLVED_RESOURCES.length} resources representing dissolved layers`);
-  console.log(`Loaded ${DISSOLVED_PROMPTS.length} prompts for common operations`);
+  try {
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+    console.error("AXIOM Dissolved MCP Server running on stdio");
+    console.error(`Loaded ${DISSOLVED_TOOLS.length} tools from dissolved AXIOM architecture`);
+    console.error(`Loaded ${DISSOLVED_RESOURCES.length} resources representing dissolved layers`);
+    console.error(`Loaded ${DISSOLVED_PROMPTS.length} prompts for common operations`);
+  } catch (error) {
+    console.error("Failed to start AXIOM Dissolved MCP Server:", error);
+    process.exitCode = 1;
+  }
 }
 
-main().catch(console.error);
+main();
