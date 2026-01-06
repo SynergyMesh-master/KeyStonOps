@@ -1,5 +1,10 @@
 # MachineNativeOps /workspace/mcp 深度分析報告（2026-01-06）
 
+**INSTANT 執行重構計劃對齊**
+- 核心理念：AI自動演化、即時交付、零延遲執行；標準：<3分鐘完整堆疊、0次人工介入、完全自治；競爭力：對標 Replit / Claude 4 / GPT 的即時交付能力
+- 執行模式：事件驅動（trigger → event → action）、閉環執行、0次人工介入、AI 100% 決策、並行 64–256 代理
+- 延遲閾值：≤100ms / ≤500ms / ≤5s；狀態為二元（已實現 / 未實現）；傳統時間線與人工審批模式已廢棄
+
 ## 專案與範圍
 - **平台／倉庫**：GitHub `MachineNativeOps/machine-native-ops`
 - **分析範圍**：`workspace/mcp` 子專案（含 pipelines、schemas、types、tools、validation、servers 引用）與清單中引用的相關路徑。
