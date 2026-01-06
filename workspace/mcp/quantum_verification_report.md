@@ -18,7 +18,7 @@
 | Python 工具 | 1 | tools/load_unified_pipeline.py |
 | TypeScript 類型 | 1 | types/unifiedPipeline.ts |
 | JSON Schema | 1 | schemas/unified-pipeline.schema.json |
-| **總計** | **6** | - |
+| **總計** | **5** | - |
 
 ### 詳細文件列表
 
