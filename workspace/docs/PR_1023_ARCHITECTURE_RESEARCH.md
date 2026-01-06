@@ -49,7 +49,7 @@
 ## ✅ 驗證與操作切入點
 
 - **快速健康檢查**
-  - 量子後端 API：`PYTHONPATH=workspace/src uvicorn quantum.api.main:app --reload`（在倉庫根目錄執行，需 FastAPI 依賴）
+  - 量子後端 API：`PYTHONPATH=workspace/src uvicorn backend.python.api.main:app --reload`（依照程式碼匯入命名空間，需 FastAPI 依賴）
   - 測試組合：`python -m pytest workspace/tests/quantum`（需安裝 cirq / qiskit / pennylane）
   - 證據鏈計數：`ls workspace/docs/validation/evidence-chains/EV-*.json | wc -l` → 23
 - **K8s 部署檢查**
