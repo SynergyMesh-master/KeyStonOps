@@ -18,6 +18,7 @@ const slsaRateLimiter = rateLimit({
   max: 10,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => process.env.NODE_ENV === 'test',
 });
 
 // 健康檢查端點
