@@ -46,6 +46,7 @@ interface PromptDefinition {
   name: string;
   description: string;
   arguments: Array<{ name: string; description: string; required: boolean }>;
+  template: (args?: Record<string, unknown>) => string;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1232,6 +1233,17 @@ const DISSOLVED_PROMPTS: PromptDefinition[] = [
       { name: "problem_type", description: "Type of optimization problem", required: true },
       { name: "constraints", description: "Problem constraints", required: false },
     ],
+    template: (args?: Record<string, unknown>) => `You are using the AXIOM dissolved quantum optimization layer.
+
+Problem Type: ${args?.problem_type || "unspecified"}
+Constraints: ${JSON.stringify(args?.constraints || {})}
+
+Available quantum tools:
+- vqe_solver: For eigenvalue problems
+- qaoa_optimizer: For combinatorial optimization
+- qml_engine: For quantum machine learning
+
+Please specify your optimization parameters and the tool will automatically select the best quantum algorithm.`,
   },
   {
     name: "cognitive_analysis",
@@ -1240,6 +1252,16 @@ const DISSOLVED_PROMPTS: PromptDefinition[] = [
       { name: "input_data", description: "Data to analyze", required: true },
       { name: "analysis_depth", description: "Depth of analysis", required: false },
     ],
+    template: (args?: Record<string, unknown>) => `Initiating AXIOM cognitive analysis pipeline.
+
+Input: ${JSON.stringify(args?.input_data || {})}
+Depth: ${args?.analysis_depth || "deep"}
+
+The following tools will be orchestrated:
+- cognitive_analysis: Deep cognitive processing
+- pattern_recognition: Pattern detection
+- semantic_processor: Semantic understanding
+- knowledge_graph: Knowledge integration`,
   },
   {
     name: "ethics_evaluation",
@@ -1248,6 +1270,15 @@ const DISSOLVED_PROMPTS: PromptDefinition[] = [
       { name: "action", description: "Action to evaluate", required: true },
       { name: "frameworks", description: "Ethical frameworks to apply", required: false },
     ],
+    template: (args?: Record<string, unknown>) => `AXIOM Ethics Governance Evaluation
+
+Action: ${JSON.stringify(args?.action || {})}
+Frameworks: ${JSON.stringify(args?.frameworks || ["ai_ethics", "fairness"])}
+
+This evaluation will use:
+- ethics_governance: Policy compliance
+- bias_detector: Fairness analysis
+- fairness_optimizer: Bias mitigation recommendations`,
   },
 ];
 
@@ -1423,41 +1454,7 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
     throw new Error(`Prompt not found: ${name}`);
   }
 
-  let promptText = "";
-  if (name === "quantum_optimization") {
-    promptText = `You are using the AXIOM dissolved quantum optimization layer.
-
-Problem Type: ${args?.problem_type || "unspecified"}
-Constraints: ${JSON.stringify(args?.constraints || {})}
-
-Available quantum tools:
-- vqe_solver: For eigenvalue problems
-- qaoa_optimizer: For combinatorial optimization
-- qml_engine: For quantum machine learning
-
-Please specify your optimization parameters and the tool will automatically select the best quantum algorithm.`;
-  } else if (name === "cognitive_analysis") {
-    promptText = `Initiating AXIOM cognitive analysis pipeline.
-
-Input: ${JSON.stringify(args?.input_data || {})}
-Depth: ${args?.analysis_depth || "deep"}
-
-The following tools will be orchestrated:
-- cognitive_analysis: Deep cognitive processing
-- pattern_recognition: Pattern detection
-- semantic_processor: Semantic understanding
-- knowledge_graph: Knowledge integration`;
-  } else if (name === "ethics_evaluation") {
-    promptText = `AXIOM Ethics Governance Evaluation
-
-Action: ${JSON.stringify(args?.action || {})}
-Frameworks: ${JSON.stringify(args?.frameworks || ["ai_ethics", "fairness"])}
-
-This evaluation will use:
-- ethics_governance: Policy compliance
-- bias_detector: Fairness analysis
-- fairness_optimizer: Bias mitigation recommendations`;
-  }
+  const promptText = prompt.template(args);
 
   return {
     messages: [
