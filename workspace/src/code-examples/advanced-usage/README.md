@@ -1,6 +1,6 @@
 # 高级用法 / Advanced Usage Examples
 
-> **路径**: `src/代码圣殿/高级用法/`  
+> **路径**: `src/code-examples/advanced-usage/`  
 > **难度**: 高级 (Advanced)  
 > **前置知识**: 系统架构、分布式系统、高级编程概念
 

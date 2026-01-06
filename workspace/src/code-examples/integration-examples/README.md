@@ -1,6 +1,6 @@
 # 集成示例 / Integration Examples
 
-> **路径**: `src/代码圣殿/集成示例/`  
+> **路径**: `src/code-examples/integration-examples/`  
 > **难度**: 中级 (Intermediate)  
 > **前置知识**: API基础知识、网络基础
 

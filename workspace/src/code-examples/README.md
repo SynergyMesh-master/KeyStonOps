@@ -2,7 +2,7 @@
 
 > **版本**: 1.0.0  
 > **维护者**: SynergyMesh Development Team  
-> **路径**: `src/代码圣殿/`
+> **路径**: `src/code-examples/`
 
 ---
 
@@ -24,15 +24,15 @@
 ### 示例架构层次
 
 ```
-示例代码中心 (src/代码圣殿/)
-├── 基础示例 (Basic Examples)          # 基础使用示例
-├── 集成示例 (Integration Examples)     # 外部系统集成
-├── 配置示例 (Configuration Examples)   # 配置文件示例
-├── 最佳实践 (Best Practices)          # 最佳实践指南
-├── 故障排除 (Troubleshooting Examples) # 故障排查示例
-├── 高级用法 (Advanced Usage Examples)  # 高级特性用法
-├── config/                             # 示例中心配置
-└── scripts/                            # 辅助脚本
+示例代码中心 (src/code-examples/)
+├── basic-examples (Basic Examples)              # 基础使用示例
+├── integration-examples (Integration Examples)   # 外部系统集成
+├── configuration-examples (Configuration Examples) # 配置文件示例
+├── best-practices (Best Practices)              # 最佳实践指南
+├── troubleshooting (Troubleshooting Examples)   # 故障排查示例
+├── advanced-usage (Advanced Usage Examples)     # 高级特性用法
+├── config/                                      # 示例中心配置
+└── scripts/                                     # 辅助脚本
 ```
 
 ### 核心组件
@@ -50,7 +50,7 @@
 
 ## 📋 核心功能
 
-### 1. 基础示例 (`基础示例/`)
+### 1. 基础示例 (`basic-examples/`)
 
 提供系统基础功能的使用示例：
 
@@ -58,9 +58,9 @@
 - **核心概念**: 工作流定义、任务创建、事件处理、状态管理
 - **常见模式**: 重试模式、熔断器模式、批量处理、异步处理
 
-📂 [查看基础示例](./基础示例/README.md)
+📂 [查看基础示例](./basic-examples/README.md)
 
-### 2. 集成示例 (`集成示例/`)
+### 2. 集成示例 (`integration-examples/`)
 
 展示如何集成外部系统和服务：
 
@@ -69,9 +69,9 @@
 - **消息系统**: Kafka, RabbitMQ, AWS SQS, Google Pub/Sub
 - **云服务**: AWS, Azure, GCP, 云存储
 
-📂 [查看集成示例](./集成示例/README.md)
+📂 [查看集成示例](./integration-examples/README.md)
 
-### 3. 配置示例 (`配置示例/`)
+### 3. 配置示例 (`configuration-examples/`)
 
 提供各种环境和场景的配置示例：
 
@@ -80,9 +80,9 @@
 - **性能配置**: 缓存、连接池、线程池、内存优化
 - **监控配置**: 指标、日志、告警、追踪
 
-📂 [查看配置示例](./配置示例/README.md)
+📂 [查看配置示例](./configuration-examples/README.md)
 
-### 4. 最佳实践 (`最佳实践/`)
+### 4. 最佳实践 (`best-practices/`)
 
 展示行业最佳实践和设计模式：
 
@@ -91,9 +91,9 @@
 - **安全实践**: 安全编码、数据保护、访问控制、审计日志
 - **部署实践**: CI/CD流水线、容器化、基础设施即代码、蓝绿部署
 
-📂 [查看最佳实践](./最佳实践/README.md)
+📂 [查看最佳实践](./best-practices/README.md)
 
-### 5. 故障排除 (`故障排除/`)
+### 5. 故障排除 (`troubleshooting/`)
 
 提供常见问题的诊断和解决方案：
 
@@ -101,9 +101,9 @@
 - **性能问题**: 慢查询、高延迟、资源泄漏、瓶颈识别
 - **集成问题**: API兼容性、数据格式、版本冲突、网络问题
 
-📂 [查看故障排除](./故障排除/README.md)
+📂 [查看故障排除](./troubleshooting/README.md)
 
-### 6. 高级用法 (`高级用法/`)
+### 6. 高级用法 (`advanced-usage/`)
 
 展示系统的高级特性和复杂场景：
 
@@ -111,7 +111,7 @@
 - **复杂场景**: 分布式工作流、长运行流程、事件溯源、Saga模式
 - **优化技术**: 性能调优、可扩展性解决方案、弹性模式、成本优化
 
-📂 [查看高级用法](./高级用法/README.md)
+📂 [查看高级用法](./advanced-usage/README.md)
 
 ---
 
@@ -122,7 +122,7 @@
 ```bash
 # 克隆仓库
 git clone https://github.com/MachineNativeOps/MachineNativeOps.git
-cd MachineNativeOps/src/代码圣殿
+cd MachineNativeOps/src/code-examples
 
 # 安装依赖
 npm install

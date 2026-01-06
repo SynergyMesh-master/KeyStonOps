@@ -1,6 +1,6 @@
 # 配置示例 / Configuration Examples
 
-> **路径**: `src/代码圣殿/配置示例/`  
+> **路径**: `src/code-examples/configuration-examples/`  
 > **难度**: 中级 (Intermediate)  
 > **前置知识**: YAML/JSON基础、环境配置概念
 

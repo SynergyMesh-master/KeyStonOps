@@ -1,6 +1,6 @@
 # 最佳实践 / Best Practices
 
-> **路径**: `src/代码圣殿/最佳实践/`  
+> **路径**: `src/code-examples/best-practices/`  
 > **难度**: 中高级 (Intermediate to Advanced)  
 > **前置知识**: 系统架构、设计模式、生产环境经验
 

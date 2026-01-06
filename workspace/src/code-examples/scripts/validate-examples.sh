@@ -10,7 +10,7 @@
 #
 # 示例:
 #   ./scripts/validate-examples.sh --all
-#   ./scripts/validate-examples.sh --category 基础示例
+#   ./scripts/validate-examples.sh --category basic-examples
 #   ./scripts/validate-examples.sh --example simple-workflow
 # ============================================================================
 
@@ -115,7 +115,7 @@ validate_file() {
 validate_all() {
     log_info "验证所有示例..."
     
-    find "src/代码圣殿" -type f \( -name "*.ts" -o -name "*.py" -o -name "*.yaml" -o -name "*.yml" \) | while read -r file; do
+    find "src/code-examples" -type f \( -name "*.ts" -o -name "*.py" -o -name "*.yaml" -o -name "*.yml" \) | while read -r file; do
         validate_file "$file"
     done
 }
@@ -125,12 +125,12 @@ validate_category() {
     local category=$1
     log_info "验证类别: $category"
     
-    if [[ ! -d "src/代码圣殿/$category" ]]; then
+    if [[ ! -d "src/code-examples/$category" ]]; then
         log_error "类别不存在: $category"
         exit 1
     fi
     
-    find "src/代码圣殿/$category" -type f \( -name "*.ts" -o -name "*.py" -o -name "*.yaml" -o -name "*.yml" \) | while read -r file; do
+    find "src/code-examples/$category" -type f \( -name "*.ts" -o -name "*.py" -o -name "*.yaml" -o -name "*.yml" \) | while read -r file; do
         validate_file "$file"
     done
 }
@@ -151,7 +151,7 @@ show_help() {
 
 示例:
     $0 --all
-    $0 --category 基础示例
+    $0 --category basic-examples
     $0 --example simple-workflow
 EOF
 }

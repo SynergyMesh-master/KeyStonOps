@@ -157,12 +157,12 @@ validate_args() {
 # 映射类别到目录
 get_category_dir() {
     case $CATEGORY in
-        basic) echo "基础示例" ;;
-        integration) echo "集成示例" ;;
-        configuration) echo "配置示例" ;;
-        best-practices) echo "最佳实践" ;;
-        troubleshooting) echo "故障排除" ;;
-        advanced) echo "高级用法" ;;
+        basic) echo "basic-examples" ;;
+        integration) echo "integration-examples" ;;
+        configuration) echo "configuration-examples" ;;
+        best-practices) echo "best-practices" ;;
+        troubleshooting) echo "troubleshooting" ;;
+        advanced) echo "advanced-usage" ;;
     esac
 }
 
@@ -275,7 +275,7 @@ EOF
 # 创建README文件
 create_readme() {
     local category_dir=$(get_category_dir)
-    local example_dir="src/代码圣殿/${category_dir}/examples"
+    local example_dir="src/code-examples/${category_dir}/examples"
     local readme_path="${example_dir}/${NAME}.md"
 
     log_info "创建README文件: ${readme_path}"
@@ -350,7 +350,7 @@ main() {
     create_readme
     
     log_success "示例创建完成！"
-    log_info "文件位置: src/代码圣殿/$(get_category_dir)/examples/${NAME}.*"
+    log_info "文件位置: src/code-examples/$(get_category_dir)/examples/${NAME}.*"
     log_info ""
     log_info "下一步:"
     log_info "  1. 编辑示例代码"

@@ -1,6 +1,6 @@
 # 基础示例 / Basic Examples
 
-> **路径**: `src/代码圣殿/基础示例/`  
+> **路径**: `src/code-examples/basic-examples/`  
 > **难度**: 入门级 (Beginner)  
 > **前置知识**: 基本编程知识
 

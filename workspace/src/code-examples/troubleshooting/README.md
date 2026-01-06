@@ -1,6 +1,6 @@
 # 故障排除 / Troubleshooting Examples
 
-> **路径**: `src/代码圣殿/故障排除/`  
+> **路径**: `src/code-examples/troubleshooting/`  
 > **难度**: 中级 (Intermediate)  
 > **前置知识**: 系统运维基础、日志分析、调试技能
 
