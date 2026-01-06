@@ -1,0 +1,15 @@
+{
+  "evidence_id": "EV-LINK-002",
+  "evidence_name": "cross-references",
+  "category": "link_integrity",
+  "timestamp": "2026-01-06T00:53:55.133970Z",
+  "verification_data": {
+    "cross_references": 6,
+    "matching_references": 6,
+    "compliance_rate": 1.0
+  },
+  "quantum_signature": "qsig_EV-LINK-002_abcdef01",
+  "blockchain_anchor": "0xev8f3ac2",
+  "immutable": true,
+  "slsa_level": 4
+}

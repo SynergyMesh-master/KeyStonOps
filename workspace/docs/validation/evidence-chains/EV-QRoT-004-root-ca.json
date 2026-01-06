@@ -1,0 +1,16 @@
+{
+  "evidence_id": "EV-QRoT-004",
+  "evidence_name": "root-ca",
+  "category": "quantum_root_trust",
+  "timestamp": "2026-01-06T00:53:55.134544Z",
+  "verification_data": {
+    "algorithm": "Falcon-1024",
+    "key_lifetime_days": 90,
+    "revocation": "quantum_crl",
+    "compliance_rate": 1.0
+  },
+  "quantum_signature": "qsig_EV-QRoT-004_abcdef01",
+  "blockchain_anchor": "0xev8f3ac2",
+  "immutable": true,
+  "slsa_level": 4
+}

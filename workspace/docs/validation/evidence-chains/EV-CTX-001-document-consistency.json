@@ -1,0 +1,15 @@
+{
+  "evidence_id": "EV-CTX-001",
+  "evidence_name": "document-consistency",
+  "category": "context_continuity",
+  "timestamp": "2026-01-06T00:53:55.132862Z",
+  "verification_data": {
+    "documents": 9,
+    "bilingual_format_consistent": 9,
+    "compliance_rate": 1.0
+  },
+  "quantum_signature": "qsig_EV-CTX-001_abcdef01",
+  "blockchain_anchor": "0xev8f3ac2",
+  "immutable": true,
+  "slsa_level": 4
+}

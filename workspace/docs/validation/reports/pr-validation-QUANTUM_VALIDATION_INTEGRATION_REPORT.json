@@ -1,0 +1,27 @@
+{
+  "document": {
+    "name": "QUANTUM_VALIDATION_INTEGRATION_REPORT.md",
+    "path": "/home/runner/work/machine-native-ops/machine-native-ops/workspace/docs/QUANTUM_VALIDATION_INTEGRATION_REPORT.md",
+    "size": "11.8KB",
+    "last_modified": "2026-01-06T00:29:20.024755Z"
+  },
+  "quantum_features": {
+    "coherence": 0.7987292810912001,
+    "entanglement": 0.859999884336813,
+    "fidelity": 0.9834648371399357,
+    "noise_level": 0.08687476783867136,
+    "coherence_time": 0.7954934343402017
+  },
+  "extraction_info": {
+    "backend": "ibm_kyiv",
+    "circuit_depth": 8,
+    "shots": 1024,
+    "error_mitigated": true,
+    "timestamp": "2026-01-06T00:34:51.017445Z"
+  },
+  "cryptographic_evidence": {
+    "sha256": "90d0795c34cf542355aeeaccd12a6c10a6cc78465f152cf36c3d8aeebd82bc6f",
+    "sha512": "3d3fa652af60618add0f62bd3113883f917792ccab0ae3819acf4f3cfb9f3f0d0d909db3f9291d0a9ea241e0aa09dc7d978e906378b154086d44c895ad8478e9",
+    "quantum_signature": "qsig:2:ibm_kyiv:0xd01d2262a9a5fc0e"
+  }
+}

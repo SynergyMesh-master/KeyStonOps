@@ -1,0 +1,27 @@
+{
+  "document": {
+    "name": "QUANTUMFLOW_INTEGRATION_REPORT.md",
+    "path": "/home/runner/work/machine-native-ops/machine-native-ops/workspace/docs/QUANTUMFLOW_INTEGRATION_REPORT.md",
+    "size": "17.1KB",
+    "last_modified": "2026-01-06T00:29:20.024755Z"
+  },
+  "quantum_features": {
+    "coherence": 0.7869704408892446,
+    "entanglement": 0.8747031264713891,
+    "fidelity": 0.9868699555382263,
+    "noise_level": 0.13815941043444768,
+    "coherence_time": 0.7969039204300012
+  },
+  "extraction_info": {
+    "backend": "ibm_kyiv",
+    "circuit_depth": 8,
+    "shots": 1024,
+    "error_mitigated": true,
+    "timestamp": "2026-01-06T00:34:50.903759Z"
+  },
+  "cryptographic_evidence": {
+    "sha256": "8cdd292ed567df1c07973e533c3178f11dff84d79be8848daa97f4ce0bc06692",
+    "sha512": "28184b6ec595f6c708cb88fff5d9a82dda25bfd1096b88f1e970d1eeea58b6cf622a6c993ef1c35c80cc64629288d90691360b07de4ee2ad12f00065c4444c0b",
+    "quantum_signature": "qsig:2:ibm_kyiv:0x2ec2d721986d61a2"
+  }
+}

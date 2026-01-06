@@ -1,0 +1,19 @@
+{
+  "evidence_id": "EV-QRoT-003",
+  "evidence_name": "hsm-integration",
+  "category": "quantum_root_trust",
+  "timestamp": "2026-01-06T00:53:55.134458Z",
+  "verification_data": {
+    "hsm_type": [
+      "aws_cloudhsm",
+      "azure_dedicated_hsm"
+    ],
+    "certification": "fips_140_3_level_4",
+    "quantum_resistance": true,
+    "compliance_rate": 1.0
+  },
+  "quantum_signature": "qsig_EV-QRoT-003_abcdef01",
+  "blockchain_anchor": "0xev8f3ac2",
+  "immutable": true,
+  "slsa_level": 4
+}

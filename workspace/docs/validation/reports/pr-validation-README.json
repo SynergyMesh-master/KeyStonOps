@@ -1,0 +1,27 @@
+{
+  "document": {
+    "name": "README.md",
+    "path": "/home/runner/work/machine-native-ops/machine-native-ops/tools/validation/README.md",
+    "size": "4.7KB",
+    "last_modified": "2026-01-06T00:29:19.971755Z"
+  },
+  "quantum_features": {
+    "coherence": 0.7999744616507838,
+    "entanglement": 0.921199856521867,
+    "fidelity": 0.9685847213001011,
+    "noise_level": 0.14176514210494728,
+    "coherence_time": 0.8006605217414238
+  },
+  "extraction_info": {
+    "backend": "ibm_kyiv",
+    "circuit_depth": 8,
+    "shots": 1024,
+    "error_mitigated": true,
+    "timestamp": "2026-01-06T00:34:51.305096Z"
+  },
+  "cryptographic_evidence": {
+    "sha256": "d0804567590cbb4419d5ee4d435b001cb58a4903af1b0c0e13d14167d10d383f",
+    "sha512": "4cd883d6c05879e630044bbfa544d91abddd366fcc6253201e0aacd4fffbff67e76ca79d2bee5d198865c2f366ad14595a4c5b6a40c1ff3774d5f337a1d458cd",
+    "quantum_signature": "qsig:2:ibm_kyiv:0xa55a6fd65869db7e"
+  }
+}

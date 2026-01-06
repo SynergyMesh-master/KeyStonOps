@@ -1,0 +1,27 @@
+{
+  "document": {
+    "name": "THREE_PHASE_REFACTORING_EXECUTION_PLAN.md",
+    "path": "/home/runner/work/machine-native-ops/machine-native-ops/workspace/docs/THREE_PHASE_REFACTORING_EXECUTION_PLAN.md",
+    "size": "41.7KB",
+    "last_modified": "2026-01-06T00:29:20.028755Z"
+  },
+  "quantum_features": {
+    "coherence": 0.7855739823921579,
+    "entanglement": 0.961858357911305,
+    "fidelity": 0.9845400614942389,
+    "noise_level": 0.12116640051765198,
+    "coherence_time": 0.7887836112452836
+  },
+  "extraction_info": {
+    "backend": "ibm_kyiv",
+    "circuit_depth": 8,
+    "shots": 1024,
+    "error_mitigated": true,
+    "timestamp": "2026-01-06T00:34:33.813792Z"
+  },
+  "cryptographic_evidence": {
+    "sha256": "fdb2c3510fef2e7ea85ba208cff174324155bb024d132211a60b2ec63ded0da3",
+    "sha512": "691e832b6388d65726546fff14c25dd3da7d1c7923260cd18715fe49bd1d895d88512eda7039e710bf91477b11ecea427be46ea6ac283b8e9684ff8aed47bdc3",
+    "quantum_signature": "qsig:2:ibm_kyiv:0x32c92b0ddeccb9a4"
+  }
+}

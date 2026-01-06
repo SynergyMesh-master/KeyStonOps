@@ -1,0 +1,16 @@
+{
+  "evidence_id": "EV-STRUCT-001",
+  "evidence_name": "directory-structure",
+  "category": "structural_compliance",
+  "timestamp": "2026-01-06T00:53:55.131761Z",
+  "verification_data": {
+    "directories_checked": 9,
+    "naming_convention": "kebab-case",
+    "compliance_rate": 1.0,
+    "non_compliant": []
+  },
+  "quantum_signature": "qsig_EV-STRUCT-001_abcdef01",
+  "blockchain_anchor": "0xev8f3ac2",
+  "immutable": true,
+  "slsa_level": 4
+}

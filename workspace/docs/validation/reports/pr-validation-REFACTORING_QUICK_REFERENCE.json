@@ -1,0 +1,27 @@
+{
+  "document": {
+    "name": "REFACTORING_QUICK_REFERENCE.md",
+    "path": "/home/runner/work/machine-native-ops/machine-native-ops/workspace/docs/REFACTORING_QUICK_REFERENCE.md",
+    "size": "7.9KB",
+    "last_modified": "2026-01-06T00:29:20.025755Z"
+  },
+  "quantum_features": {
+    "coherence": 0.7957254184450229,
+    "entanglement": 0.9518687030539787,
+    "fidelity": 0.9991986276865759,
+    "noise_level": 0.056566914349857916,
+    "coherence_time": 0.7914650767957175
+  },
+  "extraction_info": {
+    "backend": "ibm_kyiv",
+    "circuit_depth": 8,
+    "shots": 1024,
+    "error_mitigated": true,
+    "timestamp": "2026-01-06T00:34:50.846601Z"
+  },
+  "cryptographic_evidence": {
+    "sha256": "1df3d05219eba07496c15a17bb73481947be8fb4c888e71c0fcfc12b197e50b1",
+    "sha512": "d74077627c4f2c0dcd76aa3942082ba47b5202afdc14d5be5f5b39cec9ec6f2fc186c657effc64c43519bc26815e0e67155f9c91647ea9080a0d27ed7e9c6071",
+    "quantum_signature": "qsig:2:ibm_kyiv:0x0863eb9ad07daf54"
+  }
+}

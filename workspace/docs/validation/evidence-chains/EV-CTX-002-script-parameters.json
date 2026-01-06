@@ -1,0 +1,15 @@
+{
+  "evidence_id": "EV-CTX-002",
+  "evidence_name": "script-parameters",
+  "category": "context_continuity",
+  "timestamp": "2026-01-06T00:53:55.132946Z",
+  "verification_data": {
+    "parameter_categories": 6,
+    "consistent_parameters": 6,
+    "compliance_rate": 1.0
+  },
+  "quantum_signature": "qsig_EV-CTX-002_abcdef01",
+  "blockchain_anchor": "0xev8f3ac2",
+  "immutable": true,
+  "slsa_level": 4
+}

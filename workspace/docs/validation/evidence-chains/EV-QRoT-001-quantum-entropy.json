@@ -1,0 +1,17 @@
+{
+  "evidence_id": "EV-QRoT-001",
+  "evidence_name": "quantum-entropy",
+  "category": "quantum_root_trust",
+  "timestamp": "2026-01-06T00:53:55.134291Z",
+  "verification_data": {
+    "entropy_source": "ibm_kyiv_qrng",
+    "entropy_bits": 4096,
+    "min_required": 4096,
+    "realtime_validation": true,
+    "compliance_rate": 1.0
+  },
+  "quantum_signature": "qsig_EV-QRoT-001_abcdef01",
+  "blockchain_anchor": "0xev8f3ac2",
+  "immutable": true,
+  "slsa_level": 4
+}

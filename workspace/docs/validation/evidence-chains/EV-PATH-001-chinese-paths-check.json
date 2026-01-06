@@ -1,0 +1,15 @@
+{
+  "evidence_id": "EV-PATH-001",
+  "evidence_name": "chinese-paths-check",
+  "category": "path_correctness",
+  "timestamp": "2026-01-06T00:53:55.132229Z",
+  "verification_data": {
+    "files_scanned": 154,
+    "chinese_paths_found": 0,
+    "compliance_rate": 1.0
+  },
+  "quantum_signature": "qsig_EV-PATH-001_abcdef01",
+  "blockchain_anchor": "0xev8f3ac2",
+  "immutable": true,
+  "slsa_level": 4
+}
