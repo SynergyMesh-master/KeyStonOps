@@ -149,3 +149,4 @@ vite.config.ts.timestamp-*
 __pycache__/
 *.pyc
 comment_body.md
+workspace/mcp/servers/tools/*.js
