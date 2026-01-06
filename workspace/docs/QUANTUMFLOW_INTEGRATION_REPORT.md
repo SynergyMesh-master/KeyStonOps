@@ -522,13 +522,15 @@ evolution_4_ml_integration:
 
 | 功能 | 狀態 | 觸發條件 |
 |------|------|----------|
-| CI/CD 集成 | ✅ 已實現 | PR merge to main |
-| 代理註冊 | ✅ 已實現 | Service deployment |
+| CI/CD 集成 | ⏳ 計劃中 | PR merge to main（pipeline 定義中） |
+| 代理註冊 | ⏳ 計劃中 | Service deployment（治理整合 20%） |
 | 健康監控 | ✅ 已實現 | Service startup |
 | 性能擴展 | ✅ 已實現 | Load threshold |
 | 核心整合 | ✅ 已實現 | API gateway ready |
 
 **無傳統時間線** - 所有功能由事件觸發，無需等待週/月週期
+
+> 與「整合狀態總結」對齊：CI/CD 集成仍在規劃，代理註冊隨治理整合推進（目前 20%），其餘項目已就緒。
 
 ---
 
