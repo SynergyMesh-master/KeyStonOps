@@ -25,6 +25,14 @@ import { DISSOLVED_TOOLS } from "./tools/index.js";
 import type { ToolDefinition, ResourceDefinition, PromptDefinition } from "./tools/types.js";
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// EXTENDED PROMPT DEFINITION WITH TEMPLATE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+interface ExtendedPromptDefinition extends PromptDefinition {
+  template: (args?: Record<string, unknown>) => string;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // DISSOLVED AXIOM TOOLS REGISTRY
 // All 59 modules as MCP tools
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1101,98 +1109,98 @@ const DISSOLVED_RESOURCES: ResourceDefinition[] = [
     name: "Infrastructure & Bootstrap Layer",
     description: "Immutable foundation with quantum-hardened bootstrap",
     mimeType: "application/json",
-    metadata: { layer: "L00", module_count: 5, quantumEnabled: true },
+    metadata: { layer: "L00", moduleCount: 5, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l01-language",
     name: "Language Processing Layer",
     description: "Quantum-enhanced NLP with transformer models",
     mimeType: "application/json",
-    metadata: { layer: "L01", module_count: 2, quantumEnabled: true },
+    metadata: { layer: "L01", moduleCount: 2, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l02-input",
     name: "Input Processing Layer",
     description: "Quantum state preparation and multimodal processing",
     mimeType: "application/json",
-    metadata: { layer: "L02", module_count: 3, quantumEnabled: true },
+    metadata: { layer: "L02", moduleCount: 3, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l03-network",
     name: "Network & Routing Layer",
     description: "ML-based intelligent routing with circuit breakers",
     mimeType: "application/json",
-    metadata: { layer: "L03", module_count: 3, quantumEnabled: true },
+    metadata: { layer: "L03", moduleCount: 3, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l04-cognitive",
     name: "Cognitive Processing Layer",
     description: "Deep cognitive processing with transformer architectures",
     mimeType: "application/json",
-    metadata: { layer: "L04", module_count: 4, quantumEnabled: true },
+    metadata: { layer: "L04", moduleCount: 4, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l05-ethics",
     name: "Ethics & Governance Layer",
     description: "Policy evaluation and bias detection",
     mimeType: "application/json",
-    metadata: { layer: "L05", module_count: 3, quantumEnabled: false },
+    metadata: { layer: "L05", moduleCount: 3, quantumEnabled: false },
   },
   {
     uri: "axiom://layers/l06-integration",
     name: "Integration & Orchestration Layer",
     description: "Multi-agent orchestration and workflow engine",
     mimeType: "application/json",
-    metadata: { layer: "L06", module_count: 3, quantumEnabled: true },
+    metadata: { layer: "L06", moduleCount: 3, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l07-reasoning",
     name: "Reasoning & Knowledge Layer",
     description: "Neural-symbolic reasoning with knowledge graphs",
     mimeType: "application/json",
-    metadata: { layer: "L07", module_count: 3, quantumEnabled: true },
+    metadata: { layer: "L07", moduleCount: 3, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l08-emotion",
     name: "Emotional Intelligence Layer",
     description: "Emotion classification and empathy modeling",
     mimeType: "application/json",
-    metadata: { layer: "L08", module_count: 3, quantumEnabled: true },
+    metadata: { layer: "L08", moduleCount: 3, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l09-output",
     name: "Output Optimization Layer",
     description: "Quality scoring and format optimization",
     mimeType: "application/json",
-    metadata: { layer: "L09", module_count: 3, quantumEnabled: true },
+    metadata: { layer: "L09", moduleCount: 3, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l10-governance",
     name: "System Governance Layer",
     description: "Policy enforcement and compliance monitoring",
     mimeType: "application/json",
-    metadata: { layer: "L10", module_count: 5, quantumEnabled: false },
+    metadata: { layer: "L10", moduleCount: 5, quantumEnabled: false },
   },
   {
     uri: "axiom://layers/l11-optimization",
     name: "Performance Optimization Layer",
     description: "System-wide optimization with genetic algorithms",
     mimeType: "application/json",
-    metadata: { layer: "L11", module_count: 4, quantumEnabled: true },
+    metadata: { layer: "L11", moduleCount: 4, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l12-metacognition",
     name: "Metacognitive & Strategic Layer",
     description: "Multi-objective optimization and emergence detection",
     mimeType: "application/json",
-    metadata: { layer: "L12", module_count: 3, quantumEnabled: true },
+    metadata: { layer: "L12", moduleCount: 3, quantumEnabled: true },
   },
   {
     uri: "axiom://layers/l13-quantum",
     name: "Quantum Specialized Layer",
     description: "Domain-specific quantum computing applications",
     mimeType: "application/json",
-    metadata: { layer: "L13", module_count: 15, quantumEnabled: true, fallbackEnabled: true },
+    metadata: { layer: "L13", moduleCount: 15, quantumEnabled: true, fallbackEnabled: true },
   },
 ];
 
@@ -1200,7 +1208,7 @@ const DISSOLVED_RESOURCES: ResourceDefinition[] = [
 // MCP PROMPTS REGISTRY
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const DISSOLVED_PROMPTS: PromptDefinition[] = [
+const DISSOLVED_PROMPTS: ExtendedPromptDefinition[] = [
   {
     name: "quantum_optimization",
     description: "Prompt for quantum optimization tasks using dissolved AXIOM tools",
@@ -1451,7 +1459,7 @@ function buildToolResult(
 ): Record<string, unknown> {
   return {
     tool: toolName,
-    source_module: sourceModule,
+    sourceModule: sourceModule,
     args,
     executionTimestamp: new Date().toISOString(),
     quantumExecuted: quantumExecuted,
@@ -1509,6 +1517,9 @@ async function executeDissolvedTool(
           executionTimestamp: new Date().toISOString(),
           quantumExecuted: true,
           executionMethod: "quantum",
+        },
+        executionMethod: "quantum",
+          source_module: tool.sourceModule,
           error: error instanceof Error ? error.message : String(error),
         }
       );
@@ -1525,6 +1536,7 @@ async function executeDissolvedTool(
         result: buildToolResult(toolName, tool.sourceModule, args, false, {
           fallbackUsed: true,
           fallbackReason: error instanceof Error ? error.message : "Quantum execution failed",
+          fallback_reason: error instanceof Error ? error.message : "Quantum execution failed",
           ...classicalResult,
         }),
         executionMethod: "classical_fallback",
@@ -1554,6 +1566,7 @@ async function executeDissolvedTool(
           quantumExecuted: false,
           fallbackUsed: true,
           errorMessage: error instanceof Error ? error.message : String(error),
+          error_message: error instanceof Error ? error.message : String(error),
         },
       };
     }
@@ -1563,6 +1576,14 @@ async function executeDissolvedTool(
   const classicalResult = await executeClassicalTool(toolName, args, tool);
   return {
     success: true,
+    result: {
+      tool: toolName,
+      sourceModule: tool.sourceModule,
+      args,
+      executionTimestamp: new Date().toISOString(),
+      quantumEnabled: tool.quantumEnabled,
+    },
+    executionMethod: tool.quantumEnabled ? "quantum" : "classical",
     result: buildToolResult(toolName, tool.sourceModule, args, false, classicalResult),
     executionMethod: "classical",
   };
@@ -1863,10 +1884,10 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   
   const tools = DISSOLVED_TOOLS.filter((t) => {
     const layerMatch = t.sourceModule.match(/L(\d{2})/);
+    const resourceLayerMatch = layerId.match(/l(\d{2})/);
     const resourceLayerMatch = layerId?.match(/l(\d{2})/);
     return layerMatch && resourceLayerMatch && layerMatch[1] === resourceLayerMatch[1];
   });
-
   return {
     contents: [
       {
@@ -1878,7 +1899,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
             tools: tools.map((t) => ({
               name: t.name,
               description: t.description,
-              quantumEnabled: t.quantumEnabled,
+              quantum_enabled: t.quantum_enabled,
             })),
           },
           null,

@@ -117,6 +117,7 @@ export const L13_TOOLS: ToolDefinition[] = [
       required: ["operation"],
     },
     quantumEnabled: true,
+    // Note: No fallbackEnabled - QKD requires quantum hardware for security guarantees
     // Note: No fallback_enabled - QKD requires quantum hardware for security guarantees
     priority: 50,
   },
@@ -133,6 +134,7 @@ export const L13_TOOLS: ToolDefinition[] = [
       },
     },
     quantumEnabled: true,
+    // Note: No fallbackEnabled - true randomness requires quantum entropy source
     // Note: No fallback_enabled - true randomness requires quantum entropy source
     priority: 51,
   },
