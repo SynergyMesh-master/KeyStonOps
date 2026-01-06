@@ -29,4 +29,4 @@ validation:
   binary_state: 已實現
   evidence:
     - workspace/docs/refactor_playbooks/EXECUTION_STATUS.md
-    - ../../.github/workflows/quantum-validation-pr.yml
+    - .github/workflows/quantum-validation-pr.yml
