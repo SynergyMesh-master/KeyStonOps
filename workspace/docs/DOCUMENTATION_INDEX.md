@@ -206,6 +206,7 @@ cat governance/00-vision-strategy/AUTONOMOUS_AGENT_STATE.md
 | [docs/architecture/FileDescription.md](./docs/architecture/FileDescription.md)                                     | 文件描述         | 重要文件說明            |
 | [docs/architecture/ADVANCED_SYSTEM_INTEGRATION.md](./docs/architecture/ADVANCED_SYSTEM_INTEGRATION.md)             | 進階系統整合     | 高級整合方案            |
 | [docs/architecture/PR351_ARCHITECTURE_EVOLUTION.md](./docs/architecture/PR351_ARCHITECTURE_EVOLUTION.md) ⭐ **NEW** | PR #351 架構演化 | 三層治理模型、配置優化、子系統整合 |
+| [docs/PR_1023_ARCHITECTURE_RESEARCH.md](./docs/PR_1023_ARCHITECTURE_RESEARCH.md) ⭐ **NEW**                        | PR #1023 架構研究 | 153 檔案變更分層地圖、量子整合、驗證與安全切入點 |
 | [docs/architecture/REPOSITORY_INTEGRATION_ASSESSMENT.md](./docs/architecture/REPOSITORY_INTEGRATION_ASSESSMENT.md) | 倉庫整合評估     | 整合評估報告            |
 | [docs/architecture/matechat-integration.md](./docs/architecture/matechat-integration.md)                           | MateChat 整合    | 聊天系統整合            |
 | [docs/architecture.zh.md](./docs/architecture.zh.md)                                                               | 架構說明（中文） | 中文架構文檔            |
