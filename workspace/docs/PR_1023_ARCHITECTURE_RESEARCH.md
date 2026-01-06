@@ -52,6 +52,7 @@
   - 量子後端 API：`PYTHONPATH=workspace/src uvicorn quantum.api.main:app --reload`（依照檔案結構啟動，需 FastAPI 依賴）
   - 測試組合：`python -m pytest workspace/tests/quantum`（需安裝 cirq / qiskit / pennylane）
   - 證據鏈計數：`ls workspace/docs/validation/evidence-chains/EV-*.json | wc -l` → 23
+- PR #1023 層級驗證腳本：`python tools/validation/validate_pr1023_layers.py`
 - **K8s 部署檢查**
   - 量子堆疊：`kubectl apply -f infrastructure/kubernetes/quantum/`
   - 驗證系統：`kubectl apply -f infrastructure/kubernetes/validation/`
