@@ -558,73 +558,72 @@ export interface StreamProcessor {
     /**
      * Quantum-Assisted Conversion
      * @deprecated Use direct imports from './converters-quantum.js' instead
-     * @see converters-quantum.ts
-     */
-    export type QuantumConversionConfig = import('./converters-quantum.js').QuantumConversionConfig;
-    export type QuantumConversionResult<T> = import('./converters-quantum.js').QuantumConversionResult<T>;
-    export type QuantumAssistedConverter = import('./converters-quantum.js').QuantumAssistedConverter;
-    export type QuantumConversionMetrics = import('./converters-quantum.js').QuantumConversionMetrics;
+   *
+   * NOTE: Previously modeled using nested TypeScript namespaces:
+   *   - Protocols.Standard
+   *   - Protocols.MCP
+   *   - Protocols.Bridge
+   *
+   * To align with ES2015 module style, these are now expressed as
+   * flat, exported interfaces with names that encode the hierarchy.
+   */
+  export interface ProtocolsStandardProtocolMessage {
+    readonly type: string;
+    readonly payload: unknown;
+    readonly signature: Uint8Array;
+    readonly timestamp: Date;
   }
 
-  // ============================================================================
-  // GRAIL PROTOCOLS NAMESPACE
-  // ============================================================================
+  export interface ProtocolsStandardProtocol {
+    send(message: ProtocolsStandardProtocolMessage): Promise<void>;
+    receive(): AsyncGenerator<ProtocolsStandardProtocolMessage>;
+    verify(message: ProtocolsStandardProtocolMessage): Promise<boolean>;
+    seal(message: ProtocolsStandardProtocolMessage): Promise<ProtocolsStandardProtocolMessage>;
+  }
 
   /**
-   * Protocols namespace - ops::registry (just communication standards)
-   * @deprecated Use direct imports from './protocols-*.js' modules instead
-   * @deprecated Use direct imports from './protocols.js' instead
-   * @see {@link ../protocols}
+   * MCP Extensions (previously Protocols.MCP.*)
    */
-  export namespace Protocols {
-    /**
-     * Standard Protocol (no divinity required)
-     * @deprecated Use direct imports from './protocols-standard.js' instead
-     * @see protocols-standard.ts
-     */
-    export namespace Standard {
-      export type ProtocolMessage = import('./protocols-standard.js').ProtocolMessage;
-      export type StandardProtocol = import('./protocols-standard.js').StandardProtocol;
-     * @deprecated Use direct imports from './protocols.js' instead
-     */
-    export namespace Standard {
-      export type ProtocolMessage = ProtocolsTypes.ProtocolMessage;
-      export type StandardProtocol = ProtocolsTypes.StandardProtocol;
-    }
-
-    /**
-     * MCP Extensions
-     * @deprecated Use direct imports from './protocols-mcp.js' instead
-     * @see protocols-mcp.ts
-     */
-    export namespace MCP {
-      export type GrailToolDefinition = import('./protocols-mcp.js').GrailToolDefinition;
-      export type GrailResourceDefinition = import('./protocols-mcp.js').GrailResourceDefinition;
-      export type MCPExtension = import('./protocols-mcp.js').MCPExtension;
-     * @deprecated Use direct imports from './protocols.js' instead
-     */
-    export namespace MCP {
-      export type GrailToolDefinition = ProtocolsTypes.GrailToolDefinition;
-      export type GrailResourceDefinition = ProtocolsTypes.GrailResourceDefinition;
-      export type MCPExtension = ProtocolsTypes.MCPExtension;
-    }
-
-    /**
-     * Inter-Protocol Bridge
-     * @deprecated Use direct imports from './protocols-bridge.js' instead
-     * @see protocols-bridge.ts
-     * @see {@link ./protocols-bridge.js}
-     */
-    export namespace Bridge {
-      export type ProtocolAdapter<T, U> = import('./protocols-bridge.js').ProtocolAdapter<T, U>;
-      export type InterProtocolBridge = import('./protocols-bridge.js').InterProtocolBridge;
-     * @deprecated Use direct imports from './protocols.js' instead
-     */
-    export namespace Bridge {
-      export type ProtocolAdapter<T, U> = ProtocolsTypes.ProtocolAdapter<T, U>;
-      export type InterProtocolBridge = ProtocolsTypes.InterProtocolBridge;
-    }
+  export interface ProtocolsMCPGrailToolDefinition {
+    readonly name: string;
+    readonly description: string;
+    readonly namespace: NamespacePath;
+    readonly inputSchema: unknown;
+    readonly outputSchema: unknown;
   }
+
+  export interface ProtocolsMCPGrailResourceDefinition {
+    readonly uri: string;
+    readonly name: string;
+    readonly namespace: NamespacePath;
+    readonly mimeType: string;
+  }
+
+  export interface ProtocolsMCPExtension {
+    registerTool(tool: ProtocolsMCPGrailToolDefinition): void;
+    registerResource(resource: ProtocolsMCPGrailResourceDefinition): void;
+    getTools(): ProtocolsMCPGrailToolDefinition[];
+    getResources(): ProtocolsMCPGrailResourceDefinition[];
+    invoke(toolName: string, params: unknown): Promise<unknown>;
+  }
+
+  /**
+   * Inter-Protocol Bridge (previously Protocols.Bridge.*)
+   */
+  export interface ProtocolsBridgeProtocolAdapter<T, U> {
+    readonly sourceProtocol: string;
+    readonly targetProtocol: string;
+    adapt(message: T): U;
+    reverse(message: U): T;
+  }
+
+  export interface ProtocolsBridgeInterProtocolBridge {
+    registerAdapter<T, U>(adapter: ProtocolsBridgeProtocolAdapter<T, U>): void;
+    bridge<T, U>(message: T, sourceProtocol: string, targetProtocol: string): U;
+    getSupportedBridges(): Array<[string, string]>;
+  }
+
+  // End of Protocols-related type declarations.
 }
 
 // ============================================================================
