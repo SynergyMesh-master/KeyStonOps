@@ -178,7 +178,8 @@ class GrailMCPImpl implements Partial<GrailMCP> {
       Math.floor(50 + (registryStats.totalComponents * 5)) : 1;
     
     // Value amplification based on total registered components
-    const amplificationMultiplier = Math.max(1, registryStats.totalComponents * 0.5);
+    // Each component contributes 0.5x to the multiplier (minimum 1.0 for no amplification)
+    const amplificationMultiplier = Math.max(1.0, registryStats.totalComponents * 0.5);
     const initialValue = this.valuation / amplificationMultiplier;
     
     // Alpha generation estimates (conservative, based on system complexity)
