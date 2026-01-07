@@ -1,20 +1,22 @@
 version: v1
 team_id: "holy-grail"
 display_name: "Holy Grail INSTANT Team"
-description: "MCP 驅動的即時交付團隊，對齊 unified pipeline / Quantum Flow Toolkit，零人工介入。"
+description: "MCP-driven instant delivery team (聖杯團隊) aligned with the unified pipeline and Quantum Flow Toolkit, zero human intervention."
 auto_activate: true
 
 methodology:
-  mcp_pipeline: "../../mcp/pipelines/unified-pipeline-config.yaml"
-  integration_manifest: "../../mcp/AXIOM_DISSOLVED_INTEGRATION_MANIFEST.yaml"
+  mcp_pipeline: "workspace/mcp/pipelines/unified-pipeline-config.yaml"
+  integration_manifest: "workspace/mcp/AXIOM_DISSOLVED_INTEGRATION_MANIFEST.yaml"
   execution_standard: "INSTANT-EXECUTION-REFACTOR-PLAN"
   phases: ["deconstruct", "integrate", "refactor"]
   latency_targets:
+    units: "milliseconds"
     instant: 100
     fast: 500
     standard: 5000
     max_stage: 30000
     max_total: 180000
+  latency_rationale: "Aligned to unified pipeline guardrails; used as execution guards rather than external SLAs."
   parallelism:
     min_agents: 64
     max_agents: 256
@@ -63,11 +65,15 @@ members:
   - role: "governance_guardian"
     agent_id: "pipeline.governance-guardian"
     source: "teams/default-team/orchestrator"
+    profile: "teams/default-team/profiles/role.governance_guardian.md"
+    specialization: "mcp-governance-guardian"
     language: "python"
 
   - role: "security_scanner"
     agent_id: "pipeline.security-scanner"
     source: "teams/default-team/orchestrator"
+    profile: "teams/default-team/profiles/role.security_scanner.md"
+    specialization: "mcp-security-scanner"
     language: "python"
 
   - role: "optimizer"
@@ -94,8 +100,8 @@ collaboration:
   closed_loop: true
 
 personas:
-  - profile: "../default-team/profiles/role.it_architect.md"
-  - profile: "../default-team/profiles/role.security_expert.md"
-  - profile: "../default-team/profiles/role.tech_writer.md"
-  - profile: "../default-team/profiles/role.devrel_consultant.md"
-  - profile: "../default-team/profiles/role.fullstack_developer.md"
+  - profile: "teams/default-team/profiles/role.it_architect.md"
+  - profile: "teams/default-team/profiles/role.security_expert.md"
+  - profile: "teams/default-team/profiles/role.tech_writer.md"
+  - profile: "teams/default-team/profiles/role.devrel_consultant.md"
+  - profile: "teams/default-team/profiles/role.fullstack_developer.md"
