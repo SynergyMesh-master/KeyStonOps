@@ -157,6 +157,15 @@ class GrailMCPImpl implements Partial<GrailMCP> {
    * For actual system metrics, use getMetrics() instead.
    * 
    * @returns Example demonstration data structure (not real performance metrics)
+   * Demonstrate the power of the Holy Grail
+   * 
+   * ⚠️ **Important**: This method returns EXAMPLE/PLACEHOLDER values for demonstration purposes.
+   * These are not real measurements or actual system metrics. The values are hardcoded
+   * to illustrate the expected structure and range of results.
+   * 
+   * For actual runtime metrics, use the `getMetrics()` method instead.
+   * 
+   * @returns Example demonstration results (not based on real measurements)
    */
   async demonstrate(): Promise<GrailDemonstration> {
     if (!this._activated) {
@@ -164,6 +173,7 @@ class GrailMCPImpl implements Partial<GrailMCP> {
     }
 
     // PLACEHOLDER VALUES - Not real metrics
+    // NOTE: All values below are PLACEHOLDER examples, not real measurements
     return {
       multimodalCapabilities: {
         semanticDepth: 0.95, // Example value
@@ -178,6 +188,11 @@ class GrailMCPImpl implements Partial<GrailMCP> {
       valueCreation: {
         initialValue: 1_000_000, // Example value
         amplifiedValue: 10_000_000, // Example value
+        fidelity: 0.999 // Example fidelity
+      },
+      valueCreation: {
+        initialValue: 1_000_000, // Example initial value
+        amplifiedValue: 10_000_000, // Example amplified value
         multiplier: 10 // Example multiplier
       },
       alphaGeneration: {
@@ -189,6 +204,13 @@ class GrailMCPImpl implements Partial<GrailMCP> {
         totalFlow: 1_000_000_000, // Example value
         extractionEfficiency: 0.88, // Example value
         amplificationFactor: 5.2 // Example value
+        riskFreeAlpha: 0.08, // Example risk-free alpha
+        consistency: 0.92 // Example consistency
+      },
+      globalValueFlow: {
+        totalFlow: 1_000_000_000, // Example total flow
+        extractionEfficiency: 0.88, // Example efficiency
+        amplificationFactor: 5.2 // Example amplification
       }
     };
   }
