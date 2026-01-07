@@ -211,6 +211,12 @@ class GrailMCPImpl implements Partial<GrailMCP> {
    * @returns Example demonstration data structure (not real performance metrics)
    * Demonstrate the power of the Holy Grail
    * 
+   * **IMPORTANT:** This method returns hardcoded placeholder values for demonstration
+   * purposes only. The returned metrics (semanticDepth: 0.95, speedup: 100, multiplier: 10,
+   * etc.) are NOT based on actual system measurements or real performance data.
+   * 
+   * @returns Mock demonstration data with example/placeholder values
+   * @see {@link GrailDemonstration} for details on the placeholder nature of returned values
    * Note: Returns calculated metrics based on actual system state (registry stats,
    * activation status, and configuration). Values are estimates derived from
    * component counts and system configuration, not hardcoded mock data.

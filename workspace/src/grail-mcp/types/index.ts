@@ -182,6 +182,16 @@ export interface GrailMCP {
 /**
  * Grail demonstration results
  * 
+ * **NOTE:** This interface contains placeholder/example values for demonstration purposes.
+ * The values returned by {@link GrailMCP.demonstrate} are hardcoded mock data and do not
+ * represent actual system measurements or performance metrics.
+ * 
+ * @example
+ * ```typescript
+ * const demo = await grail.demonstrate();
+ * // All values in demo are example placeholders, not real metrics
+ * console.log(demo.valueCreation.multiplier); // Example: 10
+ * ```
  * ⚠️ NOTE: The demonstrate() method returns HARDCODED PLACEHOLDER VALUES.
  * These are example values to illustrate the API structure, NOT real performance metrics.
  * Do not use these values for actual performance assessment or decision-making.
