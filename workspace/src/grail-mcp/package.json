@@ -42,7 +42,7 @@
     "vitest": "^4.0.16"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.25.1",
+    "@modelcontextprotocol/sdk": "^1.25.2",
     "js-yaml": "^4.1.1",
     "fast-xml-parser": "^5.3.3",
     "js-yaml": "^4.1.1",
