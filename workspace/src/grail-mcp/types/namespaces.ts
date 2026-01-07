@@ -22,6 +22,19 @@ export type GrailDomain =
   | 'protocols';
 
 /**
+ * Array of valid GRAIL domains for runtime validation.
+ * IMPORTANT: Must be kept in sync with the GrailDomain type above.
+ */
+export const VALID_GRAIL_DOMAINS: readonly GrailDomain[] = [
+  'core',
+  'quantum',
+  'nexus',
+  'market',
+  'converters',
+  'protocols'
+] as const;
+
+/**
  * Namespace path pattern: grail::{domain}::{subdomain}::{component}
  */
 export type NamespacePath = `grail::${GrailDomain}::${string}`;
@@ -666,8 +679,13 @@ export function parseNamespacePath(path: NamespacePath): NamespaceIdentifier {
     throw new Error(`Invalid namespace path: ${path}`);
   }
 
+  const domain = parts[1];
+  if (!VALID_GRAIL_DOMAINS.includes(domain as GrailDomain)) {
+    throw new Error(`Invalid domain in namespace path: ${path}. Domain "${domain}" is not a valid GrailDomain.`);
+  }
+
   return {
-    domain: parts[1] as GrailDomain,
+    domain: domain as GrailDomain,
     subdomain: parts[2],
     component: parts[3],
     fullPath: path
@@ -678,7 +696,8 @@ export function parseNamespacePath(path: NamespacePath): NamespaceIdentifier {
  * Validate a namespace path
  */
 export function isValidNamespacePath(path: string): path is NamespacePath {
-  const regex = /^grail::(core|quantum|nexus|market|converters|protocols)::\w+(::\w+)?$/;
+  const domainPattern = VALID_GRAIL_DOMAINS.join('|');
+  const regex = new RegExp(`^grail::(${domainPattern})::\\w+(::\\w+)?$`);
   return regex.test(path);
 }
 
