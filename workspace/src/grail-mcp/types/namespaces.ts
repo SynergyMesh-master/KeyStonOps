@@ -6,6 +6,9 @@
  * @valuation $10M+
  */
 
+// Import ES2015 module types for re-export in namespaces
+import type * as ConvertersQuantumTypes from './converters-quantum.js';
+
 // ============================================================================
 // NAMESPACE PATH UTILITIES
 // ============================================================================
@@ -553,33 +556,14 @@ export namespace Grail {
 
     /**
      * Quantum-Assisted Conversion
+     * @deprecated Use direct imports from './converters-quantum.js' instead
+     * @see {@link ../converters-quantum}
      */
     export namespace Quantum {
-      export interface QuantumConversionConfig {
-        readonly useQuantumOptimization: boolean;
-        readonly parallelism: number;
-        readonly errorCorrection: boolean;
-      }
-
-      export interface QuantumConversionResult<T> {
-        readonly result: T;
-        readonly quantumAdvantage: boolean;
-        readonly speedup: number;
-        readonly fidelity: number;
-      }
-
-      export interface QuantumAssistedConverter {
-        configure(config: QuantumConversionConfig): void;
-        convert<S, T>(source: S, targetType: string): Promise<QuantumConversionResult<T>>;
-        batchConvert<S, T>(sources: S[], targetType: string): Promise<QuantumConversionResult<T[]>>;
-        getQuantumMetrics(): QuantumConversionMetrics;
-      }
-
-      export interface QuantumConversionMetrics {
-        readonly totalConversions: number;
-        readonly averageSpeedup: number;
-        readonly quantumUtilization: number;
-      }
+      export type QuantumConversionConfig = ConvertersQuantumTypes.QuantumConversionConfig;
+      export type QuantumConversionResult<T> = ConvertersQuantumTypes.QuantumConversionResult<T>;
+      export type QuantumAssistedConverter = ConvertersQuantumTypes.QuantumAssistedConverter;
+      export type QuantumConversionMetrics = ConvertersQuantumTypes.QuantumConversionMetrics;
     }
   }
 
@@ -700,13 +684,3 @@ export function isValidNamespacePath(path: string): path is NamespacePath {
   const regex = /^grail::(core|quantum|nexus|market|converters|protocols)::\w+(::\w+)?$/;
   return regex.test(path);
 }
-
-// ============================================================================
-// EXPORTS
-// ============================================================================
-
-export type {
-  GrailDomain,
-  NamespacePath,
-  NamespaceIdentifier
-};
