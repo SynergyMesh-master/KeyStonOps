@@ -1,12 +1,10 @@
 /**
- * GRAIL CRediT Namespace - Contributor Roles Taxonomy
- * @module grail::credit
- * @description ANSI/NISO Z39.104-2022 compliant contributor role classification
- * @version 1.0.0
+ * CRediT Contributor Roles - Clinical Dissection Edition
+ * @module dissect::credit
+ * @description ANSI/NISO Z39.104-2022 with honest naming
+ * @version 2.0.0
  * @standard ANSI/NISO Z39.104-2022
- *
- * CRediT (Contributor Roles Taxonomy) integration for machine-native
- * contribution tracking with governance DAG validation.
+ * @style 臨床反諷 | 誠實命名 | 不包裝
  */
 
 // ============================================================================
@@ -14,156 +12,106 @@
 // ============================================================================
 
 /**
- * The 14 CRediT contributor roles as defined by ANSI/NISO Z39.104-2022
+ * The 14 CRediT contributor roles - with honest descriptions
  */
 export const CREDIT_ROLES = {
-  /** Ideas; formulation or evolution of overarching research goals and aims */
   CONCEPTUALIZATION: 'conceptualization',
-
-  /** Management activities to annotate, scrub data and maintain research data */
   DATA_CURATION: 'data_curation',
-
-  /** Application of statistical, mathematical, computational techniques */
   FORMAL_ANALYSIS: 'formal_analysis',
-
-  /** Acquisition of the financial support for the project */
   FUNDING_ACQUISITION: 'funding_acquisition',
-
-  /** Conducting a research and investigation process */
   INVESTIGATION: 'investigation',
-
-  /** Development or design of methodology; creation of models */
   METHODOLOGY: 'methodology',
-
-  /** Management and coordination responsibility for research activity planning */
   PROJECT_ADMINISTRATION: 'project_administration',
-
-  /** Provision of study materials, reagents, materials, patients, samples */
   RESOURCES: 'resources',
-
-  /** Programming, software development; designing computer programs */
   SOFTWARE: 'software',
-
-  /** Oversight and leadership responsibility for research activity planning */
   SUPERVISION: 'supervision',
-
-  /** Verification of overall replication/reproducibility of results */
   VALIDATION: 'validation',
-
-  /** Preparation, creation and/or presentation of the published work */
   VISUALIZATION: 'visualization',
-
-  /** Preparation, creation of the published work - original draft */
   WRITING_ORIGINAL_DRAFT: 'writing_original_draft',
-
-  /** Critical review, commentary or revision of the published work */
   WRITING_REVIEW_EDITING: 'writing_review_editing'
 } as const;
 
-/**
- * CRediT role identifier type
- */
 export type CreditRoleId = typeof CREDIT_ROLES[keyof typeof CREDIT_ROLES];
 
+// ============================================================================
+// CLINICAL ROLE MAPPING - 臨床反諷版本
+// ============================================================================
+
 /**
- * Complete CRediT role definition with metadata
+ * Clinical namespace identifiers - honest about what we do
+ */
+export const CLINICAL_ROLES = {
+  // A類: 包裝真相的人
+  IDEA_PACKAGING: 'facade.idea_packaging',
+  METHOD_THEATRE: 'dissect.method_theatre',
+  MONEY_HUNTING: 'reality.money_hunting',
+  HERDING_CATS: 'ops.herding_cats',
+
+  // B類: 實際幹活的人
+  DIG_DIRT: 'archaeology.dig_dirt',
+  DATA_JANITOR: 'dissect.data_janitor',
+  NUMBER_TORTURE: 'audit.number_torture',
+  CODE_MONKEY: 'ops.code_monkey',
+  STUFF_PROVIDER: 'ops.stuff_provider',
+  MAKE_PRETTY: 'facade.make_pretty',
+  FIRST_DRAFT_LIES: 'artifact.first_draft_lies',
+  POLISH_THE_LIES: 'artifact.polish_the_lies',
+
+  // C類: 找碴的人
+  REALITY_CHECK: 'audit.reality_check',
+  ADULT_SUPERVISION: 'audit.adult_supervision'
+} as const;
+
+export type ClinicalRoleId = typeof CLINICAL_ROLES[keyof typeof CLINICAL_ROLES];
+
+/**
+ * Complete role definition with clinical mapping
  */
 export interface CreditRoleDefinition {
-  /** Role identifier (snake_case) */
   readonly id: CreditRoleId;
-
-  /** Display name (Title Case) */
   readonly name: string;
-
-  /** Chinese translation */
   readonly nameCN: string;
-
-  /** Full description from ANSI/NISO Z39.104-2022 */
   readonly description: string;
-
-  /** Chinese description */
   readonly descriptionCN: string;
-
-  /** Role category */
+  /** 臨床反諷解讀 */
+  readonly honestDescription: string;
   readonly category: CreditRoleCategory;
-
-  /** Governance role mapping */
-  readonly governanceRole: GovernanceRoleId;
-
-  /** DAG dependencies (must complete before this role) */
+  /** 臨床映射 */
+  readonly clinicalRole: ClinicalRoleId;
   readonly dependsOn: CreditRoleId[];
-
-  /** Order in typical research workflow (1-14) */
   readonly workflowOrder: number;
 }
 
-/**
- * CRediT role categories aligned with KAI Governance
- */
 export type CreditRoleCategory =
-  | 'structural'    // A類: Structural / Conceptual Governance
-  | 'operational'   // B類: Operational / Execution Roles
-  | 'validation';   // C類: Validation / Oversight Roles
+  | 'structural'    // A類: 包裝真相的人
+  | 'operational'   // B類: 實際幹活的人
+  | 'validation';   // C類: 找碴的人
 
 // ============================================================================
-// GOVERNANCE ROLE MAPPING (KAI Governance Roles)
+// CREDIT → CLINICAL MAPPING (反諷版)
 // ============================================================================
 
-/**
- * KAI Governance role identifiers
- */
-export const GOVERNANCE_ROLES = {
-  // A類: Structural / Conceptual Governance
-  ARCHITECTURE: 'governance.architecture',
-  METHOD_DESIGN: 'governance.method-design',
-  EXECUTION_ORCHESTRATION: 'governance.execution-orchestration',
-  RESOURCE_ALLOCATION: 'governance.resource-allocation',
-
-  // B類: Operational / Execution Roles
-  DATA_COLLECTION: 'ops.data-collection',
-  DATA_GOVERNANCE: 'ops.data-governance',
-  ANALYSIS: 'ops.analysis',
-  SOFTWARE_ENGINEERING: 'ops.software-engineering',
-  RESOURCE_PROVIDER: 'ops.resource-provider',
-  VISUALIZATION: 'ops.visualization',
-  AUTHORING_DRAFT: 'ops.authoring-draft',
-  AUTHORING_REVIEW: 'ops.authoring-review',
-
-  // C類: Validation / Oversight Roles
-  VALIDATION: 'qa.validation',
-  SUPERVISION: 'qa.supervision'
-} as const;
-
-export type GovernanceRoleId = typeof GOVERNANCE_ROLES[keyof typeof GOVERNANCE_ROLES];
-
-/**
- * Machine-native CRediT to Governance role mapping
- * Single-line JSON format for .governance files
- */
-export const CREDIT_TO_GOVERNANCE_MAP: Record<CreditRoleId, GovernanceRoleId> = {
-  conceptualization: 'governance.architecture',
-  data_curation: 'ops.data-governance',
-  formal_analysis: 'ops.analysis',
-  funding_acquisition: 'governance.resource-allocation',
-  investigation: 'ops.data-collection',
-  methodology: 'governance.method-design',
-  project_administration: 'governance.execution-orchestration',
-  resources: 'ops.resource-provider',
-  software: 'ops.software-engineering',
-  supervision: 'qa.supervision',
-  validation: 'qa.validation',
-  visualization: 'ops.visualization',
-  writing_original_draft: 'ops.authoring-draft',
-  writing_review_editing: 'ops.authoring-review'
+export const CREDIT_TO_CLINICAL_MAP: Record<CreditRoleId, ClinicalRoleId> = {
+  conceptualization: 'facade.idea_packaging',
+  methodology: 'dissect.method_theatre',
+  funding_acquisition: 'reality.money_hunting',
+  project_administration: 'ops.herding_cats',
+  investigation: 'archaeology.dig_dirt',
+  data_curation: 'dissect.data_janitor',
+  formal_analysis: 'audit.number_torture',
+  software: 'ops.code_monkey',
+  resources: 'ops.stuff_provider',
+  visualization: 'facade.make_pretty',
+  writing_original_draft: 'artifact.first_draft_lies',
+  writing_review_editing: 'artifact.polish_the_lies',
+  validation: 'audit.reality_check',
+  supervision: 'audit.adult_supervision'
 };
 
 // ============================================================================
-// COMPLETE ROLE DEFINITIONS
+// COMPLETE ROLE DEFINITIONS (臨床版)
 // ============================================================================
 
-/**
- * Complete definitions for all 14 CRediT roles
- */
 export const CREDIT_ROLE_DEFINITIONS: readonly CreditRoleDefinition[] = [
   {
     id: 'conceptualization',
@@ -171,8 +119,9 @@ export const CREDIT_ROLE_DEFINITIONS: readonly CreditRoleDefinition[] = [
     nameCN: '概念化',
     description: 'Ideas; formulation or evolution of overarching research goals and aims.',
     descriptionCN: '構思；制定或發展整體研究目標和目的。',
+    honestDescription: '把想法包裝成看起來很厲害的樣子',
     category: 'structural',
-    governanceRole: 'governance.architecture',
+    clinicalRole: 'facade.idea_packaging',
     dependsOn: [],
     workflowOrder: 1
   },
@@ -182,8 +131,9 @@ export const CREDIT_ROLE_DEFINITIONS: readonly CreditRoleDefinition[] = [
     nameCN: '方法論',
     description: 'Development or design of methodology; creation of models.',
     descriptionCN: '方法論的發展或設計；模型的創建。',
+    honestDescription: '方法論表演 - 讓過程看起來很科學',
     category: 'structural',
-    governanceRole: 'governance.method-design',
+    clinicalRole: 'dissect.method_theatre',
     dependsOn: ['conceptualization'],
     workflowOrder: 2
   },
@@ -191,10 +141,11 @@ export const CREDIT_ROLE_DEFINITIONS: readonly CreditRoleDefinition[] = [
     id: 'funding_acquisition',
     name: 'Funding Acquisition',
     nameCN: '資金籌集',
-    description: 'Acquisition of the financial support for the project leading to this publication.',
-    descriptionCN: '為促成本次出版的計畫籌集資金。',
+    description: 'Acquisition of the financial support for the project.',
+    descriptionCN: '為計畫籌集資金。',
+    honestDescription: '找錢的人 - 這才是真正重要的技能',
     category: 'structural',
-    governanceRole: 'governance.resource-allocation',
+    clinicalRole: 'reality.money_hunting',
     dependsOn: ['conceptualization'],
     workflowOrder: 3
   },
@@ -202,10 +153,11 @@ export const CREDIT_ROLE_DEFINITIONS: readonly CreditRoleDefinition[] = [
     id: 'project_administration',
     name: 'Project Administration',
     nameCN: '專案管理',
-    description: 'Management and coordination responsibility for the research activity planning and execution.',
+    description: 'Management and coordination responsibility for research activity.',
     descriptionCN: '負責研究活動規劃和執行的管理和協調。',
+    honestDescription: '趕貓 - 試圖讓一群不想合作的人合作',
     category: 'structural',
-    governanceRole: 'governance.execution-orchestration',
+    clinicalRole: 'ops.herding_cats',
     dependsOn: ['conceptualization', 'methodology'],
     workflowOrder: 4
   },
@@ -213,10 +165,11 @@ export const CREDIT_ROLE_DEFINITIONS: readonly CreditRoleDefinition[] = [
     id: 'resources',
     name: 'Resources',
     nameCN: '資源',
-    description: 'Provision of study materials, reagents, materials, patients, laboratory samples, animals, instrumentation, computing resources, or other analysis tools.',
-    descriptionCN: '提供學習材料、試劑、材料、病人、實驗室樣本、動物、儀器、計算資源或其他分析工具。',
+    description: 'Provision of study materials, instrumentation, computing resources.',
+    descriptionCN: '提供學習材料、儀器、計算資源或其他分析工具。',
+    honestDescription: '提供東西的人 - 有錢能使鬼推磨',
     category: 'operational',
-    governanceRole: 'ops.resource-provider',
+    clinicalRole: 'ops.stuff_provider',
     dependsOn: ['funding_acquisition'],
     workflowOrder: 5
   },
@@ -224,10 +177,11 @@ export const CREDIT_ROLE_DEFINITIONS: readonly CreditRoleDefinition[] = [
     id: 'investigation',
     name: 'Investigation',
     nameCN: '調查',
-    description: 'Conducting a research and investigation process, specifically performing the experiments, or data/evidence collection.',
-    descriptionCN: '進行研究和調查過程，具體而言，就是進行實驗或數據/證據收集。',
+    description: 'Conducting research process, performing experiments or data collection.',
+    descriptionCN: '進行研究和調查過程，進行實驗或數據收集。',
+    honestDescription: '挖泥巴 - 實際動手挖掘數據的人',
     category: 'operational',
-    governanceRole: 'ops.data-collection',
+    clinicalRole: 'archaeology.dig_dirt',
     dependsOn: ['methodology', 'resources'],
     workflowOrder: 6
   },
@@ -235,10 +189,11 @@ export const CREDIT_ROLE_DEFINITIONS: readonly CreditRoleDefinition[] = [
     id: 'data_curation',
     name: 'Data Curation',
     nameCN: '資料整理',
-    description: 'Management activities to annotate (produce metadata), scrub data and maintain research data for initial use and later reuse.',
-    descriptionCN: '管理活動包括註釋（產生元資料）、清理資料以及維護研究資料，以供初始使用和後續重複使用。',
+    description: 'Annotate, scrub data and maintain research data.',
+    descriptionCN: '註釋、清理資料以及維護研究資料。',
+    honestDescription: '數據清潔工 - 把髒數據擦乾淨',
     category: 'operational',
-    governanceRole: 'ops.data-governance',
+    clinicalRole: 'dissect.data_janitor',
     dependsOn: ['investigation'],
     workflowOrder: 7
   },
@@ -246,10 +201,11 @@ export const CREDIT_ROLE_DEFINITIONS: readonly CreditRoleDefinition[] = [
     id: 'formal_analysis',
     name: 'Formal Analysis',
     nameCN: '形式分析',
-    description: 'Application of statistical, mathematical, computational, or other formal techniques to analyse or synthesize study data.',
-    descriptionCN: '運用統計學、數學、計算或其他正式技術來分析或綜合研究資料。',
+    description: 'Application of statistical, mathematical techniques to analyse data.',
+    descriptionCN: '運用統計學、數學技術來分析資料。',
+    honestDescription: '折磨數字直到它招供 - 總能找到想要的結論',
     category: 'operational',
-    governanceRole: 'ops.analysis',
+    clinicalRole: 'audit.number_torture',
     dependsOn: ['data_curation'],
     workflowOrder: 8
   },
@@ -257,10 +213,11 @@ export const CREDIT_ROLE_DEFINITIONS: readonly CreditRoleDefinition[] = [
     id: 'software',
     name: 'Software',
     nameCN: '軟體',
-    description: 'Programming, software development; designing computer programs; implementation of the computer code and supporting algorithms; testing of existing code components.',
-    descriptionCN: '程式設計、軟體開發；設計電腦程式；實作電腦程式碼和支援演算法；測試現有程式碼組件。',
+    description: 'Programming, software development; implementation of code.',
+    descriptionCN: '程式設計、軟體開發；實作程式碼和演算法。',
+    honestDescription: '碼農 - 把鍵盤敲爛的人',
     category: 'operational',
-    governanceRole: 'ops.software-engineering',
+    clinicalRole: 'ops.code_monkey',
     dependsOn: ['methodology'],
     workflowOrder: 9
   },
@@ -268,10 +225,11 @@ export const CREDIT_ROLE_DEFINITIONS: readonly CreditRoleDefinition[] = [
     id: 'visualization',
     name: 'Visualization',
     nameCN: '視覺化',
-    description: 'Preparation, creation and/or presentation of the published work, specifically visualization/data presentation.',
-    descriptionCN: '準備、創作和/或展示已發表的作品，特別是視覺化/資料展示。',
+    description: 'Preparation of visualization/data presentation.',
+    descriptionCN: '視覺化/資料展示的準備和創作。',
+    honestDescription: '讓它變漂亮 - 用圖表掩蓋數據的醜陋',
     category: 'operational',
-    governanceRole: 'ops.visualization',
+    clinicalRole: 'facade.make_pretty',
     dependsOn: ['formal_analysis'],
     workflowOrder: 10
   },
@@ -279,10 +237,11 @@ export const CREDIT_ROLE_DEFINITIONS: readonly CreditRoleDefinition[] = [
     id: 'validation',
     name: 'Validation',
     nameCN: '驗證',
-    description: 'Verification, whether as a part of the activity or separate, of the overall replication/reproducibility of results/experiments and other research outputs.',
-    descriptionCN: '驗證（無論是作為活動的一部分還是單獨進行）結果/實驗和其他研究成果的整體可重複性/可再現性。',
+    description: 'Verification of replication/reproducibility of results.',
+    descriptionCN: '驗證結果的可重複性/可再現性。',
+    honestDescription: '現實檢查 - 看看是不是在自欺欺人',
     category: 'validation',
-    governanceRole: 'qa.validation',
+    clinicalRole: 'audit.reality_check',
     dependsOn: ['formal_analysis', 'software'],
     workflowOrder: 11
   },
@@ -290,10 +249,11 @@ export const CREDIT_ROLE_DEFINITIONS: readonly CreditRoleDefinition[] = [
     id: 'writing_original_draft',
     name: 'Writing – Original Draft',
     nameCN: '寫作 - 初稿',
-    description: 'Preparation, creation and/or presentation of the published work, specifically writing the initial draft (including substantive translation).',
-    descriptionCN: '準備、創作和/或展示已出版的作品，特別是撰寫初稿（包括實質翻譯）。',
+    description: 'Writing the initial draft.',
+    descriptionCN: '撰寫初稿。',
+    honestDescription: '初稿謊言 - 第一版總是充滿誇大和省略',
     category: 'operational',
-    governanceRole: 'ops.authoring-draft',
+    clinicalRole: 'artifact.first_draft_lies',
     dependsOn: ['formal_analysis', 'visualization'],
     workflowOrder: 12
   },
@@ -301,10 +261,11 @@ export const CREDIT_ROLE_DEFINITIONS: readonly CreditRoleDefinition[] = [
     id: 'writing_review_editing',
     name: 'Writing – Review & Editing',
     nameCN: '寫作 - 審閱與編輯',
-    description: 'Preparation, creation and/or presentation of the published work by those from the original research group, specifically critical review, commentary or revision.',
-    descriptionCN: '由原研究小組的成員準備、創作和/或展示已發表的作品，特別是批判性審查、評論或修訂。',
+    description: 'Critical review, commentary or revision.',
+    descriptionCN: '批判性審查、評論或修訂。',
+    honestDescription: '潤色謊言 - 讓謊言更難被發現',
     category: 'operational',
-    governanceRole: 'ops.authoring-review',
+    clinicalRole: 'artifact.polish_the_lies',
     dependsOn: ['writing_original_draft'],
     workflowOrder: 13
   },
@@ -312,10 +273,11 @@ export const CREDIT_ROLE_DEFINITIONS: readonly CreditRoleDefinition[] = [
     id: 'supervision',
     name: 'Supervision',
     nameCN: '監督',
-    description: 'Oversight and leadership responsibility for the research activity planning and execution, including mentorship external to the core team.',
-    descriptionCN: '負責研究活動規劃和執行的監督和領導工作，包括對核心團隊外部人員的指導。',
+    description: 'Oversight and leadership responsibility, including mentorship.',
+    descriptionCN: '監督和領導工作，包括對團隊外部人員的指導。',
+    honestDescription: '大人監督 - 確保小朋友不會搞砸',
     category: 'validation',
-    governanceRole: 'qa.supervision',
+    clinicalRole: 'audit.adult_supervision',
     dependsOn: ['validation'],
     workflowOrder: 14
   }
@@ -325,66 +287,68 @@ export const CREDIT_ROLE_DEFINITIONS: readonly CreditRoleDefinition[] = [
 // ROLE LOOKUP UTILITIES
 // ============================================================================
 
-/**
- * Get role definition by ID
- */
 export function getRoleDefinition(roleId: CreditRoleId): CreditRoleDefinition | undefined {
   return CREDIT_ROLE_DEFINITIONS.find(r => r.id === roleId);
 }
 
-/**
- * Get roles by category
- */
 export function getRolesByCategory(category: CreditRoleCategory): CreditRoleDefinition[] {
   return CREDIT_ROLE_DEFINITIONS.filter(r => r.category === category);
 }
 
-/**
- * Get governance role for a CRediT role
- */
-export function getGovernanceRole(creditRole: CreditRoleId): GovernanceRoleId {
-  return CREDIT_TO_GOVERNANCE_MAP[creditRole];
+export function getClinicalRole(creditRole: CreditRoleId): ClinicalRoleId {
+  return CREDIT_TO_CLINICAL_MAP[creditRole];
 }
 
-/**
- * Get CRediT role for a governance role
- */
-export function getCreditRole(governanceRole: GovernanceRoleId): CreditRoleId | undefined {
-  for (const [credit, gov] of Object.entries(CREDIT_TO_GOVERNANCE_MAP)) {
-    if (gov === governanceRole) {
-      return credit as CreditRoleId;
-    }
-  }
-  return undefined;
-}
-
-/**
- * Get roles in workflow order
- */
 export function getRolesInWorkflowOrder(): CreditRoleDefinition[] {
   return [...CREDIT_ROLE_DEFINITIONS].sort((a, b) => a.workflowOrder - b.workflowOrder);
 }
 
 // ============================================================================
-// MACHINE-NATIVE JSON EXPORTS
+// MACHINE-NATIVE JSON EXPORTS (Minified)
 // ============================================================================
 
 /**
- * Single-line JSON for .governance/roles.json
+ * Single-line JSON for .governance files - clinical edition
  */
-export const CREDIT_TO_GOVERNANCE_JSON = JSON.stringify({
-  creditToGovernance: CREDIT_TO_GOVERNANCE_MAP
+export const CREDIT_TO_CLINICAL_JSON = JSON.stringify({
+  credit_to_clinical: CREDIT_TO_CLINICAL_MAP
 });
 
 /**
- * Minified role definitions for machine consumption
+ * Minified with honest descriptions
  */
 export const CREDIT_ROLES_MINIFIED = JSON.stringify(
   CREDIT_ROLE_DEFINITIONS.map(r => ({
     id: r.id,
     cat: r.category[0], // s=structural, o=operational, v=validation
-    gov: r.governanceRole,
+    cli: r.clinicalRole,
     ord: r.workflowOrder,
-    dep: r.dependsOn
+    dep: r.dependsOn,
+    honest: r.honestDescription
   }))
 );
+
+// ============================================================================
+// CATEGORY DESCRIPTIONS (臨床版)
+// ============================================================================
+
+export const CATEGORY_DESCRIPTIONS = {
+  structural: {
+    name: 'Structural',
+    nameCN: '結構層',
+    clinicalName: '包裝真相的人',
+    description: 'Those who package truth to look impressive'
+  },
+  operational: {
+    name: 'Operational',
+    nameCN: '執行層',
+    clinicalName: '實際幹活的人',
+    description: 'Those who actually do the work'
+  },
+  validation: {
+    name: 'Validation',
+    nameCN: '驗證層',
+    clinicalName: '找碴的人',
+    description: 'Those who find problems (thankless job)'
+  }
+} as const;
