@@ -142,8 +142,12 @@ class GrailMCPImpl implements Partial<GrailMCP> {
       this._activated = true;
       return true;
     } catch (error) {
-      console.error('GRAIL activation failed:', error);
-      return false;
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new GrailActivationError(
+        `GRAIL activation failed: ${errorMessage}`,
+        'ACTIVATION_FAILED',
+        error instanceof Error ? error : undefined
+      );
     }
   }
 
@@ -222,6 +226,37 @@ class GrailMCPImpl implements Partial<GrailMCP> {
    */
   getRegistry(): GrailRegistry {
     return this.registry;
+  }
+}
+
+// ============================================================================
+// ERROR TYPES
+// ============================================================================
+
+/**
+ * Activation error codes
+ */
+export type ActivationErrorCode =
+  | 'ACTIVATION_FAILED'
+  | 'ALREADY_ACTIVATED'
+  | 'INVALID_CONFIG';
+
+/**
+ * Custom error for GRAIL activation failures
+ */
+export class GrailActivationError extends Error {
+  constructor(
+    message: string,
+    public readonly code: ActivationErrorCode,
+    public readonly cause?: Error
+  ) {
+    super(message);
+    this.name = 'GrailActivationError';
+    
+    // Maintain stack trace from the original error if available
+    if (cause && cause.stack) {
+      this.stack = `${this.stack}\nCaused by: ${cause.stack}`;
+    }
   }
 }
 
