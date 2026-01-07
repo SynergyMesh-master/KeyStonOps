@@ -5,6 +5,7 @@
  * @version 1.0.0
  */
 
+import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import type {
   FormatConverter,
   SupportedFormat,
@@ -215,16 +216,31 @@ export class GrailFormatConverter implements FormatConverter {
       }
     });
 
-    // XML handler (simplified)
+    // XML handler using fast-xml-parser
     this.formatHandlers.set('xml', {
       parse: async (data: unknown) => {
         if (typeof data !== 'string') {
           return data;
         }
-        return this.parseSimpleXml(data);
+        const parser = new XMLParser({
+          ignoreAttributes: false,
+          attributeNamePrefix: '@_',
+          textNodeName: '#text',
+          parseAttributeValue: true,
+          trimValues: true
+        });
+        return parser.parse(data);
       },
       serialize: async (data: unknown, options?: FormatOptions) => {
-        return this.serializeToXml(data, options?.pretty ? 2 : 0);
+        const builder = new XMLBuilder({
+          ignoreAttributes: false,
+          attributeNamePrefix: '@_',
+          textNodeName: '#text',
+          format: options?.pretty,
+          indentBy: options?.pretty ? '  ' : '',
+          suppressEmptyNode: true
+        });
+        return builder.build(data);
       }
     });
 
@@ -351,63 +367,6 @@ export class GrailFormatConverter implements FormatConverter {
       return value;
     }
     return String(value);
-  }
-
-  private parseSimpleXml(xml: string): unknown {
-    // Very basic XML parsing
-    const result: Record<string, unknown> = {};
-    const tagRegex = /<(\w+)>([^<]*)<\/\1>/g;
-    let match;
-
-    while ((match = tagRegex.exec(xml)) !== null) {
-      const [, tag, content] = match;
-      result[tag] = content;
-    }
-
-    return result;
-  }
-
-  private serializeToXml(data: unknown, indent: number): string {
-    const lines: string[] = ['<?xml version="1.0" encoding="UTF-8"?>'];
-    this.serializeXmlValue('root', data, lines, 0, indent);
-    return lines.join('\n');
-  }
-
-  private serializeXmlValue(
-    tag: string,
-    value: unknown,
-    lines: string[],
-    depth: number,
-    indent: number
-  ): void {
-    const prefix = ' '.repeat(depth * indent);
-
-    if (value === null || value === undefined) {
-      lines.push(`${prefix}<${tag}/>`);
-    } else if (typeof value === 'object' && !Array.isArray(value)) {
-      lines.push(`${prefix}<${tag}>`);
-      for (const [k, v] of Object.entries(value)) {
-        this.serializeXmlValue(k, v, lines, depth + 1, indent);
-      }
-      lines.push(`${prefix}</${tag}>`);
-    } else if (Array.isArray(value)) {
-      lines.push(`${prefix}<${tag}>`);
-      for (const item of value) {
-        this.serializeXmlValue('item', item, lines, depth + 1, indent);
-      }
-      lines.push(`${prefix}</${tag}>`);
-    } else {
-      lines.push(`${prefix}<${tag}>${this.escapeXml(String(value))}</${tag}>`);
-    }
-  }
-
-  private escapeXml(str: string): string {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&apos;');
   }
 
   private parseCsv(csv: string): unknown[] {

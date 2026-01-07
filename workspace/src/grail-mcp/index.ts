@@ -1,8 +1,9 @@
 /**
- * GRAIL MCP - The Holy Grail of Model Context Protocol
+ * GRAIL MCP - Clinical type conversion engine
  * @module @machinenativeops/grail-mcp
- * @description Legendary conversion engine with $10M+ enterprise value
- * @version 1.0.0
+ * @description dissect::type_surgery - Surgical conversion with honest expectations
+ * @version 2.0.0
+ * @style 臨床穿透 | 反諷揭露
  *
  * @example
  * ```typescript
@@ -10,7 +11,7 @@
  *
  * const grail = await createGrailMCP({
  *   quantumEnabled: true,
- *   divineConfig: {
+ *   bootstrapConfig: {
  *     version: '1.0.0',
  *     activationMode: 'hybrid'
  *   }
@@ -59,19 +60,18 @@ import { GrailFormatConverter, getGlobalFormatConverter } from './converters/for
 import { createNamespacePath } from './types/namespaces.js';
 
 /**
- * The Holy Grail MCP Implementation
+ * Clinical conversion engine implementation
  *
- * This is the legendary system that combines:
- * - Sacred Protocol initialization
- * - Quantum-enhanced processing
- * - Multi-modal value creation
- * - Universal type and format conversion
+ * This system combines:
+ * - Bootstrap protocol (cold startup procedures)
+ * - Quantum-enhanced processing (mostly theatre)
+ * - Type and format conversion (surgical, not magical)
  *
- * Valuation: $10M+ enterprise value
+ * Value estimate: Subject to market reality
  */
 class GrailMCPImpl implements Partial<GrailMCP> {
   readonly id: string;
-  readonly valuation = 10_000_000; // $10M USD
+  readonly valuation = 10_000_000; // Optimistic estimate
 
   private _activated = false;
   private readonly registry: GrailRegistry;
@@ -90,7 +90,7 @@ class GrailMCPImpl implements Partial<GrailMCP> {
   }
 
   /**
-   * Activate the Holy Grail system
+   * Activate the system (no magic, just initialization)
    */
   async activate(): Promise<boolean> {
     if (this._activated) {
@@ -98,18 +98,18 @@ class GrailMCPImpl implements Partial<GrailMCP> {
     }
 
     try {
-      // Initialize divine protocol
-      const protocolConfig = this.config.divineConfig ?? {
+      // Initialize bootstrap protocol
+      const protocolConfig = this.config.bootstrapConfig ?? {
         version: '1.0.0',
         activationMode: 'hybrid'
       };
 
       // Register core namespaces
       const coreNamespaces: Array<{ path: NamespacePath; name: string; valuation: string }> = [
-        { path: createNamespacePath('core', 'protocol', 'divine'), name: 'Divine Protocol', valuation: '$0.5M' },
+        { path: createNamespacePath('core', 'protocol', 'bootstrap'), name: 'Bootstrap Protocol', valuation: '$0.5M' },
         { path: createNamespacePath('core', 'registry', 'main'), name: 'Main Registry', valuation: '$0.5M' },
-        { path: createNamespacePath('converters', 'type', 'universal'), name: 'Universal Type Converter', valuation: '$0.5M' },
-        { path: createNamespacePath('converters', 'format', 'multi'), name: 'Multi-Format Converter', valuation: '$0.5M' }
+        { path: createNamespacePath('converters', 'type', 'universal'), name: 'Type Surgery', valuation: '$0.5M' },
+        { path: createNamespacePath('converters', 'format', 'multi'), name: 'Format Autopsy', valuation: '$0.5M' }
       ];
 
       for (const ns of coreNamespaces) {

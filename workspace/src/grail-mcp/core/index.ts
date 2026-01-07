@@ -1,16 +1,16 @@
 /**
  * GRAIL Core Module
  * @module grail::core
- * @description The Sacred Heart of GRAIL - Core engine and protocols
- * @valuation $2.5M foundational IP
+ * @description ops::cold_bootstrap - No magic, just core engine
+ * @style 臨床穿透 | 反諷揭露
  */
 
 export * from '../registry/index.js';
 
 // Re-export core types
 export type {
-  DivineProtocol,
-  DivineConfig,
+  BootstrapProtocol,
+  BootstrapConfig,
   ProtocolState,
   ValueStream,
   StreamProcessor,
