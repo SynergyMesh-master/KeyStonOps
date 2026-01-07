@@ -240,6 +240,45 @@ export class GrailFormatConverter implements FormatConverter {
         return this.serializeToCsv(data as unknown[]);
       }
     });
+
+    // ------------------------------------------------------------------------
+    // Binary format handlers (opaque pass-through)
+    //
+    // NOTE:
+    // These handlers provide minimal, generic support for binary formats by
+    // treating the payload as opaque data. Full schema-aware parsing and
+    // serialization should be implemented by callers using dedicated
+    // format-specific libraries (e.g., for Protobuf/Avro/Parquet).
+    // ------------------------------------------------------------------------
+
+    const parseBinary = async (data: unknown): Promise<unknown> => {
+      // For now, simply return the data as-is. Callers are responsible for
+      // interpreting binary payloads using appropriate libraries.
+      return data;
+    };
+
+    const serializeBinary = async (data: unknown): Promise<unknown> => {
+      // Likewise, perform no transformation and return the binary data as-is.
+      return data;
+    };
+
+    // Protobuf handler (opaque)
+    this.formatHandlers.set('protobuf', {
+      parse: parseBinary,
+      serialize: serializeBinary
+    });
+
+    // Avro handler (opaque)
+    this.formatHandlers.set('avro', {
+      parse: parseBinary,
+      serialize: serializeBinary
+    });
+
+    // Parquet handler (opaque)
+    this.formatHandlers.set('parquet', {
+      parse: parseBinary,
+      serialize: serializeBinary
+    });
   }
 
   private parseSimpleYaml(yaml: string): unknown {
