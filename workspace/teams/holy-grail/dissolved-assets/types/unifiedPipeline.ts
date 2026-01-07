@@ -1,5 +1,5 @@
 /**
- * MachineNativeOps Unified Pipeline Types v3.0.0
+ * namespace-mcp Unified Pipeline Types v3.0.0
  *
  * INSTANT Execution Architecture
  * - AI auto-evolution, instant delivery, zero latency
@@ -209,7 +209,7 @@ export interface UnifiedPipelineSpec {
 // ========================================
 // Main Pipeline Interface
 // ========================================
-export type ApiVersion = "pipeline.machinenativeops/v2" | "pipeline.machinenativeops/v3";
+export type ApiVersion = "pipeline.namespace-mcp/v2" | "pipeline.namespace-mcp/v3";
 
 export interface UnifiedPipeline {
   apiVersion: ApiVersion;
@@ -221,8 +221,8 @@ export interface UnifiedPipeline {
 // ========================================
 // Path Constants
 // ========================================
-export const unifiedPipelineManifestPath = "workspace/mcp/pipelines/unified-pipeline-config.yaml";
-export const unifiedPipelineSchemaPath = "workspace/mcp/schemas/unified-pipeline.schema.json";
+export const unifiedPipelineManifestPath = "workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml";
+export const unifiedPipelineSchemaPath = "workspace/mcp/namespace-mcp/schemas/unified-pipeline.schema.json";
 
 // ========================================
 // Type Guards
@@ -236,7 +236,7 @@ export function hasZeroHumanIntervention(pipeline: UnifiedPipeline): boolean {
 }
 
 export function isV3Pipeline(pipeline: UnifiedPipeline): boolean {
-  return pipeline.apiVersion === "pipeline.machinenativeops/v3";
+  return pipeline.apiVersion === "pipeline.namespace-mcp/v3";
 }
 
 // ========================================

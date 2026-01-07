@@ -1,6 +1,6 @@
-# AXIOM Dissolved Tools - Layer-Based Modules
+# namespace-mcp Dissolved Tools - Layer-Based Modules
 
-This directory contains the refactored AXIOM tool definitions, organized by architectural layer for improved maintainability and testability.
+This directory contains the refactored namespace-mcp tool definitions, organized by architectural layer for improved maintainability and testability.
 
 ## Structure
 
@@ -52,4 +52,4 @@ import type { ToolDefinition } from "./tools/types.js";
 
 ## Architecture Alignment
 
-This structure follows the AXIOM dissolved architecture pattern, maintaining the 14-layer hierarchy while providing better code organization according to MCP standards.
+This structure follows the namespace-mcp dissolved architecture pattern, maintaining the 14-layer hierarchy while providing better code organization according to MCP standards.

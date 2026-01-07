@@ -2,11 +2,11 @@
 
 ## 📋 PR 基本信息
 - **平台**: GitHub
-- **倉庫**: `MachineNativeOps/machine-native-ops`
+- **倉庫**: `namespace-mcp`
 - **分支**: `copilot/sub-pr-1107-again`
 - **分析範圍**: pr-files-and-related
 - **分析時間**: 2026-01-06T23:23:44.773512Z
-- **分析工具**: MachineNativeOps Analyzer v2.0.0
+- **分析工具**: namespace-mcp Analyzer v2.0.0
 
 ---
 
@@ -22,13 +22,13 @@
 - **觸發評論**: 2666549903
 - **變更類型**: Documentation update - workspace/mcp validation report
 - **影響文件**: 
-  - `workspace/mcp/workspace_mcp_validation_report.md`
+  - `workspace/mcp/namespace-mcp/workspace_mcp_validation_report.md`
 
 ---
 
 ## 📁 文件變更分析
 
-### workspace/mcp/workspace_mcp_validation_report.md
+### workspace/mcp/namespace-mcp/workspace_mcp_validation_report.md
 **類型**: markdown  
 **用途**: Validation report documenting workspace/MCP verification results
 
@@ -49,7 +49,7 @@
 ### 驗證狀態: ✅ PASSED
 
 ### 已完成項目標記
-- ✅ Duplicate type declarations in axiom-dissolved-server.ts
+- ✅ Duplicate type declarations in namespace-mcp-dissolved-server.ts
 - ✅ Mixed snake_case and camelCase in tool definitions
 
 ### 後續工作項目識別
@@ -105,5 +105,5 @@
 ---
 
 *報告生成時間: 2026-01-06T23:23:44.773512Z*  
-*分析引擎: MachineNativeOps Analyzer v2.0.0*  
+*分析引擎: namespace-mcp Analyzer v2.0.0*  
 *分析範圍: PR 文件及相關上下文*

@@ -2,10 +2,10 @@
 
 ## 📋 專案基本信息
 - **平台**: GitHub
-- **倉庫**: `MachineNativeOps/machine-native-ops`
+- **倉庫**: `namespace-mcp`
 - **分析範圍**: PR validation report fixes
 - **分析時間**: 2026-01-06T23:22:00.389885Z
-- **分析工具**: MachineNativeOps Analyzer v2.0.0
+- **分析工具**: namespace-mcp Analyzer v2.0.0
 
 ---
 
@@ -193,13 +193,13 @@
 ### 🎯 統一模板使用
 ```bash
 # 生成統一提示詞
-MachineNativeOps-cli prompt generate --template=architecture-status --version=2.0.0
+namespace-mcp-cli prompt generate --template=architecture-status --version=2.0.0
 
 # 驗證現有提示詞
-MachineNativeOps-cli prompt validate --file=current_prompt.md --strict
+namespace-mcp-cli prompt validate --file=current_prompt.md --strict
 
 # 自動修正不一致
-MachineNativeOps-cli prompt fix --input=inconsistent_prompt.md --output=fixed_prompt.md
+namespace-mcp-cli prompt fix --input=inconsistent_prompt.md --output=fixed_prompt.md
 ```
 
 ### 📝 正確的統一格式
@@ -236,5 +236,5 @@ MachineNativeOps-cli prompt fix --input=inconsistent_prompt.md --output=fixed_pr
 ---
 
 *報告生成時間: 2026-01-06T23:22:00.389885Z*
-*分析引擎: MachineNativeOps Quantum Analyzer*
+*分析引擎: namespace-mcp Quantum Analyzer*
 *版本: v2.0.0 | 企業級深度分析*

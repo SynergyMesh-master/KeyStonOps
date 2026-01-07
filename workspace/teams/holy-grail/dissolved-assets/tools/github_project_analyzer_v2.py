@@ -3,7 +3,7 @@
 
 """
 GitHub Project Deep Analyzer
-MachineNativeOps 專案深度分析工具
+namespace-mcp 專案深度分析工具
 版本: v2.0.0 | 企業級分析框架
 """
 
@@ -32,7 +32,7 @@ class GitHubProjectAnalyzer:
         self.base_url = f"https://api.github.com/repos/{config.repo_owner}/{config.repo_name}"
         self.headers = {
             "Accept": "application/vnd.github.v3+json",
-            "User-Agent": "MachineNativeOps-Analyzer/2.0.0"
+            "User-Agent": "namespace-mcp-Analyzer/2.0.0"
         }
         
     def analyze_project(self) -> Dict[str, Any]:
@@ -307,7 +307,7 @@ class GitHubProjectAnalyzer:
 - **倉庫**: `{analysis['metadata']['repository']}`
 - **分析範圍**: {analysis['metadata']['analysis_scope']}
 - **分析時間**: {analysis['timestamp']}
-- **分析工具**: MachineNativeOps Analyzer v{analysis['metadata']['analyzer_version']}
+- **分析工具**: namespace-mcp Analyzer v{analysis['metadata']['analyzer_version']}
 
 ---
 
@@ -395,13 +395,13 @@ class GitHubProjectAnalyzer:
 ### 🎯 統一模板使用
 ```bash
 # 生成統一提示詞
-MachineNativeOps-cli prompt generate --template=architecture-status --version=2.0.0
+namespace-mcp-cli prompt generate --template=architecture-status --version=2.0.0
 
 # 驗證現有提示詞
-MachineNativeOps-cli prompt validate --file=current_prompt.md --strict
+namespace-mcp-cli prompt validate --file=current_prompt.md --strict
 
 # 自動修正不一致
-MachineNativeOps-cli prompt fix --input=inconsistent_prompt.md --output=fixed_prompt.md
+namespace-mcp-cli prompt fix --input=inconsistent_prompt.md --output=fixed_prompt.md
 ```
 
 ### 📝 正確的統一格式
@@ -438,7 +438,7 @@ MachineNativeOps-cli prompt fix --input=inconsistent_prompt.md --output=fixed_pr
 ---
 
 *報告生成時間: {analysis['timestamp']}*
-*分析引擎: MachineNativeOps Quantum Analyzer*
+*分析引擎: namespace-mcp Quantum Analyzer*
 *版本: v2.0.0 | 企業級深度分析*
 """
         
@@ -549,8 +549,8 @@ MachineNativeOps-cli prompt fix --input=inconsistent_prompt.md --output=fixed_pr
 
 def main():
     parser = argparse.ArgumentParser(description='GitHub專案深度分析工具 (企業級版)')
-    parser.add_argument('--owner', default='MachineNativeOps', help='倉庫擁有者')
-    parser.add_argument('--repo', default='machine-native-ops', help='倉庫名稱')
+    parser.add_argument('--owner', default='namespace-mcp', help='倉庫擁有者')
+    parser.add_argument('--repo', default='namespace-mcp', help='倉庫名稱')
     parser.add_argument('--scope', default='entire', help='分析範圍')
     parser.add_argument('--output', default='pr_analysis_report.md', help='輸出文件')
 

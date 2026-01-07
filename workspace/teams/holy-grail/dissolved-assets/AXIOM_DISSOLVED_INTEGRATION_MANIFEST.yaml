@@ -1,8 +1,8 @@
 %YAML 1.2
 ---
 # ═══════════════════════════════════════════════════════════════════════════════
-#                    AXIOM 溶解整合清單 - MCP 無縫嵌入
-#                    AXIOM Dissolved Integration Manifest
+#                    namespace-mcp 溶解整合清單 - MCP 無縫嵌入
+#                    namespace-mcp Dissolved Integration Manifest
 # ═══════════════════════════════════════════════════════════════════════════════
 #
 # Purpose: Final integration manifest for seamless MCP embedding
@@ -15,17 +15,17 @@
 # Created: 2026-01-06
 # ═══════════════════════════════════════════════════════════════════════════════
 
-apiVersion: integration.machinenativeops/v1
+apiVersion: integration.namespace-mcp/v1
 kind: DissolvedIntegrationManifest
 metadata:
-  name: axiom-dissolved-integration
+  name: namespace-mcp-dissolved-integration
   version: "1.0.0"
   labels:
     dissolution: complete
     mcp_alignment: full
     integration: seamless
   annotations:
-    source_architecture: "AXIOM Quantum AI Platform v8.4"
+    source_architecture: "namespace-mcp Quantum AI Platform v8.4"
     dissolution_method: "硫酸溶解法"
     original_modules: "59"
     original_layers: "14"
@@ -35,7 +35,7 @@ metadata:
 # ═══════════════════════════════════════════════════════════════════════════════
 dissolution_summary:
   source:
-    name: "AXIOM Quantum AI Platform"
+    name: "namespace-mcp Quantum AI Platform"
     version: "v8.4"
     total_modules: 59
     total_layers: 14
@@ -50,7 +50,7 @@ dissolution_summary:
     methodology: "硫酸溶解法 (Sulfuric Acid Dissolution)"
     description: |
       Complete architectural dissolution converting monolithic
-      AXIOM modules into atomic MCP-native components with
+      namespace-mcp modules into atomic MCP-native components with
       standardized naming, interfaces, and seamless integration.
 
     statistics:
@@ -67,7 +67,7 @@ dissolution_summary:
 mcp_components:
   # Architecture Definition
   architecture_definition:
-    path: workspace/mcp/axiom-dissolved-mcp-architecture.yaml
+    path: workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml
     type: yaml
     description: "Complete dissolved architecture specification"
     contains:
@@ -81,7 +81,7 @@ mcp_components:
 
   # Server Implementation
   server_implementation:
-    path: workspace/mcp/servers/axiom-dissolved-server.ts
+    path: workspace/mcp/namespace-mcp/servers/namespace-mcp-dissolved-server.ts
     type: typescript
     runtime: "Node.js >=18.0.0"
     description: "MCP server implementing all dissolved tools"
@@ -93,7 +93,7 @@ mcp_components:
 
   # Integration Manifest
   integration_manifest:
-    path: workspace/mcp/AXIOM_DISSOLVED_INTEGRATION_MANIFEST.yaml
+    path: workspace/mcp/namespace-mcp/namespace-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml
     type: yaml
     description: "This file - central integration reference"
 
@@ -199,7 +199,7 @@ naming_alignment:
 # ═══════════════════════════════════════════════════════════════════════════════
 server_organization:
   infrastructure_server:
-    name: axiom_infrastructure_server
+    name: namespace-mcp_infrastructure_server
     tools_count: 5
     layers_covered: [L00]
     tools:
@@ -210,7 +210,7 @@ server_organization:
       - memory_allocator
 
   processing_server:
-    name: axiom_processing_server
+    name: namespace-mcp_processing_server
     tools_count: 5
     layers_covered: [L01, L02]
     tools:
@@ -221,7 +221,7 @@ server_organization:
       - multimodal_processor
 
   network_server:
-    name: axiom_network_server
+    name: namespace-mcp_network_server
     tools_count: 3
     layers_covered: [L03]
     tools:
@@ -230,7 +230,7 @@ server_organization:
       - adaptive_router
 
   cognitive_server:
-    name: axiom_cognitive_server
+    name: namespace-mcp_cognitive_server
     tools_count: 7
     layers_covered: [L04, L05]
     tools:
@@ -243,7 +243,7 @@ server_organization:
       - fairness_optimizer
 
   reasoning_server:
-    name: axiom_reasoning_server
+    name: namespace-mcp_reasoning_server
     tools_count: 9
     layers_covered: [L06, L07, L08]
     tools:
@@ -258,7 +258,7 @@ server_organization:
       - empathy_engine
 
   governance_server:
-    name: axiom_governance_server
+    name: namespace-mcp_governance_server
     tools_count: 15
     layers_covered: [L09, L10, L11, L12]
     tools:
@@ -279,7 +279,7 @@ server_organization:
       - emergence_detector
 
   quantum_server:
-    name: axiom_quantum_server
+    name: namespace-mcp_quantum_server
     tools_count: 15
     layers_covered: [L13]
     fallback_enabled: true
@@ -316,8 +316,8 @@ seamless_integration:
   hot_reload:
     enabled: true
     watch_paths:
-      - workspace/mcp/axiom-dissolved-mcp-architecture.yaml
-      - workspace/mcp/servers/axiom-dissolved-server.ts
+      - workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml
+      - workspace/mcp/namespace-mcp/servers/namespace-mcp-dissolved-server.ts
     debounce_ms: 1000
 
   # Fallback configuration
@@ -346,12 +346,12 @@ seamless_integration:
 cross_references:
   # Link to main integration index
   integration_index:
-    path: workspace/mcp/INTEGRATION_INDEX.yaml
+    path: workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml
     relationship: extends
 
   # Link to unified pipeline
   unified_pipeline:
-    path: workspace/mcp/pipelines/unified-pipeline-config.yaml
+    path: workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml
     relationship: integrates_with
     integration_point: mcpIntegration.toolAdapters
 
@@ -370,9 +370,9 @@ cross_references:
       - performance-analyzer.js
       - comprehensive-validator.js
 
-  # Link to AXIOM baseline
-  axiom_baseline:
-    path: workspace/config/axiom/axiom-global-baseline-v2.yaml
+  # Link to namespace-mcp baseline
+  namespace-mcp_baseline:
+    path: workspace/config/namespace-mcp/namespace-mcp-global-baseline-v2.yaml
     relationship: dissolves_and_replaces
 
   # Link to INSTANT execution engine
@@ -387,7 +387,7 @@ cross_references:
 usage_examples:
   # Example 1: Using dissolved tool via MCP
   tool_invocation:
-    description: "Invoke a dissolved AXIOM tool via MCP"
+    description: "Invoke a dissolved namespace-mcp tool via MCP"
     example: |
       // Using MCP SDK
       const result = await client.callTool({
@@ -406,7 +406,7 @@ usage_examples:
     example: |
       // Read layer resource
       const resource = await client.readResource({
-        uri: "axiom://layers/l13-quantum"
+        uri: "namespace-mcp://layers/l13-quantum"
       });
       // Returns: layer info, available tools, SLOs
 
@@ -481,15 +481,15 @@ deployment:
       - name: "Build server"
         command: "npm run build"
       - name: "Register server"
-        command: "mcp server register axiom-dissolved"
+        command: "mcp server register namespace-mcp-dissolved"
 
   configuration:
     mcp_settings: |
       {
         "mcpServers": {
-          "axiom-dissolved": {
+          "namespace-mcp-dissolved": {
             "command": "node",
-            "args": ["workspace/mcp/servers/axiom-dissolved-server.js"],
+            "args": ["workspace/mcp/namespace-mcp/servers/namespace-mcp-dissolved-server.js"],
             "env": {
               "QUANTUM_BACKEND": "ibm_brisbane",
               "FALLBACK_ENABLED": "true"
@@ -499,12 +499,12 @@ deployment:
       }
 
   verification:
-    - "mcp tool list | grep axiom"
-    - "mcp resource list | grep axiom://"
+    - "mcp tool list | grep namespace-mcp"
+    - "mcp resource list | grep namespace-mcp://"
     - "mcp prompt list | grep quantum_optimization"
 
 ---
 # ═══════════════════════════════════════════════════════════════════════════════
-# END OF AXIOM DISSOLVED INTEGRATION MANIFEST
+# END OF namespace-mcp DISSOLVED INTEGRATION MANIFEST
 # 硫酸溶解完成 - MCP 完全對齊
 # ═══════════════════════════════════════════════════════════════════════════════

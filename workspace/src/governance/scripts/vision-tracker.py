@@ -77,7 +77,7 @@ class VisionTracker:
         """Load pipeline configuration."""
         config_paths = [
             self.config_path,
-            'workspace/mcp/pipelines/unified-pipeline-config.yaml',
+            'workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml',
             'contracts/INSTANT-EXECUTION-MANIFEST.yaml',
             'pipeline-config.yaml'
         ]

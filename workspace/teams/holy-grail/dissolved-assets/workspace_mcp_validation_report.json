@@ -1,8 +1,8 @@
 {
   "metadata": {
     "platform": "GitHub",
-    "repository": "MachineNativeOps/machine-native-ops",
-    "clone_url": "https://github.com/MachineNativeOps/machine-native-ops.git",
+    "repository": "namespace-mcp",
+    "clone_url": "https://github.com/namespace-mcp.git",
     "analysis_scope": "entire",
     "analyzer_version": "3.0.0",
     "quantum_enabled": true
@@ -54,48 +54,48 @@
   "workspace_validation": {
     "yaml_files": [
       {
-        "file": "workspace/mcp/axiom-dissolved-mcp-architecture.yaml",
+        "file": "workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml",
         "valid": false,
         "errors": [
-          "YAML syntax error: expected a single document in the stream\n  in \"workspace/mcp/axiom-dissolved-mcp-architecture.yaml\", line 21, column 1\nbut found another document\n  in \"workspace/mcp/axiom-dissolved-mcp-architecture.yaml\", line 2979, column 1"
+          "YAML syntax error: expected a single document in the stream\n  in \"workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml\", line 21, column 1\nbut found another document\n  in \"workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml\", line 2979, column 1"
         ],
         "warnings": []
       },
       {
-        "file": "workspace/mcp/AXIOM_DISSOLVED_INTEGRATION_MANIFEST.yaml",
+        "file": "workspace/mcp/namespace-mcp/namespace-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml",
         "valid": false,
         "errors": [
-          "YAML syntax error: expected a single document in the stream\n  in \"workspace/mcp/AXIOM_DISSOLVED_INTEGRATION_MANIFEST.yaml\", line 18, column 1\nbut found another document\n  in \"workspace/mcp/AXIOM_DISSOLVED_INTEGRATION_MANIFEST.yaml\", line 506, column 1"
+          "YAML syntax error: expected a single document in the stream\n  in \"workspace/mcp/namespace-mcp/namespace-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml\", line 18, column 1\nbut found another document\n  in \"workspace/mcp/namespace-mcp/namespace-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml\", line 506, column 1"
         ],
         "warnings": []
       },
       {
-        "file": "workspace/mcp/INTEGRATION_INDEX.yaml",
+        "file": "workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml",
         "valid": false,
         "errors": [
-          "YAML syntax error: expected a single document in the stream\n  in \"workspace/mcp/INTEGRATION_INDEX.yaml\", line 14, column 1\nbut found another document\n  in \"workspace/mcp/INTEGRATION_INDEX.yaml\", line 514, column 1"
+          "YAML syntax error: expected a single document in the stream\n  in \"workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml\", line 14, column 1\nbut found another document\n  in \"workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml\", line 514, column 1"
         ],
         "warnings": []
       },
       {
-        "file": "workspace/mcp/pipelines/unified-pipeline-config.yaml",
+        "file": "workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml",
         "valid": true,
         "errors": [],
         "warnings": [],
         "content_type": "dict"
       },
       {
-        "file": "workspace/mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml",
+        "file": "workspace/mcp/namespace-mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml",
         "valid": false,
         "errors": [
-          "YAML syntax error: expected a single document in the stream\n  in \"workspace/mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml\", line 14, column 1\nbut found another document\n  in \"workspace/mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml\", line 459, column 1"
+          "YAML syntax error: expected a single document in the stream\n  in \"workspace/mcp/namespace-mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml\", line 14, column 1\nbut found another document\n  in \"workspace/mcp/namespace-mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml\", line 459, column 1"
         ],
         "warnings": []
       }
     ],
     "typescript_files": [
       {
-        "file": "workspace/mcp/types/unifiedPipeline.ts",
+        "file": "workspace/mcp/namespace-mcp/types/unifiedPipeline.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -104,7 +104,7 @@
         "has_imports": false
       },
       {
-        "file": "workspace/mcp/servers/axiom-dissolved-server.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/namespace-mcp-dissolved-server.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -113,7 +113,7 @@
         "has_imports": true
       },
       {
-        "file": "workspace/mcp/servers/tools/l10-governance.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/l10-governance.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -122,7 +122,7 @@
         "has_imports": true
       },
       {
-        "file": "workspace/mcp/servers/tools/l06-integration.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/l06-integration.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -131,7 +131,7 @@
         "has_imports": true
       },
       {
-        "file": "workspace/mcp/servers/tools/l08-emotion.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/l08-emotion.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -140,7 +140,7 @@
         "has_imports": true
       },
       {
-        "file": "workspace/mcp/servers/tools/l07-reasoning.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/l07-reasoning.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -149,7 +149,7 @@
         "has_imports": true
       },
       {
-        "file": "workspace/mcp/servers/tools/l04-cognitive.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/l04-cognitive.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -158,7 +158,7 @@
         "has_imports": true
       },
       {
-        "file": "workspace/mcp/servers/tools/index.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/index.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -167,7 +167,7 @@
         "has_imports": true
       },
       {
-        "file": "workspace/mcp/servers/tools/l11-performance.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/l11-performance.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -176,7 +176,7 @@
         "has_imports": true
       },
       {
-        "file": "workspace/mcp/servers/tools/l02-input.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/l02-input.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -185,7 +185,7 @@
         "has_imports": true
       },
       {
-        "file": "workspace/mcp/servers/tools/l12-metacognitive.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/l12-metacognitive.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -194,7 +194,7 @@
         "has_imports": true
       },
       {
-        "file": "workspace/mcp/servers/tools/l00-infrastructure.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/l00-infrastructure.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -203,7 +203,7 @@
         "has_imports": true
       },
       {
-        "file": "workspace/mcp/servers/tools/l01-language.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/l01-language.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -212,7 +212,7 @@
         "has_imports": true
       },
       {
-        "file": "workspace/mcp/servers/tools/l03-network.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/l03-network.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -221,7 +221,7 @@
         "has_imports": true
       },
       {
-        "file": "workspace/mcp/servers/tools/l09-output.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/l09-output.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -230,7 +230,7 @@
         "has_imports": true
       },
       {
-        "file": "workspace/mcp/servers/tools/l05-ethics.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/l05-ethics.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -239,7 +239,7 @@
         "has_imports": true
       },
       {
-        "file": "workspace/mcp/servers/tools/types.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/types.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -248,7 +248,7 @@
         "has_imports": false
       },
       {
-        "file": "workspace/mcp/servers/tools/l13-quantum.ts",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/l13-quantum.ts",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -259,14 +259,14 @@
     ],
     "python_files": [
       {
-        "file": "workspace/mcp/tools/github_project_analyzer.py",
+        "file": "workspace/mcp/namespace-mcp/tools/github_project_analyzer.py",
         "valid": true,
         "errors": [],
         "warnings": [],
         "line_count": 957
       },
       {
-        "file": "workspace/mcp/tools/github_project_analyzer_quantum.py",
+        "file": "workspace/mcp/namespace-mcp/tools/github_project_analyzer_quantum.py",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -274,7 +274,7 @@
         "line_count": 775
       },
       {
-        "file": "workspace/mcp/tools/load_unified_pipeline.py",
+        "file": "workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -283,14 +283,14 @@
     ],
     "json_files": [
       {
-        "file": "workspace/mcp/workspace_mcp_validation_report.json",
+        "file": "workspace/mcp/namespace-mcp/workspace_mcp_validation_report.json",
         "valid": true,
         "errors": [],
         "warnings": [],
         "content_type": "dict"
       },
       {
-        "file": "workspace/mcp/schemas/unified-pipeline.schema.json",
+        "file": "workspace/mcp/namespace-mcp/schemas/unified-pipeline.schema.json",
         "valid": true,
         "errors": [],
         "warnings": [],
@@ -300,42 +300,42 @@
     ],
     "markdown_files": [
       {
-        "file": "workspace/mcp/workspace_mcp_validation_report.md",
+        "file": "workspace/mcp/namespace-mcp/workspace_mcp_validation_report.md",
         "valid": true,
         "line_count": 124
         "line_count": 139
       },
       {
-        "file": "workspace/mcp/README.md",
+        "file": "workspace/mcp/namespace-mcp/README.md",
         "valid": true,
         "line_count": 372
       },
       {
-        "file": "workspace/mcp/quantum_verification_v2_report.md",
+        "file": "workspace/mcp/namespace-mcp/quantum_verification_v2_report.md",
         "valid": true,
         "line_count": 113
       },
       {
-        "file": "workspace/mcp/quantum_verification_report.md",
+        "file": "workspace/mcp/namespace-mcp/quantum_verification_report.md",
         "valid": true,
         "line_count": 135
       },
       {
-        "file": "workspace/mcp/MCP_DEEP_ANALYSIS_REPORT.md",
+        "file": "workspace/mcp/namespace-mcp/MCP_DEEP_ANALYSIS_REPORT.md",
         "valid": true,
         "line_count": 117
       },
       {
-        "file": "workspace/mcp/servers/tools/README.md",
+        "file": "workspace/mcp/namespace-mcp/servers/tools/README.md",
         "valid": true,
         "line_count": 56
       }
     ],
     "errors": [
-      "YAML syntax error: expected a single document in the stream\n  in \"workspace/mcp/axiom-dissolved-mcp-architecture.yaml\", line 21, column 1\nbut found another document\n  in \"workspace/mcp/axiom-dissolved-mcp-architecture.yaml\", line 2979, column 1",
-      "YAML syntax error: expected a single document in the stream\n  in \"workspace/mcp/AXIOM_DISSOLVED_INTEGRATION_MANIFEST.yaml\", line 18, column 1\nbut found another document\n  in \"workspace/mcp/AXIOM_DISSOLVED_INTEGRATION_MANIFEST.yaml\", line 506, column 1",
-      "YAML syntax error: expected a single document in the stream\n  in \"workspace/mcp/INTEGRATION_INDEX.yaml\", line 14, column 1\nbut found another document\n  in \"workspace/mcp/INTEGRATION_INDEX.yaml\", line 514, column 1",
-      "YAML syntax error: expected a single document in the stream\n  in \"workspace/mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml\", line 14, column 1\nbut found another document\n  in \"workspace/mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml\", line 459, column 1"
+      "YAML syntax error: expected a single document in the stream\n  in \"workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml\", line 21, column 1\nbut found another document\n  in \"workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml\", line 2979, column 1",
+      "YAML syntax error: expected a single document in the stream\n  in \"workspace/mcp/namespace-mcp/namespace-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml\", line 18, column 1\nbut found another document\n  in \"workspace/mcp/namespace-mcp/namespace-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml\", line 506, column 1",
+      "YAML syntax error: expected a single document in the stream\n  in \"workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml\", line 14, column 1\nbut found another document\n  in \"workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml\", line 514, column 1",
+      "YAML syntax error: expected a single document in the stream\n  in \"workspace/mcp/namespace-mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml\", line 14, column 1\nbut found another document\n  in \"workspace/mcp/namespace-mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml\", line 459, column 1"
     ],
     "warnings": [],
     "summary": {
@@ -446,7 +446,7 @@
           "name": "MCP Tool Integration",
           "status": "production",
           "maturity": "high",
-          "description": "59 dissolved AXIOM tools as MCP"
+          "description": "59 dissolved namespace-mcp tools as MCP"
         },
         {
           "name": "INSTANT Pipelines",

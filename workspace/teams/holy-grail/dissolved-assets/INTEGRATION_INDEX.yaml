@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-#                    MachineNativeOps MCP Integration Index v3.0.0
+#                    namespace-mcp MCP Integration Index v3.0.0
 #                    MCP 整合索引 - 跨模組引用關係
 # ═══════════════════════════════════════════════════════════════════════════════
 #
@@ -11,7 +11,7 @@
 # Architecture: INSTANT Execution | AI Auto-Evolution | Zero Latency
 # ═══════════════════════════════════════════════════════════════════════════════
 
-apiVersion: integration.machinenativeops/v3
+apiVersion: integration.namespace-mcp/v3
 kind: MCPIntegrationIndex
 metadata:
   name: mcp-integration-index
@@ -27,14 +27,14 @@ metadata:
     standard: "INSTANT-EXECUTION-REFACTOR-PLAN"
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# AXIOM 溶解架構 - AXIOM Dissolved Architecture (硫酸溶解法)
+# namespace-mcp 溶解架構 - namespace-mcp Dissolved Architecture (硫酸溶解法)
 # ═══════════════════════════════════════════════════════════════════════════════
-axiomDissolved:
+namespace-mcpDissolved:
   # 溶解架構定義
   architectureDefinition:
-    path: workspace/mcp/axiom-dissolved-mcp-architecture.yaml
+    path: workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml
     version: "1.0.0"
-    description: "Complete AXIOM dissolution into MCP-native format"
+    description: "Complete namespace-mcp dissolution into MCP-native format"
     dissolutionMethod: "硫酸溶解法 (Sulfuric Acid Dissolution)"
     statistics:
       originalModules: 59
@@ -46,7 +46,7 @@ axiomDissolved:
 
   # MCP 服務器實現
   serverImplementation:
-    path: workspace/mcp/servers/axiom-dissolved-server.ts
+    path: workspace/mcp/namespace-mcp/servers/namespace-mcp-dissolved-server.ts
     runtime: "Node.js >=18.0.0"
     capabilities:
       tools: 59
@@ -54,13 +54,13 @@ axiomDissolved:
       prompts: 3
     architecture:
       structure: "Modular - Layer-based tool definitions"
-      toolsPath: workspace/mcp/servers/tools/
+      toolsPath: workspace/mcp/namespace-mcp/servers/tools/
       modules: 16  # 14 layer modules + index + types + README
       fileSize: "395 lines (reduced from 1488, 74% reduction)"
 
   # 整合清單
   integrationManifest:
-    path: workspace/mcp/AXIOM_DISSOLVED_INTEGRATION_MANIFEST.yaml
+    path: workspace/mcp/namespace-mcp/namespace-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml
     description: "Seamless MCP embedding configuration"
 
   # 服務器分組
@@ -79,26 +79,26 @@ axiomDissolved:
 coreComponents:
   # 統一管線配置
   unifiedPipeline:
-    path: workspace/mcp/pipelines/unified-pipeline-config.yaml
+    path: workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml
     version: "3.0.0"
-    apiVersion: pipeline.machinenativeops/v3
+    apiVersion: pipeline.namespace-mcp/v3
     description: "Master INSTANT pipeline configuration"
 
   # JSON Schema 驗證
   schema:
-    path: workspace/mcp/schemas/unified-pipeline.schema.json
+    path: workspace/mcp/namespace-mcp/schemas/unified-pipeline.schema.json
     version: "3.0.0"
     description: "Strict validation schema for pipeline config"
 
   # TypeScript 類型定義
   types:
-    path: workspace/mcp/types/unifiedPipeline.ts
+    path: workspace/mcp/namespace-mcp/types/unifiedPipeline.ts
     version: "3.0.0"
     description: "Type-safe TypeScript interfaces"
 
   # Python 載入器
   loader:
-    path: workspace/mcp/tools/load_unified_pipeline.py
+    path: workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py
     version: "3.0.0"
     description: "Typed dataclass loader with validation"
 
@@ -476,11 +476,11 @@ statistics:
   mcpToolCount: 74  # 15 original + 59 dissolved
   agentTypeCount: 10
 
-  # AXIOM Dissolution Statistics
-  axiomDissolvedTools: 59
-  axiomDissolvedResources: 14
-  axiomDissolvedServers: 7
-  axiomDissolvedPrompts: 3
+  # namespace-mcp Dissolution Statistics
+  namespace-mcpDissolvedTools: 59
+  namespace-mcpDissolvedResources: 14
+  namespace-mcpDissolvedServers: 7
+  namespace-mcpDissolvedPrompts: 3
 
   integrationPoints:
     - name: unified-pipeline → mcp-servers
@@ -499,10 +499,10 @@ versionAlignment:
   target: "3.0.0"
 
   aligned:
-    - workspace/mcp/pipelines/unified-pipeline-config.yaml: "3.0.0"
-    - workspace/mcp/schemas/unified-pipeline.schema.json: "3.0.0"
-    - workspace/mcp/types/unifiedPipeline.ts: "3.0.0"
-    - workspace/mcp/tools/load_unified_pipeline.py: "3.0.0"
+    - workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml: "3.0.0"
+    - workspace/mcp/namespace-mcp/schemas/unified-pipeline.schema.json: "3.0.0"
+    - workspace/mcp/namespace-mcp/types/unifiedPipeline.ts: "3.0.0"
+    - workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py: "3.0.0"
 
   toBeAligned:
     - workspace/src/autonomous/deployment/instant_execution_engine_v2.py: "2.0.0 → 3.0.0"

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Validation script for AXIOM dissolved tools refactor
+ * Validation script for namespace-mcp dissolved tools refactor
  * Ensures all tools are correctly loaded from modular structure
  */
 
@@ -11,7 +11,7 @@ import {
   L12_TOOLS, L13_TOOLS
 } from './tools/index.js';
 
-console.log('🔍 Validating AXIOM Dissolved Tools Refactor\n');
+console.log('🔍 Validating namespace-mcp Dissolved Tools Refactor\n');
 
 // Test 1: Total count
 const expectedCount = 59;

@@ -158,17 +158,17 @@ alerts:
 ```bash
 # Run vision tracker (INSTANT execution standards)
 python workspace/src/governance/scripts/vision-tracker.py \
-  --config workspace/mcp/pipelines/unified-pipeline-config.yaml \
+  --config workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml \
   --verbose
 
 # Run autonomy validator
 python workspace/src/governance/scripts/validate-autonomy.py \
-  --config workspace/mcp/pipelines/unified-pipeline-config.yaml \
+  --config workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml \
   --verbose
 
 # Run latency monitor
 python workspace/src/governance/scripts/latency-monitor.py \
-  --config workspace/mcp/pipelines/unified-pipeline-config.yaml \
+  --config workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml \
   --verbose
 ```
 

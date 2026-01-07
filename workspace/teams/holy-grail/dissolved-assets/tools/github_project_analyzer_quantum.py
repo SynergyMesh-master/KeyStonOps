@@ -3,7 +3,7 @@
 
 """
 GitHub Project Deep Analyzer - Quantum Enhanced Edition
-MachineNativeOps 專案深度分析工具
+namespace-mcp 專案深度分析工具
 版本: v3.0.0 | 量子-AI 混合強化框架
 """
 
@@ -411,7 +411,7 @@ class GitHubProjectAnalyzer:
         self.base_url = f"https://api.github.com/repos/{config.repo_owner}/{config.repo_name}"
         self.headers = {
             "Accept": "application/vnd.github.v3+json",
-            "User-Agent": "MachineNativeOps-Analyzer/3.0.0"
+            "User-Agent": "namespace-mcp-Analyzer/3.0.0"
         }
         self.quantum_engine = QuantumComputeEngine()
         self.resource_manager = ResourceManager()
@@ -505,7 +505,7 @@ class GitHubProjectAnalyzer:
         """分析當前能力"""
         return {
             "core_features": [
-                {"name": "MCP Tool Integration", "status": "production", "maturity": "high", "description": "59 dissolved AXIOM tools as MCP"},
+                {"name": "MCP Tool Integration", "status": "production", "maturity": "high", "description": "59 dissolved namespace-mcp tools as MCP"},
                 {"name": "INSTANT Pipelines", "status": "production", "maturity": "high", "description": "Sub-3-minute feature delivery"},
                 {"name": "Quantum Fallback", "status": "production", "maturity": "medium", "description": "Classical fallback for quantum tools"},
                 {"name": "Auto-Healing", "status": "beta", "maturity": "medium", "description": "Retry, fallback, circuit breaker"}
@@ -600,7 +600,7 @@ class GitHubProjectAnalyzer:
 - **平台**: {analysis['metadata']['platform']}
 - **倉庫**: `{analysis['metadata']['repository']}`
 - **分析時間**: {analysis['timestamp']}
-- **分析工具**: MachineNativeOps Quantum Analyzer v{analysis['metadata']['analyzer_version']}
+- **分析工具**: namespace-mcp Quantum Analyzer v{analysis['metadata']['analyzer_version']}
 - **量子啟用**: {"✅" if analysis['metadata']['quantum_enabled'] else "❌"}
 
 ---
@@ -676,7 +676,7 @@ class GitHubProjectAnalyzer:
 ---
 
 *報告生成時間: {analysis['timestamp']}*
-*分析引擎: MachineNativeOps Quantum Analyzer v3.0.0*
+*分析引擎: namespace-mcp Quantum Analyzer v3.0.0*
 """
         return report
 
@@ -735,8 +735,8 @@ class GitHubProjectAnalyzer:
 
 def main():
     parser = argparse.ArgumentParser(description='GitHub專案深度分析工具 (量子強化版)')
-    parser.add_argument('--owner', default='MachineNativeOps', help='倉庫擁有者')
-    parser.add_argument('--repo', default='machine-native-ops', help='倉庫名稱')
+    parser.add_argument('--owner', default='namespace-mcp', help='倉庫擁有者')
+    parser.add_argument('--repo', default='namespace-mcp', help='倉庫名稱')
     parser.add_argument('--scope', default='entire', help='分析範圍')
     parser.add_argument('--workspace-path', default='workspace/teams', help='工作空間路徑（Teams 工作團隊）')
     parser.add_argument('--output', default='workspace_teams_validation_report.md', help='輸出文件')

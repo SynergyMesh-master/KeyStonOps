@@ -2,7 +2,7 @@
 """
 Unified Pipeline Loader Tests - 統一管線載入器測試
 
-Tests for workspace/mcp/tools/load_unified_pipeline.py
+Tests for workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py
 
 測試範圍：
 1. Manifest loading and parsing

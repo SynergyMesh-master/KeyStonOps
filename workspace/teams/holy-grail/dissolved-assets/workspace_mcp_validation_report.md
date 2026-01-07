@@ -2,10 +2,10 @@
 
 ## 📋 報告元數據
 - **平台**: GitHub
-- **倉庫**: `MachineNativeOps/machine-native-ops`
+- **倉庫**: `namespace-mcp`
 - **分析時間**: 2026-01-06T23:06:08.132219Z
 - **分析時間**: 2026-01-06T23:12:01.353060Z
-- **分析工具**: MachineNativeOps Quantum Analyzer v3.0.0
+- **分析工具**: namespace-mcp Quantum Analyzer v3.0.0
 - **量子啟用**: ✅
 
 ---
@@ -28,21 +28,21 @@
 
 ### ❌ 驗證錯誤
 - YAML syntax error: expected a single document in the stream
-  in "workspace/mcp/axiom-dissolved-mcp-architecture.yaml", line 21, column 1
+  in "workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml", line 21, column 1
 but found another document
-  in "workspace/mcp/axiom-dissolved-mcp-architecture.yaml", line 2979, column 1
+  in "workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml", line 2979, column 1
 - YAML syntax error: expected a single document in the stream
-  in "workspace/mcp/AXIOM_DISSOLVED_INTEGRATION_MANIFEST.yaml", line 18, column 1
+  in "workspace/mcp/namespace-mcp/namespace-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml", line 18, column 1
 but found another document
-  in "workspace/mcp/AXIOM_DISSOLVED_INTEGRATION_MANIFEST.yaml", line 506, column 1
+  in "workspace/mcp/namespace-mcp/namespace-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml", line 506, column 1
 - YAML syntax error: expected a single document in the stream
-  in "workspace/mcp/INTEGRATION_INDEX.yaml", line 14, column 1
+  in "workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml", line 14, column 1
 but found another document
-  in "workspace/mcp/INTEGRATION_INDEX.yaml", line 514, column 1
+  in "workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml", line 514, column 1
 - YAML syntax error: expected a single document in the stream
-  in "workspace/mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml", line 14, column 1
+  in "workspace/mcp/namespace-mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml", line 14, column 1
 but found another document
-  in "workspace/mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml", line 459, column 1
+  in "workspace/mcp/namespace-mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml", line 459, column 1
 
 > 註記 / Note:  
 > 上述 YAML 語法錯誤已確認為真實問題，原因為單一串流中包含多個未正確分隔的文件。  
@@ -100,7 +100,7 @@ but found another document
 
 ### 核心功能
 - **MCP Tool Integration** (production, 成熟度: high)
-  - 59 dissolved AXIOM tools as MCP
+  - 59 dissolved namespace-mcp tools as MCP
 - **INSTANT Pipelines** (production, 成熟度: high)
   - Sub-3-minute feature delivery
 - **Quantum Fallback** (production, 成熟度: medium)
@@ -123,28 +123,28 @@ but found another document
 ## 📋 待辦事項
 
 ### ✅ 已完成項目（本次 PR #1107）
-- ✅ **Fix TypeScript syntax issues in axiom-dissolved-server.ts**
+- ✅ **Fix TypeScript syntax issues in namespace-mcp-dissolved-server.ts**
   - 狀態: 已完成
   - 移除了重複的 imports、interface 定義和屬性宣告
 - ✅ **Remove duplicate imports and declarations**
   - 狀態: 已完成
-  - 清理了 axiom-dissolved-server.ts 中的重複定義
+  - 清理了 namespace-mcp-dissolved-server.ts 中的重複定義
 - ✅ **Clean up snake_case/camelCase inconsistencies**
   - 狀態: 已完成
   - 統一使用 camelCase 命名規範
 
 ### 高優先級（待處理）
 ### 已完成項目 (Completed in PR #1107)
-- ✅ **Duplicate type declarations in axiom-dissolved-server.ts** - 已修復
+- ✅ **Duplicate type declarations in namespace-mcp-dissolved-server.ts** - 已修復
 - ✅ **Mixed snake_case and camelCase in tool definitions** - 已修復
 
 ### 後續工作項目 (Future Work)
 - **Fix YAML multi-document syntax errors** (優先級: medium)
-  - 影響檔案: INTEGRATION_INDEX.yaml, AXIOM_DISSOLVED_INTEGRATION_MANIFEST.yaml, axiom-dissolved-mcp-architecture.yaml, WORLD_CLASS_VALIDATION_PIPELINE.yaml
+  - 影響檔案: INTEGRATION_INDEX.yaml, namespace-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml, namespace-mcp-dissolved-mcp-architecture.yaml, WORLD_CLASS_VALIDATION_PIPELINE.yaml
   - 預估工作量: 2-3 hours
   - 說明: 單一串流中包含多個未正確分隔的文件，需要修正分隔或拆分為多個檔案
 - **Resolve remaining duplicate import warnings** (優先級: low)
-  - 影響檔案: Multiple tool files under workspace/mcp/servers/tools/
+  - 影響檔案: Multiple tool files under workspace/mcp/namespace-mcp/servers/tools/
   - 預估工作量: 30 minutes
   - 說明: 工具模組中仍有一些重複的 import 語句需要清理
 ### 高優先級
@@ -160,7 +160,7 @@ but found another document
 ## 🔧 已識別問題
 
 ### 已修復問題（本次 PR #1107）
-- ✅ **Duplicate type declarations in axiom-dissolved-server.ts**（已在本次 PR 中修復）
+- ✅ **Duplicate type declarations in namespace-mcp-dissolved-server.ts**（已在本次 PR 中修復）
   - 修復內容: 移除重複的 interface 定義和 property 宣告
 - ✅ **Mixed snake_case and camelCase in tool definitions**（已在本次 PR 中修復）
   - 修復內容: 統一使用 camelCase 命名規範
@@ -183,11 +183,11 @@ but found another document
 ---
 
 *報告生成時間: 2026-01-06T23:12:01.353060Z*
-*分析引擎: MachineNativeOps Quantum Analyzer v3.0.0*
+*分析引擎: namespace-mcp Quantum Analyzer v3.0.0*
 ## 📋 待辦事項
 
 ### 高優先級
-- ✅ **Fix TypeScript syntax issues in axiom-dissolved-server.ts** — 已於 PR #1107 完成並驗證。
+- ✅ **Fix TypeScript syntax issues in namespace-mcp-dissolved-server.ts** — 已於 PR #1107 完成並驗證。
 - ✅ **Remove duplicate imports and declarations** — 已於 PR #1107 清理完成。
 - ✅ **Add comprehensive TypeScript linting** — 已於 PR #1107 配置並執行。
 

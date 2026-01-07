@@ -1,13 +1,13 @@
 #!/bin/bash
-# Validation script for AXIOM dissolved tools refactor structure
+# Validation script for namespace-mcp dissolved tools refactor structure
 
-echo "🔍 Validating AXIOM Dissolved Tools Refactor Structure"
+echo "🔍 Validating namespace-mcp Dissolved Tools Refactor Structure"
 echo ""
 
 # Check main server file
-if [ -f "axiom-dissolved-server.ts" ]; then
+if [ -f "namespace-mcp-dissolved-server.ts" ]; then
   echo "✓ Main server file exists"
-  LINES=$(wc -l < axiom-dissolved-server.ts)
+  LINES=$(wc -l < namespace-mcp-dissolved-server.ts)
   echo "  - Lines: $LINES (expected ~395)"
   if [ $LINES -lt 500 ]; then
     echo "  ✓ File size reduced successfully"
@@ -69,14 +69,14 @@ fi
 # Check imports in main file
 echo ""
 echo "✓ Checking main server imports:"
-if grep -q "import { DISSOLVED_TOOLS } from \"./tools/index.js\"" axiom-dissolved-server.ts; then
+if grep -q "import { DISSOLVED_TOOLS } from \"./tools/index.js\"" namespace-mcp-dissolved-server.ts; then
   echo "  ✓ Imports from tools/index.js"
 else
   echo "  ❌ Missing import from tools/index.js"
   exit 1
 fi
 
-if grep -q "import type { ToolDefinition, ResourceDefinition, PromptDefinition } from \"./tools/types.js\"" axiom-dissolved-server.ts; then
+if grep -q "import type { ToolDefinition, ResourceDefinition, PromptDefinition } from \"./tools/types.js\"" namespace-mcp-dissolved-server.ts; then
   echo "  ✓ Imports types from tools/types.js"
 else
   echo "  ❌ Missing type imports from tools/types.js"
@@ -86,8 +86,8 @@ fi
 # Check no inline tool definitions remain
 echo ""
 echo "✓ Checking for inline tool definitions:"
-INLINE_COUNT=$(grep -c 'sourceModule: "AXM-L' axiom-dissolved-server.ts || true)
-INLINE_COUNT=$(grep -c '"sourceModule": "AXM-L' axiom-dissolved-server.ts || true)
+INLINE_COUNT=$(grep -c 'sourceModule: "AXM-L' namespace-mcp-dissolved-server.ts || true)
+INLINE_COUNT=$(grep -c '"sourceModule": "AXM-L' namespace-mcp-dissolved-server.ts || true)
 if [ $INLINE_COUNT -eq 0 ]; then
   echo "  ✓ No inline tool definitions found (refactored successfully)"
 else
@@ -98,7 +98,7 @@ echo ""
 echo "✅ All structure validations passed!"
 echo ""
 echo "📊 Summary:"
-echo "  - Main file: axiom-dissolved-server.ts (${LINES} lines)"
+echo "  - Main file: namespace-mcp-dissolved-server.ts (${LINES} lines)"
 echo "  - Tool modules: 16 files created"
 echo "  - Layers: 14 (L00-L13)"
 echo "  - File size reduction: ~74%"

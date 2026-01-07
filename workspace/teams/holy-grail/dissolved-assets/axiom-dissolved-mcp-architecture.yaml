@@ -1,12 +1,12 @@
 %YAML 1.2
 ---
 # ═══════════════════════════════════════════════════════════════════════════════
-#                    AXIOM 硫酸溶解架構 - MCP 完全對齊版本
-#                    AXIOM Dissolved Architecture - Full MCP Alignment
+#                    namespace-mcp 硫酸溶解架構 - MCP 完全對齊版本
+#                    namespace-mcp Dissolved Architecture - Full MCP Alignment
 # ═══════════════════════════════════════════════════════════════════════════════
 #
-# Purpose: Complete dissolution of AXIOM 59-module architecture into MCP-native format
-# 用途: 將 AXIOM 59模組架構完全溶解為 MCP 原生格式
+# Purpose: Complete dissolution of namespace-mcp 59-module architecture into MCP-native format
+# 用途: 將 namespace-mcp 59模組架構完全溶解為 MCP 原生格式
 #
 # Methodology: 硫酸溶解法 (Sulfuric Acid Dissolution)
 # - All naming conventions aligned to MCP (snake_case)
@@ -18,13 +18,13 @@
 # Architecture: MCP-Native | Zero Friction | Instant Integration
 # ═══════════════════════════════════════════════════════════════════════════════
 
-apiVersion: mcp.machinenativeops/v1
+apiVersion: mcp.namespace-mcp/v1
 kind: MCPDissolvedArchitecture
 metadata:
-  name: axiom-dissolved-mcp
+  name: namespace-mcp-dissolved-mcp
   version: "1.0.0"
   dissolution_method: sulfuric_acid
-  source_architecture: AXIOM-v8.4
+  source_architecture: namespace-mcp-v8.4
   target_protocol: MCP-v2024.11
   labels:
     tier: production
@@ -45,7 +45,7 @@ metadata:
 mcp_servers:
   # Server 1: Infrastructure & Bootstrap (L00)
   infrastructure_server:
-    name: axiom_infrastructure_server
+    name: namespace-mcp_infrastructure_server
     version: "1.0.0"
     protocol: mcp
     transport: stdio
@@ -63,7 +63,7 @@ mcp_servers:
 
   # Server 2: Language & Input Processing (L01-L02)
   processing_server:
-    name: axiom_processing_server
+    name: namespace-mcp_processing_server
     version: "1.0.0"
     protocol: mcp
     transport: stdio
@@ -81,7 +81,7 @@ mcp_servers:
 
   # Server 3: Network & Routing (L03)
   network_server:
-    name: axiom_network_server
+    name: namespace-mcp_network_server
     version: "1.0.0"
     protocol: mcp
     transport: stdio
@@ -96,7 +96,7 @@ mcp_servers:
 
   # Server 4: Cognitive & Ethics (L04-L05)
   cognitive_server:
-    name: axiom_cognitive_server
+    name: namespace-mcp_cognitive_server
     version: "1.0.0"
     protocol: mcp
     transport: stdio
@@ -116,7 +116,7 @@ mcp_servers:
 
   # Server 5: Integration & Reasoning (L06-L08)
   reasoning_server:
-    name: axiom_reasoning_server
+    name: namespace-mcp_reasoning_server
     version: "1.0.0"
     protocol: mcp
     transport: stdio
@@ -138,7 +138,7 @@ mcp_servers:
 
   # Server 6: Governance & Optimization (L09-L12)
   governance_server:
-    name: axiom_governance_server
+    name: namespace-mcp_governance_server
     version: "1.0.0"
     protocol: mcp
     transport: stdio
@@ -165,7 +165,7 @@ mcp_servers:
 
   # Server 7: Quantum Specialized (L13)
   quantum_server:
-    name: axiom_quantum_server
+    name: namespace-mcp_quantum_server
     version: "1.0.0"
     protocol: mcp
     transport: stdio
@@ -193,7 +193,7 @@ mcp_servers:
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # MCP TOOL DEFINITIONS
-# All 59 AXIOM modules dissolved into MCP tools
+# All 59 namespace-mcp modules dissolved into MCP tools
 # ═══════════════════════════════════════════════════════════════════════════════
 mcp_tools:
   # ═══════════════════════════════════════════════════════════════════
@@ -2534,7 +2534,7 @@ mcp_tools:
 # ═══════════════════════════════════════════════════════════════════════════════
 mcp_resources:
   layer_l00_infrastructure:
-    uri: axiom://layers/l00-infrastructure
+    uri: namespace-mcp://layers/l00-infrastructure
     name: "Infrastructure & Bootstrap Layer"
     description: "Immutable foundation with quantum-hardened bootstrap"
     mime_type: application/json
@@ -2555,7 +2555,7 @@ mcp_resources:
         - memory_allocator
 
   layer_l01_language:
-    uri: axiom://layers/l01-language
+    uri: namespace-mcp://layers/l01-language
     name: "Language Processing Layer"
     description: "Quantum-enhanced NLP with transformer models"
     mime_type: application/json
@@ -2572,7 +2572,7 @@ mcp_resources:
         - language_advanced
 
   layer_l02_input:
-    uri: axiom://layers/l02-input
+    uri: namespace-mcp://layers/l02-input
     name: "Input Processing Layer"
     description: "Quantum state preparation and multimodal processing"
     mime_type: application/json
@@ -2590,7 +2590,7 @@ mcp_resources:
         - multimodal_processor
 
   layer_l03_network:
-    uri: axiom://layers/l03-network
+    uri: namespace-mcp://layers/l03-network
     name: "Network & Routing Layer"
     description: "ML-based intelligent routing with circuit breakers"
     mime_type: application/json
@@ -2608,7 +2608,7 @@ mcp_resources:
         - adaptive_router
 
   layer_l04_cognitive:
-    uri: axiom://layers/l04-cognitive
+    uri: namespace-mcp://layers/l04-cognitive
     name: "Cognitive Processing Layer"
     description: "Deep cognitive processing with transformer architectures"
     mime_type: application/json
@@ -2627,7 +2627,7 @@ mcp_resources:
         - metacognitive_monitor
 
   layer_l05_ethics:
-    uri: axiom://layers/l05-ethics
+    uri: namespace-mcp://layers/l05-ethics
     name: "Ethics & Governance Layer"
     description: "Policy evaluation and bias detection"
     mime_type: application/json
@@ -2645,7 +2645,7 @@ mcp_resources:
         - fairness_optimizer
 
   layer_l06_integration:
-    uri: axiom://layers/l06-integration
+    uri: namespace-mcp://layers/l06-integration
     name: "Integration & Orchestration Layer"
     description: "Multi-agent orchestration and workflow engine"
     mime_type: application/json
@@ -2663,7 +2663,7 @@ mcp_resources:
         - workflow_engine
 
   layer_l07_reasoning:
-    uri: axiom://layers/l07-reasoning
+    uri: namespace-mcp://layers/l07-reasoning
     name: "Reasoning & Knowledge Layer"
     description: "Neural-symbolic reasoning with knowledge graphs"
     mime_type: application/json
@@ -2681,7 +2681,7 @@ mcp_resources:
         - knowledge_graph
 
   layer_l08_emotion:
-    uri: axiom://layers/l08-emotion
+    uri: namespace-mcp://layers/l08-emotion
     name: "Emotional Intelligence Layer"
     description: "Emotion classification and empathy modeling"
     mime_type: application/json
@@ -2699,7 +2699,7 @@ mcp_resources:
         - empathy_engine
 
   layer_l09_output:
-    uri: axiom://layers/l09-output
+    uri: namespace-mcp://layers/l09-output
     name: "Output Optimization Layer"
     description: "Quality scoring and format optimization"
     mime_type: application/json
@@ -2717,7 +2717,7 @@ mcp_resources:
         - grammar_checker
 
   layer_l10_governance:
-    uri: axiom://layers/l10-governance
+    uri: namespace-mcp://layers/l10-governance
     name: "System Governance Layer"
     description: "Policy enforcement and compliance monitoring"
     mime_type: application/json
@@ -2737,7 +2737,7 @@ mcp_resources:
         - compliance_monitor
 
   layer_l11_optimization:
-    uri: axiom://layers/l11-optimization
+    uri: namespace-mcp://layers/l11-optimization
     name: "Performance Optimization Layer"
     description: "System-wide optimization with genetic algorithms"
     mime_type: application/json
@@ -2756,7 +2756,7 @@ mcp_resources:
         - energy_optimizer
 
   layer_l12_metacognition:
-    uri: axiom://layers/l12-metacognition
+    uri: namespace-mcp://layers/l12-metacognition
     name: "Metacognitive & Strategic Layer"
     description: "Multi-objective optimization and emergence detection"
     mime_type: application/json
@@ -2774,7 +2774,7 @@ mcp_resources:
         - emergence_detector
 
   layer_l13_quantum:
-    uri: axiom://layers/l13-quantum
+    uri: namespace-mcp://layers/l13-quantum
     name: "Quantum Specialized Layer"
     description: "Domain-specific quantum computing applications"
     mime_type: application/json
@@ -2820,7 +2820,7 @@ mcp_prompts:
         description: "Problem constraints"
         required: false
     template: |
-      You are using the AXIOM dissolved quantum optimization layer.
+      You are using the namespace-mcp dissolved quantum optimization layer.
 
       Problem Type: {{problem_type}}
       Constraints: {{constraints}}
@@ -2845,7 +2845,7 @@ mcp_prompts:
         description: "Depth of analysis (surface, deep, comprehensive)"
         required: false
     template: |
-      Initiating AXIOM cognitive analysis pipeline.
+      Initiating namespace-mcp cognitive analysis pipeline.
 
       Input: {{input_data}}
       Depth: {{analysis_depth}}
@@ -2870,7 +2870,7 @@ mcp_prompts:
         description: "Ethical frameworks to apply"
         required: false
     template: |
-      AXIOM Ethics Governance Evaluation
+      namespace-mcp Ethics Governance Evaluation
 
       Action: {{action}}
       Frameworks: {{frameworks}}
@@ -2888,7 +2888,7 @@ mcp_prompts:
 # ═══════════════════════════════════════════════════════════════════════════════
 integration_manifest:
   dissolution_summary:
-    source: "AXIOM Quantum AI Platform v8.4"
+    source: "namespace-mcp Quantum AI Platform v8.4"
     methodology: "硫酸溶解法 (Sulfuric Acid Dissolution)"
     total_modules_dissolved: 59
     total_layers_dissolved: 14
@@ -2927,8 +2927,8 @@ integration_manifest:
     telemetry: opentelemetry
 
   cross_references:
-    unified_pipeline: workspace/mcp/pipelines/unified-pipeline-config.yaml
-    integration_index: workspace/mcp/INTEGRATION_INDEX.yaml
+    unified_pipeline: workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml
+    integration_index: workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml
     instant_engine: workspace/src/autonomous/deployment/instant_execution_engine_v2.py
     existing_mcp_servers: workspace/src/mcp-servers/
 
@@ -2977,5 +2977,5 @@ deployment:
     log_level: info
 
 ---
-# End of AXIOM Dissolved MCP Architecture
+# End of namespace-mcp Dissolved MCP Architecture
 # 完全溶解並對齊 MCP 協議

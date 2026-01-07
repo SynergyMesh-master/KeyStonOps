@@ -1,5 +1,5 @@
 /**
- * Shared type definitions for AXIOM dissolved tools
+ * Shared type definitions for namespace-mcp dissolved tools
  * @module tools/types
  */
 

@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-#           MachineNativeOps 世界頂級驗證管線 v3.0.0
+#           namespace-mcp 世界頂級驗證管線 v3.0.0
 #           World-Class Validation Pipeline - INSTANT Execution Architecture
 # ═══════════════════════════════════════════════════════════════════════════════
 #
@@ -11,10 +11,10 @@
 # Benchmark: 超越 Google | Netflix | Tesla | Apple
 # ═══════════════════════════════════════════════════════════════════════════════
 
-apiVersion: validation.machinenativeops/v3
+apiVersion: validation.namespace-mcp/v3
 kind: WorldClassValidationPipeline
 metadata:
-  name: machine-native-ops-world-class-validation-pipeline
+  name: namespace-mcp-world-class-validation-pipeline
   version: "3.0.0"
   mode: INSTANT-Autonomous
   labels:
@@ -450,11 +450,11 @@ industryBenchmarks:
 # 整合到 workspace/mcp 的引用
 # ═══════════════════════════════════════════════════════════════════════════════
 mcpIntegration:
-  unifiedPipelineRef: workspace/mcp/pipelines/unified-pipeline-config.yaml
-  integrationIndexRef: workspace/mcp/INTEGRATION_INDEX.yaml
-  schemaRef: workspace/mcp/schemas/unified-pipeline.schema.json
-  typesRef: workspace/mcp/types/unifiedPipeline.ts
-  loaderRef: workspace/mcp/tools/load_unified_pipeline.py
+  unifiedPipelineRef: workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml
+  integrationIndexRef: workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml
+  schemaRef: workspace/mcp/namespace-mcp/schemas/unified-pipeline.schema.json
+  typesRef: workspace/mcp/namespace-mcp/types/unifiedPipeline.ts
+  loaderRef: workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py
 
 ---
 # ═══════════════════════════════════════════════════════════════════════════════

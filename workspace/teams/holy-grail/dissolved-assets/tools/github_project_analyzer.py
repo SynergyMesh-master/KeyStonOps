@@ -3,7 +3,7 @@
 
 """
 GitHub Project Deep Analyzer
-MachineNativeOps 專案深度分析工具
+namespace-mcp 專案深度分析工具
 版本: v2.1.0 | 企業級分析框架
 
 Changes in v2.1.0:
@@ -57,7 +57,7 @@ class GitHubProjectAnalyzer:
         self.base_url = f"https://api.github.com/repos/{config.repo_owner}/{config.repo_name}"
         self.headers = {
             "Accept": "application/vnd.github.v3+json",
-            "User-Agent": "MachineNativeOps-Analyzer/2.1.0",
+            "User-Agent": "namespace-mcp-Analyzer/2.1.0",
         }
         token = config.token or os.getenv("GITHUB_TOKEN")
         if token:
@@ -666,7 +666,7 @@ class GitHubProjectAnalyzer:
 - **倉庫**: `{analysis['metadata']['repository']}`
 - **分析範圍**: {analysis['metadata']['analysis_scope']}
 - **分析時間**: {analysis['timestamp']}
-- **分析工具**: MachineNativeOps Analyzer v{analysis['metadata']['analyzer_version']}
+- **分析工具**: namespace-mcp Analyzer v{analysis['metadata']['analyzer_version']}
 {local_scan_note}
 ---
 
@@ -775,13 +775,13 @@ class GitHubProjectAnalyzer:
 ### 🎯 統一模板使用
 ```bash
 # 生成統一提示詞
-MachineNativeOps-cli prompt generate --template=architecture-status --version=2.0.0
+namespace-mcp-cli prompt generate --template=architecture-status --version=2.0.0
 
 # 驗證現有提示詞
-MachineNativeOps-cli prompt validate --file=current_prompt.md --strict
+namespace-mcp-cli prompt validate --file=current_prompt.md --strict
 
 # 自動修正不一致
-MachineNativeOps-cli prompt fix --input=inconsistent_prompt.md --output=fixed_prompt.md
+namespace-mcp-cli prompt fix --input=inconsistent_prompt.md --output=fixed_prompt.md
 ```
 
 ### 📝 正確的統一格式
@@ -805,7 +805,7 @@ MachineNativeOps-cli prompt fix --input=inconsistent_prompt.md --output=fixed_pr
 ---
 
 *報告生成時間: {analysis['timestamp']}*
-*分析引擎: MachineNativeOps Quantum Analyzer*
+*分析引擎: namespace-mcp Quantum Analyzer*
 *版本: v2.1.0 | 企業級深度分析*
 """
         return report
@@ -937,7 +937,7 @@ MachineNativeOps-cli prompt fix --input=inconsistent_prompt.md --output=fixed_pr
 
 
 def _parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="MachineNativeOps GitHub Project Deep Analyzer v2.1.0")
+    parser = argparse.ArgumentParser(description="namespace-mcp GitHub Project Deep Analyzer v2.1.0")
     parser.add_argument(
         "--owner",
         default=os.environ.get("GITHUB_REPO_OWNER"),

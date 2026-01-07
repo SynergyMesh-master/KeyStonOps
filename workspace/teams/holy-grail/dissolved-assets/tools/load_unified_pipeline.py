@@ -7,9 +7,9 @@ INSTANT Execution Architecture:
 - Competitiveness: Replit | Claude | GPT equivalent
 
 Artifacts:
-- Manifest: workspace/mcp/pipelines/unified-pipeline-config.yaml
-- Schema:   workspace/mcp/schemas/unified-pipeline.schema.json
-- TS types: workspace/mcp/types/unifiedPipeline.ts
+- Manifest: workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml
+- Schema:   workspace/mcp/namespace-mcp/schemas/unified-pipeline.schema.json
+- TS types: workspace/mcp/namespace-mcp/types/unifiedPipeline.ts
 """
 from __future__ import annotations
 
@@ -25,8 +25,8 @@ import yaml
 logger = logging.getLogger(__name__)
 
 
-MANIFEST_PATH = Path("workspace/mcp/pipelines/unified-pipeline-config.yaml")
-SCHEMA_PATH = Path("workspace/mcp/schemas/unified-pipeline.schema.json")
+MANIFEST_PATH = Path("workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml")
+SCHEMA_PATH = Path("workspace/mcp/namespace-mcp/schemas/unified-pipeline.schema.json")
 
 
 # ========================================
@@ -586,7 +586,7 @@ def has_zero_human_intervention(manifest: UnifiedPipelineManifest) -> bool:
 
 def is_v3_pipeline(manifest: UnifiedPipelineManifest) -> bool:
     """Check if the pipeline uses v3 API."""
-    return manifest.apiVersion == "pipeline.machinenativeops/v3"
+    return manifest.apiVersion == "pipeline.namespace-mcp/v3"
 
 
 def validate_latency_compliance(manifest: UnifiedPipelineManifest) -> bool:

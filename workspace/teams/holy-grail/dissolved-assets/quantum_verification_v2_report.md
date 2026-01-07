@@ -70,7 +70,7 @@ PR #1067 涉及 4 個文件，已全面分析：
 
 ## 完整證據鏈
 
-* **PR URL**: https://github.com/MachineNativeOps/machine-native-ops/pull/1067
+* **PR URL**: https://github.com/namespace-mcp/pull/1067
 * **Merge SHA**: dd851bc
 * **Head SHA**: dd851bc
 * **文件變更**: 4 個 (+175/-14行)
@@ -103,10 +103,10 @@ PR #1067 涉及 4 個文件，已全面分析：
 ## 審計追蹤
 
 * **驗證時間**: 2026-01-06T11:20:36.731700Z
-* **驗證引擎**: MachineNativeOps Quantum Verifier v3.1
+* **驗證引擎**: namespace-mcp Quantum Verifier v3.1
 * **量子後端**: Qiskit Runtime + TensorFlow Quantum
 * **證據哈希**: sha3-512:36055f4ca81d5d0325c522920475ee632d15a5c8ff9701852fd80a8f23a93996...
 
 ---
-*報告生成: MachineNativeOps 拓撲自稠密演化心智矩陣*
+*報告生成: namespace-mcp 拓撲自稠密演化心智矩陣*
 *版本: QEVR-2026.01.1 | SLSA L3 合規*

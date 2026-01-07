@@ -1,5 +1,5 @@
 /**
- * AXIOM Dissolved Tools Registry
+ * namespace-mcp Dissolved Tools Registry
  * Central aggregation of all 59 tool definitions organized by layer
  * @module tools/index
  */
@@ -21,7 +21,7 @@ import { L12_TOOLS } from "./l12-metacognitive.js";
 import { L13_TOOLS } from "./l13-quantum.js";
 
 /**
- * All AXIOM dissolved tools aggregated by layer
+ * All namespace-mcp dissolved tools aggregated by layer
  * Total: 59 tools across 14 layers
  */
 export const DISSOLVED_TOOLS: ToolDefinition[] = [

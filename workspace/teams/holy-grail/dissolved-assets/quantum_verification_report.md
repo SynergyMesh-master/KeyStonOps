@@ -77,7 +77,7 @@ PR #1067 涉及 4 個文件，已全面分析：
 
 ## 完整證據鏈
 
-* **PR URL**: https://github.com/MachineNativeOps/machine-native-ops/pull/1067
+* **PR URL**: https://github.com/namespace-mcp/pull/1067
 * **Merge SHA**: dd851bc
 * **Head SHA**: dd851bc
 * **文件變更**: 4 個 (+175/-14行)
@@ -92,13 +92,13 @@ files_changed:
 - category: MCP 核心組件
   changes: INSTANT 執行驗證 + 類型安全增強
   files:
-  - workspace/mcp/tools/load_unified_pipeline.py
-  - workspace/mcp/types/unifiedPipeline.ts
+  - workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py
+  - workspace/mcp/namespace-mcp/types/unifiedPipeline.ts
 - category: 配置管理
   changes: v3.0.0 管線配置 + JSON Schema 更新
   files:
-  - workspace/mcp/pipelines/unified-pipeline-config.yaml
-  - workspace/mcp/schemas/unified-pipeline.schema.json
+  - workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml
+  - workspace/mcp/namespace-mcp/schemas/unified-pipeline.schema.json
 
 ```
 
@@ -125,10 +125,10 @@ files_changed:
 
 ## 審計追蹤
 * **驗證時間**: 2026-01-06T11:16:07.769184Z
-* **驗證引擎**: MachineNativeOps Quantum Verifier v3.1
+* **驗證引擎**: namespace-mcp Quantum Verifier v3.1
 * **量子後端**: Qiskit Runtime + TensorFlow Quantum
 * **證據哈希**: sha3-512:b9905c2e965183b0dea32d4b3a5c65fd79d2cea89f8c8f084ea08129b49bc07f8fc17fd7d0e2357da6b35e8664d6e1ec3c34951930c13581a3cf62d72ba5594b
 
 ---
-*報告生成: MachineNativeOps 拓撲自稠密演化心智矩陣*
+*報告生成: namespace-mcp 拓撲自稠密演化心智矩陣*
 *版本: QEVR-2026.01.1 | SLSA L3 合規*

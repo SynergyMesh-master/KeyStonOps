@@ -1,13 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "UnifiedPipeline",
-  "description": "MachineNativeOps Unified Pipeline Schema v3.0.0 - INSTANT Execution Architecture",
+  "description": "namespace-mcp Unified Pipeline Schema v3.0.0 - INSTANT Execution Architecture",
   "type": "object",
   "required": ["apiVersion", "kind", "metadata", "spec"],
   "properties": {
     "apiVersion": {
       "type": "string",
-      "enum": ["pipeline.machinenativeops/v2", "pipeline.machinenativeops/v3"],
+      "enum": ["pipeline.namespace-mcp/v2", "pipeline.namespace-mcp/v3"],
       "description": "API version for pipeline configuration"
     },
     "kind": {

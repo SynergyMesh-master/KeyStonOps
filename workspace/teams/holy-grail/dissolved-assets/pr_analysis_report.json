@@ -1,8 +1,8 @@
 {
   "metadata": {
     "platform": "GitHub",
-    "repository": "MachineNativeOps/machine-native-ops",
-    "clone_url": "https://github.com/MachineNativeOps/machine-native-ops.git",
+    "repository": "namespace-mcp",
+    "clone_url": "https://github.com/namespace-mcp.git",
     "analysis_scope": "PR validation report fixes",
     "analyzer_version": "2.0.0"
   },

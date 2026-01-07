@@ -1,8 +1,8 @@
 /**
- * AXIOM Dissolved MCP Server Implementation
+ * namespace-mcp Dissolved MCP Server Implementation
  * 硫酸溶解法 - 完全 MCP 對齊實現
  *
- * This file implements all 59 dissolved AXIOM modules as MCP tools
+ * This file implements all 59 dissolved namespace-mcp modules as MCP tools
  * following the Model Context Protocol specification.
  *
  * @version 1.0.0
@@ -37,7 +37,7 @@ interface ExtendedPromptDefinition extends PromptDefinition {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// DISSOLVED AXIOM TOOLS REGISTRY
+// DISSOLVED namespace-mcp TOOLS REGISTRY
 // All 59 modules imported from modular structure in ./tools/
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -1114,98 +1114,98 @@ const DISSOLVED_TOOLS_INLINE_REMOVED: ToolDefinition[] = [
 
 const DISSOLVED_RESOURCES: ResourceDefinition[] = [
   {
-    uri: "axiom://layers/l00-infrastructure",
+    uri: "namespace-mcp://layers/l00-infrastructure",
     name: "Infrastructure & Bootstrap Layer",
     description: "Immutable foundation with quantum-hardened bootstrap",
     mimeType: "application/json",
     metadata: { layer: "L00", moduleCount: 5, quantumEnabled: true },
   },
   {
-    uri: "axiom://layers/l01-language",
+    uri: "namespace-mcp://layers/l01-language",
     name: "Language Processing Layer",
     description: "Quantum-enhanced NLP with transformer models",
     mimeType: "application/json",
     metadata: { layer: "L01", moduleCount: 2, quantumEnabled: true },
   },
   {
-    uri: "axiom://layers/l02-input",
+    uri: "namespace-mcp://layers/l02-input",
     name: "Input Processing Layer",
     description: "Quantum state preparation and multimodal processing",
     mimeType: "application/json",
     metadata: { layer: "L02", moduleCount: 3, quantumEnabled: true },
   },
   {
-    uri: "axiom://layers/l03-network",
+    uri: "namespace-mcp://layers/l03-network",
     name: "Network & Routing Layer",
     description: "ML-based intelligent routing with circuit breakers",
     mimeType: "application/json",
     metadata: { layer: "L03", moduleCount: 3, quantumEnabled: true },
   },
   {
-    uri: "axiom://layers/l04-cognitive",
+    uri: "namespace-mcp://layers/l04-cognitive",
     name: "Cognitive Processing Layer",
     description: "Deep cognitive processing with transformer architectures",
     mimeType: "application/json",
     metadata: { layer: "L04", moduleCount: 4, quantumEnabled: true },
   },
   {
-    uri: "axiom://layers/l05-ethics",
+    uri: "namespace-mcp://layers/l05-ethics",
     name: "Ethics & Governance Layer",
     description: "Policy evaluation and bias detection",
     mimeType: "application/json",
     metadata: { layer: "L05", moduleCount: 3, quantumEnabled: false },
   },
   {
-    uri: "axiom://layers/l06-integration",
+    uri: "namespace-mcp://layers/l06-integration",
     name: "Integration & Orchestration Layer",
     description: "Multi-agent orchestration and workflow engine",
     mimeType: "application/json",
     metadata: { layer: "L06", moduleCount: 3, quantumEnabled: true },
   },
   {
-    uri: "axiom://layers/l07-reasoning",
+    uri: "namespace-mcp://layers/l07-reasoning",
     name: "Reasoning & Knowledge Layer",
     description: "Neural-symbolic reasoning with knowledge graphs",
     mimeType: "application/json",
     metadata: { layer: "L07", moduleCount: 3, quantumEnabled: true },
   },
   {
-    uri: "axiom://layers/l08-emotion",
+    uri: "namespace-mcp://layers/l08-emotion",
     name: "Emotional Intelligence Layer",
     description: "Emotion classification and empathy modeling",
     mimeType: "application/json",
     metadata: { layer: "L08", moduleCount: 3, quantumEnabled: true },
   },
   {
-    uri: "axiom://layers/l09-output",
+    uri: "namespace-mcp://layers/l09-output",
     name: "Output Optimization Layer",
     description: "Quality scoring and format optimization",
     mimeType: "application/json",
     metadata: { layer: "L09", moduleCount: 3, quantumEnabled: true },
   },
   {
-    uri: "axiom://layers/l10-governance",
+    uri: "namespace-mcp://layers/l10-governance",
     name: "System Governance Layer",
     description: "Policy enforcement and compliance monitoring",
     mimeType: "application/json",
     metadata: { layer: "L10", moduleCount: 5, quantumEnabled: false },
   },
   {
-    uri: "axiom://layers/l11-optimization",
+    uri: "namespace-mcp://layers/l11-optimization",
     name: "Performance Optimization Layer",
     description: "System-wide optimization with genetic algorithms",
     mimeType: "application/json",
     metadata: { layer: "L11", moduleCount: 4, quantumEnabled: true },
   },
   {
-    uri: "axiom://layers/l12-metacognition",
+    uri: "namespace-mcp://layers/l12-metacognition",
     name: "Metacognitive & Strategic Layer",
     description: "Multi-objective optimization and emergence detection",
     mimeType: "application/json",
     metadata: { layer: "L12", moduleCount: 3, quantumEnabled: true },
   },
   {
-    uri: "axiom://layers/l13-quantum",
+    uri: "namespace-mcp://layers/l13-quantum",
     name: "Quantum Specialized Layer",
     description: "Domain-specific quantum computing applications",
     mimeType: "application/json",
@@ -1218,12 +1218,12 @@ const DISSOLVED_RESOURCES: ResourceDefinition[] = [
 const DISSOLVED_PROMPTS: ExtendedPromptDefinition[] = [
   {
     name: "quantum_optimization",
-    description: "Prompt for quantum optimization tasks using dissolved AXIOM tools",
+    description: "Prompt for quantum optimization tasks using dissolved namespace-mcp tools",
     arguments: [
       { name: "problem_type", description: "Type of optimization problem", required: true },
       { name: "constraints", description: "Problem constraints", required: false },
     ],
-    template: (args?: Record<string, unknown>) => `You are using the AXIOM dissolved quantum optimization layer.
+    template: (args?: Record<string, unknown>) => `You are using the namespace-mcp dissolved quantum optimization layer.
 
 Problem Type: ${args?.problem_type || "unspecified"}
 Constraints: ${JSON.stringify(args?.constraints || {})}
@@ -1242,7 +1242,7 @@ Please specify your optimization parameters and the tool will automatically sele
       { name: "input_data", description: "Data to analyze", required: true },
       { name: "analysis_depth", description: "Depth of analysis", required: false },
     ],
-    template: (args?: Record<string, unknown>) => `Initiating AXIOM cognitive analysis pipeline.
+    template: (args?: Record<string, unknown>) => `Initiating namespace-mcp cognitive analysis pipeline.
 
 Input: ${JSON.stringify(args?.input_data || {})}
 Depth: ${args?.analysis_depth || "deep"}
@@ -1260,7 +1260,7 @@ The following tools will be orchestrated:
       { name: "action", description: "Action to evaluate", required: true },
       { name: "frameworks", description: "Ethical frameworks to apply", required: false },
     ],
-    template: (args?: Record<string, unknown>) => `AXIOM Ethics Governance Evaluation
+    template: (args?: Record<string, unknown>) => `namespace-mcp Ethics Governance Evaluation
 
 Action: ${JSON.stringify(args?.action || {})}
 Frameworks: ${JSON.stringify(args?.frameworks || ["ai_ethics", "fairness"])}
@@ -1471,7 +1471,7 @@ function buildToolResult(
 }
 
 /**
- * Execute a dissolved AXIOM tool with proper quantum execution and fallback
+ * Execute a dissolved namespace-mcp tool with proper quantum execution and fallback
  */
 async function executeDissolvedTool(
   toolName: string,
@@ -1588,7 +1588,7 @@ async function executeQuantumTool(
 ): Promise<Record<string, unknown>> {
   // Check for quantum backend availability
   // Note: Both backend_type and backend are accepted for compatibility
-  // with different MCP tool schemas in the AXIOM architecture
+  // with different MCP tool schemas in the namespace-mcp architecture
   const backendType = (args.backend_type as string) || 
                       (args.backend as string) || 
                       "local_simulator";
@@ -1766,7 +1766,7 @@ function extractErrorMessage(
 
 const server = new Server(
   {
-    name: "axiom-dissolved-server",
+    name: "namespace-mcp-dissolved-server",
     version: "1.0.0",
   },
   {
@@ -1936,12 +1936,12 @@ async function main() {
   try {
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    console.error("AXIOM Dissolved MCP Server running on stdio");
-    console.error(`Loaded ${DISSOLVED_TOOLS.length} tools from dissolved AXIOM architecture`);
+    console.error("namespace-mcp Dissolved MCP Server running on stdio");
+    console.error(`Loaded ${DISSOLVED_TOOLS.length} tools from dissolved namespace-mcp architecture`);
     console.error(`Loaded ${DISSOLVED_RESOURCES.length} resources representing dissolved layers`);
     console.error(`Loaded ${DISSOLVED_PROMPTS.length} prompts for common operations`);
   } catch (error) {
-    console.error("Failed to start AXIOM Dissolved MCP Server:", error);
+    console.error("Failed to start namespace-mcp Dissolved MCP Server:", error);
     process.exitCode = 1;
   }
 }
