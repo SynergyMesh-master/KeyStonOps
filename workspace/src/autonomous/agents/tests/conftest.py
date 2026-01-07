@@ -18,10 +18,6 @@ _parent_dir = os.path.dirname(_current_dir)
 if _parent_dir not in sys.path:
     sys.path.insert(0, _parent_dir)
 
-# Configure pytest-asyncio to use auto mode
-pytest_plugins = ['pytest_asyncio']
-
-
 def pytest_configure(config):
     """Configure pytest"""
     config.addinivalue_line(
