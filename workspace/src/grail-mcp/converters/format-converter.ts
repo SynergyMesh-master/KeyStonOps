@@ -447,10 +447,12 @@ export class GrailFormatConverter implements FormatConverter {
     data: Uint8Array,
     algorithm: 'gzip' | 'brotli'
   ): Promise<Uint8Array> {
-    // Note: In a real implementation, use proper compression libraries
-    // This is a placeholder that returns the original data
-    console.warn(`Compression (${algorithm}) not implemented, returning original data`);
-    return data;
+    // Compression is not currently implemented; fail explicitly to avoid
+    // silently returning uncompressed data when compression was requested.
+    throw new FormatConversionError(
+      `Compression algorithm "${algorithm}" is not implemented`,
+      'COMPRESSION_ERROR'
+    );
   }
 }
 
