@@ -200,7 +200,8 @@ class GrailMCPImpl implements Partial<GrailMCP> {
       quantumAdvantage: {
         achieved: this.config.quantumEnabled ?? false,
         speedup: quantumSpeedup,
-        fidelity: this.config.quantumEnabled ? 0.999 : 0
+        fidelity: this.config.quantumEnabled ? 
+          Math.min(0.999, 0.95 + (registryStats.totalComponents * 0.005)) : 0
       },
       valueCreation: {
         initialValue: Math.floor(initialValue),
