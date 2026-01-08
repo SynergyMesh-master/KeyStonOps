@@ -397,6 +397,7 @@ jobs:
   pipeline-summary:
     name: "📋 Pipeline Summary"
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: [tier1-contracts-l1-service, tier2-workspace-services, integration-tests]
     if: always()
     

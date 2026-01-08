@@ -21,6 +21,7 @@ jobs:
   validate_root_naming:
     name: 🔍 驗證 root/ 命名規範
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: 📥 檢出代碼

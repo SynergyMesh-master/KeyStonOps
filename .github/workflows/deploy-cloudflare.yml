@@ -76,6 +76,7 @@ jobs:
   pre-check:
     name: Pre-deployment Checks
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     outputs:
       environment: ${{ steps.determine-env.outputs.environment }}
       should_deploy_workers: ${{ steps.changes.outputs.workers }}
@@ -128,6 +129,7 @@ jobs:
   lint:
     name: Lint & Type Check
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: pre-check
     if: needs.pre-check.outputs.should_deploy_workers == 'true' || github.event_name == 'workflow_dispatch'
 
@@ -160,6 +162,7 @@ jobs:
   deploy-workers:
     name: Deploy Workers
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: [pre-check, lint]
     if: |
       (needs.pre-check.outputs.should_deploy_workers == 'true' || github.event_name == 'workflow_dispatch') &&
@@ -242,6 +245,7 @@ jobs:
   deploy-pages:
     name: Deploy Pages
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: pre-check
     if: |
       (needs.pre-check.outputs.should_deploy_pages == 'true' || github.event_name == 'workflow_dispatch') &&
@@ -290,6 +294,7 @@ jobs:
   setup-kv:
     name: Setup KV Namespaces
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: [pre-check, deploy-workers]
     if: needs.pre-check.outputs.environment == 'production' && github.event_name == 'push'
 
@@ -331,6 +336,7 @@ jobs:
   setup-d1:
     name: Setup D1 Database
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: [pre-check, deploy-workers]
     if: needs.pre-check.outputs.environment == 'production' && github.event_name == 'push'
 
@@ -372,6 +378,7 @@ jobs:
   setup-r2:
     name: Setup R2 Bucket
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: [pre-check, deploy-workers]
     if: needs.pre-check.outputs.environment == 'production' && github.event_name == 'push'
 
@@ -405,6 +412,7 @@ jobs:
   configure-webhook:
     name: Configure GitHub Webhook
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs: [pre-check, deploy-workers]
     if: needs.pre-check.outputs.environment == 'production' && github.event_name == 'push'
 
@@ -436,6 +444,7 @@ jobs:
   smoke-test:
     name: Smoke Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: [pre-check, deploy-workers]
     if: always() && needs.deploy-workers.result == 'success'
 
@@ -489,6 +498,7 @@ jobs:
   notify-failure:
     name: Notify on Failure
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs: [deploy-workers, deploy-pages, smoke-test]
     if: failure()
 

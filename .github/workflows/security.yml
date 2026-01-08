@@ -523,6 +523,7 @@ jobs:
   security-summary:
     name: "📋 Security Summary Report"
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: [code-security-analysis, dependency-scan, container-security, secrets-scan, compliance-check]
     if: always()
     

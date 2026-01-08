@@ -481,6 +481,7 @@ jobs:
   post-deploy-notification:
     name: "📢 Post-Deployment Notification"
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: [pre-deploy-checks, build-and-push, security-scan, performance-tests, deploy]
     if: always()
     

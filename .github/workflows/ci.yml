@@ -449,6 +449,7 @@ jobs:
   ci-summary:
     name: "📋 CI Summary Report"
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: [code-quality, security-scan, unit-tests, integration-tests]
     if: always()
     

@@ -13,6 +13,7 @@ jobs:
   update-memory:
     name: Update Project Memory
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: write
     if: github.event_name == 'push' || (github.event.pull_request.merged == true)
@@ -189,25 +190,21 @@ jobs:
               exit(0)
           
           # 生成更新摘要
-          summary = f"""
-### 自動更新 - {commit['timestamp']}
-
-**Commit**: {commit['sha']}  
-**Author**: {commit['author']}  
-**Message**: {commit['message']}
-
-**變更統計**:
-- 新增檔案: {len(changes['added'])}
-- 修改檔案: {len(changes['modified'])}
-- 刪除檔案: {len(changes['deleted'])}
-
-**檔案類型分布**:
-- Root 配置: {len(changes['root_files'])}
-- 規範檔案: {len(changes['spec_files'])}
-- 註冊表: {len(changes['registry_files'])}
-- 工作流: {len(changes['workflow_files'])}
-- 文檔: {len(changes['doc_files'])}
-"""
+          # Note: Using string concatenation to avoid YAML parser issues with ** at line start
+          summary = "### 自動更新 - " + commit['timestamp'] + "\n\n"
+          summary += "**Commit**: " + commit['sha'] + "  \n"
+          summary += "**Author**: " + commit['author'] + "  \n"
+          summary += "**Message**: " + commit['message'] + "\n\n"
+          summary += "**變更統計**:\n"
+          summary += "- 新增檔案: " + str(len(changes['added'])) + "\n"
+          summary += "- 修改檔案: " + str(len(changes['modified'])) + "\n"
+          summary += "- 刪除檔案: " + str(len(changes['deleted'])) + "\n\n"
+          summary += "**檔案類型分布**:\n"
+          summary += "- Root 配置: " + str(len(changes['root_files'])) + "\n"
+          summary += "- 規範檔案: " + str(len(changes['spec_files'])) + "\n"
+          summary += "- 註冊表: " + str(len(changes['registry_files'])) + "\n"
+          summary += "- 工作流: " + str(len(changes['workflow_files'])) + "\n"
+          summary += "- 文檔: " + str(len(changes['doc_files'])) + "\n"
           
           # 更新「自動更新記錄」區塊
           update_section_pattern = r'(## 🔄 自動更新記錄.*?### 最近更新\n)(.*?)(\n### 統計資訊)'
@@ -267,24 +264,19 @@ jobs:
               exit(0)
           
           # 生成對話記錄條目
-          log_entry = f"""
----
-
-### 自動記錄 - {commit['timestamp']}
-
-#### Commit 資訊
-- **SHA**: {commit['sha']}
-- **Author**: {commit['author']}
-- **Message**: {commit['message']}
-- **Timestamp**: {commit['timestamp']}
-
-#### 變更摘要
-- **新增**: {len(changes['added'])} 個檔案
-- **修改**: {len(changes['modified'])} 個檔案
-- **刪除**: {len(changes['deleted'])} 個檔案
-
-#### 檔案清單
-"""
+          # Note: Using string concatenation to avoid YAML parser issues with --- and ** at line start
+          log_entry = "---\n\n"
+          log_entry += "### 自動記錄 - " + commit['timestamp'] + "\n\n"
+          log_entry += "#### Commit 資訊\n"
+          log_entry += "- **SHA**: " + commit['sha'] + "\n"
+          log_entry += "- **Author**: " + commit['author'] + "\n"
+          log_entry += "- **Message**: " + commit['message'] + "\n"
+          log_entry += "- **Timestamp**: " + commit['timestamp'] + "\n\n"
+          log_entry += "#### 變更摘要\n"
+          log_entry += "- **新增**: " + str(len(changes['added'])) + " 個檔案\n"
+          log_entry += "- **修改**: " + str(len(changes['modified'])) + " 個檔案\n"
+          log_entry += "- **刪除**: " + str(len(changes['deleted'])) + " 個檔案\n\n"
+          log_entry += "#### 檔案清單\n"
           
           if changes['added']:
               log_entry += "\n**新增檔案**:\n"
