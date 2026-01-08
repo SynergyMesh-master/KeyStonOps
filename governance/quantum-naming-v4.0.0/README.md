@@ -18,7 +18,6 @@ quantum-naming-v4.0.0/
 ├── deployment/                                # Kubernetes deployment
 │   └── quantum-deployment-manifest.yaml.txt  # Complete K8s manifests
 ├── scripts/                                   # Automation scripts
-│   ├── quantum-alignment-engine.py           # Quantum code transformer
 │   └── QUICK_INSTALL.sh                      # One-click installation
 └── docs/                                      # Documentation
     ├── README.md                              # Comprehensive guide
@@ -179,9 +178,9 @@ Panels include:
 ### Automated Testing
 
 ```bash
-# Run quantum validation tests
-cd scripts/
-python quantum-alignment-engine.py --test
+# Run quantum validation tests using the existing quantum alignment engine
+cd ../../workspace/tools/quantum-alignment-engine/
+python -m pytest tests/
 
 # Run integration tests
 kubectl exec -it deployment/quantum-governance-service \
@@ -201,14 +200,17 @@ The quantum pipeline automatically runs on:
 ### Local Development
 
 ```bash
+# The quantum alignment engine is available at workspace/tools/quantum-alignment-engine/
+# Refer to workspace/tools/quantum-alignment-engine/README.md for installation and usage
+
 # Install quantum dependencies
-pip install qiskit qiskit-aer qiskit-ibm-runtime
+cd ../../workspace/tools/quantum-alignment-engine/
+pip install -r requirements.txt
 
 # Run quantum alignment engine locally
-python scripts/quantum-alignment-engine.py \
-  --config config/naming-governance-v2.0.0.yaml.txt \
-  --input sample-code.py \
-  --output transformed-code.py
+python -m src.core.transformer /path/to/code \
+  --policy axiom-naming-v9 \
+  --output ./transformed_output
 ```
 
 ### Contributing

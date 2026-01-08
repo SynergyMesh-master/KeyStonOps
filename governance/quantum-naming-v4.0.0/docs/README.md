@@ -227,19 +227,18 @@ quantum_requests_success_rate
 ### Local Development Setup
 
 ```bash
+# The quantum alignment engine is available at workspace/tools/quantum-alignment-engine/
 # Install quantum dependencies
-pip install qiskit qiskit-aer qiskit-ibm-runtime
+cd ../../../workspace/tools/quantum-alignment-engine/
+pip install -r requirements.txt
 
 # Run quantum alignment engine locally
-python quantum-alignment-engine.py \
-  --config quantum-config.yaml \
-  --input sample-code.py \
-  --output transformed-code.py
+python -m src.core.transformer /path/to/code \
+  --policy axiom-naming-v9 \
+  --output ./transformed_output
 
-# Validate quantum coherence
-python quantum-coherence-validator.py \
-  --input transformed-code.py \
-  --threshold 0.9999
+# Validate quantum coherence using the engine's built-in validation
+python -m pytest tests/test_transformer.py
 ```
 
 ### Testing

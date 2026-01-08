@@ -32,11 +32,12 @@ Transform traditional resource naming from a manual, error-prone process into a 
 
 ### Core Quantum Components
 
-1. **Quantum Alignment Engine** (`quantum-alignment-engine.py`)
+1. **Quantum Alignment Engine** (`workspace/tools/quantum-alignment-engine/`)
    - Hyperdimensional code transformation
    - Quantum semantic lattice projection
    - Entanglement-based remapping
    - Decoherence calibration
+   - **Note**: Existing tool at workspace/tools/quantum-alignment-engine/ is used for quantum transformations
 
 2. **Quantum Configuration** (`naming-governance-v2.0.0.yaml.txt`)
    - Complete three-layer governance specification
@@ -127,7 +128,6 @@ governance:
 ```
 MachineNativeOps-Quantum-Naming-Governance/
 ├── 📄 naming-governance-v2.0.0.yaml.txt          # Core quantum configuration
-├── 📄 quantum-alignment-engine.py                 # Quantum transformation engine
 ├── 📄 .github/workflows/quantum-naming-governance.yaml.txt  # CI/CD pipeline
 ├── 📄 prometheus-quantum-rules.yaml.txt          # Monitoring rules
 ├── 📄 grafana-quantum-dashboard.json.txt         # Visualization dashboard
@@ -137,6 +137,8 @@ MachineNativeOps-Quantum-Naming-Governance/
 ├── 📄 PROJECT_SUMMARY.md                         # This summary
 └── 📁 charts/                                    # Helm charts (generated)
     └── quantum-naming-governance-v4.0.0.tgz
+
+Note: Quantum transformation engine is located at workspace/tools/quantum-alignment-engine/
 ```
 
 ### Component Details
@@ -147,11 +149,12 @@ MachineNativeOps-Quantum-Naming-Governance/
 - **Features**: Quantum parameters, compliance, API endpoints
 - **Validation**: YAML schema + quantum policy validation
 
-#### 2. Quantum Engine (`quantum-alignment-engine.py`)
+#### 2. Quantum Engine (`workspace/tools/quantum-alignment-engine/`)
 - **Language**: Python 3.9+ with Qiskit integration
 - **Features**: Quantum lattice encoding, entanglement mapping
 - **Algorithms**: Grover search, quantum annealing, surface code
 - **Performance**: 15,000x faster than traditional methods
+- **Location**: Existing tool at workspace/tools/quantum-alignment-engine/
 
 #### 3. CI/CD Pipeline (`.github/workflows/quantum-naming-governance.yaml.txt`)
 - **Jobs**: 7 parallel quantum workflows
