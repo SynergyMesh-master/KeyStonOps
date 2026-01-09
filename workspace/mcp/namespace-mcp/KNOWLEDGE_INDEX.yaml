@@ -23,13 +23,13 @@ metadata:
 
 sourceIndex:
   path: workspace/docs/knowledge_index.yaml
-  lastUpdated: "2025-11-30"
+  lastUpdated: "2026-01-09"
   validator: workspace/tools/docs/validate_index.py
 
 conversion:
   method: namespace-mcp-deep-conversion
   status: completed
   routing:
-    pipelineManifest: workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml
+    pipelineManifest: workspace/mcp/validation-mcp/pipelines/unified-pipeline-config.yaml
     integrationIndex: workspace/mcp/validation-mcp/INTEGRATION_INDEX.yaml
-    mcpLoader: workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py
+    mcpLoader: workspace/mcp/validation-mcp/tools/load_unified_pipeline.py
