@@ -24,7 +24,7 @@
 
 ## 🏗️ 架構概述
 
-Taxonomy Root Layer（專案命名分類法）以「類 Linux 最小系統骨架」+ Controlplane 分離架構為基礎，強調所有命名、模組與治理條目皆經過嚴謹分類，確保層級清晰、可追溯且具備高級感。
+Taxonomy Root Layer（專案命名分類法）以「類 Linux 最小系統骨架」+ Controlplane 分離架構為基礎，強調所有命名、模組與治理條目皆經過嚴格分類，確保層級清晰、可追溯且具備高級感。
 
 ### 配置與命名索引（Taxonomy）
 
