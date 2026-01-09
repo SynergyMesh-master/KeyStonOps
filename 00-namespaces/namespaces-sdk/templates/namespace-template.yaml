@@ -1,0 +1,52 @@
+# Namespace Template - INSTANT Deployment
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.namespace }}
+  labels:
+    team: {{ .Values.team }}
+    environment: {{ .Values.environment }}
+    managed-by: namespaces-sdk
+    deployment-method: instant
+  annotations:
+    namespaces-sdk.io/version: "1.0.0"
+    namespaces-sdk.io/deployment-latency: "<100ms"
+    namespaces-sdk.io/automation-level: "100%"
+spec:
+  finalizers:
+    - kubernetes.io/pvc-protection
+---
+# Resource Quota - INSTANT
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: {{ .Values.namespace }}-quota
+  namespace: {{ .Values.namespace }}
+spec:
+  hard:
+    requests.cpu: "{{ .Values.resources.cpu.requests }}"
+    requests.memory: "{{ .Values.resources.memory.requests }}"
+    limits.cpu: "{{ .Values.resources.cpu.limits }}"
+    limits.memory: "{{ .Values.resources.memory.limits }}"
+---
+# Network Policy - INSTANT
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Values.namespace }}-netpol
+  namespace: {{ .Values.namespace }}
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: {{ .Values.namespace }}
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: {{ .Values.namespace }}

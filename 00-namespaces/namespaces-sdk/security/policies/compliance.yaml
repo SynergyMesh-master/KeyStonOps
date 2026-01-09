@@ -1,0 +1,24 @@
+# Namespaces SDK Compliance Policy - INSTANT
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: namespaces-sdk-instant-compliance
+  annotations:
+    policies.kyverno.io/title: "INSTANT Compliance Policy"
+    policies.kyverno.io/description: "Ensure <100ms deployment compliance"
+spec:
+  validationFailureAction: enforce
+  rules:
+  - name: require-instant-deployment
+    match:
+      any:
+      - resources:
+          kinds:
+          - Namespace
+    validate:
+      pattern:
+        metadata:
+          labels:
+            namespaces-sdk.io/deployment-latency: "<100ms"
+            namespaces-sdk.io/automation-level: "100%"
+      message: "Namespace must be deployed with INSTANT standards"
