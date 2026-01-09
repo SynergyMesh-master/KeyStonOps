@@ -1,0 +1,475 @@
+# ADK Package Configuration
+# Taxonomy-compliant configuration for namespaces-adk
+
+package:
+  # Taxonomy-compliant naming
+  name: "@machine-native-ops/namespaces-adk"
+  canonical_name: "platform-namespaces-adk-v1"
+  version: "1.0.0"
+  description: "Agent Development Kit for machine-native operations with autonomous governance capabilities"
+  
+  # Taxonomy metadata
+  taxonomy:
+    domain: "platform"
+    name: "namespaces"
+    type: "adk"
+    version: "v1"
+    tags: ["adk", "agents", "governance", "mcp", "taxonomy"]
+  
+  # Dependencies
+  dependencies:
+    # Taxonomy core integration
+    "@machine-native-ops/taxonomy-core": "^1.0.0"
+    
+    # Python dependencies
+    python:
+      - "anthropic>=0.18.0"
+      - "httpx>=0.25.0"
+      - "pydantic>=2.0.0"
+      - "redis>=5.0.0"
+      - "chromadb>=0.4.0"
+      - "prometheus-client>=0.19.0"
+      - "opentelemetry-api>=1.21.0"
+      - "opentelemetry-sdk>=1.21.0"
+      - "opentelemetry-exporter-otlp>=1.21.0"
+      - "python-json-logger>=2.0.0"
+      - "pyyaml>=6.0"
+      - "jsonschema>=4.20.0"
+      - "tenacity>=8.2.0"
+      - "circuitbreaker>=2.0.0"
+      - "aiohttp>=3.9.0"
+      - "websockets>=12.0"
+      - "pyjwt>=2.8.0"
+      - "cryptography>=41.0"
+      - "python-dotenv>=1.0.0"
+
+# Agent configuration
+agents:
+  # DAG Maintenance Agent
+  dag_maintenance:
+    name: "platform-dag-maintainer-agent-v1"
+    enabled: true
+    capabilities:
+      - "scan_dependencies"
+      - "validate_taxonomy"
+      - "detect_conflicts"
+      - "auto_repair"
+      - "create_repair_pr"
+    schedule: "*/5 * * * *"  # Every 5 minutes
+    governance:
+      mi9_runtime:
+        intervention_level: "monitor"
+        autonomy_threshold: 0.8
+      ari_index:
+        autonomy_weight: 0.4
+        adaptability_weight: 0.3
+        continuity_weight: 0.3
+  
+  # CI/CD Repair Agent
+  cicd_repair:
+    name: "platform-cicd-repair-agent-v1"
+    enabled: true
+    capabilities:
+      - "monitor_pipelines"
+      - "analyze_failure"
+      - "apply_fix"
+      - "validate_fix"
+      - "create_fix_pr"
+    schedule: "*/2 * * * *"  # Every 2 minutes
+    governance:
+      mi9_runtime:
+        intervention_level: "monitor"
+        autonomy_threshold: 0.7
+      ari_index:
+        autonomy_weight: 0.3
+        adaptability_weight: 0.4
+        continuity_weight: 0.3
+  
+  # Artifact Generation Agent
+  artifact_generation:
+    name: "platform-artifact-generator-agent-v1"
+    enabled: true
+    capabilities:
+      - "generate_schema"
+      - "generate_config"
+      - "generate_docs"
+      - "validate_artifact"
+      - "version_artifact"
+    schedule: "on_demand"
+    governance:
+      mi9_runtime:
+        intervention_level: "monitor"
+        autonomy_threshold: 0.9
+      ari_index:
+        autonomy_weight: 0.5
+        adaptability_weight: 0.3
+        continuity_weight: 0.2
+  
+  # GitOps PR Workflow Agent
+  gitops_workflow:
+    name: "platform-gitops-workflow-agent-v1"
+    enabled: true
+    capabilities:
+      - "create_pr"
+      - "review_pr"
+      - "enforce_policies"
+      - "coordinate_approval"
+      - "track_deployment"
+    schedule: "on_demand"
+    governance:
+      mi9_runtime:
+        intervention_level: "monitor"
+        autonomy_threshold: 0.6
+      ari_index:
+        autonomy_weight: 0.2
+        adaptability_weight: 0.4
+        continuity_weight: 0.4
+
+# MCP Toolchain configuration
+mcp_toolchain:
+  # GitHub MCP Server
+  github_mcp:
+    name: "platform-github-mcp-server-v1"
+    enabled: true
+    url: "http://localhost:8001"
+    transport: "http"
+    tools:
+      - "create_branch"
+      - "create_pr"
+      - "merge_pr"
+      - "close_pr"
+      - "validate_workflow"
+      - "get_repository_info"
+      - "list_branches"
+      - "get_file_content"
+      - "update_file"
+    authentication:
+      type: "token"
+      token_env: "GITHUB_TOKEN"
+  
+  # Kubernetes MCP Server
+  kubernetes_mcp:
+    name: "platform-kubernetes-mcp-server-v1"
+    enabled: true
+    url: "http://localhost:8002"
+    transport: "http"
+    tools:
+      - "apply_manifest"
+      - "validate_resource"
+      - "check_status"
+      - "get_logs"
+      - "list_pods"
+      - "scale_deployment"
+      - "rollback_deployment"
+    authentication:
+      type: "kubeconfig"
+      kubeconfig_path: "~/.kube/config"
+  
+  # Docker MCP Server
+  docker_mcp:
+    name: "platform-docker-mcp-server-v1"
+    enabled: true
+    url: "http://localhost:8003"
+    transport: "http"
+    tools:
+      - "build_image"
+      - "push_image"
+      - "list_images"
+      - "remove_image"
+      - "inspect_image"
+    authentication:
+      type: "token"
+      token_env: "DOCKER_TOKEN"
+  
+  # Cloudflare MCP Server
+  cloudflare_mcp:
+    name: "platform-cloudflare-mcp-server-v1"
+    enabled: true
+    url: "http://localhost:8004"
+    transport: "http"
+    tools:
+      - "deploy_pages"
+      - "create_dns_record"
+      - "update_dns_record"
+      - "list_dns_records"
+      - "purge_cache"
+    authentication:
+      type: "token"
+      token_env: "CLOUDFLARE_API_TOKEN"
+  
+  # Schema MCP Server
+  schema_mcp:
+    name: "platform-schema-mcp-server-v1"
+    enabled: true
+    url: "http://localhost:8005"
+    transport: "http"
+    tools:
+      - "validate_json_schema"
+      - "generate_schema"
+      - "convert_format"
+      - "merge_schemas"
+      - "validate_data"
+    authentication:
+      type: "none"
+  
+  # Template MCP Server
+  template_mcp:
+    name: "platform-template-mcp-server-v1"
+    enabled: true
+    url: "http://localhost:8006"
+    transport: "http"
+    tools:
+      - "render_template"
+      - "validate_template"
+      - "list_templates"
+      - "create_template"
+    authentication:
+      type: "none"
+  
+  # Filesystem MCP Server
+  filesystem_mcp:
+    name: "platform-filesystem-mcp-server-v1"
+    enabled: true
+    url: "http://localhost:8007"
+    transport: "http"
+    tools:
+      - "read_file"
+      - "write_file"
+      - "list_directory"
+      - "create_directory"
+      - "delete_file"
+      - "scan_directory"
+    authentication:
+      type: "none"
+
+# Taxonomy integration configuration
+taxonomy_integration:
+  enabled: true
+  version: "1.0.0"
+  validation_rules:
+    - "kebab-case"
+    - "domain-prefix"
+    - "no-consecutive-hyphens"
+    - "max-length"
+    - "version-format"
+  
+  naming_patterns:
+    agent: "{domain}-{name}-agent-v{version}"
+    workflow: "{domain}-{name}-workflow-v{version}"
+    tool: "{domain}-{name}-tool-v{version}"
+    mcp_server: "{domain}-{name}-mcp-server-v{version}"
+  
+  auto_fix:
+    enabled: true
+    strategies:
+      - "lowercase_conversion"
+      - "hyphen_normalization"
+      - "version_standardization"
+      - "domain_prefix_addition"
+
+# Observability configuration
+observability:
+  logging:
+    enabled: true
+    level: "INFO"
+    format: "json"
+    output: "stdout"
+    context_propagation: true
+  
+  tracing:
+    enabled: true
+    exporter: "otlp"
+    endpoint: "localhost:4317"
+    sampling_rate: 0.1
+  
+  metrics:
+    enabled: true
+    exporter: "prometheus"
+    port: 9090
+    labels:
+      - "agent_name"
+      - "operation_type"
+      - "namespace"
+      - "status"
+
+# Security configuration
+security:
+  authentication:
+    enabled: true
+    method: "token"
+    token_expiry_hours: 24
+  
+  permissioning:
+    enabled: true
+    default_role: "user"
+    rbac_enabled: true
+  
+  pii_filter:
+    enabled: true
+    redaction_char: "*"
+    patterns:
+      - email
+      - api_key
+      - token
+      - password
+      - credit_card
+  
+  a2a_auth:
+    enabled: true
+    methods:
+      - "shared_secret"
+      - "public_key"
+      - "challenge_response"
+
+# Governance configuration
+governance:
+  mi9_runtime:
+    enabled: true
+    intervention_levels:
+      - "monitor"
+      - "advise"
+      - "intervene"
+      - "terminate"
+    default_level: "monitor"
+  
+  ari_index:
+    enabled: true
+    scoring:
+      autonomy_weight: 0.4
+      adaptability_weight: 0.3
+      continuity_weight: 0.3
+    tiers:
+      tier1: { min_score: 0.8, max_autonomy: 1.0 }
+      tier2: { min_score: 0.6, max_autonomy: 0.7 }
+      tier3: { min_score: 0.4, max_autonomy: 0.5 }
+  
+  conformance_engine:
+    enabled: true
+    validation_mode: "strict"
+    forbidden_transitions: []
+  
+  containment:
+    enabled: true
+    default_level: "none"
+    auto_escalate: true
+    levels:
+      - "none"
+      - "monitor"
+      - "isolate"
+      - "terminate"
+  
+  drift_detection:
+    enabled: true
+    window_size: 100
+    threshold: 0.1
+    adaptive: true
+  
+  audit_trail:
+    enabled: true
+    tamper_evident: true
+    hash_chain: true
+    retention_days: 90
+
+# Deployment configuration
+deployment:
+  mode: "kubernetes"
+  
+  kubernetes:
+    namespace: "governance"
+    replicas: 3
+    
+    resources:
+      requests:
+        cpu: "500m"
+        memory: "512Mi"
+      limits:
+        cpu: "2000m"
+        memory: "2Gi"
+    
+    autoscaling:
+      enabled: true
+      min_replicas: 3
+      max_replicas: 10
+      target_cpu_utilization: 70
+      target_memory_utilization: 80
+    
+    service:
+      type: "ClusterIP"
+      port: 8080
+    
+    ingress:
+      enabled: true
+      host: "adk.governance.internal"
+      tls: true
+
+# Testing configuration
+testing:
+  unit_tests:
+    enabled: true
+    coverage_threshold: 80
+    frameworks:
+      - "pytest"
+      - "unittest"
+  
+  integration_tests:
+    enabled: true
+    coverage_threshold: 70
+    frameworks:
+      - "pytest"
+      - "testcontainers"
+  
+  e2e_tests:
+    enabled: true
+    coverage_threshold: 60
+    frameworks:
+      - "pytest"
+      - "selenium"
+  
+  performance_tests:
+    enabled: true
+    frameworks:
+      - "locust"
+      - "pytest-benchmark"
+
+# CI/CD integration
+ci_cd:
+  github_actions:
+    enabled: true
+    workflows:
+      - "lint"
+      - "test"
+      - "build"
+      - "deploy"
+  
+  pipelines:
+    lint:
+      stages:
+        - "flake8"
+        - "pylint"
+        - "mypy"
+    
+    test:
+      stages:
+        - "unit_tests"
+        - "integration_tests"
+        - "coverage_report"
+    
+    build:
+      stages:
+        - "docker_build"
+        - "docker_push"
+        - "tag_release"
+    
+    deploy:
+      stages:
+        - "kubernetes_deploy"
+        - "health_check"
+        - "smoke_test"
+
+# Documentation
+documentation:
+  generated: true
+  format: "markdown"
+  include_api_docs: true
+  include_architecture_docs: true
+  include_examples: true

@@ -1,0 +1,24 @@
+apiVersion: v2
+name: namespace-sdk
+description: Namespaces SDK Helm Chart - INSTANT Deployment
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+
+keywords:
+  - namespaces
+  - sdk
+  - instant
+  - automation
+  - kubernetes
+
+maintainers:
+  - name: MachineNativeOps
+    email: ops@machinenative.io
+
+dependencies: []
+
+annotations:
+  deployment.method: "instant"
+  performance.target: "<100ms"
+  automation.level: "100%"

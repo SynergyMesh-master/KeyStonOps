@@ -1,0 +1,74 @@
+name: Namespaces SDK CI/CD - INSTANT
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - '00-namespaces/namespaces-sdk/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '00-namespaces/namespaces-sdk/**'
+  workflow_dispatch:
+
+jobs:
+  instant-deploy:
+    name: INSTANT Deployment
+    runs-on: ubuntu-latest
+    timeout-minutes: 3  # INSTANT: 3分钟限制
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install Dependencies
+        run: npm ci
+        
+      - name: Build
+        run: npm run build
+        
+      - name: Test (INSTANT)
+        run: npm test -- --coverage --watchAll=false
+        
+      - name: Deploy (INSTANT)
+        run: |
+          echo "🚀 Starting INSTANT deployment..."
+          npm run deploy:instant
+          
+      - name: Verify Performance
+        run: |
+          echo "📊 Verifying <100ms latency targets..."
+          npm run verify:performance
+          
+      - name: Security Scan
+        run: |
+          echo "🛡️ Security verification..."
+          npm run security:scan
+          
+  integration-test:
+    name: INSTANT Integration
+    runs-on: ubuntu-latest
+    needs: instant-deploy
+    timeout-minutes: 2
+    
+    steps:
+      - name: Test MCP Integration
+        run: |
+          echo "🔗 Testing MCP integration..."
+          npm run test:mcp
+          
+      - name: Test ADK Integration
+        run: |
+          echo "🤖 Testing ADK integration..."
+          npm run test:adk
+          
+      - name: Test Additional Systems
+        run: |
+          echo "⚡ Testing Additional Systems integration..."
+          npm run test:additional
