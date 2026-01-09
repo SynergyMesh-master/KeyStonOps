@@ -1,0 +1,125 @@
+# document-validator.yaml
+# 文件結構驗證器配置
+
+version: "1.0.0"
+description: "文件結構驗證器規則配置"
+
+# 驗證規則
+rules:
+  # 目錄命名規範
+  directory_naming:
+    enabled: true
+    pattern: "^[a-z0-9_-]+$"
+    description: "目錄名稱應使用kebab-case格式（小寫字母、數字、連字符、下劃線）"
+    severity: "error"
+    suggestion: "將目錄名稱轉換為小寫並使用連字符分隔單詞"
+    examples:
+      valid: ["src", "my-project", "utils_v2", "test-data"]
+      invalid: ["MyProject", "my project", "MyProject_V2"]
+  
+  # 文件命名規範
+  file_naming:
+    enabled: true
+    pattern: "^[a-zA-Z0-9_\\-\\.]+$"
+    description: "文件名稱應使用標準字符（字母、數字、下劃線、連字符、點）"
+    severity: "error"
+    suggestion: "避免使用特殊字符和空格"
+    examples:
+      valid: ["main.py", "utils.py", "data_file.json"]
+      invalid: ["my file.py", "data@file.json", "test#1.py"]
+  
+  # 必需目錄檢查
+  required_directories:
+    enabled: true
+    directories:
+      - name: "src"
+        required: true
+        description: "源代碼目錄"
+      - name: "docs"
+        required: true
+        description: "文檔目錄"
+      - name: "tests"
+        required: true
+        description: "測試目錄"
+      - name: "config"
+        required: false
+        description: "配置文件目錄"
+    severity: "warning"
+    suggestion: "確保項目包含標準目錄結構"
+  
+  # 文件位置驗證
+  file_placement:
+    enabled: true
+    rules:
+      - pattern: "\\.py$"
+        allowed_locations: ["src/", "tests/"]
+        description: "Python文件應位於src或tests目錄中"
+        severity: "warning"
+      
+      - pattern: "\\.md$"
+        allowed_locations: ["docs/", "./"]
+        description: "Markdown文檔應位於docs目錄或根目錄"
+        severity: "warning"
+      
+      - pattern: "\\.json$|\\.yaml$|\\.yml$"
+        allowed_locations: ["config/"]
+        description: "配置文件應位於config目錄"
+        severity: "warning"
+  
+  # 內容結構驗證
+  content_structure:
+    enabled: true
+    rules:
+      - file_type: "README.md"
+        required_sections:
+          - "項目簡介"
+          - "安裝說明"
+          - "使用方法"
+        description: "README.md應包含標準章節"
+        severity: "info"
+      
+      - file_type: "*.py"
+        required_elements:
+          - "docstring"
+          - "if __name__ == '__main__'"
+        description: "Python文件應包含文檔字符串和主程序入口"
+        severity: "warning"
+
+# 排除規則
+exclude:
+  directories:
+    - ".git"
+    - "__pycache__"
+    - "node_modules"
+    - ".venv"
+    - "venv"
+    - "env"
+    - "dist"
+    - "build"
+  
+  files:
+    - "*.pyc"
+    - "*.pyo"
+    - "*.pyd"
+    - ".DS_Store"
+    - "Thumbs.db"
+    - "*.swp"
+    - "*~"
+
+# 驗證選項
+options:
+  strict_mode: false
+  fail_on_warnings: false
+  verbose_output: true
+  check_symlinks: true
+  follow_symlinks: false
+  max_file_size: 10485760  # 10MB
+  max_depth: 100
+
+# 報告配置
+reporting:
+  format: "text"
+  include_context: true
+  max_issues_per_file: 10
+  sort_by: "severity"
+  group_by: "file"

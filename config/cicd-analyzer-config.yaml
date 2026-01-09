@@ -1,0 +1,170 @@
+# cicd-analyzer-config.yaml
+# MachineNativeOps CI/CD 分析平台配置
+
+version: "1.0.0"
+description: "MachineNativeOps 持續集成分析平台配置"
+
+# 平台元數據
+platform:
+  name: "MachineNativeOps CI/CD Analyzer Platform"
+  version: "1.0.0"
+  description: "企業級持續集成分析平台"
+  maintainer: "MachineNativeOps Core Team"
+  license: "Apache-2.0"
+  mcp_version: "2025-11-25"
+  mcp_compliant: true
+
+# MCP 配置
+mcp:
+  namespace_prefix: "machinenativeops"
+  tool_id: "machinenativeops.cicd_analyzer"
+  protocol: "JSON-RPC 2.0"
+  
+  # 工具架構
+  tool_schema:
+    name: "machinenativeops.cicd_analyzer"
+    description: "MachineNativeOps CI/CD 分析平台 - 企業級持續集成分析工具"
+    input_schema:
+      type: "object"
+      properties:
+        path:
+          type: "string"
+          description: "要分析的項目路徑"
+        analysis_type:
+          type: "string"
+          enum: ["code_quality", "build_performance", "dependency", "security", "test_coverage", "all"]
+          description: "分析類型"
+          default: "all"
+        output_format:
+          type: "string"
+          enum: ["text", "json", "yaml"]
+          description: "輸出格式"
+          default: "text"
+        detail:
+          type: "boolean"
+          description: "顯示詳細分析結果"
+          default: "false"
+        build_command:
+          type: "string"
+          description: "構建命令"
+          default: "make build"
+        test_command:
+          type: "string"
+          description: "測試命令"
+          default: "pytest --cov=. --cov-report=json"
+
+# 分析模塊配置
+analysis_modules:
+  code_quality:
+    enabled: true
+    thresholds:
+      max_complexity: 10
+      min_maintainability: 70
+      max_duplication: 5.0
+      max_technical_debt: 10.0
+  
+  build_performance:
+    enabled: true
+    thresholds:
+      max_build_time: 600
+      max_memory_usage: 4096
+      max_cpu_usage: 90
+  
+  dependency:
+    enabled: true
+    checks:
+      check_vulnerabilities: true
+      check_outdated: true
+      check_licenses: true
+  
+  security:
+    enabled: true
+    severity_threshold: "medium"
+    scan_patterns:
+      - "*.py"
+      - "*.js"
+      - "*.java"
+      - "*.go"
+  
+  test_coverage:
+    enabled: true
+    thresholds:
+      min_line_coverage: 80
+      min_branch_coverage: 70
+      min_function_coverage: 80
+      max_failure_rate: 5
+
+# 安全配置
+security:
+  zero_trust:
+    enabled: true
+  quantum_safe:
+    enabled: true
+    level: "NIST Level 5+"
+  immutable_logging:
+    enabled: true
+
+# 性能配置
+performance:
+  timeouts:
+    code_quality_analysis: 120.0
+    build_performance_analysis: 600.0
+    dependency_analysis: 60.0
+    security_analysis: 180.0
+    test_coverage_analysis: 300.0
+    total_analysis: 600.0
+  
+  resource_limits:
+    cpu: "4"
+    memory: "8Gi"
+  
+  concurrency:
+    max_parallel_analyses: 8
+    max_concurrent_files: 100
+
+# 監控配置
+monitoring:
+  enabled: true
+  prometheus:
+    enabled: true
+    port: 9090
+
+# 合規性配置
+compliance:
+  standards:
+    - name: "SLSA"
+      version: "v1.0"
+      level: "L4+"
+    - name: "NIST CSF"
+      version: "2.0"
+      level: "Level 5+"
+    - name: "MCP"
+      version: "2025-11-25"
+      level: "Compliant"
+
+# 集成配置
+integrations:
+  ci_cd:
+    github_actions: true
+    gitlab_ci: true
+    jenkins: true
+  
+  code_quality:
+    sonarqube: true
+    codacy: true
+  
+  security:
+    snyk: true
+    dependabot: true
+  
+  monitoring:
+    prometheus: true
+    grafana: true
+
+# 功能開關
+feature_flags:
+  advanced_analysis: true
+  quantum_computing: true
+  ai_assistance: true
+  mcp_integration: true
+  instant_standard_compliance: true

@@ -1,0 +1,365 @@
+# machinenativeops-platform-config.yaml
+# MachineNativeOps 統一驗證平台配置
+
+version: "1.0.0"
+description: "MachineNativeOps 自動化驗證與觸發平台配置"
+
+# 平台元數據
+platform:
+  name: "MachineNativeOps Validator Platform"
+  version: "1.0.0"
+  description: "企業級文件驗證與INSTANT觸發器統一平台"
+  maintainer: "MachineNativeOps Core Team"
+  license: "Apache-2.0"
+  mcp_version: "2025-11-25"
+  mcp_compliant: true
+
+# MCP 配置
+mcp:
+  namespace_prefix: "machinenativeops"
+  tool_id: "machinenativeops.validator"
+  protocol: "JSON-RPC 2.0"
+  
+  # 工具架構
+  tool_schema:
+    name: "machinenativeops.validator"
+    description: "MachineNativeOps 統一驗證平台 - 企業級文件結構驗證與INSTANT觸發器驗證工具"
+    input_schema:
+      type: "object"
+      properties:
+        path:
+          type: "string"
+          description: "要驗證的目標路徑"
+        validation_type:
+          type: "string"
+          enum: ["document", "instant", "all"]
+          description: "驗證類型"
+          default: "all"
+        output_format:
+          type: "string"
+          enum: ["text", "json", "yaml"]
+          description: "輸出格式"
+          default: "text"
+        detail:
+          type: "boolean"
+          description: "顯示詳細驗證結果"
+          default: "false"
+
+# 驗證模塊配置
+validation_modules:
+  document_validator:
+    enabled: true
+    config_path: "./config/document-validator.yaml"
+    rules:
+      - name: "directory_naming"
+        pattern: "^[a-z0-9_-]+$"
+        severity: "error"
+      
+      - name: "file_naming"
+        pattern: "^[a-zA-Z0-9_\\-\\.]+$"
+        severity: "error"
+      
+      - name: "required_directories"
+        severity: "warning"
+      
+      - name: "content_structure"
+        severity: "warning"
+  
+  instant_trigger_validator:
+    enabled: true
+    config_path: "./config/instant-trigger.yaml"
+    dimensions:
+      - "naming_convention"
+      - "directory_structure"
+      - "legacy_archiving"
+      - "temp_cleaning"
+      - "document_sync"
+      - "python_compatibility"
+      - "evidence_integrity"
+      - "ai_contract_compliance"
+      - "governance_compliance"
+  
+  quantum_validator:
+    enabled: true
+    security_level: "NIST Level 5+"
+    algorithms: ["sha3-512", "blake3"]
+    key_size: 512
+
+# 安全配置
+security:
+  zero_trust:
+    enabled: true
+    minimal_privilege: true
+    continuous_verification: true
+    micro_segmentation: true
+  
+  quantum_safe:
+    enabled: true
+    level: "NIST Level 5+"
+    algorithms:
+      encryption: "AES-256-GCM"
+      signature: "ECDSA-P521"
+      hash: "SHA3-512"
+  
+  immutable_logging:
+    enabled: true
+    storage: "blockchain"
+    retention: "7years"
+    compression: "zstd"
+    encryption: true
+
+# 性能配置
+performance:
+  timeouts:
+    document_validation: 60.0
+    instant_validation: 30.0
+    quantum_validation: 5.0
+    total_execution: 120.0
+  
+  resource_limits:
+    cpu: "4"
+    memory: "8Gi"
+    disk: "10Gi"
+  
+  concurrency:
+    max_parallel_validations: 8
+    max_quantum_threads: 16
+    max_io_operations: 32
+
+# 監控配置
+monitoring:
+  enabled: true
+  prometheus:
+    enabled: true
+    port: 9090
+    path: "/metrics"
+  
+  metrics:
+    - name: "validation_duration_seconds"
+      help: "驗證執行時間"
+      type: "histogram"
+      buckets: [0.1, 0.5, 1.0, 5.0, 10.0, 30.0, 60.0]
+    
+    - name: "validation_success_total"
+      help: "成功驗證次數"
+      type: "counter"
+    
+    - name: "validation_failure_total"
+      help: "失敗驗證次數"
+      type: "counter"
+  
+  alerts:
+    - alert: "ValidationTimeout"
+      expr: "validation_duration_seconds > 60"
+      severity: "warning"
+      description: "驗證執行超時"
+    
+    - alert: "HighFailureRate"
+      expr: "rate(validation_failure_total[5m]) > 0.1"
+      severity: "critical"
+      description: "驗證失敗率過高"
+
+# 審計配置
+audit:
+  enabled: true
+  level: "EAL7+"
+  format: "json"
+  compression: "zstd"
+  encryption: true
+  retention: "permanent"
+  
+  blockchain:
+    enabled: true
+    network: "ethereum-mainnet"
+    contract: "0xMNOP_AUDIT"
+    gas_limit: 1000000
+  
+  storage:
+    type: "ipfs"
+    replication: 3
+    encryption: true
+
+# 網絡配置
+network:
+  security:
+    mtls: true
+    quantum_key_distribution: true
+    intrusion_detection: true
+    rate_limiting: true
+    max_connections: 1000
+  
+  ports:
+    api: 8080
+    metrics: 9090
+    health: 8081
+  
+  timeouts:
+    connection: 30.0
+    read: 60.0
+    write: 60.0
+
+# 備份與恢復
+backup:
+  enabled: true
+  schedule: "0 */6 * * *"  # 每6小時
+  retention: "30d"
+  encryption: true
+  verification: true
+  
+  storage:
+    type: "s3"
+    bucket: "mnop-backups"
+    region: "auto"
+    encryption: true
+  
+  monitoring:
+    enabled: true
+    alert_on_failure: true
+    alert_on_missing: true
+
+# 合規性配置
+compliance:
+  standards:
+    - name: "SLSA"
+      version: "v1.0"
+      level: "L4+"
+      required: true
+    
+    - name: "NIST CSF"
+      version: "2.0"
+      level: "Level 5+"
+      required: true
+    
+    - name: "ISO 27001"
+      version: "2022"
+      level: "A"
+      required: false
+    
+    - name: "SOC2"
+      version: "Type II"
+      level: "Compliant"
+      required: false
+    
+    - name: "MCP"
+      version: "2025-11-25"
+      level: "Compliant"
+      required: true
+  
+  evidence:
+    collection: true
+    verification: true
+    storage: "immutable"
+    retention: "7years"
+  
+  reporting:
+    automated: true
+    frequency: "daily"
+    format: "json"
+    recipients: ["security@machinenativeops.com"]
+
+# 自動化配置
+automation:
+  auto_remediation:
+    enabled: true
+    rules:
+      - name: "fix_naming_convention"
+        pattern: ".*[A-Z].*"
+        action: "convert_to_kebab_case"
+      
+      - name: "remove_temp_files"
+        pattern: "\\.tmp$|_scratch"
+        action: "delete"
+      
+      - name: "update_documentation_links"
+        pattern: "README\\.md"
+        action: "update_links"
+  
+  auto_scaling:
+    enabled: true
+    min_replicas: 2
+    max_replicas: 10
+    target_cpu_utilization: 70
+    target_memory_utilization: 80
+  
+  self_healing:
+    enabled: true
+    health_checks:
+      - name: "api_health"
+        endpoint: "/health"
+        interval: "30s"
+        timeout: "5s"
+      
+      - name: "database_health"
+        endpoint: "/db-health"
+        interval: "60s"
+        timeout: "10s"
+    
+    restart_policy: "always"
+    max_restart_attempts: 3
+
+# 部署配置
+deployment:
+  strategy: "blue-green"
+  canary:
+    enabled: true
+    percentage: 10
+    duration: "5m"
+  
+  rollback:
+    enabled: true
+    automatic: true
+    timeout: "10m"
+  
+  health_checks:
+    enabled: true
+    initial_delay: "30s"
+    period: "10s"
+    timeout: "5s"
+    success_threshold: 1
+    failure_threshold: 3
+  
+  resource_limits:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+
+# 集成配置
+integrations:
+  ci_cd:
+    github_actions: true
+    gitlab_ci: true
+    jenkins: true
+    tekton: true
+  
+  monitoring:
+    prometheus: true
+    grafana: true
+    datadog: false
+    new_relic: false
+  
+  logging:
+    loki: true
+    elasticsearch: true
+    splunk: false
+    cloudwatch: false
+  
+  notification:
+    slack: true
+    email: true
+    webhook: true
+    pagerduty: true
+
+# 功能開關
+feature_flags:
+  advanced_validation: true
+  quantum_computing: true
+  ai_assistance: true
+  predictive_analytics: true
+  automated_remediation: true
+  real_time_monitoring: true
+  blockchain_audit: true
+  multi_cloud_support: true
+  mcp_integration: true
