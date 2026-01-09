@@ -9,15 +9,15 @@
 - **平台／倉庫**：GitHub `namespace-mcp`
 - **分析範圍**：`workspace/mcp` 子專案（含 pipelines、schemas、types、tools、validation、servers 引用）與清單中引用的相關路徑。
 - **核心依據**：  
-  - 架構與標準：`workspace/mcp/namespace-mcp/README.md`、`workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml`  
-  - 型別與載入：`workspace/mcp/namespace-mcp/types/unifiedPipeline.ts`、`workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py`  
-  - 自動化掃描腳本：`workspace/mcp/namespace-mcp/tools/github_project_analyzer.py`  
+  - 架構與標準：`00-namespaces/namespaces-mcp/README.md`、`00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml`  
+  - 型別與載入：`00-namespaces/namespaces-mcp/types/unifiedPipeline.ts`、`00-namespaces/namespaces-mcp/tools/load_unified_pipeline.py`  
+  - 自動化掃描腳本：`00-namespaces/namespaces-mcp/tools/github_project_analyzer.py`  
   - MCP 端點與周邊：`workspace/src/mcp-servers/`（README 中含未解決衝突段落）
 
 ---
 
 ## 1. 架構設計理念分析
-- **核心架構模式**：INSTANT Execution 架構（事件驅動、零人工、<3 分鐘全堆疊），在 `workspace/mcp/namespace-mcp/README.md` 以分層 mermaid 圖呈現，並以 `unified-pipeline-config.yaml` 描述各層。
+- **核心架構模式**：INSTANT Execution 架構（事件驅動、零人工、<3 分鐘全堆疊），在 `00-namespaces/namespaces-mcp/README.md` 以分層 mermaid 圖呈現，並以 `unified-pipeline-config.yaml` 描述各層。
 - **技術棧選擇與優勢**  
   - **YAML/JSON Schema** 驗證：`pipelines/unified-pipeline-config.yaml` + `schemas/unified-pipeline.schema.json` 提供嚴格配置與向後相容性。  
   - **TypeScript 型別**：`types/unifiedPipeline.ts` 提供編譯期守衛與執行期常數，用於 MCP 端工具及前後端共享。  
@@ -94,7 +94,7 @@
 
 ## 5. 深度細節補充
 - **代碼質量**：TS 型別與 Python dataclass 具明確邊界； `_safe_construct` 會記錄未知欄位警告，利於向前相容。建議為 MCP JS 端與 loader 補充 lint/test pipeline，降低靜態缺陷風險。  
-- **文檔**：`workspace/mcp/namespace-mcp/README.md` 架構詳盡；MCP 端 README 需修復衝突後再對齊。可增設「實測指標/運行手冊」區塊。  
+- **文檔**：`00-namespaces/namespaces-mcp/README.md` 架構詳盡；MCP 端 README 需修復衝突後再對齊。可增設「實測指標/運行手冊」區塊。  
 - **測試策略**：目前未見針對 `tools`/`types` 的自動測試；建議新增最小單元測試（載入合法/違規 manifest、延遲/並行邊界、humanIntervention 斷言）。  
 - **CI/CD 與部署**：manifest 指向 `.github/workflows/instant-execution-validator.yml`、`quantum-validation-pr.yml`，但缺少 MCP 端特定報告；建議在 CI 中加入 `npm run check:strict`（MCP servers README 所述）並產生構件。  
 - **社群與貢獻**：未在 mcp 子專案發現貢獻者/活躍度指標；可透過 GitHub Insights 或 analyzer 腳本增補。  

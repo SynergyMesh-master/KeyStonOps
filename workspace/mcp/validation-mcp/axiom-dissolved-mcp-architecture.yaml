@@ -2927,8 +2927,8 @@ integration_manifest:
     telemetry: opentelemetry
 
   cross_references:
-    unified_pipeline: workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml
-    integration_index: workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml
+    unified_pipeline: 00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml
+    integration_index: 00-namespaces/namespaces-mcp/INTEGRATION_INDEX.yaml
     instant_engine: workspace/src/autonomous/deployment/instant_execution_engine_v2.py
     existing_mcp_servers: workspace/src/mcp-servers/
 

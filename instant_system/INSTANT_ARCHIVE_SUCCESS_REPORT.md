@@ -375,7 +375,7 @@ All 5 INSTANT execution principles perfectly demonstrated:
 - [ ] Add automated cleanup of old archives
 
 ### Maintenance
-- Archive location: `workspace/mcp/namespace-mcp/refactor_playbooks/_archive/`
+- Archive location: `00-namespaces/namespaces-mcp/refactor_playbooks/_archive/`
 - Retention policy: Manual (no auto-deletion)
 - Rollback: Extract tar.gz anytime
 - Monitoring: Check archive_result JSON files

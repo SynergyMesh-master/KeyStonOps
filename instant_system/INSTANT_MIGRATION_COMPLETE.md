@@ -22,7 +22,7 @@
 
 ### 檔案遷移
 - **源位置**: `workspace/docs/refactor_playbooks/`
-- **目標位置**: `workspace/mcp/namespace-mcp/refactor_playbooks/`
+- **目標位置**: `00-namespaces/namespaces-mcp/refactor_playbooks/`
 - **檔案數量**: 107 → 110 (新增 3 個文檔)
 - **總大小**: 1.9 MB
 - **成功率**: 100%
@@ -125,7 +125,7 @@ statistics:
 ### INTEGRATION_INDEX.yaml ✅
 ```yaml
 refactor_playbooks:
-  location: workspace/mcp/namespace-mcp/refactor_playbooks/
+  location: 00-namespaces/namespaces-mcp/refactor_playbooks/
   status: INTEGRATED
   integrationMode: INSTANT-Autonomous
   executionTime: "4.8s"
@@ -141,7 +141,7 @@ refactor_playbooks:
 ## 📁 最終目錄結構
 
 ```
-workspace/mcp/namespace-mcp/refactor_playbooks/
+00-namespaces/namespaces-mcp/refactor_playbooks/
 ├── 01_deconstruction/          (10 files) ✅
 ├── 02_integration/             (15 files) ✅
 ├── 03_refactor/                (50 files) ✅
@@ -248,14 +248,14 @@ Size: 1.9 MB
 ## 📞 資源與文檔
 
 ### 核心文檔
-- **遷移清單**: `machine-native-ops/workspace/mcp/namespace-mcp/refactor_playbooks/INSTANT_MIGRATION_MANIFEST.yaml`
-- **遷移通知**: `machine-native-ops/workspace/mcp/namespace-mcp/refactor_playbooks/MIGRATION_NOTICE.md`
-- **INSTANT 指南**: `machine-native-ops/workspace/mcp/namespace-mcp/refactor_playbooks/README_INSTANT.md`
+- **遷移清單**: `machine-native-ops/00-namespaces/namespaces-mcp/refactor_playbooks/INSTANT_MIGRATION_MANIFEST.yaml`
+- **遷移通知**: `machine-native-ops/00-namespaces/namespaces-mcp/refactor_playbooks/MIGRATION_NOTICE.md`
+- **INSTANT 指南**: `machine-native-ops/00-namespaces/namespaces-mcp/refactor_playbooks/README_INSTANT.md`
 - **舊位置通知**: `machine-native-ops/workspace/docs/refactor_playbooks/MOVED.md`
 
 ### 索引文檔
-- **NAMESPACE_INDEX**: `machine-native-ops/workspace/mcp/namespace-mcp/NAMESPACE_INDEX.yaml`
-- **INTEGRATION_INDEX**: `machine-native-ops/workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml`
+- **NAMESPACE_INDEX**: `machine-native-ops/00-namespaces/namespaces-mcp/NAMESPACE_INDEX.yaml`
+- **INTEGRATION_INDEX**: `machine-native-ops/00-namespaces/namespaces-mcp/INTEGRATION_INDEX.yaml`
 
 ### 評估文檔 (本地)
 - **評估報告**: `refactor_playbooks_assessment.md`
@@ -363,7 +363,7 @@ Size: 1.9 MB
 
 **refactor_playbooks INSTANT 遷移已成功完成！**
 
-- ✅ 所有檔案已遷移至 `workspace/mcp/namespace-mcp/refactor_playbooks/`
+- ✅ 所有檔案已遷移至 `00-namespaces/namespaces-mcp/refactor_playbooks/`
 - ✅ 所有路徑引用已更新
 - ✅ 所有索引已整合
 - ✅ 所有驗證已通過

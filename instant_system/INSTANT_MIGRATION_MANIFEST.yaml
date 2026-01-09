@@ -71,7 +71,7 @@ migration:
     structure: "three-phase-refactor-system"
     
   target:
-    location: "workspace/mcp/namespace-mcp/refactor_playbooks/"
+    location: "00-namespaces/namespaces-mcp/refactor_playbooks/"
     fileCount: 107
     totalSize: "1.9MB"
     integrated: true

@@ -12,18 +12,18 @@
 #### 🎯 遠端儲存庫 (已同步)
 ```
 ✅ scripts/migration/axiom-namespace-migrator.py
-✅ workspace/mcp/namespace-mcp/axiom/core/ (4個核心檔案)
-✅ workspace/mcp/namespace-mcp/axiom/examples/ (1個範例檔案)
-✅ workspace/mcp/namespace-mcp/axiom/docs/ (1個文檔檔案)
-✅ workspace/mcp/namespace-mcp/axiom/plugins/ (4個插件檔案)
-✅ workspace/mcp/namespace-mcp/axiom/tests/ (1個測試檔案)
+✅ 00-namespaces/namespaces-mcp/axiom/core/ (4個核心檔案)
+✅ 00-namespaces/namespaces-mcp/axiom/examples/ (1個範例檔案)
+✅ 00-namespaces/namespaces-mcp/axiom/docs/ (1個文檔檔案)
+✅ 00-namespaces/namespaces-mcp/axiom/plugins/ (4個插件檔案)
+✅ 00-namespaces/namespaces-mcp/axiom/tests/ (1個測試檔案)
 ```
 
 #### 🏠 本機工作區 (包含原始版本)
 ```
 📦 machine-native-ops/ (遠端同步版本)
 ├── scripts/migration/axiom-namespace-migrator.py
-├── workspace/mcp/namespace-mcp/axiom/ (11個檔案)
+├── 00-namespaces/namespaces-mcp/axiom/ (11個檔案)
 
 📦 axiom_backup/ (原始開發版本)
 ├── core/ (3個核心檔案)

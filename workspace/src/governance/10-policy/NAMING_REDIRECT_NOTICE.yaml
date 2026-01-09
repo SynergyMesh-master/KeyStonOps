@@ -3,7 +3,7 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 #
 # IMPORTANT: This directory's naming policy files have been consolidated into:
-#   workspace/mcp/namespace-mcp/policies/
+#   00-namespaces/namespaces-mcp/policies/
 #
 # Single Source of Truth: namespace-mcp
 #
@@ -14,10 +14,10 @@
 # Original files in this directory are preserved for backward compatibility.
 # All new development should reference namespace-mcp as the canonical source.
 #
-# See: workspace/mcp/namespace-mcp/README.md
+# See: 00-namespaces/namespaces-mcp/README.md
 # ═══════════════════════════════════════════════════════════════════════════════
 
-redirectTo: workspace/mcp/namespace-mcp/policies/
+redirectTo: 00-namespaces/namespaces-mcp/policies/
 singleSourceOfTruth: true
 consolidationVersion: "3.0.0"
 consolidationDate: "2026-01-07"
@@ -31,6 +31,6 @@ consolidatedFiles:
   - naming-validation-automations.yaml
 
 documentation:
-  - workspace/mcp/namespace-mcp/NAMESPACE_INDEX.yaml
-  - workspace/mcp/namespace-mcp/README.md
-  - workspace/mcp/namespace-mcp/REDIRECT_NOTICE.md
+  - 00-namespaces/namespaces-mcp/NAMESPACE_INDEX.yaml
+  - 00-namespaces/namespaces-mcp/README.md
+  - 00-namespaces/namespaces-mcp/REDIRECT_NOTICE.md

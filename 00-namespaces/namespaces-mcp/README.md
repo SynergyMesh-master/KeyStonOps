@@ -22,7 +22,7 @@ namespace-mcp 是 MachineNativeOps 生態系統的核心子專案，專注於實
 - ✅ **測試覆蓋率**: 80%+ 代碼覆蓋
 - ✅ **執行標準化**: 清晰的入口點和執行流程
 
-**專案路徑**: `machine-native-ops/workspace/mcp/namespace-mcp`
+**專案路徑**: `machine-native-ops/00-namespaces/namespaces-mcp`
 
 ### 🎯 核心目標
 
@@ -34,7 +34,7 @@ namespace-mcp 是 MachineNativeOps 生態系統的核心子專案，專注於實
 ## 🏗️ INSTANT 標準專案結構
 
 ```
-workspace/mcp/namespace-mcp/          # INSTANT 標準路徑
+00-namespaces/namespaces-mcp/          # INSTANT 標準路徑
 ├── .instant-manifest.yaml            # INSTANT 合規清單
 ├── .gitignore                        # Git 忽略規則
 │

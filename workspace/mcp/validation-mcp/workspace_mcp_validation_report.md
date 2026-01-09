@@ -28,21 +28,21 @@
 
 ### ❌ 驗證錯誤
 - YAML syntax error: expected a single document in the stream
-  in "workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml", line 21, column 1
+  in "00-namespaces/namespaces-00-namespaces/namespaces-mcp-dissolved-mcp-architecture.yaml", line 21, column 1
 but found another document
-  in "workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml", line 2979, column 1
+  in "00-namespaces/namespaces-00-namespaces/namespaces-mcp-dissolved-mcp-architecture.yaml", line 2979, column 1
 - YAML syntax error: expected a single document in the stream
-  in "workspace/mcp/namespace-mcp/namespace-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml", line 18, column 1
+  in "00-namespaces/namespaces-00-namespaces/namespaces-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml", line 18, column 1
 but found another document
-  in "workspace/mcp/namespace-mcp/namespace-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml", line 506, column 1
+  in "00-namespaces/namespaces-00-namespaces/namespaces-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml", line 506, column 1
 - YAML syntax error: expected a single document in the stream
-  in "workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml", line 14, column 1
+  in "00-namespaces/namespaces-mcp/INTEGRATION_INDEX.yaml", line 14, column 1
 but found another document
-  in "workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml", line 514, column 1
+  in "00-namespaces/namespaces-mcp/INTEGRATION_INDEX.yaml", line 514, column 1
 - YAML syntax error: expected a single document in the stream
-  in "workspace/mcp/namespace-mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml", line 14, column 1
+  in "00-namespaces/namespaces-mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml", line 14, column 1
 but found another document
-  in "workspace/mcp/namespace-mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml", line 459, column 1
+  in "00-namespaces/namespaces-mcp/validation/WORLD_CLASS_VALIDATION_PIPELINE.yaml", line 459, column 1
 
 > 註記 / Note:  
 > 上述 YAML 語法錯誤已確認為真實問題，原因為單一串流中包含多個未正確分隔的文件。  
@@ -144,7 +144,7 @@ but found another document
   - 預估工作量: 2-3 hours
   - 說明: 單一串流中包含多個未正確分隔的文件，需要修正分隔或拆分為多個檔案
 - **Resolve remaining duplicate import warnings** (優先級: low)
-  - 影響檔案: Multiple tool files under workspace/mcp/namespace-mcp/servers/tools/
+  - 影響檔案: Multiple tool files under 00-namespaces/namespaces-mcp/servers/tools/
   - 預估工作量: 30 minutes
   - 說明: 工具模組中仍有一些重複的 import 語句需要清理
 ### 高優先級

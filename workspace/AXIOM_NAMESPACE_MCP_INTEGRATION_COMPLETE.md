@@ -14,7 +14,7 @@
 
 ### 原始結構 → namespace-mcp 標準結構
 ```
-axiom_backup/                     → workspace/mcp/namespace-mcp/axiom/
+axiom_backup/                     → 00-namespaces/namespaces-mcp/axiom/
 ├── standards/                     ├── standards/
 ├── core/                         ├── core/
 ├── plugins/                      ├── plugins/
@@ -147,17 +147,17 @@ axiom_backup/                     → workspace/mcp/namespace-mcp/axiom/
 
 ### 核心文檔
 - [Pull Request #1186](https://github.com/MachineNativeOps/machine-native-ops/pull/1186)
-- [NAMESPACE_INDEX.yaml](machine-native-ops/workspace/mcp/namespace-mcp/NAMESPACE_INDEX.yaml)
+- [NAMESPACE_INDEX.yaml](machine-native-ops/00-namespaces/namespaces-mcp/NAMESPACE_INDEX.yaml)
 - [集成配置](NAMESPACE_MCP_AXIOM_INTEGRATION.yaml)
 
 ### 系統文檔
-- [AXIOM系統文檔](machine-native-ops/workspace/mcp/namespace-mcp/axiom/docs/README.md)
-- [插件接口規範](machine-native-ops/workspace/mcp/namespace-mcp/axiom/standards/plugin_interface_v1.yaml)
-- [完整集成示例](machine-native-ops/workspace/mcp/namespace-mcp/axiom/examples/complete_integration.py)
+- [AXIOM系統文檔](machine-native-ops/00-namespaces/namespaces-mcp/axiom/docs/README.md)
+- [插件接口規範](machine-native-ops/00-namespaces/namespaces-mcp/axiom/standards/plugin_interface_v1.yaml)
+- [完整集成示例](machine-native-ops/00-namespaces/namespaces-mcp/axiom/examples/complete_integration.py)
 
 ### 測試文檔
-- [綜合測試套件](machine-native-ops/workspace/mcp/namespace-mcp/axiom/tests/test_plugin_system.py)
-- [系統演示](machine-native-ops/workspace/mcp/namespace-mcp/axiom/docs/demo_system.py)
+- [綜合測試套件](machine-native-ops/00-namespaces/namespaces-mcp/axiom/tests/test_plugin_system.py)
+- [系統演示](machine-native-ops/00-namespaces/namespaces-mcp/axiom/docs/demo_system.py)
 
 ---
 

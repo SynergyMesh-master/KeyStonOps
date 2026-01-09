@@ -22,13 +22,13 @@
 - **觸發評論**: 2666549903
 - **變更類型**: Documentation update - workspace/mcp validation report
 - **影響文件**: 
-  - `workspace/mcp/namespace-mcp/workspace_mcp_validation_report.md`
+  - `00-namespaces/namespaces-mcp/workspace_mcp_validation_report.md`
 
 ---
 
 ## 📁 文件變更分析
 
-### workspace/mcp/namespace-mcp/workspace_mcp_validation_report.md
+### 00-namespaces/namespaces-mcp/workspace_mcp_validation_report.md
 **類型**: markdown  
 **用途**: Validation report documenting workspace/MCP verification results
 

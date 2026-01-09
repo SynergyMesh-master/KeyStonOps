@@ -44,7 +44,7 @@
 /core/contracts/ @MachineNativeOps-admin
 /mcp-servers/ @MachineNativeOps-admin
 # Workspace MCP packages (namespaced adapters)
-/workspace/mcp/namespace-mcp/ @MachineNativeOps-admin
+/00-namespaces/namespaces-mcp/ @MachineNativeOps-admin
 
 # Advanced system source - Requires senior developer review
 /advanced-system-src/ @MachineNativeOps-admin

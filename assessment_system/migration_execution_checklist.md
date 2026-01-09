@@ -35,7 +35,7 @@
   ```
 - [ ] Verify backup integrity
 - [ ] Document backup location: `________________`
-- [ ] Create backup of `workspace/mcp/namespace-mcp/`
+- [ ] Create backup of `00-namespaces/namespaces-mcp/`
 - [ ] Commit all current changes to git
 
 ### Dependency Audit
@@ -68,7 +68,7 @@
 ### Target Directory Setup
 - [ ] Create target directory structure
   ```bash
-  mkdir -p machine-native-ops/workspace/mcp/namespace-mcp/refactor_playbooks
+  mkdir -p machine-native-ops/00-namespaces/namespaces-mcp/refactor_playbooks
   ```
 - [ ] Verify directory permissions
 - [ ] Test write access
@@ -97,11 +97,11 @@
 - [ ] Execute file copy to target location
   ```bash
   cp -r machine-native-ops/workspace/docs/refactor_playbooks/* \
-    machine-native-ops/workspace/mcp/namespace-mcp/refactor_playbooks/
+    machine-native-ops/00-namespaces/namespaces-mcp/refactor_playbooks/
   ```
 - [ ] Verify all 107 files copied
   ```bash
-  find machine-native-ops/workspace/mcp/namespace-mcp/refactor_playbooks/ \
+  find machine-native-ops/00-namespaces/namespaces-mcp/refactor_playbooks/ \
     -type f | wc -l
   # Expected: 107
   ```
@@ -143,7 +143,7 @@
 ## Phase 2: Integration (Day 2 - Afternoon)
 
 ### NAMESPACE_INDEX.yaml Update
-- [ ] Open `workspace/mcp/namespace-mcp/NAMESPACE_INDEX.yaml`
+- [ ] Open `00-namespaces/namespaces-mcp/NAMESPACE_INDEX.yaml`
 - [ ] Update statistics section
   ```yaml
   statistics:
@@ -160,11 +160,11 @@
 - [ ] Commit changes
 
 ### INTEGRATION_INDEX.yaml Update
-- [ ] Open `workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml`
+- [ ] Open `00-namespaces/namespaces-mcp/INTEGRATION_INDEX.yaml`
 - [ ] Add refactor_playbooks integration section
   ```yaml
   refactor_playbooks:
-    location: workspace/mcp/namespace-mcp/refactor_playbooks/
+    location: 00-namespaces/namespaces-mcp/refactor_playbooks/
     type: refactor-system
     status: integrated
     integration_date: "2026-01-08"
@@ -197,7 +197,7 @@
   # Before
   - uses: docs/refactor_playbooks/config/
   # After
-  - uses: mcp/namespace-mcp/refactor_playbooks/config/
+  - uses: 00-namespaces/namespaces-mcp/refactor_playbooks/config/
   ```
 - [ ] Test workflows in staging
 - [ ] Commit workflow changes
@@ -229,13 +229,13 @@
   # Source
   find machine-native-ops/workspace/docs/refactor_playbooks/ -type f | wc -l
   # Target
-  find machine-native-ops/workspace/mcp/namespace-mcp/refactor_playbooks/ -type f | wc -l
+  find machine-native-ops/00-namespaces/namespaces-mcp/refactor_playbooks/ -type f | wc -l
   # Should match: 107
   ```
 - [ ] Verify total size matches
   ```bash
   du -sh machine-native-ops/workspace/docs/refactor_playbooks/
-  du -sh machine-native-ops/workspace/mcp/namespace-mcp/refactor_playbooks/
+  du -sh machine-native-ops/00-namespaces/namespaces-mcp/refactor_playbooks/
   # Should both be ~1.9M
   ```
 - [ ] Run file checksum comparison
@@ -245,14 +245,14 @@
 - [ ] Test all relative paths in config files
 - [ ] Verify YAML files parse correctly
   ```bash
-  yamllint machine-native-ops/workspace/mcp/namespace-mcp/refactor_playbooks/config/*.yaml
+  yamllint machine-native-ops/00-namespaces/namespaces-mcp/refactor_playbooks/config/*.yaml
   ```
 - [ ] Verify markdown links work
 - [ ] Check for broken references
   ```bash
   # Look for old path references
   grep -r "docs/refactor_playbooks" \
-    machine-native-ops/workspace/mcp/namespace-mcp/refactor_playbooks/
+    machine-native-ops/00-namespaces/namespaces-mcp/refactor_playbooks/
   # Should return 0 results
   ```
 
@@ -288,15 +288,15 @@
   # ⚠️ LOCATION CHANGED
   
   This directory has been migrated to:
-  **New Location**: `workspace/mcp/namespace-mcp/refactor_playbooks/`
+  **New Location**: `00-namespaces/namespaces-mcp/refactor_playbooks/`
   
-  See: [Migration Assessment](../../mcp/namespace-mcp/refactor_playbooks/MIGRATION_ASSESSMENT.md)
+  See: [Migration Assessment](../../00-namespaces/namespaces-mcp/refactor_playbooks/MIGRATION_ASSESSMENT.md)
   EOF
   ```
 - [ ] Add redirect in old README.md
 - [ ] Create symlink (optional)
   ```bash
-  ln -s ../../mcp/namespace-mcp/refactor_playbooks \
+  ln -s ../../00-namespaces/namespaces-mcp/refactor_playbooks \
     machine-native-ops/workspace/docs/refactor_playbooks_new
   ```
 

@@ -109,7 +109,7 @@ teams/
 ## 聖杯團隊 (Holy Grail INSTANT Team)
 
 - **位置**：`teams/holy-grail`
-- **方法論**：引用 `workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml` 與 `AXIOM_DISSOLVED_INTEGRATION_MANIFEST.yaml`，落實 INSTANT Execution 與 Quantum Flow Toolkit。
+- **方法論**：引用 `00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml` 與 `AXIOM_DISSOLVED_INTEGRATION_MANIFEST.yaml`，落實 INSTANT Execution 與 Quantum Flow Toolkit。
 - **三階段**：解構 → 整合 → 重構，對應 unified pipeline 的 instant-feature-delivery (分析→生成→驗證→部署)。
 - **守則**：closed-loop、0 人工介入、延遲閾值 (≤100ms / ≤500ms / ≤5s)，並行 64-256 代理。
 

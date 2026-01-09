@@ -11,7 +11,7 @@
 此目錄已遷移至：
 
 ```
-workspace/mcp/namespace-mcp/refactor_playbooks/
+00-namespaces/namespaces-mcp/refactor_playbooks/
 ```
 
 **原因**: 整合至 namespace-mcp 作為命名與重構治理的單一真相來源
@@ -20,10 +20,10 @@ workspace/mcp/namespace-mcp/refactor_playbooks/
 
 ## 🔗 快速連結
 
-- [新位置](../../mcp/namespace-mcp/refactor_playbooks/)
-- [遷移通知](../../mcp/namespace-mcp/refactor_playbooks/MIGRATION_NOTICE.md)
-- [遷移清單](../../mcp/namespace-mcp/refactor_playbooks/INSTANT_MIGRATION_MANIFEST.yaml)
-- [NAMESPACE_INDEX.yaml](../../mcp/namespace-mcp/NAMESPACE_INDEX.yaml)
+- [新位置](../../00-namespaces/namespaces-mcp/refactor_playbooks/)
+- [遷移通知](../../00-namespaces/namespaces-mcp/refactor_playbooks/MIGRATION_NOTICE.md)
+- [遷移清單](../../00-namespaces/namespaces-mcp/refactor_playbooks/INSTANT_MIGRATION_MANIFEST.yaml)
+- [NAMESPACE_INDEX.yaml](../../00-namespaces/namespaces-mcp/NAMESPACE_INDEX.yaml)
 
 ---
 
@@ -36,7 +36,7 @@ workspace/mcp/namespace-mcp/refactor_playbooks/
 cd workspace/docs/refactor_playbooks
 
 # 新路徑 (當前)
-cd workspace/mcp/namespace-mcp/refactor_playbooks
+cd 00-namespaces/namespaces-mcp/refactor_playbooks
 ```
 
 ### Git 歷史
@@ -89,11 +89,11 @@ git log --follow -- workspace/docs/refactor_playbooks/
 ## 📞 支援
 
 如有問題，請參考：
-- [遷移通知](../../mcp/namespace-mcp/refactor_playbooks/MIGRATION_NOTICE.md)
-- [NAMESPACE_INDEX.yaml](../../mcp/namespace-mcp/NAMESPACE_INDEX.yaml)
+- [遷移通知](../../00-namespaces/namespaces-mcp/refactor_playbooks/MIGRATION_NOTICE.md)
+- [NAMESPACE_INDEX.yaml](../../00-namespaces/namespaces-mcp/NAMESPACE_INDEX.yaml)
 
 ---
 
 **此目錄將在 30 天後歸檔**
 
-**新位置**: `workspace/mcp/namespace-mcp/refactor_playbooks/`
+**新位置**: `00-namespaces/namespaces-mcp/refactor_playbooks/`

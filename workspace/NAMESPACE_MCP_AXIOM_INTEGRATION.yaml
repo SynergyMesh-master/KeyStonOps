@@ -52,28 +52,28 @@ fileRegistry:
   registeredFiles:
     # === Core Architecture ===
     - originalPath: axiom_backup/standards/plugin_interface_v1.yaml
-      namespaceMcpPath: workspace/mcp/namespace-mcp/axiom/standards/plugin_interface_v1.yaml
+      namespaceMcpPath: 00-namespaces/namespaces-mcp/axiom/standards/plugin_interface_v1.yaml
       category: core
       purpose: "Plugin interface specification v1.0.0"
       status: REGISTERED
       checksum: "SHA256:pending"
       
     - originalPath: axiom_backup/core/plugin_manager.py
-      namespaceMcpPath: workspace/mcp/namespace-mcp/axiom/core/plugin_manager.py
+      namespaceMcpPath: 00-namespaces/namespaces-mcp/axiom/core/plugin_manager.py
       category: core
       purpose: "Hot-swappable plugin manager"
       status: REGISTERED
       checksum: "SHA256:pending"
       
     - originalPath: axiom_backup/core/config_manager.py
-      namespaceMcpPath: workspace/mcp/namespace-mcp/axiom/core/config_manager.py
+      namespaceMcpPath: 00-namespaces/namespaces-mcp/axiom/core/config_manager.py
       category: core
       purpose: "Configuration management with hot-reload"
       status: REGISTERED
       checksum: "SHA256:pending"
       
     - originalPath: axiom_backup/core/plugin_orchestrator.py
-      namespaceMcpPath: workspace/mcp/namespace-mcp/axiom/core/plugin_orchestrator.py
+      namespaceMcpPath: 00-namespaces/namespaces-mcp/axiom/core/plugin_orchestrator.py
       category: core
       purpose: "Plugin execution orchestrator"
       status: REGISTERED
@@ -81,28 +81,28 @@ fileRegistry:
       
     # === Plugin Implementations ===
     - originalPath: axiom_backup/plugins/compression_zstd.py
-      namespaceMcpPath: workspace/mcp/namespace-mcp/axiom/plugins/compression_zstd.py
+      namespaceMcpPath: 00-namespaces/namespaces-mcp/axiom/plugins/compression_zstd.py
       category: plugins
       purpose: "ZSTD compression plugin"
       status: REGISTERED
       checksum: "SHA256:pending"
       
     - originalPath: axiom_backup/plugins/encryption_aes.py
-      namespaceMcpPath: workspace/mcp/namespace-mcp/axiom/plugins/encryption_aes.py
+      namespaceMcpPath: 00-namespaces/namespaces-mcp/axiom/plugins/encryption_aes.py
       category: plugins
       purpose: "AES-256 encryption plugin"
       status: REGISTERED
       checksum: "SHA256:pending"
       
     - originalPath: axiom_backup/plugins/backup_incremental.py
-      namespaceMcpPath: workspace/mcp/namespace-mcp/axiom/plugins/backup_incremental.py
+      namespaceMcpPath: 00-namespaces/namespaces-mcp/axiom/plugins/backup_incremental.py
       category: plugins
       purpose: "Incremental backup plugin"
       status: REGISTERED
       checksum: "SHA256:pending"
       
     - originalPath: axiom_backup/plugins/storage_s3.py
-      namespaceMcpPath: workspace/mcp/namespace-mcp/axiom/plugins/storage_s3.py
+      namespaceMcpPath: 00-namespaces/namespaces-mcp/axiom/plugins/storage_s3.py
       category: plugins
       purpose: "S3 storage backend plugin"
       status: REGISTERED
@@ -110,14 +110,14 @@ fileRegistry:
       
     # === Configuration ===
     - originalPath: axiom_backup/config/plugins_config.yaml
-      namespaceMcpPath: workspace/mcp/namespace-mcp/axiom/config/plugins_config.yaml
+      namespaceMcpPath: 00-namespaces/namespaces-mcp/axiom/config/plugins_config.yaml
       category: configuration
       purpose: "Plugin configuration with hot-reload"
       status: REGISTERED
       checksum: "SHA256:pending"
       
     - originalPath: axiom_backup/requirements.txt
-      namespaceMcpPath: workspace/mcp/namespace-mcp/axiom/config/requirements.txt
+      namespaceMcpPath: 00-namespaces/namespaces-mcp/axiom/config/requirements.txt
       category: configuration
       purpose: "System dependencies"
       status: REGISTERED
@@ -125,7 +125,7 @@ fileRegistry:
       
     # === Examples & Demos ===
     - originalPath: axiom_backup/examples/complete_integration.py
-      namespaceMcpPath: workspace/mcp/namespace-mcp/axiom/examples/complete_integration.py
+      namespaceMcpPath: 00-namespaces/namespaces-mcp/axiom/examples/complete_integration.py
       category: examples
       purpose: "Complete integration example"
       status: REGISTERED
@@ -133,7 +133,7 @@ fileRegistry:
       
     # === Testing ===
     - originalPath: axiom_backup/tests/test_plugin_system.py
-      namespaceMcpPath: workspace/mcp/namespace-mcp/axiom/tests/test_plugin_system.py
+      namespaceMcpPath: 00-namespaces/namespaces-mcp/axiom/tests/test_plugin_system.py
       category: tests
       purpose: "Comprehensive test suite"
       status: REGISTERED
@@ -141,14 +141,14 @@ fileRegistry:
       
     # === Documentation ===
     - originalPath: axiom_backup/README.md
-      namespaceMcpPath: workspace/mcp/namespace-mcp/axiom/docs/README.md
+      namespaceMcpPath: 00-namespaces/namespaces-mcp/axiom/docs/README.md
       category: documentation
       purpose: "System documentation"
       status: REGISTERED
       checksum: "SHA256:pending"
       
     - originalPath: axiom_backup/demo_system.py
-      namespaceMcpPath: workspace/mcp/namespace-mcp/axiom/docs/demo_system.py
+      namespaceMcpPath: 00-namespaces/namespaces-mcp/axiom/docs/demo_system.py
       category: documentation
       purpose: "System demonstration"
       status: REGISTERED
@@ -156,7 +156,7 @@ fileRegistry:
       
     # === Deployment ===
     - originalPath: todo.md
-      namespaceMcpPath: workspace/mcp/namespace-mcp/axiom/project/todo.md
+      namespaceMcpPath: 00-namespaces/namespaces-mcp/axiom/project/todo.md
       category: deployment
       purpose: "Project tracking and migration"
       status: REGISTERED
@@ -172,31 +172,31 @@ pathMapping:
   # 原始 AXIOM 結構 → namespace-mcp 結構
   mappings:
     - from: "axiom_backup/standards/"
-      to: "workspace/mcp/namespace-mcp/axiom/standards/"
+      to: "00-namespaces/namespaces-mcp/axiom/standards/"
       type: structural
       
     - from: "axiom_backup/core/"
-      to: "workspace/mcp/namespace-mcp/axiom/core/"
+      to: "00-namespaces/namespaces-mcp/axiom/core/"
       type: structural
       
     - from: "axiom_backup/plugins/"
-      to: "workspace/mcp/namespace-mcp/axiom/plugins/"
+      to: "00-namespaces/namespaces-mcp/axiom/plugins/"
       type: structural
       
     - from: "axiom_backup/config/"
-      to: "workspace/mcp/namespace-mcp/axiom/config/"
+      to: "00-namespaces/namespaces-mcp/axiom/config/"
       type: structural
       
     - from: "axiom_backup/examples/"
-      to: "workspace/mcp/namespace-mcp/axiom/examples/"
+      to: "00-namespaces/namespaces-mcp/axiom/examples/"
       type: structural
       
     - from: "axiom_backup/tests/"
-      to: "workspace/mcp/namespace-mcp/axiom/tests/"
+      to: "00-namespaces/namespaces-mcp/axiom/tests/"
       type: structural
       
     - from: "axiom_backup/docs/"
-      to: "workspace/mcp/namespace-mcp/axiom/docs/"
+      to: "00-namespaces/namespaces-mcp/axiom/docs/"
       type: structural
 
 # ═══════════════════════════════════════════════════════════════════════════════

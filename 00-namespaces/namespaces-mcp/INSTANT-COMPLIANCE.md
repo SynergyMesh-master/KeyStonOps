@@ -18,7 +18,7 @@
 
 #### 實現
 ```
-workspace/mcp/namespace-mcp/     # 層級 1
+00-namespaces/namespaces-mcp/     # 層級 1
 ├── config/                      # 層級 2 - 配置層
 ├── src/                         # 層級 2 - 執行層
 ├── scripts/                     # 層級 2 - 自動化層
@@ -369,7 +369,7 @@ logging.basicConfig(
 
 - [INSTANT 標準規範](https://machinenativeops.com/instant)
 - [專案主頁](https://github.com/MachineNativeOps/machine-native-ops)
-- [文檔中心](https://github.com/MachineNativeOps/machine-native-ops/tree/main/workspace/mcp/namespace-mcp/docs)
+- [文檔中心](https://github.com/MachineNativeOps/machine-native-ops/tree/main/00-namespaces/namespaces-mcp/docs)
 
 ---
 

@@ -8,7 +8,7 @@
 
 ## 📚 Document Overview
 
-This assessment provides a comprehensive analysis and migration plan for moving `refactor_playbooks` from `workspace/docs/` to `workspace/mcp/namespace-mcp/`.
+This assessment provides a comprehensive analysis and migration plan for moving `refactor_playbooks` from `workspace/docs/` to `00-namespaces/namespaces-mcp/`.
 
 ### Document Structure
 
@@ -183,7 +183,7 @@ Migration Assessment Package
 
 ### Key Statistics
 - **Source Location**: `workspace/docs/refactor_playbooks/`
-- **Target Location**: `workspace/mcp/namespace-mcp/refactor_playbooks/`
+- **Target Location**: `00-namespaces/namespaces-mcp/refactor_playbooks/`
 - **Total Files**: 107
 - **Total Size**: 1.9 MB
 - **Markdown Files**: 70

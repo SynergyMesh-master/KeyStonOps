@@ -221,8 +221,8 @@ export interface UnifiedPipeline {
 // ========================================
 // Path Constants
 // ========================================
-export const unifiedPipelineManifestPath = "workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml";
-export const unifiedPipelineSchemaPath = "workspace/mcp/namespace-mcp/schemas/unified-pipeline.schema.json";
+export const unifiedPipelineManifestPath = "00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml";
+export const unifiedPipelineSchemaPath = "00-namespaces/namespaces-mcp/schemas/unified-pipeline.schema.json";
 
 // ========================================
 // Type Guards

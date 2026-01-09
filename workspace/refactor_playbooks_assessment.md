@@ -1,7 +1,7 @@
 # refactor_playbooks Migration Assessment Report
 
 **Assessment Date**: 2026-01-08  
-**Target Migration**: `workspace/docs/refactor_playbooks` → `workspace/mcp/namespace-mcp/refactor_playbooks`  
+**Target Migration**: `workspace/docs/refactor_playbooks` → `00-namespaces/namespaces-mcp/refactor_playbooks`  
 **Assessment Status**: COMPREHENSIVE ANALYSIS COMPLETE
 
 ---
@@ -150,7 +150,7 @@ refactor_playbooks/
 
 ### Current namespace-mcp Structure
 
-**Location**: `workspace/mcp/namespace-mcp/`
+**Location**: `00-namespaces/namespaces-mcp/`
 
 **Key Components**:
 - NAMESPACE_INDEX.yaml - Central index of 59 naming files
@@ -188,7 +188,7 @@ refactor_playbooks/
 
 **Target Structure**:
 ```
-workspace/mcp/namespace-mcp/
+00-namespaces/namespaces-mcp/
 ├── refactor_playbooks/
 │   ├── 01_deconstruction/
 │   ├── 02_integration/

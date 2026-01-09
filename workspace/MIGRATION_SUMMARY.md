@@ -10,7 +10,7 @@
 
 ### What We're Migrating
 - **Source**: `workspace/docs/refactor_playbooks/`
-- **Target**: `workspace/mcp/namespace-mcp/refactor_playbooks/`
+- **Target**: `00-namespaces/namespaces-mcp/refactor_playbooks/`
 - **Size**: 107 files, 1.9 MB
 - **Type**: Three-phase refactor system (解構-集成-重構)
 

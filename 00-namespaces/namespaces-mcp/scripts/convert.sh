@@ -182,10 +182,10 @@ execute_conversion() {
 
     # 構建 Python 命令
     PYTHON_CMD="python3 $SRC_DIR/converter.py"
-    PYTHON_CMD="$PYTHON_CMD &quot;$SOURCE_PATH&quot; &quot;$TARGET_PATH&quot;"
+    PYTHON_CMD="$PYTHON_CMD \"$SOURCE_PATH\" \"$TARGET_PATH\""
     
     if [ -f "$CONFIG_FILE" ]; then
-        PYTHON_CMD="$PYTHON_CMD --config &quot;$CONFIG_FILE&quot;"
+        PYTHON_CMD="$PYTHON_CMD --config \"$CONFIG_FILE\""
     fi
     
     if [ "$VERBOSE" = true ]; then

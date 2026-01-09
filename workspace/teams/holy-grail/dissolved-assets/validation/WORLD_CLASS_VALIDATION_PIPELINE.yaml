@@ -450,11 +450,11 @@ industryBenchmarks:
 # 整合到 workspace/mcp 的引用
 # ═══════════════════════════════════════════════════════════════════════════════
 mcpIntegration:
-  unifiedPipelineRef: workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml
-  integrationIndexRef: workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml
-  schemaRef: workspace/mcp/namespace-mcp/schemas/unified-pipeline.schema.json
-  typesRef: workspace/mcp/namespace-mcp/types/unifiedPipeline.ts
-  loaderRef: workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py
+  unifiedPipelineRef: 00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml
+  integrationIndexRef: 00-namespaces/namespaces-mcp/INTEGRATION_INDEX.yaml
+  schemaRef: 00-namespaces/namespaces-mcp/schemas/unified-pipeline.schema.json
+  typesRef: 00-namespaces/namespaces-mcp/types/unifiedPipeline.ts
+  loaderRef: 00-namespaces/namespaces-mcp/tools/load_unified_pipeline.py
 
 ---
 # ═══════════════════════════════════════════════════════════════════════════════

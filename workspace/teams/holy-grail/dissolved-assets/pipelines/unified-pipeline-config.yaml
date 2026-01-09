@@ -183,7 +183,7 @@ spec:
         path: tools/validation/world_class_validation.py
         capabilities: ["syntax", "semantic", "security"]
       - name: pipeline_manifest
-        path: workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml
+        path: 00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml
         capabilities: ["config", "schema"]
       - name: code_analyzer
         path: workspace/src/mcp-servers/code-analyzer.js
@@ -196,7 +196,7 @@ spec:
         capabilities: ["vulnerability", "owasp", "compliance"]
       # namespace-mcp 溶解架構工具 (硫酸溶解法)
       - name: namespace-mcp_dissolved_server
-        path: workspace/mcp/namespace-mcp/servers/namespace-mcp-dissolved-server.ts
+        path: 00-namespaces/namespaces-mcp/servers/namespace-mcp-dissolved-server.ts
         capabilities: ["quantum", "cognitive", "governance", "optimization"]
         tools: 59
         resources: 14
@@ -245,7 +245,7 @@ spec:
     - standard: INSTANT_EXECUTION
       validator: vision-tracker.py
       validatorImplementationStatus: planned  # Validator script not yet implemented
-      fallbackValidator: workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py  # Use Python loader for validation
+      fallbackValidator: 00-namespaces/namespaces-mcp/tools/load_unified_pipeline.py  # Use Python loader for validation
       fallbackImplementationStatus: implemented
       validatorPath: workspace/src/governance/scripts/vision-tracker.py
       implementationStatus: planned  # Validator script not yet implemented
@@ -255,7 +255,7 @@ spec:
     - standard: AUTONOMY_LEVEL
       validator: validate-autonomy.py
       validatorImplementationStatus: planned  # Validator script not yet implemented
-      fallbackValidator: workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py
+      fallbackValidator: 00-namespaces/namespaces-mcp/tools/load_unified_pipeline.py
       fallbackImplementationStatus: implemented
       validatorPath: workspace/src/governance/scripts/validate-autonomy.py
       implementationStatus: planned  # Validator script not yet implemented
@@ -265,7 +265,7 @@ spec:
     - standard: LATENCY_COMPLIANCE
       validator: latency-monitor.py
       validatorImplementationStatus: planned  # Validator script not yet implemented
-      fallbackValidator: workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py
+      fallbackValidator: 00-namespaces/namespaces-mcp/tools/load_unified_pipeline.py
       fallbackImplementationStatus: implemented
       validatorPath: workspace/src/governance/scripts/latency-monitor.py
       implementationStatus: planned  # Validator script not yet implemented
@@ -279,13 +279,13 @@ spec:
   # ========================================
   integrationReferences:
     # 整合索引
-    indexRef: workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml
+    indexRef: 00-namespaces/namespaces-mcp/INTEGRATION_INDEX.yaml
 
     # namespace-mcp 溶解架構 (硫酸溶解法)
     namespace-mcpDissolved:
-      architectureDefinition: workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml
-      serverImplementation: workspace/mcp/namespace-mcp/servers/namespace-mcp-dissolved-server.ts
-      integrationManifest: workspace/mcp/namespace-mcp/namespace-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml
+      architectureDefinition: 00-namespaces/namespaces-00-namespaces/namespaces-mcp-dissolved-mcp-architecture.yaml
+      serverImplementation: 00-namespaces/namespaces-mcp/servers/namespace-mcp-dissolved-server.ts
+      integrationManifest: 00-namespaces/namespaces-00-namespaces/namespaces-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml
       statistics:
         tools: 59
         resources: 14

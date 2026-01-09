@@ -7,9 +7,9 @@ INSTANT Execution Architecture:
 - Competitiveness: Replit | Claude | GPT equivalent
 
 Artifacts:
-- Manifest: workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml
-- Schema:   workspace/mcp/namespace-mcp/schemas/unified-pipeline.schema.json
-- TS types: workspace/mcp/namespace-mcp/types/unifiedPipeline.ts
+- Manifest: 00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml
+- Schema:   00-namespaces/namespaces-mcp/schemas/unified-pipeline.schema.json
+- TS types: 00-namespaces/namespaces-mcp/types/unifiedPipeline.ts
 """
 from __future__ import annotations
 
@@ -25,8 +25,8 @@ import yaml
 logger = logging.getLogger(__name__)
 
 
-MANIFEST_PATH = Path("workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml")
-SCHEMA_PATH = Path("workspace/mcp/namespace-mcp/schemas/unified-pipeline.schema.json")
+MANIFEST_PATH = Path("00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml")
+SCHEMA_PATH = Path("00-namespaces/namespaces-mcp/schemas/unified-pipeline.schema.json")
 
 
 # ========================================

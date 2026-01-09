@@ -14,7 +14,7 @@ steps:
     action: "mcp.pipeline.load"
     description: "Load the unified pipeline to ensure MCP methodology is applied."
     inputs:
-      path: "workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml"
+      path: "00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml"
     outputs:
       - pipeline_spec
 
@@ -61,7 +61,7 @@ steps:
       event_type: "HOLY_GRAIL_TEAM_COMPLETED"
       payload:
         team_id: "holy-grail"
-        pipeline: "workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml"
+        pipeline: "00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml"
         latency: "${delivery_report.latency}"
 
 audit:

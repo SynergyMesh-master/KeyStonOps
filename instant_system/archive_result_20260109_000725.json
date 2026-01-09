@@ -101,7 +101,7 @@
     ],
     "estimated_compression_ratio": 0.33
   },
-  "archive_path": "machine-native-ops/workspace/mcp/namespace-mcp/refactor_playbooks/_archive/refactor_playbooks_20260109_000725.tar.gz",
+  "archive_path": "machine-native-ops/00-namespaces/namespaces-mcp/refactor_playbooks/_archive/refactor_playbooks_20260109_000725.tar.gz",
   "validation": {
     "integrity_check": true,
     "file_count_match": true,

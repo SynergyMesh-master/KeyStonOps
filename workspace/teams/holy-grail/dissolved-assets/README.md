@@ -101,13 +101,13 @@ graph TB
 
 | Artifact | Path | Description |
 |----------|------|-------------|
-| YAML Manifest | `workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml` | v3 pipeline configuration |
-| JSON Schema | `workspace/mcp/namespace-mcp/schemas/unified-pipeline.schema.json` | Strict validation schema |
-| TypeScript Types | `workspace/mcp/namespace-mcp/types/unifiedPipeline.ts` | Type-safe interfaces |
-| Python Loader | `workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py` | Typed dataclass loader |
-| **namespace-mcp Dissolved** | `workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml` | 59 MCP tools from dissolved namespace-mcp |
-| namespace-mcp Server | `workspace/mcp/namespace-mcp/servers/namespace-mcp-dissolved-server.ts` | MCP server implementation |
-| Integration Manifest | `workspace/mcp/namespace-mcp/namespace-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml` | Seamless MCP embedding |
+| YAML Manifest | `00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml` | v3 pipeline configuration |
+| JSON Schema | `00-namespaces/namespaces-mcp/schemas/unified-pipeline.schema.json` | Strict validation schema |
+| TypeScript Types | `00-namespaces/namespaces-mcp/types/unifiedPipeline.ts` | Type-safe interfaces |
+| Python Loader | `00-namespaces/namespaces-mcp/tools/load_unified_pipeline.py` | Typed dataclass loader |
+| **namespace-mcp Dissolved** | `00-namespaces/namespaces-00-namespaces/namespaces-mcp-dissolved-mcp-architecture.yaml` | 59 MCP tools from dissolved namespace-mcp |
+| namespace-mcp Server | `00-namespaces/namespaces-mcp/servers/namespace-mcp-dissolved-server.ts` | MCP server implementation |
+| Integration Manifest | `00-namespaces/namespaces-00-namespaces/namespaces-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml` | Seamless MCP embedding |
 
 ## namespace-mcp Dissolved Architecture (硫酸溶解法)
 
@@ -253,7 +253,7 @@ if is_instant_mode(manifest):
 | Adapter | Path | Capabilities |
 |---------|------|--------------|
 | validation_tooling | tools/validation/world_class_validation.py | syntax, semantic, security |
-| pipeline_manifest | workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml | config, schema |
+| pipeline_manifest | 00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml | config, schema |
 | code_analyzer | workspace/src/mcp-servers/code-analyzer.js | complexity, quality, security |
 | test_generator | workspace/src/mcp-servers/test-generator.js | unit, integration, e2e |
 | security_scanner | workspace/src/mcp-servers/security-scanner.js | vulnerability, owasp, compliance |
@@ -302,15 +302,15 @@ if is_instant_mode(manifest):
 ```bash
 # Validate INSTANT execution standards
 python workspace/src/governance/scripts/vision-tracker.py \
-  --config workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml --verbose
+  --config 00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml --verbose
 
 # Validate autonomy levels
 python workspace/src/governance/scripts/validate-autonomy.py \
-  --config workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml --verbose
+  --config 00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml --verbose
 
 # Monitor latency compliance
 python workspace/src/governance/scripts/latency-monitor.py \
-  --config workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml --verbose
+  --config 00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml --verbose
 ```
 
 ### Running Pipeline Loader Tests

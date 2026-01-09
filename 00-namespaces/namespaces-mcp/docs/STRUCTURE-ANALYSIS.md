@@ -1,6 +1,6 @@
 # namespace-mcp 結構速覽（深度研究預備）
 
-本文件對 `workspace/mcp/namespace-mcp` 的實際目錄、關鍵檔案與入口進行快速盤點，作為後續架構協助的事前準備。
+本文件對 `00-namespaces/namespaces-mcp` 的實際目錄、關鍵檔案與入口進行快速盤點，作為後續架構協助的事前準備。
 
 ## 目錄實況（近期同步）
 - `config/`：`conversion.yaml`、`mcp-rules.yaml`、`governance.yaml` 三個主要配置。

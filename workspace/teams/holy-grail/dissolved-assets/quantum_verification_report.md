@@ -92,13 +92,13 @@ files_changed:
 - category: MCP 核心組件
   changes: INSTANT 執行驗證 + 類型安全增強
   files:
-  - workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py
-  - workspace/mcp/namespace-mcp/types/unifiedPipeline.ts
+  - 00-namespaces/namespaces-mcp/tools/load_unified_pipeline.py
+  - 00-namespaces/namespaces-mcp/types/unifiedPipeline.ts
 - category: 配置管理
   changes: v3.0.0 管線配置 + JSON Schema 更新
   files:
-  - workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml
-  - workspace/mcp/namespace-mcp/schemas/unified-pipeline.schema.json
+  - 00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml
+  - 00-namespaces/namespaces-mcp/schemas/unified-pipeline.schema.json
 
 ```
 

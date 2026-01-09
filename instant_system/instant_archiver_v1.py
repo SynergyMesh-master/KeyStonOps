@@ -304,7 +304,7 @@ def main():
     """Main execution function"""
     # Configuration
     source_dir = "machine-native-ops/workspace/docs/refactor_playbooks"
-    archive_dir = "machine-native-ops/workspace/mcp/namespace-mcp/refactor_playbooks/_archive"
+    archive_dir = "machine-native-ops/00-namespaces/namespaces-mcp/refactor_playbooks/_archive"
     
     # Execute INSTANT archive
     archiver = InstantArchiver(source_dir, archive_dir)

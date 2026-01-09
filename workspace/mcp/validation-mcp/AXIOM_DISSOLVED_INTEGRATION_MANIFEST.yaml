@@ -67,7 +67,7 @@ dissolution_summary:
 mcp_components:
   # Architecture Definition
   architecture_definition:
-    path: workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml
+    path: 00-namespaces/namespaces-00-namespaces/namespaces-mcp-dissolved-mcp-architecture.yaml
     type: yaml
     description: "Complete dissolved architecture specification"
     contains:
@@ -81,7 +81,7 @@ mcp_components:
 
   # Server Implementation
   server_implementation:
-    path: workspace/mcp/namespace-mcp/servers/namespace-mcp-dissolved-server.ts
+    path: 00-namespaces/namespaces-mcp/servers/namespace-mcp-dissolved-server.ts
     type: typescript
     runtime: "Node.js >=18.0.0"
     description: "MCP server implementing all dissolved tools"
@@ -93,7 +93,7 @@ mcp_components:
 
   # Integration Manifest
   integration_manifest:
-    path: workspace/mcp/namespace-mcp/namespace-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml
+    path: 00-namespaces/namespaces-00-namespaces/namespaces-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml
     type: yaml
     description: "This file - central integration reference"
 
@@ -316,8 +316,8 @@ seamless_integration:
   hot_reload:
     enabled: true
     watch_paths:
-      - workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml
-      - workspace/mcp/namespace-mcp/servers/namespace-mcp-dissolved-server.ts
+      - 00-namespaces/namespaces-00-namespaces/namespaces-mcp-dissolved-mcp-architecture.yaml
+      - 00-namespaces/namespaces-mcp/servers/namespace-mcp-dissolved-server.ts
     debounce_ms: 1000
 
   # Fallback configuration
@@ -346,12 +346,12 @@ seamless_integration:
 cross_references:
   # Link to main integration index
   integration_index:
-    path: workspace/mcp/namespace-mcp/INTEGRATION_INDEX.yaml
+    path: 00-namespaces/namespaces-mcp/INTEGRATION_INDEX.yaml
     relationship: extends
 
   # Link to unified pipeline
   unified_pipeline:
-    path: workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml
+    path: 00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml
     relationship: integrates_with
     integration_point: mcpIntegration.toolAdapters
 
@@ -372,7 +372,7 @@ cross_references:
 
   # Link to namespace-mcp baseline
   namespace-mcp_baseline:
-    path: workspace/config/namespace-mcp/namespace-mcp-global-baseline-v2.yaml
+    path: workspace/config/namespace-00-namespaces/namespaces-mcp-global-baseline-v2.yaml
     relationship: dissolves_and_replaces
 
   # Link to INSTANT execution engine
@@ -489,7 +489,7 @@ deployment:
         "mcpServers": {
           "namespace-mcp-dissolved": {
             "command": "node",
-            "args": ["workspace/mcp/namespace-mcp/servers/namespace-mcp-dissolved-server.js"],
+            "args": ["00-namespaces/namespaces-mcp/servers/namespace-mcp-dissolved-server.js"],
             "env": {
               "QUANTUM_BACKEND": "ibm_brisbane",
               "FALLBACK_ENABLED": "true"

@@ -32,7 +32,7 @@ metadata:
 namespace-mcpDissolved:
   # 溶解架構定義
   architectureDefinition:
-    path: workspace/mcp/namespace-mcp/namespace-mcp-dissolved-mcp-architecture.yaml
+    path: 00-namespaces/namespaces-00-namespaces/namespaces-mcp-dissolved-mcp-architecture.yaml
     version: "1.0.0"
     description: "Complete namespace-mcp dissolution into MCP-native format"
     dissolutionMethod: "硫酸溶解法 (Sulfuric Acid Dissolution)"
@@ -46,7 +46,7 @@ namespace-mcpDissolved:
 
   # MCP 服務器實現
   serverImplementation:
-    path: workspace/mcp/namespace-mcp/servers/namespace-mcp-dissolved-server.ts
+    path: 00-namespaces/namespaces-mcp/servers/namespace-mcp-dissolved-server.ts
     runtime: "Node.js >=18.0.0"
     capabilities:
       tools: 59
@@ -54,13 +54,13 @@ namespace-mcpDissolved:
       prompts: 3
     architecture:
       structure: "Modular - Layer-based tool definitions"
-      toolsPath: workspace/mcp/namespace-mcp/servers/tools/
+      toolsPath: 00-namespaces/namespaces-mcp/servers/tools/
       modules: 16  # 14 layer modules + index + types + README
       fileSize: "395 lines (reduced from 1488, 74% reduction)"
 
   # 整合清單
   integrationManifest:
-    path: workspace/mcp/namespace-mcp/namespace-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml
+    path: 00-namespaces/namespaces-00-namespaces/namespaces-mcp_DISSOLVED_INTEGRATION_MANIFEST.yaml
     description: "Seamless MCP embedding configuration"
 
   # 服務器分組
@@ -79,26 +79,26 @@ namespace-mcpDissolved:
 coreComponents:
   # 統一管線配置
   unifiedPipeline:
-    path: workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml
+    path: 00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml
     version: "3.0.0"
     apiVersion: pipeline.namespace-mcp/v3
     description: "Master INSTANT pipeline configuration"
 
   # JSON Schema 驗證
   schema:
-    path: workspace/mcp/namespace-mcp/schemas/unified-pipeline.schema.json
+    path: 00-namespaces/namespaces-mcp/schemas/unified-pipeline.schema.json
     version: "3.0.0"
     description: "Strict validation schema for pipeline config"
 
   # TypeScript 類型定義
   types:
-    path: workspace/mcp/namespace-mcp/types/unifiedPipeline.ts
+    path: 00-namespaces/namespaces-mcp/types/unifiedPipeline.ts
     version: "3.0.0"
     description: "Type-safe TypeScript interfaces"
 
   # Python 載入器
   loader:
-    path: workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py
+    path: 00-namespaces/namespaces-mcp/tools/load_unified_pipeline.py
     version: "3.0.0"
     description: "Typed dataclass loader with validation"
 
@@ -499,10 +499,10 @@ versionAlignment:
   target: "3.0.0"
 
   aligned:
-    - workspace/mcp/namespace-mcp/pipelines/unified-pipeline-config.yaml: "3.0.0"
-    - workspace/mcp/namespace-mcp/schemas/unified-pipeline.schema.json: "3.0.0"
-    - workspace/mcp/namespace-mcp/types/unifiedPipeline.ts: "3.0.0"
-    - workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py: "3.0.0"
+    - 00-namespaces/namespaces-mcp/pipelines/unified-pipeline-config.yaml: "3.0.0"
+    - 00-namespaces/namespaces-mcp/schemas/unified-pipeline.schema.json: "3.0.0"
+    - 00-namespaces/namespaces-mcp/types/unifiedPipeline.ts: "3.0.0"
+    - 00-namespaces/namespaces-mcp/tools/load_unified_pipeline.py: "3.0.0"
 
   toBeAligned:
     - workspace/src/autonomous/deployment/instant_execution_engine_v2.py: "2.0.0 → 3.0.0"

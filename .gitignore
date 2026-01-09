@@ -149,9 +149,9 @@ vite.config.ts.timestamp-*
 __pycache__/
 *.pyc
 comment_body.md
-workspace/mcp/namespace-mcp/servers/tools/*.js
+00-namespaces/namespaces-mcp/servers/tools/*.js
 
 # MCP TypeScript compiled output - ignore all .js files except the validation script
-workspace/mcp/namespace-mcp/servers/**/*.js
-!workspace/mcp/namespace-mcp/servers/validate-tools-refactor.js
+00-namespaces/namespaces-mcp/servers/**/*.js
+!00-namespaces/namespaces-mcp/servers/validate-tools-refactor.js
 .axiom-migration-backup/

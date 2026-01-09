@@ -6,52 +6,51 @@
 
 ```
 machine-native-ops/
-└── workspace/
-    ├── docs/
-    │   └── refactor_playbooks/              ← CURRENT LOCATION
-    │       ├── 01_deconstruction/           (10 files)
-    │       ├── 02_integration/              (15 files)
-    │       ├── 03_refactor/                 (50 files)
-    │       ├── config/                      (10 files)
-    │       ├── templates/                   (12 files)
-    │       ├── _legacy_scratch/
-    │       └── [19 root MD files]
-    │       Total: 107 files, 1.9 MB
-    │
-    └── mcp/
-        └── namespace-mcp/                   ← TARGET PARENT
-            ├── NAMESPACE_INDEX.yaml         (59 files indexed)
-            ├── INTEGRATION_INDEX.yaml
-            ├── policies/
-            ├── pipelines/
-            ├── schemas/
-            ├── servers/
-            └── tools/
+├── workspace/
+│   └── docs/
+│       └── refactor_playbooks/              ← CURRENT LOCATION
+│           ├── 01_deconstruction/           (10 files)
+│           ├── 02_integration/              (15 files)
+│           ├── 03_refactor/                 (50 files)
+│           ├── config/                      (10 files)
+│           ├── templates/                   (12 files)
+│           ├── _legacy_scratch/
+│           └── [19 root MD files]
+│           Total: 107 files, 1.9 MB
+│
+└── 00-namespaces/
+    └── namespaces-mcp/                      ← TARGET PARENT
+        ├── NAMESPACE_INDEX.yaml             (59 files indexed)
+        ├── INTEGRATION_INDEX.yaml
+        ├── policies/
+        ├── pipelines/
+        ├── schemas/
+        ├── servers/
+        └── tools/
 ```
 
 ### Target Structure (After Migration - Option 1)
 
 ```
 machine-native-ops/
-└── workspace/
-    └── mcp/
-        └── namespace-mcp/                   ← CONSOLIDATED LOCATION
-            ├── refactor_playbooks/          ← MIGRATED HERE
-            │   ├── 01_deconstruction/
-            │   ├── 02_integration/
-            │   ├── 03_refactor/
-            │   ├── config/
-            │   ├── templates/
-            │   ├── _legacy_scratch/
-            │   └── [root files]
-            │
-            ├── NAMESPACE_INDEX.yaml         (UPDATED: +107 files)
-            ├── INTEGRATION_INDEX.yaml       (UPDATED)
-            ├── policies/
-            ├── pipelines/
-            ├── schemas/
-            ├── servers/
-            └── tools/
+└── 00-namespaces/
+    └── namespaces-mcp/                      ← CONSOLIDATED LOCATION
+        ├── refactor_playbooks/              ← MIGRATED HERE
+        │   ├── 01_deconstruction/
+        │   ├── 02_integration/
+        │   ├── 03_refactor/
+        │   ├── config/
+        │   ├── templates/
+        │   ├── _legacy_scratch/
+        │   └── [root files]
+        │
+        ├── NAMESPACE_INDEX.yaml             (UPDATED: +107 files)
+        ├── INTEGRATION_INDEX.yaml           (UPDATED)
+        ├── policies/
+        ├── pipelines/
+        ├── schemas/
+        ├── servers/
+        └── tools/
 ```
 
 ---
@@ -114,7 +113,7 @@ statistics:
 ```yaml
 # Add to NAMESPACE_INDEX.yaml
 refactorPlaybooks:
-  canonicalLocation: workspace/mcp/namespace-mcp/refactor_playbooks/
+  canonicalLocation: 00-namespaces/namespaces-mcp/refactor_playbooks/
   
   description: |
     Three-phase refactor system for legacy asset analysis, integration design,
@@ -122,27 +121,27 @@ refactorPlaybooks:
   
   components:
     - name: 01_deconstruction
-      path: workspace/mcp/namespace-mcp/refactor_playbooks/01_deconstruction/
+      path: 00-namespaces/namespaces-mcp/refactor_playbooks/01_deconstruction/
       purpose: "Legacy asset analysis and deconstruction"
       fileCount: 10
       
     - name: 02_integration
-      path: workspace/mcp/namespace-mcp/refactor_playbooks/02_integration/
+      path: 00-namespaces/namespaces-mcp/refactor_playbooks/02_integration/
       purpose: "Integration design and architecture planning"
       fileCount: 15
       
     - name: 03_refactor
-      path: workspace/mcp/namespace-mcp/refactor_playbooks/03_refactor/
+      path: 00-namespaces/namespaces-mcp/refactor_playbooks/03_refactor/
       purpose: "Executable refactor plans with P0/P1/P2 priorities"
       fileCount: 50
       
     - name: config
-      path: workspace/mcp/namespace-mcp/refactor_playbooks/config/
+      path: 00-namespaces/namespaces-mcp/refactor_playbooks/config/
       purpose: "Refactor engine and governance configurations"
       fileCount: 10
       
     - name: templates
-      path: workspace/mcp/namespace-mcp/refactor_playbooks/templates/
+      path: 00-namespaces/namespaces-mcp/refactor_playbooks/templates/
       purpose: "Document generation templates"
       fileCount: 12
   
@@ -159,13 +158,13 @@ refactorPlaybooks:
 
 | Source Path | Target Path | File Count | Status |
 |-------------|-------------|------------|--------|
-| `docs/refactor_playbooks/01_deconstruction/` | `mcp/namespace-mcp/refactor_playbooks/01_deconstruction/` | 10 | Pending |
-| `docs/refactor_playbooks/02_integration/` | `mcp/namespace-mcp/refactor_playbooks/02_integration/` | 15 | Pending |
-| `docs/refactor_playbooks/03_refactor/` | `mcp/namespace-mcp/refactor_playbooks/03_refactor/` | 50 | Pending |
-| `docs/refactor_playbooks/config/` | `mcp/namespace-mcp/refactor_playbooks/config/` | 10 | Pending |
-| `docs/refactor_playbooks/templates/` | `mcp/namespace-mcp/refactor_playbooks/templates/` | 12 | Pending |
-| `docs/refactor_playbooks/_legacy_scratch/` | `mcp/namespace-mcp/refactor_playbooks/_legacy_scratch/` | 1 | Pending |
-| `docs/refactor_playbooks/*.md` | `mcp/namespace-mcp/refactor_playbooks/*.md` | 19 | Pending |
+| `docs/refactor_playbooks/01_deconstruction/` | `00-namespaces/namespaces-mcp/refactor_playbooks/01_deconstruction/` | 10 | Pending |
+| `docs/refactor_playbooks/02_integration/` | `00-namespaces/namespaces-mcp/refactor_playbooks/02_integration/` | 15 | Pending |
+| `docs/refactor_playbooks/03_refactor/` | `00-namespaces/namespaces-mcp/refactor_playbooks/03_refactor/` | 50 | Pending |
+| `docs/refactor_playbooks/config/` | `00-namespaces/namespaces-mcp/refactor_playbooks/config/` | 10 | Pending |
+| `docs/refactor_playbooks/templates/` | `00-namespaces/namespaces-mcp/refactor_playbooks/templates/` | 12 | Pending |
+| `docs/refactor_playbooks/_legacy_scratch/` | `00-namespaces/namespaces-mcp/refactor_playbooks/_legacy_scratch/` | 1 | Pending |
+| `docs/refactor_playbooks/*.md` | `00-namespaces/namespaces-mcp/refactor_playbooks/*.md` | 19 | Pending |
 
 **Total Files to Move**: 107
 
@@ -182,7 +181,7 @@ refactorPlaybooks:
 
 This directory has been migrated to:
 
-**New Location**: `workspace/mcp/namespace-mcp/refactor_playbooks/`
+**New Location**: `00-namespaces/namespaces-mcp/refactor_playbooks/`
 
 **Migration Date**: 2026-01-08
 
@@ -190,9 +189,9 @@ This directory has been migrated to:
 
 ## Quick Links
 
-- [New Location](../mcp/namespace-mcp/refactor_playbooks/)
-- [Migration Assessment](../mcp/namespace-mcp/refactor_playbooks/MIGRATION_ASSESSMENT.md)
-- [NAMESPACE_INDEX.yaml](../mcp/namespace-mcp/NAMESPACE_INDEX.yaml)
+- [New Location](../00-namespaces/namespaces-mcp/refactor_playbooks/)
+- [Migration Assessment](../00-namespaces/namespaces-mcp/refactor_playbooks/MIGRATION_ASSESSMENT.md)
+- [NAMESPACE_INDEX.yaml](../00-namespaces/namespaces-mcp/NAMESPACE_INDEX.yaml)
 
 ## For Developers
 
@@ -203,7 +202,7 @@ Update your bookmarks and scripts to use the new path:
 cd workspace/docs/refactor_playbooks
 
 # New path (current)
-cd workspace/mcp/namespace-mcp/refactor_playbooks
+cd 00-namespaces/namespaces-mcp/refactor_playbooks
 ```
 
 ## Rollback

@@ -54,7 +54,7 @@ Your architectural assessment was **EXCELLENT** and has been **FULLY IMPLEMENTED
 
 **Evidence Location**:
 ```
-workspace/mcp/namespace-mcp/refactor_playbooks/MIGRATION_PROVENANCE.yaml
+00-namespaces/namespaces-mcp/refactor_playbooks/MIGRATION_PROVENANCE.yaml
 ```
 
 ---
@@ -85,7 +85,7 @@ workspace/mcp/namespace-mcp/refactor_playbooks/MIGRATION_PROVENANCE.yaml
 
 **Evidence Location**:
 ```
-workspace/mcp/namespace-mcp/refactor_playbooks/AUDIT_LOG_SPEC.yaml
+00-namespaces/namespaces-mcp/refactor_playbooks/AUDIT_LOG_SPEC.yaml
 ```
 
 ---
@@ -114,7 +114,7 @@ workspace/mcp/namespace-mcp/refactor_playbooks/AUDIT_LOG_SPEC.yaml
 
 **Evidence Location**:
 ```
-workspace/mcp/namespace-mcp/refactor_playbooks/ROLLBACK_MANAGEMENT.yaml
+00-namespaces/namespaces-mcp/refactor_playbooks/ROLLBACK_MANAGEMENT.yaml
 ```
 
 ---
@@ -148,7 +148,7 @@ workspace/mcp/namespace-mcp/refactor_playbooks/ROLLBACK_MANAGEMENT.yaml
 
 **Evidence Location**:
 ```
-workspace/mcp/namespace-mcp/refactor_playbooks/COMPLIANCE_MAPPING.yaml
+00-namespaces/namespaces-mcp/refactor_playbooks/COMPLIANCE_MAPPING.yaml
 ```
 
 ---
@@ -182,7 +182,7 @@ workspace/mcp/namespace-mcp/refactor_playbooks/COMPLIANCE_MAPPING.yaml
 
 **Evidence Location**:
 ```
-workspace/mcp/namespace-mcp/refactor_playbooks/CHANGE_MANAGEMENT.yaml
+00-namespaces/namespaces-mcp/refactor_playbooks/CHANGE_MANAGEMENT.yaml
 ```
 
 ---
@@ -253,7 +253,7 @@ Final Score:         98/100 (World-Class)
 ### Complete Artifact List
 
 ```
-workspace/mcp/namespace-mcp/refactor_playbooks/
+00-namespaces/namespaces-mcp/refactor_playbooks/
 ├── INSTANT_MIGRATION_MANIFEST.yaml      ✅ Original
 ├── MIGRATION_NOTICE.md                  ✅ Original
 ├── README_INSTANT.md                    ✅ Original
@@ -427,7 +427,7 @@ Total: 115 files (107 original + 8 governance)
 1. **Deploy Audit Logging**
    ```bash
    # Set up audit log infrastructure
-   mkdir -p workspace/mcp/namespace-mcp/refactor_playbooks/_audit
+   mkdir -p 00-namespaces/namespaces-mcp/refactor_playbooks/_audit
    # Implement audit event generator
    # Configure log rotation
    ```
@@ -435,7 +435,7 @@ Total: 115 files (107 original + 8 governance)
 2. **Create Initial Snapshot**
    ```bash
    # Create pre-migration snapshot
-   cd workspace/mcp/namespace-mcp/refactor_playbooks
+   cd 00-namespaces/namespaces-mcp/refactor_playbooks
    tar -czf _snapshots/snapshot_$(date +%Y%m%d_%H%M%S).tar.gz .
    ```
 

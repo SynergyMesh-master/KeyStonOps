@@ -2,7 +2,7 @@
 """
 Unified Pipeline Loader Tests - 統一管線載入器測試
 
-Tests for workspace/mcp/namespace-mcp/tools/load_unified_pipeline.py
+Tests for 00-namespaces/namespaces-mcp/tools/load_unified_pipeline.py
 
 測試範圍：
 1. Manifest loading and parsing
@@ -17,12 +17,13 @@ import sys
 from pathlib import Path
 from dataclasses import dataclass
 
-# Add mcp/tools to path
+# Add namespaces-mcp/tools to path
 project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root / 'mcp' / 'tools'))
+repo_root = project_root.parent
+sys.path.insert(0, str(repo_root / '00-namespaces' / 'namespaces-mcp' / 'tools'))
 
 # Override MANIFEST_PATH for tests running from workspace directory
-WORKSPACE_MANIFEST_PATH = project_root / 'mcp' / 'pipelines' / 'unified-pipeline-config.yaml'
+WORKSPACE_MANIFEST_PATH = repo_root / '00-namespaces' / 'namespaces-mcp' / 'pipelines' / 'unified-pipeline-config.yaml'
 
 from load_unified_pipeline import (
     InstantExecutionStandards,
