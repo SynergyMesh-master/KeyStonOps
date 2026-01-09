@@ -212,7 +212,7 @@ class MachineNativeConverter:
                     # from django import
                     rules.append(ConversionRule(
                         name=f"dependency_{lang}_{old_dep}_from_import",
-                        pattern=f'\\bfrom\\s+{escaped_old}(\\s+import\\s+[\\w\\*,\\s]+)',
+                        pattern=f'\\bfrom\\s+{escaped_old}(\\s+import\\s+[a-zA-Z_\\*][\\w\\*,\\s]*)',
                         replacement=f'from {module_name}\\1  # namespace-mcp: {new_dep}',
                         file_types=["source_code"],
                         context=f"{lang}_dependencies_from",
