@@ -5,6 +5,7 @@ MachineNativeOps 高級命名空間 MCP 轉換器
 提供對現有 MachineNativeConverter 的薄封裝，作為 README 所列「高級轉換器」入口。
 """
 
+import copy
 import logging
 from pathlib import Path
 from typing import Optional, Dict, Any
@@ -30,7 +31,7 @@ class AdvancedMachineNativeConverter(MachineNativeConverter):
 
         if not self.enable_semantic:
             # 暫時允許禁用語意層，透過移除該層規則實現
-            self.conversion_rules = dict(self.conversion_rules)
+            self.conversion_rules = copy.deepcopy(self.conversion_rules)
             self.conversion_rules["semantic"] = []
             logger.info("已禁用語意層轉換 (semantic layer skipped)")
 
