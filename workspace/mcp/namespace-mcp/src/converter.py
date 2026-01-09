@@ -582,6 +582,15 @@ class MachineNativeConverter:
         logger.info(f"Markdown 報告已生成: {report_path}")
 
 
+def find_repository_root(start: Optional[Path] = None) -> Path:
+    """尋找儲存庫根目錄"""
+    resolved_path = (start or Path(__file__)).resolve()
+    for candidate in [resolved_path.parent] + list(resolved_path.parents):
+        if (candidate / ".git").exists():
+            return candidate
+    return Path.cwd()
+
+
 def main():
     """主函數"""
     import argparse
@@ -598,26 +607,23 @@ def main():
         logging.getLogger().setLevel(logging.DEBUG)
     
     if not args.source or not args.target:
-        resolved_path = Path(__file__).resolve()
-        repo_root: Optional[Path] = None
-        for candidate in [resolved_path.parent] + list(resolved_path.parents):
-            if (candidate / ".git").exists():
-                repo_root = candidate
-                break
-        
-        repo_root = repo_root or Path.cwd()
+        repo_root = find_repository_root()
         default_target = repo_root / "outputs" / "namespace-mcp-scan"
-        
+        defaults_applied = False
+
         if not args.source:
             args.source = str(repo_root)
+            defaults_applied = True
         if not args.target:
             args.target = str(default_target)
-        
-        logger.info(
-            "未提供路徑，使用默認路徑: source=%s, target=%s",
-            args.source,
-            args.target,
-        )
+            defaults_applied = True
+
+        if defaults_applied:
+            logger.info(
+                "未提供路徑，使用默認路徑: source=%s, target=%s",
+                args.source,
+                args.target,
+            )
     
     try:
         converter = MachineNativeConverter(args.config)
