@@ -587,8 +587,8 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description='MachineNativeOps 專案轉換器')
-    parser.add_argument('source', help='源專案路徑')
-    parser.add_argument('target', help='目標專案路徑')
+    parser.add_argument('source', nargs='?', help='源專案路徑')
+    parser.add_argument('target', nargs='?', help='目標專案路徑')
     parser.add_argument('--config', '-c', help='配置文件路徑')
     parser.add_argument('--verbose', '-v', action='store_true', help='詳細輸出')
     
@@ -596,6 +596,17 @@ def main():
     
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
+    
+    if not args.source or not args.target:
+        repo_root = Path(__file__).resolve().parents[4]
+        default_target = repo_root / "outputs" / "namespace-mcp-scan"
+        args.source = args.source or str(repo_root)
+        args.target = args.target or str(default_target)
+        logger.info(
+            "未提供路徑，使用默認路徑: source=%s, target=%s",
+            args.source,
+            args.target,
+        )
     
     try:
         converter = MachineNativeConverter(args.config)
