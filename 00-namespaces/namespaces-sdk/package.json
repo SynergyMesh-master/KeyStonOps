@@ -49,6 +49,7 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
+    "@machine-native-ops/taxonomy-core": "workspace:*",
     "ajv": "^8.12.0",
     "ajv-formats": "^2.1.1"
   },
