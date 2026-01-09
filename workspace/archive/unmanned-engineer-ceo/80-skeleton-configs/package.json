@@ -9,10 +9,10 @@
     "05-identity-tenancy"
   ],
   "scripts": {
-    "build": "echo 'Delegating build to child workspaces' && npm run build --workspaces --if-present",
+    "build": "echo 'No build steps for skeleton configs'",
     "lint": "echo 'Skeleton configs have no direct linting - linting handled by child workspaces'",
-    "test": "echo 'Delegating test to child workspaces' && npm run test --workspaces --if-present",
-    "clean": "echo 'Delegating clean to child workspaces' && npm run clean --workspaces --if-present"
+    "test": "echo 'No tests to run for skeleton configs'",
+    "clean": "echo 'No clean steps for skeleton configs'"
   },
   "keywords": [
     "architecture",
