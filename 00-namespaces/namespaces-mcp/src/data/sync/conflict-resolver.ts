@@ -14,20 +14,29 @@ import { EventEmitter } from 'events';
 export enum ConflictType { VERSION_MISMATCH = 'version_mismatch', CONCURRENT_UPDATE = 'concurrent_update' }
 export enum ResolutionStrategy { LAST_WRITE_WINS = 'last_write_wins', MANUAL_MERGE = 'manual_merge' }
 
+export interface SyncOperation {
+  id: string;
+  documentId: string;
+  timestamp: number;
+  version: number;
+  data: Record<string, unknown>;
+  type: 'update' | 'delete' | 'create';
+}
+
 export interface Conflict {
   id: string;
   type: ConflictType;
-  operations: any[];
+  operations: SyncOperation[];
   timestamp: number;
   resolved?: boolean;
   resolution?: ResolutionStrategy;
-  mergedData?: any;
+  mergedData?: Record<string, unknown>;
 }
 
 export interface ResolutionResult {
   conflict: Conflict;
   strategy: ResolutionStrategy;
-  mergedData: any;
+  mergedData: Record<string, unknown>;
   success: boolean;
   error?: string;
 }
@@ -42,7 +51,7 @@ export class ConflictResolver extends EventEmitter {
     this.resolutionHistory = [];
   }
   
-  async detectConflicts(operations: any[]): Promise<Conflict[]> {
+  async detectConflicts(operations: SyncOperation[]): Promise<Conflict[]> {
     const detectedConflicts: Conflict[] = [];
     const documentGroups = this.groupOperationsByDocument(operations);
     
@@ -75,18 +84,16 @@ export class ConflictResolver extends EventEmitter {
     
     if (!conflict) {
       return {
-        conflict: conflict as any,
+        conflict: { id: conflictId, type: ConflictType.VERSION_MISMATCH, operations: [], timestamp: Date.now() },
         strategy,
-        mergedData: null,
+        mergedData: {},
         success: false,
         error: 'Conflict not found'
       };
     }
     
-    const startTime = Date.now();
-    
     try {
-      let mergedData: any;
+      let mergedData: Record<string, unknown>;
       
       switch (strategy) {
         case ResolutionStrategy.LAST_WRITE_WINS:
@@ -120,7 +127,7 @@ export class ConflictResolver extends EventEmitter {
       const result: ResolutionResult = {
         conflict,
         strategy,
-        mergedData: null,
+        mergedData: {},
         success: false,
         error: error instanceof Error ? error.message : String(error)
       };
@@ -131,8 +138,8 @@ export class ConflictResolver extends EventEmitter {
     }
   }
   
-  private groupOperationsByDocument(operations: any[]): Map<string, any[]> {
-    const groups = new Map<string, any[]>();
+  private groupOperationsByDocument(operations: SyncOperation[]): Map<string, SyncOperation[]> {
+    const groups = new Map<string, SyncOperation[]>();
     
     for (const operation of operations) {
       const docId = operation.documentId;
@@ -147,16 +154,16 @@ export class ConflictResolver extends EventEmitter {
     return groups;
   }
   
-  private hasVersionMismatch(operations: any[]): boolean {
+  private hasVersionMismatch(operations: SyncOperation[]): boolean {
     const versions = operations.map(op => op.version);
     return new Set(versions).size > 1;
   }
   
-  private findConcurrentUpdates(operations: any[]): any[] {
+  private findConcurrentUpdates(operations: SyncOperation[]): SyncOperation[] {
     const updateOps = operations.filter(op => op.type === 'update');
     
     // Simple concurrency detection based on timestamp proximity
-    const concurrent: any[] = [];
+    const concurrent: SyncOperation[] = [];
     for (let i = 0; i < updateOps.length; i++) {
       for (let j = i + 1; j < updateOps.length; j++) {
         if (Math.abs(updateOps[i].timestamp - updateOps[j].timestamp) < 1000) {
@@ -168,7 +175,7 @@ export class ConflictResolver extends EventEmitter {
     return concurrent;
   }
   
-  private createConflict(type: ConflictType, operations: any[]): Conflict {
+  private createConflict(type: ConflictType, operations: SyncOperation[]): Conflict {
     return {
       id: `conflict-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type,
@@ -177,12 +184,12 @@ export class ConflictResolver extends EventEmitter {
     };
   }
   
-  private resolveLastWriteWins(conflict: Conflict): any {
+  private resolveLastWriteWins(conflict: Conflict): Record<string, unknown> {
     const sortedOps = conflict.operations.sort((a, b) => b.timestamp - a.timestamp);
-    return sortedOps[0]?.data || null;
+    return sortedOps[0]?.data || {};
   }
   
-  private resolveManualMerge(conflict: Conflict): any {
+  private resolveManualMerge(conflict: Conflict): Record<string, unknown> {
     // In a real implementation, this would require user input
     // For now, return the first operation's data
     return conflict.operations[0]?.data || null;

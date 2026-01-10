@@ -151,31 +151,31 @@ import {
 } from './storage/storage-interface';
 
 import { MemoryStorageFactory } from './storage/memory-storage';
-import { CacheManagerFactory } from './cache/cache-manager';
-import { SearchEngine } from './indexing/search-engine';
+import { CacheManagerFactory, ICacheManager, CacheConfig } from './cache/cache-manager';
+import { SearchEngine, SearchDocument } from './indexing/search-engine';
 import { IndexManager } from './indexing/index-manager';
 import { SyncManager } from './sync/sync-manager';
-import { ConsistencyCheckerFactory } from './sync/consistency-checker';
+import { ConsistencyChecker, ConsistencyCheckerFactory } from './sync/consistency-checker';
 
 /**
  * Integrated data management system
  */
 export class DataManagementSystem {
-  private storage: IStorage<any, any>;
-  private cache: any;
-  private searchEngine: SearchEngine<any>;
-  private indexManager: IndexManager<any, any>;
+  private storage: IStorage<string, unknown>;
+  private cache: ICacheManager<unknown>;
+  private searchEngine: SearchEngine<SearchDocument>;
+  private indexManager: IndexManager<string, unknown>;
   private syncManager: SyncManager;
-  private consistencyChecker: any;
+  private consistencyChecker: ConsistencyChecker;
   
   constructor(config?: {
     storage?: StorageConfig;
-    cache?: any;
+    cache?: CacheConfig;
   }) {
     this.storage = MemoryStorageFactory.createPerformanceOptimized(config?.storage);
     this.cache = CacheManagerFactory.createPerformanceOptimized(config?.cache);
-    this.searchEngine = new SearchEngine<any>();
-    this.indexManager = new IndexManager<any, any>();
+    this.searchEngine = new SearchEngine<SearchDocument>();
+    this.indexManager = new IndexManager<string, unknown>();
     this.syncManager = new SyncManager();
     this.consistencyChecker = ConsistencyCheckerFactory.createDefault();
   }
@@ -215,7 +215,7 @@ export class DataManagementSystem {
 export class DataManagementSystemFactory {
   static createDefault(config?: {
     storage?: StorageConfig;
-    cache?: any;
+    cache?: CacheConfig;
   }): DataManagementSystem {
     return new DataManagementSystem(config);
   }

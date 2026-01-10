@@ -41,17 +41,17 @@ export interface IndexStatistics {
   hitRate: number;
 }
 
-export interface IIndexManager<K, V> {
+export interface IIndexManager<V> {
   createIndex(config: IndexConfig): Promise<void>;
   dropIndex(name: string): Promise<void>;
-  insert(documentId: string, data: any): Promise<void>;
-  update(documentId: string, data: any): Promise<void>;
+  insert(documentId: string, data: Record<string, unknown>): Promise<void>;
+  update(documentId: string, data: Record<string, unknown>): Promise<void>;
   delete(documentId: string): Promise<void>;
-  search(indexName: string, query: any): Promise<Array<{value: V, score: number, documentId: string}>>;
+  search(indexName: string, query: Record<string, unknown>): Promise<Array<{value: V, score: number, documentId: string}>>;
   getStatistics(indexName: string): IndexStatistics | null;
 }
 
-export class IndexManager<K, V> extends EventEmitter implements IIndexManager<K, V> {
+export class IndexManager<K, V> extends EventEmitter implements IIndexManager<V> {
   private indexes: Map<string, Map<K, IndexEntry<K, V>[]>>;
   private indexConfigs: Map<string, IndexConfig>;
   private indexStats: Map<string, IndexStatistics>;
@@ -99,7 +99,7 @@ export class IndexManager<K, V> extends EventEmitter implements IIndexManager<K,
     this.emit('index:dropped', { name });
   }
   
-  async insert(documentId: string, data: any): Promise<void> {
+  async insert(documentId: string, data: Record<string, unknown>): Promise<void> {
     for (const [indexName, config] of this.indexConfigs) {
       const index = this.indexes.get(indexName);
       if (!index) continue;
@@ -125,7 +125,7 @@ export class IndexManager<K, V> extends EventEmitter implements IIndexManager<K,
     }
   }
   
-  async update(documentId: string, data: any): Promise<void> {
+  async update(documentId: string, data: Record<string, unknown>): Promise<void> {
     await this.delete(documentId);
     await this.insert(documentId, data);
   }
@@ -151,8 +151,7 @@ export class IndexManager<K, V> extends EventEmitter implements IIndexManager<K,
     }
   }
   
-  async search(indexName: string, query: any): Promise<Array<{value: V, score: number, documentId: string}>> {
-    const startTime = Date.now();
+  async search(indexName: string, query: Record<string, unknown>): Promise<Array<{value: V, score: number, documentId: string}>> {
     const index = this.indexes.get(indexName);
     
     if (!index) {
@@ -177,15 +176,15 @@ export class IndexManager<K, V> extends EventEmitter implements IIndexManager<K,
     return this.indexStats.get(indexName) || null;
   }
   
-  private extractKey(data: any, fields: string[]): K {
-    if (fields.length === 0) return undefined as any;
+  private extractKey(data: Record<string, unknown>, fields: string[]): K {
+    if (fields.length === 0) return undefined as unknown as K;
     
-    let value = data;
+    let value: unknown = data;
     for (const field of fields) {
       if (value && typeof value === 'object') {
-        value = value[field];
+        value = (value as Record<string, unknown>)[field];
       } else {
-        return undefined as any;
+        return undefined as unknown as K;
       }
     }
     

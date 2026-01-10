@@ -97,7 +97,7 @@ export class ResultRanker<T> extends EventEmitter {
     return scoredResults;
   }
   
-  private calculateFreshnessScore(result: any): number {
+  private calculateFreshnessScore(result: T & { timestamp?: number }): number {
     // Simple freshness calculation based on timestamp
     const now = Date.now();
     const timestamp = result.timestamp || now - 86400000; // 1 day ago default
@@ -107,7 +107,7 @@ export class ResultRanker<T> extends EventEmitter {
     return Math.max(0, 1 - (ageInHours / 168)); // Decay over 1 week
   }
   
-  private calculatePopularityScore(result: any): number {
+  private calculatePopularityScore(result: T & { accessCount?: number }): number {
     // Simple popularity based on access count
     const accessCount = result.accessCount || 0;
     return Math.min(1, accessCount / 100); // Normalize to 0-1

@@ -23,11 +23,11 @@ export interface StorageRecord<K, V> {
   };
 }
 
-export interface QueryOptions<K> {
-  filter?: (record: StorageRecord<K, any>) => boolean;
+export interface QueryOptions<K, V = unknown> {
+  filter?: (record: StorageRecord<K, V>) => boolean;
   limit?: number;
   offset?: number;
-  sortBy?: keyof StorageRecord<K, any>;
+  sortBy?: keyof StorageRecord<K, V>;
   sortOrder?: 'asc' | 'desc';
 }
 
@@ -77,9 +77,9 @@ export type StorageEventType =
   | 'transaction:committed'
   | 'transaction:rolledback';
 
-export type StorageEventHandler<K, V> = (
+export type StorageEventHandler<K = unknown, V = unknown> = (
   event: StorageEventType,
-  data: any
+  data: { key?: K; value?: V; [key: string]: unknown }
 ) => void;
 
 export abstract class BaseStorage<K, V> implements IStorage<K, V> {
@@ -113,7 +113,7 @@ export abstract class BaseStorage<K, V> implements IStorage<K, V> {
     this.eventHandlers.get(event)?.delete(handler);
   }
 
-  protected emit(event: StorageEventType, data: any): void {
+  protected emit(event: StorageEventType, data: { key?: K; value?: V; [key: string]: unknown }): void {
     this.eventHandlers.get(event)?.forEach(handler => handler(event, data));
   }
 
@@ -183,22 +183,22 @@ export interface IStorage<K, V> {
 }
 
 export class StorageFactory {
-  static createMemoryStorage<K, V>(config?: StorageConfig): IStorage<K, V> {
-    const { MemoryStorage } = require('./memory-storage');
-    return new MemoryStorage<K, V>(config);
+  static async createMemoryStorage<K, V>(config?: StorageConfig): Promise<IStorage<K, V>> {
+    const { MemoryStorage } = await import('./memory-storage');
+    return new MemoryStorage<V>(config);
   }
 
-  static createFileStorage<K, V>(config?: StorageConfig): IStorage<K, V> {
-    const { FileStorage } = require('./file-storage');
-    return new FileStorage<K, V>(config);
+  static async createFileStorage<K, V>(config?: StorageConfig): Promise<IStorage<K, V>> {
+    const { FileStorage } = await import('./file-storage');
+    return new FileStorage<V>(config);
   }
 
-  static createDatabaseStorage<K, V>(
-    adapter: any,
-    dbConfig: any,
+  static async createDatabaseStorage<K, V>(
+    adapter: { query: (q: string, params?: unknown[]) => Promise<unknown>; execute: (q: string, params?: unknown[]) => Promise<unknown> },
+    dbConfig: { type: string; host?: string; port?: number; database?: string },
     config?: StorageConfig
-  ): IStorage<K, V> {
-    const { DatabaseStorage } = require('./database-storage');
-    return new DatabaseStorage<K, V>(adapter, dbConfig, config);
+  ): Promise<IStorage<K, V>> {
+    const { DatabaseStorage } = await import('./database-storage');
+    return new DatabaseStorage<V>(adapter, dbConfig, config);
   }
 }

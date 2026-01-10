@@ -12,7 +12,6 @@
 import { 
   IStorage, 
   BaseStorage, 
-  StorageRecord, 
   QueryOptions, 
   QueryResult, 
   StorageTransaction, 
@@ -218,8 +217,16 @@ export class MemoryStorage<V> extends BaseStorage<string, V> {
     return JSON.stringify(value).length;
   }
   
-  private getNestedValue(obj: any, path: string): any {
-    return path.split('.').reduce((current, key) => current?.[key], obj);
+  private getNestedValue(obj: Record<string, unknown>, path: string): unknown {
+    return path
+      .split('.')
+      .reduce<unknown>((current, key) => {
+        if (current !== null && typeof current === 'object') {
+          const currentObj = current as Record<string, unknown>;
+          return currentObj[key];
+        }
+        return undefined;
+      }, obj);
   }
 }
 

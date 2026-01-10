@@ -12,7 +12,6 @@
 import { 
   IStorage, 
   BaseStorage, 
-  StorageRecord, 
   QueryOptions, 
   QueryResult, 
   StorageTransaction, 
@@ -37,10 +36,15 @@ export interface DatabaseConnectionConfig {
 }
 
 export interface IDatabaseAdapter<V> {
+  /**
+   * Phantom type property to bind adapter to the value type V without affecting runtime behavior.
+   */
+  _valueType?: V;
+  
   connect(): Promise<void>;
   disconnect(): Promise<void>;
-  query(query: string, params?: any[]): Promise<any>;
-  execute(query: string, params?: any[]): Promise<any>;
+  query(query: string, params?: unknown[]): Promise<unknown>;
+  execute(query: string, params?: unknown[]): Promise<unknown>;
   beginTransaction(): Promise<void>;
   commit(): Promise<void>;
   rollback(): Promise<void>;
@@ -203,14 +207,14 @@ export class DatabaseStorage<V> extends BaseStorage<string, V> {
   
   async keys(): Promise<string[]> {
     const query = `SELECT key FROM ${this.tableName}`;
-    const result = await this.adapter.query(query);
-    return result.rows.map((row: any) => row.key);
+    const result = await this.adapter.query(query) as { rows: Array<{ key: string }> };
+    return result.rows.map((row) => row.key);
   }
   
   async query(options: QueryOptions<string>): Promise<QueryResult<string, V>> {
     const startTime = Date.now();
     let query = `SELECT key, value FROM ${this.tableName}`;
-    const params: any[] = [];
+    const params: unknown[] = [];
     
     if (options?.limit) {
       query += ` LIMIT $${params.length + 1}`;
@@ -222,8 +226,8 @@ export class DatabaseStorage<V> extends BaseStorage<string, V> {
       params.push(options.offset);
     }
     
-    const result = await this.adapter.query(query, params);
-    const records = result.rows.map((row: any) => ({
+    const result = await this.adapter.query(query, params) as { rows: Array<{ key: string; value: V }> };
+    const records = result.rows.map((row) => ({
       key: row.key,
       value: row.value
     }));

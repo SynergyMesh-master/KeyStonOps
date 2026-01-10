@@ -123,7 +123,7 @@ export class ConsistencyChecker extends EventEmitter {
     };
   }
   
-  private async checkDataIntegrity(node: ReplicationNode): Promise<ConsistencyAnomaly[]> {
+  private async checkDataIntegrity(_node: ReplicationNode): Promise<ConsistencyAnomaly[]> {
     const anomalies: ConsistencyAnomaly[] = [];
     
     // Mock implementation - would check checksums, corruption, etc.
@@ -131,7 +131,7 @@ export class ConsistencyChecker extends EventEmitter {
     return anomalies;
   }
   
-  private async checkVersionConsistency(node: ReplicationNode): Promise<ConsistencyAnomaly[]> {
+  private async checkVersionConsistency(_node: ReplicationNode): Promise<ConsistencyAnomaly[]> {
     const anomalies: ConsistencyAnomaly[] = [];
     
     // Mock implementation - would check vector clocks, version numbers
@@ -144,7 +144,15 @@ export class ConsistencyChecker extends EventEmitter {
     
     if (!anomaly) {
       return {
-        anomaly: anomaly as any,
+        anomaly: {
+          id: anomalyId,
+          type: ConsistencyType.DATA_INTEGRITY,
+          severity: AnomalySeverity.LOW,
+          description: 'Anomaly not found',
+          affectedNodes: [],
+          affectedDocuments: [],
+          timestamp: Date.now()
+        },
         success: false,
         repairedDocuments: 0,
         repairTime: 0,

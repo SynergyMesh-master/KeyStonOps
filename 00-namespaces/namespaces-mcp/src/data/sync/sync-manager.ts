@@ -26,7 +26,7 @@ export interface SyncOperation {
   id: string;
   type: 'create' | 'update' | 'delete';
   documentId: string;
-  data: any;
+  data: Record<string, unknown>;
   timestamp: number;
   nodeId: string;
   version: number;

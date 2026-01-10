@@ -67,7 +67,7 @@ export class ReplicationManager extends EventEmitter {
     this.emit('node:added', { node: replicationNode });
   }
   
-  async replicate(data: any): Promise<void> {
+  async replicate(data: Record<string, unknown>): Promise<void> {
     const startTime = Date.now();
     
     if (!this.primaryNodeId) {
@@ -96,7 +96,7 @@ export class ReplicationManager extends EventEmitter {
     });
   }
   
-  private async replicateToNode(nodeId: string, data: any): Promise<void> {
+  private async replicateToNode(nodeId: string, data: Record<string, unknown>): Promise<void> {
     const node = this.nodes.get(nodeId);
     if (!node || node.status !== 'online') {
       throw new Error(`Node ${nodeId} is not available`);

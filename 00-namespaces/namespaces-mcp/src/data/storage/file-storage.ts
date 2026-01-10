@@ -14,13 +14,12 @@ import * as path from 'path';
 import { 
   IStorage, 
   BaseStorage, 
-  StorageRecord, 
   QueryOptions, 
   QueryResult, 
   StorageTransaction, 
   StorageConfig
 } from './storage-interface';
-import { MemoryStorage, MemoryStorageFactory } from './memory-storage';
+import { MemoryStorage } from './memory-storage';
 
 export interface FileStorageConfig extends StorageConfig {
   baseDir?: string;
@@ -117,7 +116,8 @@ export class FileStorage<V> extends BaseStorage<string, V> {
       this.recordSuccess();
       return record.value;
     } catch (error) {
-      if ((error as any).code === 'ENOENT') {
+      const nodeError = error as NodeJS.ErrnoException;
+      if (nodeError.code === 'ENOENT') {
         this.recordLatency('read', Date.now() - startTime);
         this.recordSuccess();
         return null;
@@ -169,7 +169,7 @@ export class FileStorage<V> extends BaseStorage<string, V> {
       this.recordSuccess();
       return true;
     } catch (error) {
-      if ((error as any).code === 'ENOENT') {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         this.recordLatency('delete', Date.now() - startTime);
         this.recordSuccess();
         return false;

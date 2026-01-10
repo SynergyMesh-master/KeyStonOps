@@ -20,10 +20,9 @@ Integration Points:
 import sys
 import argparse
 import yaml
-import json
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple, Any
+from typing import Dict, List, Optional
 from datetime import datetime, timezone
 from collections import defaultdict
 
@@ -517,7 +516,6 @@ class ArtifactValidator:
             artifact_path = artifact.get('_source_path', 'unknown')
             metadata = artifact.get('metadata', {})
             artifact_name = metadata.get('name', '')
-            artifact_version = metadata.get('version', '')
             
             spec = artifact.get('spec', {})
             dependencies = spec.get('artifact', {}).get('dependencies', [])
@@ -530,7 +528,6 @@ class ArtifactValidator:
             for dep in dependencies:
                 dep_name = dep.get('name', '')
                 dep_version = dep.get('version', '')
-                dep_type = dep.get('type', 'required')
                 
                 # Check for self-dependency
                 if dep_name == artifact_name:

@@ -46,7 +46,7 @@ export class SearchEngine<T> extends EventEmitter {
   async indexDocument(document: SearchDocument<T>): Promise<void> {
     this.documents.set(document.id, document);
     
-    for (const [fieldName, fieldValue] of Object.entries(document.fields)) {
+    for (const fieldValue of Object.values(document.fields)) {
       const tokens = this.tokenize(fieldValue);
       
       for (const token of tokens) {
