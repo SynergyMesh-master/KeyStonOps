@@ -1,0 +1,20 @@
+version: "2.0.0"
+semantic_role: manifest_storage
+artifact_type: manifest
+semantic_root: true
+
+module:
+  name: "configuration-governance"
+  version: "1.0.0"
+  description: "Configuration and governance layer"
+  category: "configuration-governance"
+  
+provides:
+  capabilities:
+    - "policy-engine"
+    - "compliance-checker"
+    - "audit-manager"
+
+metadata:
+  created_at: "2025-01-10T14:00:00Z"
+  status: "active"

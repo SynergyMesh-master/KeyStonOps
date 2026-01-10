@@ -1,0 +1,25 @@
+version: "2.0.0"
+semantic_role: dependency_graphs
+artifact_type: graph
+semantic_root: false
+
+graph:
+  name: "data-management-dependencies"
+  version: "1.0.0"
+  type: "dag"
+
+nodes:
+  - id: "data-management"
+    type: "module"
+    artifact: "data-management.manifest.yaml"
+    semantic_root: true
+    layer: 2
+
+edges:
+  - from: "data-management"
+    to: "communication"
+    type: "depends_on"
+
+metadata:
+  created_at: "2025-01-10T14:00:00Z"
+  status: "active"

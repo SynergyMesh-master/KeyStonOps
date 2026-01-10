@@ -1,0 +1,16 @@
+version: "2.0.0"
+semantic_role: policy_definitions
+artifact_type: policy
+semantic_root: false
+
+access_control:
+  rbac:
+    roles:
+      - name: "monitoring.admin"
+        permissions: ["monitoring:*"]
+      - name: "monitoring.viewer"
+        permissions: ["monitoring:read"]
+
+metadata:
+  created_at: "2025-01-10T14:00:00Z"
+  status: "active"

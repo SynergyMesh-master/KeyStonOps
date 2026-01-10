@@ -1,0 +1,20 @@
+version: "2.0.0"
+semantic_role: schema_definitions
+artifact_type: schema
+semantic_root: false
+
+schema_definitions:
+  StorageConfig:
+    type: "object"
+    properties:
+      backend: {type: "string"}
+      path: {type: "string"}
+  CacheConfig:
+    type: "object"
+    properties:
+      size: {type: "string"}
+      ttl: {type: "string"}
+
+metadata:
+  created_at: "2025-01-10T14:00:00Z"
+  status: "active"

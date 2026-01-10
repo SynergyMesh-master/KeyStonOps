@@ -1,0 +1,20 @@
+version: "2.0.0"
+semantic_role: policy_definitions
+artifact_type: policy
+semantic_root: false
+
+access_control:
+  rbac:
+    roles:
+      - name: "data-management.admin"
+        permissions: ["data-management:*"]
+      - name: "data-management.reader"
+        permissions: ["data-management:read"]
+
+governance_rules:
+  data_retention: "90d"
+  max_storage_size: "100GB"
+
+metadata:
+  created_at: "2025-01-10T14:00:00Z"
+  status: "active"

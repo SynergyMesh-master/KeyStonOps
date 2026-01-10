@@ -1,0 +1,164 @@
+# Protocol Module Dependency Graph
+# Defines RAG/DAG integration and dependencies
+
+version: "2.0.0"
+semantic_role: dependency_graphs
+artifact_type: graph
+semantic_root: false
+
+graph:
+  name: "protocol-dependencies"
+  version: "1.0.0"
+  description: "Dependency graph for protocol module"
+  type: "dag"
+
+nodes:
+  - id: "protocol"
+    type: "module"
+    artifact: "protocol.manifest.yaml"
+    semantic_root: true
+    layer: 2
+    
+  - id: "json-rpc-handler"
+    type: "component"
+    artifact: "src/protocol/json-rpc-handler.ts"
+    parent: "protocol"
+    
+  - id: "transport-layer"
+    type: "component"
+    artifact: "src/protocol/transport-layer.ts"
+    parent: "protocol"
+    
+  - id: "protocol-validator"
+    type: "component"
+    artifact: "src/protocol/protocol-validator.ts"
+    parent: "protocol"
+    
+  - id: "message-router"
+    type: "component"
+    artifact: "src/protocol/message-router.ts"
+    parent: "protocol"
+    
+  - id: "protocol-schema"
+    type: "schema"
+    artifact: "schemas/protocol.schema.yaml"
+    parent: "protocol"
+    
+  - id: "protocol-spec"
+    type: "spec"
+    artifact: "specs/protocol.spec.yaml"
+    parent: "protocol"
+    
+  - id: "protocol-policy"
+    type: "policy"
+    artifact: "policies/protocol.policy.yaml"
+    parent: "protocol"
+    
+  - id: "communication"
+    type: "module"
+    artifact: "communication.manifest.yaml"
+    layer: 1
+
+edges:
+  - from: "protocol"
+    to: "protocol-schema"
+    type: "uses"
+    description: "Module uses schema for validation"
+    
+  - from: "protocol"
+    to: "protocol-spec"
+    type: "implements"
+    description: "Module implements specification"
+    
+  - from: "protocol"
+    to: "protocol-policy"
+    type: "enforces"
+    description: "Module enforces policy"
+    
+  - from: "protocol"
+    to: "communication"
+    type: "depends_on"
+    description: "Protocol depends on communication layer"
+    
+  - from: "json-rpc-handler"
+    to: "protocol-validator"
+    type: "depends_on"
+    description: "Handler uses validator"
+    
+  - from: "json-rpc-handler"
+    to: "message-router"
+    type: "depends_on"
+    description: "Handler uses router"
+    
+  - from: "transport-layer"
+    to: "communication"
+    type: "depends_on"
+    description: "Transport uses communication layer"
+    
+  - from: "message-router"
+    to: "transport-layer"
+    type: "depends_on"
+    description: "Router uses transport"
+
+integration_points:
+  upstream:
+    - module: "tools"
+      interface: "json-rpc"
+      description: "Tools use protocol for RPC calls"
+    
+    - module: "resources"
+      interface: "json-rpc"
+      description: "Resources use protocol for RPC calls"
+    
+    - module: "prompts"
+      interface: "json-rpc"
+      description: "Prompts use protocol for RPC calls"
+  
+  downstream:
+    - module: "communication"
+      interface: "message-bus"
+      description: "Protocol uses communication for messaging"
+
+rag_integration:
+  enabled: false
+  description: "Protocol module does not directly participate in RAG pipeline"
+
+dag_integration:
+  enabled: true
+  workflows:
+    - name: "request-processing-pipeline"
+      description: "DAG workflow for JSON-RPC request processing"
+      steps:
+        - "receive-request"
+        - "validate-request"
+        - "route-request"
+        - "process-request"
+        - "format-response"
+        - "send-response"
+
+semantic_closure:
+  status: "complete"
+  validation:
+    - rule: "no_circular_dependencies"
+      status: "pass"
+    - rule: "all_dependencies_resolved"
+      status: "pass"
+    - rule: "semantic_consistency"
+      status: "pass"
+    - rule: "communication_dependency_satisfied"
+      status: "pass"
+
+visualization:
+  layout: "hierarchical"
+  direction: "top-to-bottom"
+  grouping: "by_layer"
+
+metadata:
+  created_at: "2025-01-10T14:00:00Z"
+  updated_at: "2025-01-10T14:00:00Z"
+  version: "2.0.0"
+  status: "active"
+  references:
+    - "protocol.manifest.yaml"
+    - "communication.manifest.yaml"
+    - "dependency-registry.yaml"

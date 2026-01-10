@@ -1,0 +1,19 @@
+version: "2.0.0"
+semantic_role: dependency_graphs
+artifact_type: graph
+semantic_root: false
+
+graph:
+  name: "integration-extension-dependencies"
+  version: "1.0.0"
+  type: "dag"
+
+nodes:
+  - id: "integration-extension"
+    type: "module"
+    semantic_root: true
+    layer: 4
+
+metadata:
+  created_at: "2025-01-10T14:00:00Z"
+  status: "active"

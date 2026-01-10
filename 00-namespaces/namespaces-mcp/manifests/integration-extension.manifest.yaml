@@ -1,0 +1,25 @@
+version: "2.0.0"
+semantic_role: manifest_storage
+artifact_type: manifest
+semantic_root: true
+
+module:
+  name: "integration-extension"
+  version: "1.0.0"
+  description: "Integration and extension layer"
+  category: "integration-extension"
+  
+provides:
+  capabilities:
+    - "rest-adapter"
+    - "graphql-adapter"
+    - "grpc-adapter"
+    - "webhook-adapter"
+    - "plugin-system"
+    - "extension-manager"
+    - "event-bridge"
+    - "adapter-registry"
+
+metadata:
+  created_at: "2025-01-10T14:00:00Z"
+  status: "active"
