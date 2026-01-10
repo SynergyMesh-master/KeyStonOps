@@ -1,0 +1,237 @@
+# mcp-rules.yaml
+# MCP 協議專用轉換規則
+# 版本: 1.0.0
+
+version: "1.0.0"
+description: "Model Context Protocol 2024.1 專用轉換規則"
+
+# MCP 協議配置
+mcp_protocol:
+  version: "2024.1"
+  compliance_level: "strict"
+  json_rpc_version: "2.0"
+  
+  implementation:
+    name: "MachineNativeOps-MCP-Server"
+    version: "1.0.0"
+    vendor: "MachineNativeOps"
+
+# MCP 工具轉換規則
+tools:
+  naming_convention: "machine-native-{tool-name}"
+  
+  standard_tools:
+    - name: "file-operations"
+      mcp_name: "machine-native-file-ops"
+      description: "文件操作工具"
+    
+    - name: "data-processing"
+      mcp_name: "machine-native-data-proc"
+      description: "數據處理工具"
+    
+    - name: "api-client"
+      mcp_name: "machine-native-api-client"
+      description: "API 客戶端工具"
+  
+  tool_schema:
+    required_fields:
+      - "name"
+      - "description"
+      - "inputSchema"
+    
+    naming_rules:
+      prefix: "machine-native-"
+      case_style: "kebab-case"
+      max_length: 64
+
+# MCP 資源轉換規則
+resources:
+  path_prefix: "machine-native-resources"
+  uri_scheme: "mnops"
+  
+  resource_types:
+    - type: "file"
+      uri_pattern: "mnops://file/{path}"
+      mime_types:
+        - "text/plain"
+        - "application/json"
+        - "application/yaml"
+    
+    - type: "data"
+      uri_pattern: "mnops://data/{dataset}"
+      mime_types:
+        - "application/json"
+        - "text/csv"
+    
+    - type: "config"
+      uri_pattern: "mnops://config/{name}"
+      mime_types:
+        - "application/yaml"
+        - "application/json"
+  
+  resource_schema:
+    required_fields:
+      - "uri"
+      - "name"
+      - "mimeType"
+    
+    optional_fields:
+      - "description"
+      - "metadata"
+
+# MCP 提示轉換規則
+prompts:
+  path_prefix: "machine-native-prompts"
+  
+  prompt_types:
+    - type: "system"
+      prefix: "mnops-system-"
+      description: "系統級提示"
+    
+    - type: "user"
+      prefix: "mnops-user-"
+      description: "用戶級提示"
+    
+    - type: "assistant"
+      prefix: "mnops-assistant-"
+      description: "助手級提示"
+  
+  prompt_schema:
+    required_fields:
+      - "name"
+      - "description"
+      - "arguments"
+    
+    naming_rules:
+      prefix: "mnops-"
+      case_style: "kebab-case"
+
+# MCP 消息轉換規則
+messages:
+  request_format:
+    jsonrpc: "2.0"
+    method_prefix: "mnops/"
+    
+    standard_methods:
+      - "mnops/initialize"
+      - "mnops/tools/list"
+      - "mnops/tools/call"
+      - "mnops/resources/list"
+      - "mnops/resources/read"
+      - "mnops/prompts/list"
+      - "mnops/prompts/get"
+  
+  response_format:
+    jsonrpc: "2.0"
+    include_metadata: true
+    
+    metadata_fields:
+      - "timestamp"
+      - "server_version"
+      - "request_id"
+  
+  error_handling:
+    use_standard_codes: true
+    include_stack_trace: false
+    
+    error_codes:
+      parse_error: -32700
+      invalid_request: -32600
+      method_not_found: -32601
+      invalid_params: -32602
+      internal_error: -32603
+
+# MCP 服務器配置轉換
+server_config:
+  implementation:
+    name: "MachineNativeOps MCP Server"
+    version: "1.0.0"
+    
+  capabilities:
+    tools: true
+    resources: true
+    prompts: true
+    logging: true
+  
+  transport:
+    type: "stdio"
+    encoding: "utf-8"
+  
+  security:
+    authentication: true
+    authorization: true
+    encryption: true
+    
+    auth_methods:
+      - "api_key"
+      - "oauth2"
+      - "jwt"
+
+# MCP 客戶端配置轉換
+client_config:
+  connection:
+    timeout: 30
+    retry_attempts: 3
+    retry_delay: 1
+  
+  capabilities:
+    sampling: false
+    roots: false
+  
+  logging:
+    level: "INFO"
+    format: "json"
+
+# 協議驗證規則
+validation:
+  protocol_compliance:
+    check_jsonrpc_version: true
+    validate_message_format: true
+    verify_method_names: true
+    check_parameter_types: true
+  
+  schema_validation:
+    validate_tool_schema: true
+    validate_resource_schema: true
+    validate_prompt_schema: true
+  
+  security_validation:
+    check_authentication: true
+    verify_authorization: true
+    validate_encryption: true
+
+# 轉換模式
+conversion_patterns:
+  tool_definition:
+    - pattern: '"name"\\s*:\\s*"([^"]+)"'
+      replacement: '"name": "machine-native-\\1"'
+      context: "tool_name"
+    
+    - pattern: '"description"\\s*:\\s*"([^"]+)"'
+      replacement: '"description": "MachineNativeOps - \\1"'
+      context: "tool_description"
+  
+  resource_uri:
+    - pattern: '([a-z]+)://([^/]+)'
+      replacement: 'mnops://\\2'
+      context: "resource_uri"
+  
+  method_name:
+    - pattern: '"method"\\s*:\\s*"([^/]+)/([^"]+)"'
+      replacement: '"method": "mnops/\\2"'
+      context: "method_name"
+
+# 元數據
+metadata:
+  created: "2024-01-09T12:00:00Z"
+  author: "MachineNativeOps Team"
+  mcp_version: "2024.1"
+  
+  references:
+    - "https://modelcontextprotocol.io/docs/specification"
+    - "https://github.com/modelcontextprotocol/specification"
+  
+  compliance:
+    - "MCP 2024.1 Specification"
+    - "JSON-RPC 2.0"
+    - "RFC 8259 (JSON)"

@@ -1,0 +1,359 @@
+# conversion.yaml
+# MachineNativeOps 命名空間 MCP 轉換配置
+# 版本: 1.0.0
+
+version: "1.0.0"
+description: "命名空間 MCP 專案轉換配置 - 六層治理對齊"
+
+# 企業級配置
+enterprise:
+  prefix: "machine-native"
+  namespace: "mnops"
+  domain: "machinenativeops.com"
+  organization: "MachineNativeOps"
+
+# 架構配置
+architecture:
+  pattern: "microservices"
+  module_prefix: "mnops"
+  service_suffix: "svc"
+  api_version: "v1"
+
+# 命名空間轉換規則
+namespace_rules:
+  class_naming:
+    prefix: "MachineNative"
+    suffix: ""
+    case_style: "PascalCase"
+    examples:
+      - "MyClass -> MachineNativeMyClass"
+      - "DataProcessor -> MachineNativeDataProcessor"
+  
+  method_naming:
+    prefix: "mnops_"
+    suffix: ""
+    case_style: "snake_case"
+    examples:
+      - "process_data -> mnops_process_data"
+      - "handleRequest -> mnops_handle_request"
+  
+  variable_naming:
+    prefix: ""
+    suffix: ""
+    case_style: "snake_case"
+    preserve_constants: true
+  
+  constant_naming:
+    prefix: "MNOPS_"
+    suffix: ""
+    case_style: "UPPER_CASE"
+
+# 依賴映射配置
+dependency_mapping:
+  python:
+    django: "machine-native-web"
+    flask: "machine-native-web"
+    fastapi: "machine-native-api"
+    requests: "machine-native-http"
+    numpy: "machine-native-ml"
+    pandas: "machine-native-data"
+    sqlalchemy: "machine-native-orm"
+    celery: "machine-native-queue"
+    redis: "machine-native-cache"
+    pytest: "machine-native-test"
+  
+  javascript:
+    express: "machine-native-server"
+    react: "machine-native-ui"
+    vue: "machine-native-ui"
+    angular: "machine-native-ui"
+    axios: "machine-native-http"
+    lodash: "machine-native-utils"
+    moment: "machine-native-time"
+    jest: "machine-native-test"
+  
+  java:
+    spring-boot: "machine-native-framework"
+    hibernate: "machine-native-orm"
+    junit: "machine-native-test"
+    jackson: "machine-native-json"
+  
+  go:
+    gin: "machine-native-web"
+    gorm: "machine-native-orm"
+    testify: "machine-native-test"
+
+# 引用路徑轉換規則
+reference_rules:
+  python:
+    - pattern: "from\\s+([.\\w]+)\\s+import"
+      replacement: "from machine_native.\\1 import"
+      context: "import_statements"
+    
+    - pattern: "import\\s+([.\\w]+)"
+      replacement: "import machine_native.\\1"
+      context: "import_statements"
+  
+  javascript:
+    - pattern: "require\\(['&quot;]([^'&quot;]+)['&quot;]\\)"
+      replacement: "require('machine-native/\\1')"
+      context: "require_statements"
+    
+    - pattern: "from\\s+['&quot;]([^'&quot;]+)['&quot;]"
+      replacement: "from 'machine-native/\\1'"
+      context: "import_statements"
+
+# 結構佈局轉換規則
+structure_rules:
+  directory_mapping:
+    "src": "lib"
+    "source": "lib"
+    "app": "lib"
+    "docs": "documentation"
+    "doc": "documentation"
+    "test": "tests"
+    "spec": "tests"
+    "config": "configuration"
+    "conf": "configuration"
+    "deploy": "deployment"
+    "build": "dist"
+  
+  file_organization:
+    source_dir: "lib"
+    test_dir: "tests"
+    doc_dir: "documentation"
+    config_dir: "configuration"
+    script_dir: "scripts"
+    example_dir: "examples"
+
+# 語意對齊配置
+semantic_rules:
+  llm_enabled: true
+  embedding_model: "text-embedding-3-large"
+  similarity_threshold: 0.85
+  
+  code_analysis:
+    ast_parsing: true
+    semantic_validation: true
+    behavior_verification: true
+  
+  naming_suggestions:
+    use_context: true
+    preserve_meaning: true
+    improve_clarity: true
+
+# 治理合規配置
+governance:
+  license:
+    default: "MachineNativeOps Enterprise License v1.0"
+    header_template: |
+      # Copyright (c) 2024 MachineNativeOps. All rights reserved.
+      # Licensed under the MachineNativeOps Enterprise License v1.0.
+      # 
+      # This file is part of the MachineNativeOps namespace-mcp project.
+      # Unauthorized copying, modification, or distribution is prohibited.
+    
+    allowed_source_licenses:
+      - "MIT"
+      - "Apache-2.0"
+      - "BSD-3-Clause"
+      - "ISC"
+    
+    prohibited_licenses:
+      - "GPL-3.0"
+      - "AGPL-3.0"
+      - "SSPL"
+  
+  security:
+    level: "maximum"
+    standards:
+      - "SLSA-L3"
+      - "Zero-Trust"
+      - "ISO27001"
+      - "SOC2-Type-II"
+    
+    requirements:
+      code_signing: true
+      vulnerability_scanning: true
+      dependency_checking: true
+      secret_detection: true
+  
+  audit:
+    enabled: true
+    level: "detailed"
+    retention: "permanent"
+    hash_algorithm: "sha3-512"
+    
+    tracked_events:
+      - "file_conversion"
+      - "dependency_replacement"
+      - "structure_modification"
+      - "license_update"
+      - "security_check"
+  
+  compliance:
+    standards:
+      - "GDPR"
+      - "CCPA"
+      - "HIPAA"
+      - "PCI-DSS"
+    
+    validation:
+      automated: true
+      manual_review: false
+      approval_required: false
+
+# 文件類型配置
+file_types:
+  source_code:
+    - ".py"
+    - ".js"
+    - ".ts"
+    - ".jsx"
+    - ".tsx"
+    - ".java"
+    - ".go"
+    - ".rs"
+    - ".cpp"
+    - ".c"
+    - ".cs"
+    - ".rb"
+    - ".php"
+  
+  config_files:
+    - ".json"
+    - ".yaml"
+    - ".yml"
+    - ".toml"
+    - ".ini"
+    - ".cfg"
+    - ".conf"
+    - ".properties"
+  
+  documentation:
+    - ".md"
+    - ".rst"
+    - ".txt"
+    - ".adoc"
+    - ".tex"
+  
+  build_files:
+    - "Dockerfile"
+    - "Makefile"
+    - "CMakeLists.txt"
+    - "docker-compose.yml"
+    - ".gitlab-ci.yml"
+    - "Jenkinsfile"
+    - "package.json"
+    - "requirements.txt"
+    - "Gemfile"
+    - "pom.xml"
+    - "build.gradle"
+
+# 轉換驗證標準
+validation:
+  file_integrity:
+    require_checksum: true
+    hash_algorithm: "sha3-512"
+    verify_before_after: true
+  
+  content_validation:
+    pattern_coverage: 0.95
+    success_threshold: 0.90
+    max_error_rate: 0.05
+  
+  structural_validation:
+    require_directory_structure: true
+    validate_import_paths: true
+    check_circular_dependencies: true
+  
+  semantic_validation:
+    verify_behavior: true
+    check_api_compatibility: true
+    validate_type_safety: true
+
+# 性能配置
+performance:
+  max_workers: 8
+  chunk_size: 100
+  timeout: 600
+  memory_limit: "4GB"
+  
+  optimization:
+    parallel_processing: true
+    incremental_conversion: true
+    cache_results: true
+
+# 排除配置
+exclusions:
+  paths:
+    - ".git/**"
+    - ".svn/**"
+    - "node_modules/**"
+    - "vendor/**"
+    - "dist/**"
+    - "build/**"
+    - "**/__pycache__/**"
+    - "**/.pytest_cache/**"
+    - "**/coverage/**"
+  
+  files:
+    - "package-lock.json"
+    - "yarn.lock"
+    - "go.sum"
+    - "poetry.lock"
+    - "Pipfile.lock"
+    - ".DS_Store"
+    - "Thumbs.db"
+  
+  patterns:
+    - "*.min.js"
+    - "*.min.css"
+    - "*.bundle.js"
+    - "*.log"
+    - "*.tmp"
+    - "*.swp"
+    - "*.bak"
+
+# 輸出配置
+output:
+  reports:
+    generate_markdown: true
+    generate_json: true
+    generate_html: false
+    
+    include_sections:
+      - "summary"
+      - "details"
+      - "validation"
+      - "compliance"
+      - "audit_trail"
+  
+  artifacts:
+    preserve_original: true
+    create_backup: true
+    generate_diff: true
+  
+  logging:
+    level: "INFO"
+    format: "structured"
+    destination: "file"
+    rotation: "daily"
+
+# 元數據
+metadata:
+  created: "2024-01-09T12:00:00Z"
+  author: "MachineNativeOps Team"
+  version: "1.0.0"
+  schema_version: "1.0"
+  
+  tags:
+    - "namespace-mcp"
+    - "conversion"
+    - "governance"
+    - "enterprise"
+  
+  references:
+    - "https://modelcontextprotocol.io"
+    - "https://slsa.dev"
+    - "https://machinenativeops.com"

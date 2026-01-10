@@ -1,0 +1,38 @@
+%YAML 1.2
+---
+# ═══════════════════════════════════════════════════════════════════════════════
+# SynergyMesh Knowledge Index → namespace-mcp Deep Conversion Alignment (深度轉換對齊)
+# Purpose: Bridge the SynergyMesh knowledge index into the namespace-mcp standard
+# ═══════════════════════════════════════════════════════════════════════════════
+
+apiVersion: namespace.namespace-mcp/v3
+kind: KnowledgeIndexRef
+metadata:
+  name: synergy-mesh-knowledge-index
+  version: "1.0.0"
+  mode: INSTANT-Autonomous
+  labels:
+    source: synergy-mesh
+    index: knowledge-base
+    status: production-ready
+  annotations:
+    description: "Deep-converted reference of SynergyMesh knowledge index for namespace-mcp toolchains"
+    sourceNamespace: "machinenativeops.docs"
+    targetNamespace: "namespace-mcp.docs"
+    compliance: "namespace-mcp-v3"
+
+sourceIndex:
+  path: workspace/docs/knowledge_index.yaml
+  sourceLastModified: "2025-11-30T00:00:00Z"
+  syncedAt: "2026-01-09T00:00:00Z"
+  validator: workspace/tools/docs/validate_index.py
+
+conversion:
+  method: namespace-mcp-deep-conversion
+  status: completed
+  routing:
+    pipelineManifest: workspace/mcp/validation-mcp/pipelines/unified-pipeline-config.yaml
+    integrationIndex: workspace/mcp/validation-mcp/INTEGRATION_INDEX.yaml
+    mcpLoader: workspace/mcp/validation-mcp/tools/load_unified_pipeline.py
+    validated: true
+    validatedAt: "2026-01-09T00:00:00Z"
