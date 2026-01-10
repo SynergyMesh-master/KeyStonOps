@@ -1,0 +1,354 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mcp-backup
+  namespace: mcp-system
+  labels:
+    app: mcp-backup
+    component: disaster-recovery
+spec:
+  schedule: "0 2 * * *"  # Daily at 2 AM UTC
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 3
+      template:
+        metadata:
+          labels:
+            app: mcp-backup
+            component: disaster-recovery
+        spec:
+          serviceAccountName: mcp-backup
+          restartPolicy: OnFailure
+          containers:
+          - name: backup
+            image: amazon/aws-cli:latest
+            imagePullPolicy: IfNotPresent
+            env:
+            - name: BACKUP_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: mcp-backup-config
+                  key: backup.bucket
+            - name: SOURCE_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: mcp-semantic-config
+                  key: storage.bucket
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: mcp-semantic-config
+                  key: storage.region
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mcp-storage-credentials
+                  key: access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mcp-storage-credentials
+                  key: secret-access-key
+            - name: BACKUP_DATE
+              value: "$(date +%Y%m%d-%H%M%S)"
+            command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "Starting backup at $(date)"
+              
+              # Create backup directory with timestamp
+              BACKUP_DIR="backup-$(date +%Y%m%d-%H%M%S)"
+              
+              # Backup artifacts from source bucket
+              echo "Backing up artifacts from s3://${SOURCE_BUCKET}..."
+              aws s3 sync s3://${SOURCE_BUCKET}/ s3://${BACKUP_BUCKET}/${BACKUP_DIR}/artifacts/ \
+                --region ${AWS_REGION} \
+                --storage-class STANDARD_IA
+              
+              # Create backup metadata
+              cat > /tmp/backup-metadata.json <<EOF
+              {
+                "backup_date": "$(date -Iseconds)",
+                "source_bucket": "${SOURCE_BUCKET}",
+                "backup_bucket": "${BACKUP_BUCKET}",
+                "backup_path": "${BACKUP_DIR}",
+                "backup_type": "full",
+                "status": "completed"
+              }
+              EOF
+              
+              # Upload metadata
+              aws s3 cp /tmp/backup-metadata.json s3://${BACKUP_BUCKET}/${BACKUP_DIR}/metadata.json \
+                --region ${AWS_REGION}
+              
+              # Create latest symlink
+              echo "${BACKUP_DIR}" > /tmp/latest
+              aws s3 cp /tmp/latest s3://${BACKUP_BUCKET}/latest.txt \
+                --region ${AWS_REGION}
+              
+              # Cleanup old backups (keep last 30 days)
+              echo "Cleaning up old backups..."
+              CUTOFF_DATE=$(date -d '30 days ago' +%Y%m%d)
+              aws s3 ls s3://${BACKUP_BUCKET}/ --region ${AWS_REGION} | \
+                awk '{print $2}' | \
+                grep '^backup-' | \
+                while read backup; do
+                  BACKUP_DATE=$(echo $backup | sed 's/backup-//' | cut -d'-' -f1)
+                  if [ "$BACKUP_DATE" -lt "$CUTOFF_DATE" ]; then
+                    echo "Deleting old backup: $backup"
+                    aws s3 rm s3://${BACKUP_BUCKET}/${backup} --recursive --region ${AWS_REGION}
+                  fi
+                done
+              
+              echo "Backup completed successfully at $(date)"
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mcp-backup
+  namespace: mcp-system
+  labels:
+    app: mcp-backup
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mcp-backup-config
+  namespace: mcp-system
+  labels:
+    app: mcp-backup
+data:
+  backup.bucket: "mcp-artifacts-backup"
+  backup.schedule: "0 2 * * *"
+  backup.retention.days: "30"
+  backup.type: "full"
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mcp-backup-verification
+  namespace: mcp-system
+  labels:
+    app: mcp-backup
+    component: verification
+spec:
+  schedule: "0 3 * * *"  # Daily at 3 AM UTC (1 hour after backup)
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            app: mcp-backup
+            component: verification
+        spec:
+          serviceAccountName: mcp-backup
+          restartPolicy: OnFailure
+          containers:
+          - name: verify
+            image: amazon/aws-cli:latest
+            imagePullPolicy: IfNotPresent
+            env:
+            - name: BACKUP_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: mcp-backup-config
+                  key: backup.bucket
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: mcp-semantic-config
+                  key: storage.region
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mcp-storage-credentials
+                  key: access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mcp-storage-credentials
+                  key: secret-access-key
+            command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "Starting backup verification at $(date)"
+              
+              # Get latest backup
+              LATEST_BACKUP=$(aws s3 cp s3://${BACKUP_BUCKET}/latest.txt - --region ${AWS_REGION})
+              echo "Verifying backup: ${LATEST_BACKUP}"
+              
+              # Check if backup exists
+              if ! aws s3 ls s3://${BACKUP_BUCKET}/${LATEST_BACKUP}/ --region ${AWS_REGION} > /dev/null 2>&1; then
+                echo "ERROR: Backup not found: ${LATEST_BACKUP}"
+                exit 1
+              fi
+              
+              # Verify metadata
+              aws s3 cp s3://${BACKUP_BUCKET}/${LATEST_BACKUP}/metadata.json /tmp/metadata.json --region ${AWS_REGION}
+              
+              if ! grep -q '"status": "completed"' /tmp/metadata.json; then
+                echo "ERROR: Backup status is not completed"
+                exit 1
+              fi
+              
+              # Count files in backup
+              FILE_COUNT=$(aws s3 ls s3://${BACKUP_BUCKET}/${LATEST_BACKUP}/artifacts/ --recursive --region ${AWS_REGION} | wc -l)
+              echo "Backup contains ${FILE_COUNT} files"
+              
+              if [ "$FILE_COUNT" -eq 0 ]; then
+                echo "WARNING: Backup is empty"
+                exit 1
+              fi
+              
+              # Sample verification (check 10 random files)
+              echo "Performing sample verification..."
+              aws s3 ls s3://${BACKUP_BUCKET}/${LATEST_BACKUP}/artifacts/ --recursive --region ${AWS_REGION} | \
+                awk '{print $4}' | \
+                shuf -n 10 | \
+                while read file; do
+                  if ! aws s3 ls s3://${BACKUP_BUCKET}/${LATEST_BACKUP}/artifacts/${file} --region ${AWS_REGION} > /dev/null 2>&1; then
+                    echo "ERROR: File missing in backup: ${file}"
+                    exit 1
+                  fi
+                done
+              
+              echo "Backup verification completed successfully at $(date)"
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                cpu: 200m
+                memory: 256Mi
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mcp-restore
+  namespace: mcp-system
+  labels:
+    app: mcp-restore
+    component: disaster-recovery
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: mcp-restore
+        component: disaster-recovery
+    spec:
+      serviceAccountName: mcp-backup
+      restartPolicy: Never
+      containers:
+      - name: restore
+        image: amazon/aws-cli:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: BACKUP_BUCKET
+          valueFrom:
+            configMapKeyRef:
+              name: mcp-backup-config
+              key: backup.bucket
+        - name: TARGET_BUCKET
+          valueFrom:
+            configMapKeyRef:
+              name: mcp-semantic-config
+              key: storage.bucket
+        - name: AWS_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: mcp-semantic-config
+              key: storage.region
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: mcp-storage-credentials
+              key: access-key-id
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mcp-storage-credentials
+              key: secret-access-key
+        - name: RESTORE_BACKUP
+          value: "latest"  # or specific backup name like "backup-20240110-020000"
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "Starting restore at $(date)"
+          
+          # Determine backup to restore
+          if [ "${RESTORE_BACKUP}" = "latest" ]; then
+            BACKUP_DIR=$(aws s3 cp s3://${BACKUP_BUCKET}/latest.txt - --region ${AWS_REGION})
+          else
+            BACKUP_DIR="${RESTORE_BACKUP}"
+          fi
+          
+          echo "Restoring from backup: ${BACKUP_DIR}"
+          
+          # Verify backup exists
+          if ! aws s3 ls s3://${BACKUP_BUCKET}/${BACKUP_DIR}/ --region ${AWS_REGION} > /dev/null 2>&1; then
+            echo "ERROR: Backup not found: ${BACKUP_DIR}"
+            exit 1
+          fi
+          
+          # Create restore point (backup current state)
+          echo "Creating restore point..."
+          RESTORE_POINT="restore-point-$(date +%Y%m%d-%H%M%S)"
+          aws s3 sync s3://${TARGET_BUCKET}/ s3://${BACKUP_BUCKET}/${RESTORE_POINT}/pre-restore/ \
+            --region ${AWS_REGION}
+          
+          # Restore artifacts
+          echo "Restoring artifacts to s3://${TARGET_BUCKET}..."
+          aws s3 sync s3://${BACKUP_BUCKET}/${BACKUP_DIR}/artifacts/ s3://${TARGET_BUCKET}/ \
+            --region ${AWS_REGION} \
+            --delete
+          
+          # Verify restore
+          echo "Verifying restore..."
+          RESTORED_COUNT=$(aws s3 ls s3://${TARGET_BUCKET}/ --recursive --region ${AWS_REGION} | wc -l)
+          echo "Restored ${RESTORED_COUNT} files"
+          
+          # Create restore metadata
+          cat > /tmp/restore-metadata.json <<EOF
+          {
+            "restore_date": "$(date -Iseconds)",
+            "backup_restored": "${BACKUP_DIR}",
+            "target_bucket": "${TARGET_BUCKET}",
+            "restore_point": "${RESTORE_POINT}",
+            "files_restored": ${RESTORED_COUNT},
+            "status": "completed"
+          }
+          EOF
+          
+          aws s3 cp /tmp/restore-metadata.json s3://${BACKUP_BUCKET}/${RESTORE_POINT}/restore-metadata.json \
+            --region ${AWS_REGION}
+          
+          echo "Restore completed successfully at $(date)"
+          echo "Restore point saved at: s3://${BACKUP_BUCKET}/${RESTORE_POINT}/"
+        resources:
+          requests:
+            cpu: 200m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi

@@ -1,0 +1,1187 @@
+openapi: 3.0.3
+info:
+  title: MCP Level 3 Semantic Control Plane API
+  description: |
+    Comprehensive API for the MCP Level 3 Semantic Control Plane, providing
+    data validation, release promotion, and artifact management capabilities.
+    
+    ## Features
+    - **Validation Engine**: Multi-format schema validation and data quality checking
+    - **Promotion Engine**: Multi-stage release promotion with approval workflows
+    - **Artifact Registry**: Semantic versioning and multi-cloud artifact storage
+    
+    ## Authentication
+    All API endpoints require authentication using Kubernetes ServiceAccount tokens
+    or OAuth2 bearer tokens.
+    
+    ## Rate Limiting
+    - Default: 100 requests per minute per client
+    - Burst: 200 requests per minute
+    
+    ## Versioning
+    API version is specified in the URL path (e.g., `/api/v1/...`)
+  version: 3.0.0
+  contact:
+    name: NinjaTech AI Support
+    email: support@ninjatech.ai
+    url: https://ninjatech.ai/support
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+  - url: https://mcp-semantic.example.com/api/v1
+    description: Production server
+  - url: https://mcp-semantic-staging.example.com/api/v1
+    description: Staging server
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+
+tags:
+  - name: Validation
+    description: Data validation and quality checking operations
+  - name: Promotion
+    description: Release promotion and approval workflow operations
+  - name: Artifacts
+    description: Artifact storage and version management operations
+  - name: Health
+    description: Health check and monitoring endpoints
+  - name: Metrics
+    description: Prometheus metrics endpoints
+
+paths:
+  # Health Endpoints
+  /health/live:
+    get:
+      tags:
+        - Health
+      summary: Liveness probe
+      description: Check if the service is alive and running
+      operationId: getLiveness
+      responses:
+        '200':
+          description: Service is alive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '503':
+          description: Service is not alive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /health/ready:
+    get:
+      tags:
+        - Health
+      summary: Readiness probe
+      description: Check if the service is ready to accept traffic
+      operationId: getReadiness
+      responses:
+        '200':
+          description: Service is ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '503':
+          description: Service is not ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Validation Endpoints
+  /validation/schemas:
+    get:
+      tags:
+        - Validation
+      summary: List validation schemas
+      description: Retrieve a list of all registered validation schemas
+      operationId: listSchemas
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of schemas to return
+          schema:
+            type: integer
+            default: 100
+            minimum: 1
+            maximum: 1000
+        - name: offset
+          in: query
+          description: Number of schemas to skip
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: List of schemas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  schemas:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ValidationSchema'
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+    post:
+      tags:
+        - Validation
+      summary: Register validation schema
+      description: Register a new validation schema
+      operationId: registerSchema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidationSchema'
+      responses:
+        '201':
+          description: Schema registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationSchema'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Schema already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+  /validation/schemas/{schemaId}:
+    get:
+      tags:
+        - Validation
+      summary: Get validation schema
+      description: Retrieve a specific validation schema by ID
+      operationId: getSchema
+      parameters:
+        - name: schemaId
+          in: path
+          required: true
+          description: Schema identifier
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Schema details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationSchema'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+    delete:
+      tags:
+        - Validation
+      summary: Delete validation schema
+      description: Delete a validation schema
+      operationId: deleteSchema
+      parameters:
+        - name: schemaId
+          in: path
+          required: true
+          description: Schema identifier
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Schema deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+  /validation/validate:
+    post:
+      tags:
+        - Validation
+      summary: Validate data
+      description: Validate data against a registered schema
+      operationId: validateData
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - schemaId
+                - data
+              properties:
+                schemaId:
+                  type: string
+                  description: ID of the schema to validate against
+                data:
+                  type: object
+                  description: Data to validate
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Schema not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+  /validation/quality:
+    post:
+      tags:
+        - Validation
+      summary: Check data quality
+      description: Analyze data quality metrics
+      operationId: checkQuality
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  type: array
+                  items:
+                    type: object
+                  description: Array of data objects to analyze
+      responses:
+        '200':
+          description: Quality metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QualityMetrics'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+  # Promotion Endpoints
+  /promotions:
+    get:
+      tags:
+        - Promotion
+      summary: List promotions
+      description: Retrieve a list of all promotions
+      operationId: listPromotions
+      parameters:
+        - name: status
+          in: query
+          description: Filter by promotion status
+          schema:
+            type: string
+            enum: [pending, approved, rejected, in-progress, completed, failed, rolled-back]
+        - name: stage
+          in: query
+          description: Filter by target stage
+          schema:
+            type: string
+            enum: [dev, staging, prod]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of promotions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  promotions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Promotion'
+                  total:
+                    type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+    post:
+      tags:
+        - Promotion
+      summary: Request promotion
+      description: Create a new promotion request
+      operationId: requestPromotion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromotionRequest'
+      responses:
+        '201':
+          description: Promotion created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Promotion'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+  /promotions/{promotionId}:
+    get:
+      tags:
+        - Promotion
+      summary: Get promotion
+      description: Retrieve promotion details
+      operationId: getPromotion
+      parameters:
+        - name: promotionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Promotion details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Promotion'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+  /promotions/{promotionId}/approve:
+    post:
+      tags:
+        - Promotion
+      summary: Approve promotion
+      description: Approve a pending promotion
+      operationId: approvePromotion
+      parameters:
+        - name: promotionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+                  description: Optional approval comment
+      responses:
+        '200':
+          description: Promotion approved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Promotion'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+  /promotions/{promotionId}/reject:
+    post:
+      tags:
+        - Promotion
+      summary: Reject promotion
+      description: Reject a pending promotion
+      operationId: rejectPromotion
+      parameters:
+        - name: promotionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - reason
+              properties:
+                reason:
+                  type: string
+                  description: Reason for rejection
+      responses:
+        '200':
+          description: Promotion rejected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Promotion'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+  /promotions/{promotionId}/rollback:
+    post:
+      tags:
+        - Promotion
+      summary: Rollback promotion
+      description: Rollback a completed promotion
+      operationId: rollbackPromotion
+      parameters:
+        - name: promotionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - reason
+              properties:
+                reason:
+                  type: string
+                  description: Reason for rollback
+      responses:
+        '200':
+          description: Promotion rolled back
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Promotion'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+  # Artifact Endpoints
+  /artifacts:
+    get:
+      tags:
+        - Artifacts
+      summary: Search artifacts
+      description: Search for artifacts with filters
+      operationId: searchArtifacts
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+        - name: tags
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: author
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  artifacts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Artifact'
+                  total:
+                    type: integer
+                  hasMore:
+                    type: boolean
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+    post:
+      tags:
+        - Artifacts
+      summary: Publish artifact
+      description: Upload and publish a new artifact
+      operationId: publishArtifact
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - version
+                - type
+                - file
+              properties:
+                name:
+                  type: string
+                version:
+                  type: string
+                  pattern: '^\d+\.\d+\.\d+(-[a-zA-Z0-9.-]+)?(\+[a-zA-Z0-9.-]+)?$'
+                type:
+                  type: string
+                file:
+                  type: string
+                  format: binary
+                metadata:
+                  type: object
+      responses:
+        '201':
+          description: Artifact published
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artifact'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+  /artifacts/{artifactId}:
+    get:
+      tags:
+        - Artifacts
+      summary: Get artifact metadata
+      description: Retrieve artifact metadata
+      operationId: getArtifact
+      parameters:
+        - name: artifactId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Artifact metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artifact'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+    delete:
+      tags:
+        - Artifacts
+      summary: Delete artifact
+      description: Delete an artifact
+      operationId: deleteArtifact
+      parameters:
+        - name: artifactId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Artifact deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+  /artifacts/{artifactId}/download:
+    get:
+      tags:
+        - Artifacts
+      summary: Download artifact
+      description: Download artifact binary
+      operationId: downloadArtifact
+      parameters:
+        - name: artifactId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Artifact binary
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+  /artifacts/{name}/versions:
+    get:
+      tags:
+        - Artifacts
+      summary: List artifact versions
+      description: Get all versions of an artifact
+      operationId: listArtifactVersions
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of versions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  versions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Artifact'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+  /artifacts/{name}/latest:
+    get:
+      tags:
+        - Artifacts
+      summary: Get latest version
+      description: Get the latest version of an artifact
+      operationId: getLatestArtifact
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Latest artifact version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artifact'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+      security:
+        - bearerAuth: []
+
+  # Metrics Endpoint
+  /metrics:
+    get:
+      tags:
+        - Metrics
+      summary: Prometheus metrics
+      description: Get Prometheus metrics
+      operationId: getMetrics
+      responses:
+        '200':
+          description: Prometheus metrics
+          content:
+            text/plain:
+              schema:
+                type: string
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded, error]
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+        uptime:
+          type: integer
+          description: Uptime in seconds
+
+    ValidationSchema:
+      type: object
+      required:
+        - id
+        - name
+        - version
+        - format
+        - schema
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        version:
+          type: string
+        format:
+          type: string
+          enum: [json-schema, avro, protobuf, custom]
+        schema:
+          type: object
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationRule'
+        metadata:
+          type: object
+
+    ValidationRule:
+      type: object
+      required:
+        - id
+        - name
+        - type
+        - field
+        - constraint
+        - severity
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          enum: [required, format, range, pattern, custom]
+        field:
+          type: string
+        constraint:
+          type: object
+        severity:
+          type: string
+          enum: [error, warning, info]
+        message:
+          type: string
+
+    ValidationResult:
+      type: object
+      properties:
+        valid:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+        warnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationWarning'
+        metadata:
+          type: object
+          properties:
+            schemaId:
+              type: string
+            validatedAt:
+              type: string
+              format: date-time
+            duration:
+              type: number
+            rulesApplied:
+              type: integer
+
+    ValidationError:
+      type: object
+      properties:
+        field:
+          type: string
+        rule:
+          type: string
+        message:
+          type: string
+        value:
+          type: object
+        severity:
+          type: string
+          enum: [error]
+
+    ValidationWarning:
+      type: object
+      properties:
+        field:
+          type: string
+        rule:
+          type: string
+        message:
+          type: string
+        value:
+          type: object
+        severity:
+          type: string
+          enum: [warning, info]
+
+    QualityMetrics:
+      type: object
+      properties:
+        completeness:
+          type: number
+          minimum: 0
+          maximum: 1
+        accuracy:
+          type: number
+          minimum: 0
+          maximum: 1
+        consistency:
+          type: number
+          minimum: 0
+          maximum: 1
+        timeliness:
+          type: number
+          minimum: 0
+          maximum: 1
+        overall:
+          type: number
+          minimum: 0
+          maximum: 1
+
+    PromotionRequest:
+      type: object
+      required:
+        - id
+        - artifactId
+        - version
+        - fromStage
+        - toStage
+        - requestedBy
+      properties:
+        id:
+          type: string
+        artifactId:
+          type: string
+        version:
+          type: string
+        fromStage:
+          type: string
+          enum: [dev, staging, prod]
+        toStage:
+          type: string
+          enum: [dev, staging, prod]
+        requestedBy:
+          type: string
+        requestedAt:
+          type: string
+          format: date-time
+        reason:
+          type: string
+        metadata:
+          type: object
+
+    Promotion:
+      type: object
+      properties:
+        id:
+          type: string
+        request:
+          $ref: '#/components/schemas/PromotionRequest'
+        status:
+          type: string
+          enum: [pending, approved, rejected, in-progress, completed, failed, rolled-back]
+        approvals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Approval'
+        startedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+        error:
+          type: string
+        rollbackInfo:
+          $ref: '#/components/schemas/RollbackInfo'
+
+    Approval:
+      type: object
+      properties:
+        id:
+          type: string
+        promotionId:
+          type: string
+        approverId:
+          type: string
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        level:
+          type: integer
+        approvedAt:
+          type: string
+          format: date-time
+        rejectedAt:
+          type: string
+          format: date-time
+        comment:
+          type: string
+
+    RollbackInfo:
+      type: object
+      properties:
+        triggeredBy:
+          type: string
+        triggeredAt:
+          type: string
+          format: date-time
+        reason:
+          type: string
+        previousVersion:
+          type: string
+        success:
+          type: boolean
+        duration:
+          type: number
+
+    Artifact:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        version:
+          type: string
+        type:
+          type: string
+        size:
+          type: integer
+        checksum:
+          type: string
+        storageBackend:
+          type: string
+          enum: [s3, gcs, azure, local]
+        storagePath:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/ArtifactMetadata'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ArtifactMetadata:
+      type: object
+      properties:
+        description:
+          type: string
+        author:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        dependencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dependency'
+        buildInfo:
+          $ref: '#/components/schemas/BuildInfo'
+        custom:
+          type: object
+
+    Dependency:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        type:
+          type: string
+          enum: [required, optional]
+
+    BuildInfo:
+      type: object
+      properties:
+        buildId:
+          type: string
+        buildTime:
+          type: string
+          format: date-time
+        commitHash:
+          type: string
+        branch:
+          type: string
+        environment:
+          type: string
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
