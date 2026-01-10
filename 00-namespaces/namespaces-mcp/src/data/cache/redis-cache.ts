@@ -49,7 +49,7 @@ export class RedisCache<T> extends EventEmitter implements ICacheManager<T> {
       maxSize: config.maxSize || 1024 * 1024 * 1024,
       maxItems: config.maxItems || 100000,
       defaultTTL: config.defaultTTL || 5 * 60 * 1000,
-      evictionPolicy: config.evictionPolicy || 'lru' as any,
+      evictionPolicy: (config.evictionPolicy || 'lru') as CacheConfig['evictionPolicy'],
       compressionEnabled: config.compressionEnabled || false,
       statisticsEnabled: config.statisticsEnabled !== false
     };
