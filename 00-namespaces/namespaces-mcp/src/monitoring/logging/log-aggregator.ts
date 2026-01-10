@@ -5,7 +5,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { LogEntry, LogLevel } from './logger';
+import { LogEntry } from './logger';
 
 export class LogAggregator extends EventEmitter {
   private logs: Map<string, LogEntry[]>;
