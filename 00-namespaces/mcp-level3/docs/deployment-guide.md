@@ -635,7 +635,8 @@ LOG_OUTPUT=stdout
 JWT_SECRET=<YOUR_JWT_SECRET>
 JWT_EXPIRATION=3600
 ENABLE_CORS=true
-CORS_ORIGINS=*
+# Configure CORS with an explicit, comma-separated list of trusted origins (do not use "*" in production)
+CORS_ORIGINS=https://app.example.com,https://admin.example.com
 
 # Monitoring
 PROMETHEUS_ENABLED=true
