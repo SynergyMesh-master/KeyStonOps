@@ -75,7 +75,7 @@ class TestServiceFailure:
                         if response.status == 200:
                             print("RAG engine recovered successfully")
                             return
-                except:
+                except (aiohttp.ClientError, asyncio.TimeoutError):
                     pass
                 await asyncio.sleep(2)
             
