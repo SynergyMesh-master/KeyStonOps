@@ -20,12 +20,12 @@
 | 檔案系統映射 | `.root.fs.map` | `root.fs.map` | ✅ 現有 |
 | 核心模組映射 | `.root.kernel.map` | `controlplane/config/root.kernel.map` | ✅ 委派到 controlplane |
 | Gate 映射 | `.root.gates.map.yaml` | `root/.root.gates.map.yaml` | ✅ 現有 |
-| 初始化腳本 | `.root.init.d/` | `root/.root.init.d/`（含 00-init, governance/trust/provenance 等腳本） | ✅ 現有 |
-| 工作包 | `.root.jobs/` | `root/.root.jobs/`（含 attestation-provenance、canonical-hash-lock 等 bundle） | ✅ 現有 |
+| 初始化腳本 | `.root.init.d/` | `root/.root.init.d/`（含 00-init 及治理/信任/追溯相關腳本） | ✅ 現有 |
+| 工作包 | `.root.jobs/` | `root/.root.jobs/`（含 attestation-provenance、canonical-hash-lock 等工作包） | ✅ 現有 |
 | Semantic Root | `.root.semantic-root.yaml` | `root/.root.semantic-root.yaml` | ✅ 現有 |
 | CI Gate | `.github/workflows/gate-lock-attest.yaml` | `.github/workflows/gate-lock-attest.yaml` | ✅ 現有 |
 
-> 註：為避免與 `gate-root-specs.yml` 的 root.* 監管衝突，仍採既有 `root.*`（非點檔名）實體，並在表中標註 canonical 名稱與實際路徑的對映。
+> 註：為避免與 `gate-root-specs.yml` 的 root.* 監管衝突，仍採既有 `root.*`（非點檔名）實體，並在表中標註 canonical 名稱與實際路徑的對映；所有路徑皆以倉庫根目錄為基準，如有重構請同步更新本表。
 
 ## 2. 一體化協作策略（namespaces-mcp 原則）
 
@@ -43,4 +43,17 @@
 
 ---
 
-如需更新，遵循 namespaces-mcp 命名規範（小寫、以 `root.` 前綴、使用 `.yaml`），並確保每份配置均含 `apiVersion`, `kind`, `metadata`, `spec` 四要素，保持 root 層治理的可追溯與可審計。 
+如需更新，遵循 namespaces-mcp 命名規範（小寫、以 `root.` 前綴、使用 `.yaml`），並確保每份配置均含 `apiVersion`, `kind`, `metadata`, `spec` 四要素，保持 root 層治理的可追溯與可審計。參考最小模板：
+
+```yaml
+apiVersion: machinenativeops.io/v1
+kind: RootConfig
+metadata:
+  name: root.example
+  version: v1.0.0
+  urn: urn:machinenativeops:root:example:v1
+spec:
+  description: "簡要說明"
+  owner: "system-architect"
+  controls: []
+```
