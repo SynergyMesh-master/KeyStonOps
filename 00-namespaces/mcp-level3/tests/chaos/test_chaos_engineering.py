@@ -8,7 +8,6 @@ import pytest
 import asyncio
 import aiohttp
 import time
-import random
 from typing import List, Dict, Any
 
 
