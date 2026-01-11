@@ -109,6 +109,7 @@ See individual project README files for detailed setup instructions:
 
 - **MCP namespace reports:** `./namespaces-mcp/docs/reports/`
 - **MCP Level 3 phase & module reports:** `./namespaces-mcp/mcp-level3/docs/reports/`
+- **Root namespace plans & guides:** `./docs/`
 
 ## Development
 

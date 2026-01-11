@@ -231,7 +231,7 @@ class InstantDAGGenerator:
 def main():
     """主程式"""
     if len(sys.argv) < 2:
-        manifest_path = "machine-native-ops/00-namespaces/INSTANT-EXECUTION-MANIFEST.yaml"
+        manifest_path = "machine-native-ops/00-namespaces/docs/INSTANT-EXECUTION-MANIFEST.yaml"
     else:
         manifest_path = sys.argv[1]
     
