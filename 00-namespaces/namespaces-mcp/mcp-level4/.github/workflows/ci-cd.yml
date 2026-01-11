@@ -4,15 +4,15 @@ on:
   push:
     branches: [main, develop, test-root-governance]
     paths:
-      - '00-namespaces/mcp-level4/**'
+      - '00-namespaces/namespaces-mcp/mcp-level4/**'
   pull_request:
     branches: [main, develop]
     paths:
-      - '00-namespaces/mcp-level4/**'
+      - '00-namespaces/namespaces-mcp/mcp-level4/**'
 
 env:
   NODE_VERSION: '20.x'
-  WORKING_DIRECTORY: 00-namespaces/mcp-level4
+  WORKING_DIRECTORY: 00-namespaces/namespaces-mcp/mcp-level4
 
 jobs:
   lint:

@@ -123,7 +123,7 @@
 
 ### File Structure
 ```
-00-namespaces/mcp-level4/
+00-namespaces/namespaces-mcp/mcp-level4/
 ├── src/
 │   ├── interfaces/          ✅ 14 files (2,120 lines)
 │   │   ├── core.ts

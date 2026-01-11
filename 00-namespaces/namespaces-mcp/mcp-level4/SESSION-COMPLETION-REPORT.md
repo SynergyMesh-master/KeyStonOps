@@ -58,7 +58,7 @@
 ### 3. Project Structure (100%)
 
 ```
-00-namespaces/mcp-level4/
+00-namespaces/namespaces-mcp/mcp-level4/
 ├── src/
 │   ├── interfaces/          ✅ Created
 │   │   └── core.ts         ✅ Implemented

@@ -40,7 +40,7 @@
 
 ```bash
 git clone https://github.com/MachineNativeOps/machine-native-ops.git
-cd machine-native-ops/00-namespaces/mcp-level3
+cd machine-native-ops/00-namespaces/namespaces-mcp/mcp-level3
 ```
 
 ### 2. 安裝依賴

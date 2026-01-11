@@ -25,33 +25,33 @@ jobs:
     
     - name: Install dependencies
       run: |
-        cd 00-namespaces/mcp-level3
+        cd 00-namespaces/namespaces-mcp/mcp-level3
         npm ci
     
     - name: Run linter
       run: |
-        cd 00-namespaces/mcp-level3
+        cd 00-namespaces/namespaces-mcp/mcp-level3
         npm run lint
     
     - name: Run unit tests
       run: |
-        cd 00-namespaces/mcp-level3
+        cd 00-namespaces/namespaces-mcp/mcp-level3
         npm run test:unit
     
     - name: Run integration tests
       run: |
-        cd 00-namespaces/mcp-level3
+        cd 00-namespaces/namespaces-mcp/mcp-level3
         npm run test:integration
     
     - name: Generate coverage report
       run: |
-        cd 00-namespaces/mcp-level3
+        cd 00-namespaces/namespaces-mcp/mcp-level3
         npm run test:coverage
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
-        files: ./00-namespaces/mcp-level3/coverage/lcov.info
+        files: ./00-namespaces/namespaces-mcp/mcp-level3/coverage/lcov.info
         flags: unittests
         name: codecov-umbrella
 
@@ -71,19 +71,19 @@ jobs:
     
     - name: Install dependencies
       run: |
-        cd 00-namespaces/mcp-level3
+        cd 00-namespaces/namespaces-mcp/mcp-level3
         npm ci
     
     - name: Run benchmarks
       run: |
-        cd 00-namespaces/mcp-level3
+        cd 00-namespaces/namespaces-mcp/mcp-level3
         npm run test:benchmark
     
     - name: Store benchmark results
       uses: benchmark-action/github-action-benchmark@v1
       with:
         tool: 'customSmallerIsBetter'
-        output-file-path: ./00-namespaces/mcp-level3/benchmark-results.json
+        output-file-path: ./00-namespaces/namespaces-mcp/mcp-level3/benchmark-results.json
         github-token: ${{ secrets.GITHUB_TOKEN }}
         auto-push: true
 
@@ -98,7 +98,7 @@ jobs:
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: 'fs'
-        scan-ref: './00-namespaces/mcp-level3'
+        scan-ref: './00-namespaces/namespaces-mcp/mcp-level3'
         format: 'sarif'
         output: 'trivy-results.sarif'
     
@@ -109,7 +109,7 @@ jobs:
     
     - name: Run npm audit
       run: |
-        cd 00-namespaces/mcp-level3
+        cd 00-namespaces/namespaces-mcp/mcp-level3
         npm audit --audit-level=moderate
 
   build:
@@ -128,19 +128,19 @@ jobs:
     
     - name: Install dependencies
       run: |
-        cd 00-namespaces/mcp-level3
+        cd 00-namespaces/namespaces-mcp/mcp-level3
         npm ci
     
     - name: Build TypeScript
       run: |
-        cd 00-namespaces/mcp-level3
+        cd 00-namespaces/namespaces-mcp/mcp-level3
         npm run build
     
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: build-artifacts
-        path: 00-namespaces/mcp-level3/dist/
+        path: 00-namespaces/namespaces-mcp/mcp-level3/dist/
 
   docker:
     name: Build Docker Image
@@ -163,7 +163,7 @@ jobs:
     - name: Build and push
       uses: docker/build-push-action@v4
       with:
-        context: ./00-namespaces/mcp-level3
+        context: ./00-namespaces/namespaces-mcp/mcp-level3
         push: true
         tags: |
           mcp-level3:latest
@@ -189,12 +189,12 @@ jobs:
     
     - name: Deploy to Kubernetes
       run: |
-        kubectl apply -f 00-namespaces/mcp-level3/k8s/staging/
+        kubectl apply -f 00-namespaces/namespaces-mcp/mcp-level3/k8s/staging/
         kubectl rollout status deployment/mcp-level3 -n staging
     
     - name: Run smoke tests
       run: |
-        cd 00-namespaces/mcp-level3
+        cd 00-namespaces/namespaces-mcp/mcp-level3
         npm run test:smoke -- --env=staging
 
   deploy-production:
@@ -215,12 +215,12 @@ jobs:
     
     - name: Deploy to Kubernetes
       run: |
-        kubectl apply -f 00-namespaces/mcp-level3/k8s/production/
+        kubectl apply -f 00-namespaces/namespaces-mcp/mcp-level3/k8s/production/
         kubectl rollout status deployment/mcp-level3 -n production
     
     - name: Run smoke tests
       run: |
-        cd 00-namespaces/mcp-level3
+        cd 00-namespaces/namespaces-mcp/mcp-level3
         npm run test:smoke -- --env=production
     
     - name: Notify deployment

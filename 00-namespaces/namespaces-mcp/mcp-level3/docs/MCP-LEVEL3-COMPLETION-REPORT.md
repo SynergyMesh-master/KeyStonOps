@@ -238,7 +238,7 @@
 ## 項目結構
 
 ```
-00-namespaces/mcp-level3/
+00-namespaces/namespaces-mcp/mcp-level3/
 ├── engines/                    # 核心引擎實現
 │   ├── rag/                   # RAG Engine
 │   │   ├── vector/            # VectorRAG (650+ lines)

@@ -162,7 +162,7 @@ Phase 3 Tests: 75+ tests, 95%+ coverage
 
 ### Code Files
 ```
-00-namespaces/mcp-level4/
+00-namespaces/namespaces-mcp/mcp-level4/
 ├── src/
 │   ├── interfaces/          # 14 TypeScript interfaces
 │   ├── engines/             # 12 engine implementations

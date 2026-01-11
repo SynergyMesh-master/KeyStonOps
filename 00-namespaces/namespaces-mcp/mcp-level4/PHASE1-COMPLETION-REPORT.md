@@ -253,7 +253,7 @@ Phase 1 (Foundation) of MCP Level 4 has been successfully completed, delivering 
 ## File Structure
 
 ```
-00-namespaces/mcp-level4/
+00-namespaces/namespaces-mcp/mcp-level4/
 ├── src/
 │   ├── interfaces/
 │   │   ├── core.ts                      (450 lines)
