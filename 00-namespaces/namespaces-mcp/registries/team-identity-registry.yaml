@@ -1,0 +1,177 @@
+# MCP Level 1 Team Identity Registry
+# Defines team namespaces and ownership verification
+
+version: "1.0.0"
+semantic_role: team_identity_registry
+artifact_type: registry
+semantic_root: true
+
+description: |
+  Team Identity Registry manages namespace ownership and team identities
+  for MCP artifacts. Ensures proper attribution and prevents namespace hijacking.
+
+naming_format:
+  pattern: "{namespace}"
+  rules:
+    - "Must use reverse-DNS naming (e.g., io.github.username, com.company)"
+    - "Only lowercase letters, numbers, and hyphens allowed"
+    - "Must be globally unique"
+  examples:
+    - "io.github.machinenativeops"
+    - "io.github.domdomegg"
+    - "com.anthropic"
+    - "org.openai.research"
+
+semantic_boundary:
+  description: "Each namespace corresponds to a team, organization, or individual"
+  scope:
+    - "Team/organization identity"
+    - "Artifact ownership"
+    - "Publishing rights"
+  hierarchy:
+    - "Top-level: io, com, org, net"
+    - "Second-level: github, company, organization"
+    - "Third-level: username, division, project"
+
+naming_paradigm:
+  ownership_verification: "required"
+  verification_methods:
+    - type: "github_oauth"
+      applies_to: ["io.github.*"]
+      description: "OAuth authentication with GitHub"
+      
+    - type: "dns_verification"
+      applies_to: ["com.*, org.*, net.*"]
+      description: "DNS TXT record verification"
+      
+    - type: "http_verification"
+      applies_to: ["com.*, org.*, net.*"]
+      description: "HTTP well-known endpoint verification"
+      
+  multi_level_support: true
+  sub_namespaces:
+    enabled: true
+    pattern: "{namespace}/{sub-namespace}"
+    examples:
+      - "com.company/devops"
+      - "io.github.org/team-alpha"
+
+namespace_registry:
+  registered_namespaces:
+    - namespace: "io.github.machinenativeops"
+      owner: "MachineNativeOps"
+      owner_type: "organization"
+      verified: true
+      verification_method: "github_oauth"
+      verified_at: "2025-01-10T00:00:00Z"
+      contact: "mcp@machinenativeops.io"
+      artifacts_count: 6
+      status: "active"
+      
+    - namespace: "io.github.modelcontextprotocol"
+      owner: "Model Context Protocol"
+      owner_type: "organization"
+      verified: true
+      verification_method: "github_oauth"
+      verified_at: "2024-11-25T00:00:00Z"
+      contact: "registry@modelcontextprotocol.io"
+      artifacts_count: 100
+      status: "active"
+      
+    - namespace: "com.anthropic"
+      owner: "Anthropic"
+      owner_type: "company"
+      verified: true
+      verification_method: "dns_verification"
+      verified_at: "2024-11-25T00:00:00Z"
+      contact: "mcp@anthropic.com"
+      artifacts_count: 50
+      status: "active"
+
+conflict_avoidance:
+  strategies:
+    - name: "ownership_verification"
+      description: "Only verified owners can publish to their namespace"
+      enforcement: "strict"
+      
+    - name: "namespace_reservation"
+      description: "Reserve namespace for 90 days after verification"
+      duration: "90d"
+      
+    - name: "namespace_reclamation"
+      description: "Reclaim inactive namespaces after 2 years"
+      inactive_period: "2y"
+      
+  conflict_resolution:
+    - priority: "verified_owner"
+    - priority: "first_published"
+    - priority: "most_artifacts"
+
+semantic_linkage:
+  linked_artifacts:
+    - type: "manifest"
+      field: "metadata.name"
+      description: "Manifest must include full namespace"
+      
+    - type: "governance"
+      field: "team_identity"
+      description: "Governance policies linked to team identity"
+      
+    - type: "policies"
+      field: "namespace_owner"
+      description: "Policies enforce namespace ownership"
+
+verification_process:
+  github_oauth:
+    steps:
+      - "User authenticates with GitHub OAuth"
+      - "System verifies user owns the GitHub account/org"
+      - "Namespace granted: io.github.{username} or io.github.{orgname}"
+    validity: "1 year"
+    renewal: "automatic"
+    
+  dns_verification:
+    steps:
+      - "User adds TXT record to domain: _mcp-registry-auth.{domain}"
+      - "Record contains: mcp-registry-verification={token}"
+      - "System verifies DNS record"
+      - "Namespace granted: com.{domain} or org.{domain}"
+    validity: "1 year"
+    renewal: "manual"
+    
+  http_verification:
+    steps:
+      - "User adds file to domain: /.well-known/mcp-registry-auth"
+      - "File contains: {token}"
+      - "System verifies HTTP endpoint"
+      - "Namespace granted: com.{domain} or org.{domain}"
+    validity: "1 year"
+    renewal: "manual"
+
+governance:
+  ownership_transfer:
+    allowed: true
+    approval_required: true
+    notification: "both_parties"
+    
+  namespace_suspension:
+    reasons:
+      - "Terms of service violation"
+      - "Security concerns"
+      - "Malicious artifacts"
+    process: "manual_review"
+    appeal: "allowed"
+    
+  namespace_deletion:
+    grace_period: "30d"
+    backup: "required"
+    notification: "all_users"
+
+metadata:
+  created_at: "2025-01-11T13:00:00Z"
+  updated_at: "2025-01-11T13:00:00Z"
+  version: "1.0.0"
+  status: "active"
+  total_namespaces: 3
+  verified_namespaces: 3
+  maintainer: "MCP Registry Team"

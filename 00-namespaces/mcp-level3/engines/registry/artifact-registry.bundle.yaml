@@ -1,0 +1,254 @@
+# MCP Level 3 - Artifact Registry Bundle
+
+apiVersion: mcp.ninjatech.ai/v1alpha1
+kind: EngineBundle
+metadata:
+  name: artifact-registry
+  namespace: mcp-level3
+  version: 1.0.0
+  description: "Artifact Registry deployment bundle"
+  labels:
+    engine-type: artifact-registry
+    deployment-tier: core
+    criticality: critical
+
+components:
+  services:
+    - name: registry-api-service
+      type: rest-api
+      version: 1.0.0
+      image: "ninjatech/registry-api:1.0.0"
+      port: 8080
+      replicas: 5
+      resources:
+        requests:
+          cpu: "1000m"
+          memory: "2Gi"
+        limits:
+          cpu: "4000m"
+          memory: "8Gi"
+    
+    - name: artifact-storage-service
+      type: service
+      version: 1.0.0
+      image: "ninjatech/artifact-storage:1.0.0"
+      port: 8081
+      replicas: 10
+      resources:
+        requests:
+          cpu: "2000m"
+          memory: "4Gi"
+        limits:
+          cpu: "8000m"
+          memory: "16Gi"
+    
+    - name: metadata-service
+      type: service
+      version: 1.0.0
+      image: "ninjatech/metadata-service:1.0.0"
+      port: 8082
+      replicas: 5
+      resources:
+        requests:
+          cpu: "1000m"
+          memory: "2Gi"
+        limits:
+          cpu: "4000m"
+          memory: "8Gi"
+    
+    - name: version-service
+      type: service
+      version: 1.0.0
+      image: "ninjatech/version-service:1.0.0"
+      port: 8083
+      replicas: 3
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "1Gi"
+        limits:
+          cpu: "2000m"
+          memory: "4Gi"
+    
+    - name: lineage-service
+      type: service
+      version: 1.0.0
+      image: "ninjatech/lineage-service:1.0.0"
+      port: 8084
+      replicas: 3
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "1Gi"
+        limits:
+          cpu: "2000m"
+          memory: "4Gi"
+    
+    - name: scan-service
+      type: service
+      version: 1.0.0
+      image: "ninjatech/scan-service:1.0.0"
+      port: 8085
+      replicas: 3
+      resources:
+        requests:
+          cpu: "1000m"
+          memory: "2Gi"
+        limits:
+          cpu: "4000m"
+          memory: "8Gi"
+  
+  datastores:
+    - name: object-storage
+      type: object-store
+      provider: "s3"
+      configuration:
+        bucket: "artifacts"
+        versioning: true
+        lifecycle_rules:
+          - transition_days: 90
+            storage_class: "GLACIER"
+      resources:
+        storage: "50Ti"
+    
+    - name: metadata-database
+      type: relational-db
+      provider: "postgresql"
+      version: "15.x"
+      configuration:
+        replicas: 3
+        max_connections: 2000
+      resources:
+        storage: "1Ti"
+        memory: "64Gi"
+    
+    - name: search-engine
+      type: search
+      provider: "elasticsearch"
+      version: "8.x"
+      configuration:
+        replicas: 5
+        shards: 10
+      resources:
+        storage: "2Ti"
+        memory: "64Gi"
+    
+    - name: cache-layer
+      type: cache
+      provider: "redis"
+      version: "7.x"
+      configuration:
+        replicas: 5
+        cluster_mode: true
+      resources:
+        memory: "64Gi"
+
+deployment:
+  strategy:
+    type: "rolling"
+  
+  scaling:
+    horizontal:
+      enabled: true
+      min_replicas: 5
+      max_replicas: 50
+      metrics:
+        - type: cpu
+          target: 70
+        - type: custom
+          name: upload_requests_per_second
+          target: 100
+        - type: custom
+          name: download_requests_per_second
+          target: 1000
+  
+  quotas:
+    cpu: "300"
+    memory: "600Gi"
+    storage: "60Ti"
+
+environments:
+  production:
+    replicas: 5
+    resources:
+      cpu: "300"
+      memory: "600Gi"
+    features:
+      high_availability: true
+      geo_replication: true
+      cdn_enabled: true
+
+secrets:
+  - name: s3-credentials
+    type: credentials
+    provider: vault
+    path: "secret/registry/s3"
+  
+  - name: metadata-db-credentials
+    type: credentials
+    provider: vault
+    path: "secret/registry/metadata-db"
+
+health_checks:
+  liveness:
+    http_get:
+      path: "/health/live"
+      port: 8080
+    initial_delay: 30s
+    period: 10s
+
+observability:
+  metrics:
+    enabled: true
+    provider: prometheus
+    custom_metrics:
+      - name: artifacts_uploaded
+        type: counter
+      - name: artifacts_downloaded
+        type: counter
+      - name: storage_used_bytes
+        type: gauge
+      - name: upload_duration
+        type: histogram
+      - name: download_duration
+        type: histogram
+  logging:
+    enabled: true
+    provider: elasticsearch
+  tracing:
+    enabled: true
+    provider: jaeger
+
+security:
+  pod_security:
+    run_as_non_root: true
+  
+  network_policies:
+    - name: allow-ingress
+      ingress:
+        - from:
+            - namespace_selector:
+                match_labels:
+                  name: ingress-nginx
+
+backup:
+  enabled: true
+  schedule: "0 */6 * * *"  # Every 6 hours
+  retention: 90d
+  targets:
+    - metadata-database
+    - object-storage
+
+disaster_recovery:
+  geo_replication:
+    enabled: true
+    regions:
+      - us-east-1
+      - us-west-2
+      - eu-west-1
+  
+  rpo: 1h
+  rto: 4h
+
+documentation:
+  deployment_guide: "https://docs.ninjatech.ai/mcp/artifact-registry/deployment"

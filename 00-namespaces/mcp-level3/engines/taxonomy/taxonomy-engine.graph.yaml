@@ -1,0 +1,167 @@
+# MCP Level 3 - Taxonomy Engine Dependency Graph
+
+apiVersion: mcp.ninjatech.ai/v1alpha1
+kind: EngineGraph
+metadata:
+  name: taxonomy-engine
+  namespace: mcp-level3
+  version: 1.0.0
+  description: "Taxonomy Engine dependency graph"
+  labels:
+    engine-type: taxonomy
+    graph-type: dependency
+
+nodes:
+  - id: taxonomy-api-service
+    type: service
+    category: api
+    name: "Taxonomy API Service"
+    properties:
+      port: 8080
+      replicas: 3
+      criticality: high
+  
+  - id: entity-service
+    type: service
+    category: core
+    name: "Entity Service"
+    properties:
+      port: 8081
+      replicas: 3
+      criticality: high
+  
+  - id: ontology-service
+    type: service
+    category: core
+    name: "Ontology Service"
+    properties:
+      port: 8082
+      replicas: 2
+      criticality: medium
+  
+  - id: graph-service
+    type: service
+    category: core
+    name: "Graph Service"
+    properties:
+      port: 8083
+      replicas: 3
+      criticality: high
+  
+  - id: graph-database
+    type: datastore
+    category: storage
+    name: "Graph Database"
+    properties:
+      provider: neo4j
+      criticality: critical
+  
+  - id: triple-store
+    type: datastore
+    category: storage
+    name: "Triple Store"
+    properties:
+      provider: blazegraph
+      criticality: high
+  
+  - id: search-index
+    type: datastore
+    category: storage
+    name: "Search Index"
+    properties:
+      provider: elasticsearch
+      criticality: medium
+
+edges:
+  - source: taxonomy-api-service
+    target: entity-service
+    type: synchronous
+    protocol: http
+    properties:
+      latency: 30ms
+      throughput: 1000rps
+  
+  - source: taxonomy-api-service
+    target: ontology-service
+    type: synchronous
+    protocol: http
+    properties:
+      latency: 50ms
+      throughput: 500rps
+  
+  - source: entity-service
+    target: graph-database
+    type: synchronous
+    protocol: bolt
+    properties:
+      latency: 50ms
+      throughput: 2000rps
+  
+  - source: entity-service
+    target: search-index
+    type: synchronous
+    protocol: http
+    properties:
+      latency: 20ms
+      throughput: 3000rps
+  
+  - source: ontology-service
+    target: triple-store
+    type: synchronous
+    protocol: sparql
+    properties:
+      latency: 100ms
+      throughput: 500rps
+  
+  - source: graph-service
+    target: graph-database
+    type: synchronous
+    protocol: bolt
+    properties:
+      latency: 50ms
+      throughput: 2000rps
+
+dependency_matrix:
+  services:
+    - taxonomy-api-service
+    - entity-service
+    - ontology-service
+    - graph-service
+  
+  matrix:
+    taxonomy-api-service: [0, 1, 1, 1]
+    entity-service: [0, 0, 0, 0]
+    ontology-service: [0, 0, 0, 0]
+    graph-service: [0, 0, 0, 0]
+
+data_flows:
+  - name: entity-creation-flow
+    steps:
+      - step: 1
+        component: taxonomy-api-service
+        action: "Receive entity creation request"
+      - step: 2
+        component: entity-service
+        action: "Create entity"
+      - step: 3
+        component: graph-database
+        action: "Store entity"
+
+critical_paths:
+  - name: entity-query-critical-path
+    path:
+      - taxonomy-api-service
+      - entity-service
+      - graph-database
+    total_latency: 80ms
+
+performance:
+  throughput:
+    queries_per_second: 1000
+  latency:
+    p50: 50ms
+    p95: 150ms
+    p99: 300ms
+
+documentation:
+  architecture_diagram: "https://docs.ninjatech.ai/mcp/taxonomy-engine/architecture"

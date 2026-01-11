@@ -1,3 +1,6 @@
+# Integration & Extension Module Manifest
+# Defines module metadata and dependencies
+
 version: "2.0.0"
 semantic_role: manifest_storage
 artifact_type: manifest
@@ -6,9 +9,40 @@ semantic_root: true
 module:
   name: "integration-extension"
   version: "1.0.0"
-  description: "Integration and extension layer"
-  category: "integration-extension"
+  description: "Integration and extension layer providing protocol adapters (REST, GraphQL, gRPC, Webhook), plugin system, middleware chain, and event bridge"
+  author: "MCP Core Team"
+  license: "MIT"
+  homepage: "https://github.com/MachineNativeOps/machine-native-ops"
+  repository: "https://github.com/MachineNativeOps/machine-native-ops"
   
+  keywords:
+    - "integration"
+    - "extension"
+    - "adapters"
+    - "plugins"
+    - "middleware"
+    - "event-bridge"
+
+  category: "integration-extension"
+  semantic_classification: "integration_extension_layer"
+
+dependencies:
+  required:
+    - artifact: "protocol.manifest.yaml"
+      version: ">=1.0.0"
+      purpose: "Protocol layer for communication"
+      
+    - artifact: "monitoring-observability.manifest.yaml"
+      version: ">=1.0.0"
+      purpose: "Metrics and logging"
+      
+  optional:
+    - artifact: "configuration-governance.manifest.yaml"
+      version: ">=1.0.0"
+      purpose: "Governance policies"
+      
+  peer: []
+
 provides:
   capabilities:
     - "rest-adapter"
@@ -17,9 +51,103 @@ provides:
     - "webhook-adapter"
     - "plugin-system"
     - "extension-manager"
+    - "middleware-chain"
     - "event-bridge"
     - "adapter-registry"
+    - "integration-bridge"
+  
+  endpoints:
+    - "adapters/rest"
+    - "adapters/graphql"
+    - "adapters/grpc"
+    - "adapters/webhook"
+    - "plugins/load"
+    - "events/publish"
+  
+  artifacts:
+    - type: "schema"
+      path: "schemas/integration-extension.schema.yaml"
+    - type: "spec"
+      path: "specs/integration-extension.spec.yaml"
+    - type: "policy"
+      path: "policies/integration-extension.policy.yaml"
+    - type: "bundle"
+      path: "bundles/integration-extension.bundle.yaml"
+    - type: "graph"
+      path: "graphs/integration-extension.graph.yaml"
+    - type: "flow"
+      path: "flows/integration-workflow.flow.yaml"
+
+configuration:
+  default_settings:
+    adapter_timeout: "30000"
+    plugin_sandbox: true
+    middleware_max_chain: 10
+    event_buffer_size: 10000
+    retry_max_attempts: 3
+    circuit_breaker_enabled: true
+  
+  performance_targets:
+    rest_adapter_p99: "<500ms"
+    graphql_adapter_p99: "<1s"
+    grpc_adapter_p99: "<100ms"
+    webhook_adapter_p99: "<200ms"
+    event_bridge_p99: "<20ms"
+    throughput: ">10000 req/sec"
+
+deployment:
+  runtime: "nodejs"
+  min_version: "18.0.0"
+  resources:
+    cpu: "1000m"
+    memory: "2Gi"
+  
+  health_check:
+    endpoint: "/health"
+    interval: "30s"
+    timeout: "5s"
+  
+  scaling:
+    min_replicas: 3
+    max_replicas: 20
+    target_cpu: 70
+
+lifecycle:
+  status: "active"
+  created_at: "2025-01-10T14:00:00Z"
+  updated_at: "2025-01-11T12:45:00Z"
+  deprecated: false
+  deprecation_date: null
+  
+  changelog:
+    - version: "1.0.0"
+      date: "2025-01-10"
+      changes:
+        - "Initial release"
+        - "REST adapter implementation"
+        - "GraphQL adapter implementation"
+        - "gRPC adapter implementation"
+        - "Webhook adapter implementation"
+        - "Plugin system"
+        - "Middleware chain"
+        - "Event bridge"
 
 metadata:
-  created_at: "2025-01-10T14:00:00Z"
-  status: "active"
+  tags:
+    - "integration"
+    - "extension"
+    - "adapters"
+    - "plugins"
+    - "middleware"
+  
+  maintainers:
+    - name: "MCP Core Team"
+      email: "mcp@machinenativeops.io"
+  
+  references:
+    - type: "dependency-registry"
+      path: "registries/dependency-registry.yaml"
+    - type: "reference-registry"
+      path: "registries/reference-registry.yaml"
+    - type: "naming-registry"
+      path: "registries/naming-registry.yaml"

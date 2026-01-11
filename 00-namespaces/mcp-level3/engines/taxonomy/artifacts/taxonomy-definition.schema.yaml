@@ -1,0 +1,688 @@
+# MCP Level 3 - Taxonomy Engine: Taxonomy Definition Schema
+# Purpose: Define hierarchical classification systems for organizing entities and concepts
+# Version: 1.0.0
+# Last Updated: 2025-01-11
+
+schema:
+  name: taxonomy-definition
+  version: "1.0.0"
+  namespace: mcp.level3.taxonomy.artifacts
+  description: |
+    Taxonomy definition artifact for creating hierarchical classification systems.
+    Supports multi-level hierarchies, controlled vocabularies, and semantic relationships.
+    Used for organizing entities, concepts, and knowledge across the MCP ecosystem.
+
+  type: object
+  required:
+    - taxonomy_id
+    - name
+    - version
+    - root_nodes
+    - created_at
+    - status
+  
+  properties:
+    # Core Identity
+    taxonomy_id:
+      type: string
+      format: uuid
+      description: Unique identifier for the taxonomy
+      example: "550e8400-e29b-41d4-a716-446655440000"
+      index: true
+    
+    name:
+      type: string
+      description: Human-readable taxonomy name
+      example: "MCP Artifact Classification"
+      minLength: 3
+      maxLength: 200
+    
+    version:
+      type: string
+      pattern: '^\d+\.\d+\.\d+$'
+      description: Semantic version of the taxonomy
+      example: "1.2.3"
+    
+    description:
+      type: string
+      description: Detailed description of the taxonomy's purpose and scope
+      example: "Hierarchical classification system for MCP Level 3 artifacts and components"
+      maxLength: 2000
+      optional: true
+    
+    # Taxonomy Structure
+    root_nodes:
+      type: array
+      description: Top-level nodes in the taxonomy hierarchy
+      items:
+        type: object
+        required:
+          - node_id
+          - label
+          - code
+        properties:
+          node_id:
+            type: string
+            format: uuid
+            description: Unique identifier for the node
+            example: "660e8400-e29b-41d4-a716-446655440001"
+          
+          label:
+            type: string
+            description: Human-readable label for the node
+            example: "Data Artifacts"
+            minLength: 1
+            maxLength: 200
+          
+          code:
+            type: string
+            description: Machine-readable code for the node
+            example: "DATA_ARTIFACTS"
+            pattern: '^[A-Z][A-Z0-9_]*$'
+            minLength: 1
+            maxLength: 100
+          
+          description:
+            type: string
+            description: Detailed description of the node
+            example: "Artifacts related to data storage, processing, and transformation"
+            maxLength: 1000
+            optional: true
+          
+          parent_id:
+            type: string
+            format: uuid
+            description: Parent node ID (null for root nodes)
+            example: null
+            nullable: true
+          
+          children:
+            type: array
+            description: Child nodes in the hierarchy
+            items:
+              $ref: "#/properties/root_nodes/items"
+            optional: true
+          
+          level:
+            type: integer
+            minimum: 0
+            description: Depth level in the hierarchy (0 for root)
+            example: 0
+          
+          path:
+            type: string
+            description: Full path from root to this node
+            example: "/data_artifacts"
+            pattern: '^(/[a-z][a-z0-9_]*)+$'
+          
+          order:
+            type: integer
+            minimum: 0
+            description: Display order among siblings
+            example: 1
+            optional: true
+          
+          metadata:
+            type: object
+            description: Additional node metadata
+            optional: true
+            properties:
+              icon:
+                type: string
+                description: Icon identifier for UI display
+                example: "database"
+              color:
+                type: string
+                pattern: '^#[0-9A-Fa-f]{6}$'
+                description: Color code for visualization
+                example: "#3498db"
+              tags:
+                type: array
+                items:
+                  type: string
+                description: Tags for categorization
+                example: ["core", "data"]
+              custom:
+                type: object
+                additionalProperties: true
+                description: Custom metadata fields
+      minItems: 1
+    
+    # Taxonomy Metadata
+    domain:
+      type: string
+      description: Domain or subject area of the taxonomy
+      example: "machine-learning-operations"
+      enum:
+        - machine-learning-operations
+        - data-engineering
+        - software-development
+        - business-intelligence
+        - knowledge-management
+        - general
+    
+    scope:
+      type: string
+      description: Scope of the taxonomy
+      example: "organization"
+      enum:
+        - global
+        - organization
+        - project
+        - team
+        - personal
+    
+    language:
+      type: string
+      pattern: '^[a-z]{2}(-[A-Z]{2})?$'
+      description: Primary language of the taxonomy (ISO 639-1)
+      example: "en-US"
+      default: "en"
+    
+    # Governance
+    status:
+      type: string
+      enum:
+        - draft
+        - review
+        - approved
+        - published
+        - deprecated
+        - archived
+      description: Current status of the taxonomy
+      example: "published"
+      default: "draft"
+    
+    owner:
+      type: object
+      description: Taxonomy owner information
+      required:
+        - id
+        - type
+      properties:
+        id:
+          type: string
+          description: Owner identifier
+          example: "team:data-governance"
+        type:
+          type: string
+          enum:
+            - user
+            - team
+            - organization
+            - system
+          example: "team"
+        name:
+          type: string
+          description: Owner name
+          example: "Data Governance Team"
+        email:
+          type: string
+          format: email
+          description: Contact email
+          example: "data-governance@example.com"
+          optional: true
+    
+    maintainers:
+      type: array
+      description: List of taxonomy maintainers
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            description: Maintainer identifier
+          name:
+            type: string
+            description: Maintainer name
+          role:
+            type: string
+            enum:
+              - primary
+              - secondary
+              - reviewer
+            description: Maintainer role
+      optional: true
+    
+    # Versioning
+    version_history:
+      type: array
+      description: History of taxonomy versions
+      items:
+        type: object
+        properties:
+          version:
+            type: string
+            pattern: '^\d+\.\d+\.\d+$'
+            description: Version number
+          released_at:
+            type: string
+            format: date-time
+            description: Release timestamp
+          changes:
+            type: string
+            description: Summary of changes
+          released_by:
+            type: string
+            description: Who released this version
+      optional: true
+    
+    # Relationships
+    related_taxonomies:
+      type: array
+      description: Related or dependent taxonomies
+      items:
+        type: object
+        properties:
+          taxonomy_id:
+            type: string
+            format: uuid
+            description: Related taxonomy ID
+          relationship_type:
+            type: string
+            enum:
+              - extends
+              - references
+              - replaces
+              - supersedes
+              - related_to
+            description: Type of relationship
+          description:
+            type: string
+            description: Description of the relationship
+            optional: true
+      optional: true
+    
+    # Validation Rules
+    validation_rules:
+      type: array
+      description: Rules for validating taxonomy usage
+      items:
+        type: object
+        properties:
+          rule_id:
+            type: string
+            description: Rule identifier
+          name:
+            type: string
+            description: Rule name
+          description:
+            type: string
+            description: Rule description
+          condition:
+            type: string
+            description: Validation condition expression
+          severity:
+            type: string
+            enum:
+              - error
+              - warning
+              - info
+            description: Severity level
+      optional: true
+    
+    # Statistics
+    statistics:
+      type: object
+      description: Taxonomy usage statistics
+      optional: true
+      properties:
+        total_nodes:
+          type: integer
+          minimum: 0
+          description: Total number of nodes
+          example: 156
+        max_depth:
+          type: integer
+          minimum: 0
+          description: Maximum depth of the hierarchy
+          example: 5
+        total_entities:
+          type: integer
+          minimum: 0
+          description: Total entities classified
+          example: 3421
+        last_updated:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2025-01-11T10:00:00Z"
+        usage_count:
+          type: integer
+          minimum: 0
+          description: Number of times taxonomy has been used
+          example: 15234
+    
+    # Timestamps
+    created_at:
+      type: string
+      format: date-time
+      description: Timestamp when taxonomy was created
+      example: "2025-01-01T00:00:00Z"
+      index: true
+    
+    updated_at:
+      type: string
+      format: date-time
+      description: Timestamp when taxonomy was last updated
+      example: "2025-01-11T10:00:00Z"
+      optional: true
+    
+    published_at:
+      type: string
+      format: date-time
+      description: Timestamp when taxonomy was published
+      example: "2025-01-05T00:00:00Z"
+      optional: true
+    
+    # Configuration
+    configuration:
+      type: object
+      description: Taxonomy configuration settings
+      optional: true
+      properties:
+        allow_multiple_parents:
+          type: boolean
+          description: Allow nodes to have multiple parents
+          example: false
+          default: false
+        enforce_unique_codes:
+          type: boolean
+          description: Enforce unique codes across all nodes
+          example: true
+          default: true
+        max_depth:
+          type: integer
+          minimum: 1
+          description: Maximum allowed hierarchy depth
+          example: 10
+          default: 10
+        case_sensitive:
+          type: boolean
+          description: Whether codes are case-sensitive
+          example: false
+          default: false
+        allow_custom_attributes:
+          type: boolean
+          description: Allow custom attributes on nodes
+          example: true
+          default: true
+    
+    # Metadata
+    metadata:
+      type: object
+      description: Additional metadata
+      optional: true
+      properties:
+        source:
+          type: string
+          description: Source of the taxonomy
+          example: "Internal classification system"
+        license:
+          type: string
+          description: License information
+          example: "MIT"
+        documentation_url:
+          type: string
+          format: uri
+          description: URL to detailed documentation
+          example: "https://docs.example.com/taxonomies/mcp-artifacts"
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags for categorization
+          example: ["mcp", "level3", "classification"]
+        custom:
+          type: object
+          additionalProperties: true
+          description: Custom metadata fields
+
+  # Validation Rules
+  validation:
+    rules:
+      - name: unique_node_ids
+        condition: all_unique(flatten(root_nodes, 'node_id'))
+        message: "All node IDs must be unique across the taxonomy"
+        severity: error
+      
+      - name: unique_codes
+        condition: configuration.enforce_unique_codes == false || all_unique(flatten(root_nodes, 'code'))
+        message: "All node codes must be unique when enforce_unique_codes is true"
+        severity: error
+      
+      - name: valid_parent_references
+        condition: all_parent_ids_exist(root_nodes)
+        message: "All parent_id references must point to existing nodes"
+        severity: error
+      
+      - name: no_circular_references
+        condition: no_cycles(root_nodes)
+        message: "Taxonomy must not contain circular references"
+        severity: error
+      
+      - name: max_depth_respected
+        condition: max_depth(root_nodes) <= configuration.max_depth
+        message: "Taxonomy depth exceeds configured maximum"
+        severity: error
+      
+      - name: valid_version
+        condition: version matches semantic versioning
+        message: "Version must follow semantic versioning (x.y.z)"
+        severity: error
+
+  # Indexes for Performance
+  indexes:
+    - fields: [taxonomy_id]
+      unique: true
+    - fields: [name, version]
+    - fields: [status]
+    - fields: [domain, scope]
+    - fields: [created_at]
+
+# Usage Examples
+examples:
+  - name: mcp_artifact_taxonomy
+    description: Taxonomy for classifying MCP Level 3 artifacts
+    data:
+      taxonomy_id: "550e8400-e29b-41d4-a716-446655440000"
+      name: "MCP Artifact Classification"
+      version: "1.0.0"
+      description: "Hierarchical classification system for MCP Level 3 artifacts and components"
+      domain: "machine-learning-operations"
+      scope: "organization"
+      language: "en-US"
+      status: "published"
+      owner:
+        id: "team:mcp-governance"
+        type: "team"
+        name: "MCP Governance Team"
+        email: "mcp-governance@example.com"
+      root_nodes:
+        - node_id: "660e8400-e29b-41d4-a716-446655440001"
+          label: "Data Artifacts"
+          code: "DATA_ARTIFACTS"
+          description: "Artifacts related to data storage, processing, and transformation"
+          parent_id: null
+          level: 0
+          path: "/data_artifacts"
+          order: 1
+          children:
+            - node_id: "660e8400-e29b-41d4-a716-446655440002"
+              label: "Vector Chunks"
+              code: "VECTOR_CHUNKS"
+              description: "Embedded vector representations of data chunks"
+              parent_id: "660e8400-e29b-41d4-a716-446655440001"
+              level: 1
+              path: "/data_artifacts/vector_chunks"
+              order: 1
+            - node_id: "660e8400-e29b-41d4-a716-446655440003"
+              label: "Knowledge Triplets"
+              code: "KNOWLEDGE_TRIPLETS"
+              description: "Subject-predicate-object knowledge representations"
+              parent_id: "660e8400-e29b-41d4-a716-446655440001"
+              level: 1
+              path: "/data_artifacts/knowledge_triplets"
+              order: 2
+        - node_id: "660e8400-e29b-41d4-a716-446655440004"
+          label: "Process Artifacts"
+          code: "PROCESS_ARTIFACTS"
+          description: "Artifacts related to workflow and process execution"
+          parent_id: null
+          level: 0
+          path: "/process_artifacts"
+          order: 2
+          children:
+            - node_id: "660e8400-e29b-41d4-a716-446655440005"
+              label: "DAG Definitions"
+              code: "DAG_DEFINITIONS"
+              description: "Directed acyclic graph workflow definitions"
+              parent_id: "660e8400-e29b-41d4-a716-446655440004"
+              level: 1
+              path: "/process_artifacts/dag_definitions"
+              order: 1
+            - node_id: "660e8400-e29b-41d4-a716-446655440006"
+              label: "Execution Plans"
+              code: "EXECUTION_PLANS"
+              description: "Detailed execution plans for workflows"
+              parent_id: "660e8400-e29b-41d4-a716-446655440004"
+              level: 1
+              path: "/process_artifacts/execution_plans"
+              order: 2
+      configuration:
+        allow_multiple_parents: false
+        enforce_unique_codes: true
+        max_depth: 10
+        case_sensitive: false
+        allow_custom_attributes: true
+      statistics:
+        total_nodes: 6
+        max_depth: 1
+        total_entities: 1523
+        last_updated: "2025-01-11T10:00:00Z"
+        usage_count: 3421
+      created_at: "2025-01-01T00:00:00Z"
+      updated_at: "2025-01-11T10:00:00Z"
+      published_at: "2025-01-05T00:00:00Z"
+      metadata:
+        source: "MCP Level 3 Specification"
+        license: "MIT"
+        documentation_url: "https://docs.example.com/taxonomies/mcp-artifacts"
+        tags:
+          - "mcp"
+          - "level3"
+          - "classification"
+
+  - name: ml_model_taxonomy
+    description: Taxonomy for classifying machine learning models
+    data:
+      taxonomy_id: "770e8400-e29b-41d4-a716-446655440007"
+      name: "ML Model Classification"
+      version: "2.1.0"
+      description: "Classification system for machine learning models and algorithms"
+      domain: "machine-learning-operations"
+      scope: "global"
+      language: "en"
+      status: "published"
+      owner:
+        id: "team:ml-platform"
+        type: "team"
+        name: "ML Platform Team"
+      root_nodes:
+        - node_id: "880e8400-e29b-41d4-a716-446655440008"
+          label: "Supervised Learning"
+          code: "SUPERVISED_LEARNING"
+          description: "Models trained on labeled data"
+          parent_id: null
+          level: 0
+          path: "/supervised_learning"
+          order: 1
+          children:
+            - node_id: "880e8400-e29b-41d4-a716-446655440009"
+              label: "Classification"
+              code: "CLASSIFICATION"
+              parent_id: "880e8400-e29b-41d4-a716-446655440008"
+              level: 1
+              path: "/supervised_learning/classification"
+              order: 1
+            - node_id: "880e8400-e29b-41d4-a716-446655440010"
+              label: "Regression"
+              code: "REGRESSION"
+              parent_id: "880e8400-e29b-41d4-a716-446655440008"
+              level: 1
+              path: "/supervised_learning/regression"
+              order: 2
+        - node_id: "880e8400-e29b-41d4-a716-446655440011"
+          label: "Unsupervised Learning"
+          code: "UNSUPERVISED_LEARNING"
+          description: "Models trained on unlabeled data"
+          parent_id: null
+          level: 0
+          path: "/unsupervised_learning"
+          order: 2
+          children:
+            - node_id: "880e8400-e29b-41d4-a716-446655440012"
+              label: "Clustering"
+              code: "CLUSTERING"
+              parent_id: "880e8400-e29b-41d4-a716-446655440011"
+              level: 1
+              path: "/unsupervised_learning/clustering"
+              order: 1
+      configuration:
+        allow_multiple_parents: true
+        enforce_unique_codes: true
+        max_depth: 8
+        case_sensitive: false
+        allow_custom_attributes: true
+      statistics:
+        total_nodes: 6
+        max_depth: 1
+        total_entities: 842
+        last_updated: "2025-01-11T09:00:00Z"
+        usage_count: 2156
+      created_at: "2024-06-01T00:00:00Z"
+      updated_at: "2025-01-11T09:00:00Z"
+      published_at: "2024-07-01T00:00:00Z"
+
+# Integration Guidelines
+integration:
+  creation:
+    - Define clear taxonomy scope and purpose
+    - Start with high-level categories
+    - Iteratively refine hierarchy
+    - Validate with stakeholders
+    - Document node definitions
+  
+  usage:
+    - Use taxonomy for entity classification
+    - Support multi-taxonomy classification
+    - Maintain classification history
+    - Enable taxonomy-based search
+    - Support faceted navigation
+  
+  maintenance:
+    - Regular review and updates
+    - Version control for changes
+    - Deprecation strategy for obsolete nodes
+    - Migration path for taxonomy changes
+    - Stakeholder communication
+
+# Performance Considerations
+performance:
+  storage:
+    - Store as nested JSON for small taxonomies (<1000 nodes)
+    - Use adjacency list for large taxonomies
+    - Implement materialized path for fast lookups
+    - Cache frequently accessed paths
+  
+  queries:
+    - Index on node_id, code, path
+    - Pre-compute ancestor/descendant relationships
+    - Use full-text search for node labels
+    - Implement efficient subtree queries
+  
+  updates:
+    - Batch node updates when possible
+    - Invalidate caches on structure changes
+    - Use optimistic locking for concurrent updates
+    - Maintain audit trail of changes

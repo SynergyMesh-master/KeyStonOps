@@ -1,0 +1,258 @@
+# Validation Report Artifact Schema
+# Defines the structure for validation reports in MCP Level 3
+
+version: "1.0.0"
+semantic_role: "validation_report"
+artifact_type: "schema"
+semantic_root: true
+
+metadata:
+  name: "validation-report"
+  description: "Schema for validation reports covering schema validation, semantic consistency, and quality checks"
+  author: "MCP Core Team"
+  created: "2025-01-11"
+  updated: "2025-01-11"
+  tags:
+    - "validation"
+    - "quality"
+    - "compliance"
+    - "testing"
+
+schema:
+  type: "object"
+  required:
+    - "report_id"
+    - "artifact_id"
+    - "validation_type"
+    - "status"
+    - "results"
+    - "metadata"
+  properties:
+    report_id:
+      type: "string"
+      description: "Unique identifier for the validation report"
+      pattern: "^report:[a-zA-Z0-9_-]+:[0-9]+$"
+      example: "report:validation:20250111_100000"
+      
+    artifact_id:
+      type: "string"
+      description: "ID of the artifact being validated"
+      example: "artifact:dataset:customer_data"
+      
+    validation_type:
+      type: "string"
+      description: "Type of validation performed"
+      enum: ["schema", "semantic", "policy", "quality", "regression", "integration"]
+      example: "schema"
+      
+    status:
+      type: "string"
+      description: "Overall validation status"
+      enum: ["passed", "failed", "warning", "error"]
+      example: "passed"
+      
+    results:
+      type: "object"
+      description: "Validation results"
+      required:
+        - "total_checks"
+        - "passed_checks"
+        - "failed_checks"
+      properties:
+        total_checks:
+          type: "integer"
+          minimum: 0
+          example: 50
+          
+        passed_checks:
+          type: "integer"
+          minimum: 0
+          example: 48
+          
+        failed_checks:
+          type: "integer"
+          minimum: 0
+          example: 2
+          
+        warning_checks:
+          type: "integer"
+          minimum: 0
+          example: 0
+          
+        checks:
+          type: "array"
+          description: "Individual check results"
+          items:
+            type: "object"
+            required:
+              - "check_id"
+              - "check_name"
+              - "status"
+            properties:
+              check_id:
+                type: "string"
+                example: "check:001"
+              check_name:
+                type: "string"
+                example: "Schema Compliance"
+              description:
+                type: "string"
+                example: "Validates artifact against schema definition"
+              status:
+                type: "string"
+                enum: ["passed", "failed", "warning", "skipped"]
+                example: "passed"
+              message:
+                type: "string"
+                example: "All fields conform to schema"
+              details:
+                type: "object"
+                additionalProperties: true
+              severity:
+                type: "string"
+                enum: ["critical", "high", "medium", "low", "info"]
+                example: "high"
+                
+    errors:
+      type: "array"
+      description: "Validation errors"
+      items:
+        type: "object"
+        properties:
+          error_id:
+            type: "string"
+            example: "err:001"
+          error_type:
+            type: "string"
+            example: "SchemaViolation"
+          message:
+            type: "string"
+            example: "Missing required field: 'timestamp'"
+          field:
+            type: "string"
+            example: "metadata.timestamp"
+          severity:
+            type: "string"
+            enum: ["critical", "high", "medium", "low"]
+            example: "critical"
+          suggestion:
+            type: "string"
+            example: "Add timestamp field in ISO 8601 format"
+            
+    warnings:
+      type: "array"
+      description: "Validation warnings"
+      items:
+        type: "object"
+        properties:
+          warning_id:
+            type: "string"
+          warning_type:
+            type: "string"
+          message:
+            type: "string"
+          field:
+            type: "string"
+          suggestion:
+            type: "string"
+            
+    metrics:
+      type: "object"
+      description: "Validation metrics"
+      properties:
+        success_rate:
+          type: "number"
+          description: "Percentage of passed checks"
+          minimum: 0
+          maximum: 100
+          example: 96.0
+          
+        coverage:
+          type: "number"
+          description: "Validation coverage percentage"
+          minimum: 0
+          maximum: 100
+          example: 100.0
+          
+        execution_time_ms:
+          type: "number"
+          description: "Time taken for validation"
+          minimum: 0
+          example: 125.5
+          
+    metadata:
+      type: "object"
+      required:
+        - "validated_at"
+        - "validator"
+      properties:
+        validated_at:
+          type: "string"
+          format: "date-time"
+          example: "2025-01-11T10:00:00Z"
+          
+        validator:
+          type: "string"
+          description: "Validator that performed the validation"
+          example: "schema-validator-v1.0"
+          
+        validator_version:
+          type: "string"
+          example: "1.0.0"
+          
+        environment:
+          type: "string"
+          example: "production"
+          
+        triggered_by:
+          type: "string"
+          example: "user:data_engineer"
+
+validation_rules:
+  - rule: "report_id_format"
+    description: "Report ID must follow naming convention"
+    expression: "report_id matches pattern 'report:type:timestamp'"
+    
+  - rule: "check_counts_consistent"
+    description: "Check counts must be consistent"
+    expression: "results.total_checks == results.passed_checks + results.failed_checks + results.warning_checks"
+
+examples:
+  - name: "successful_schema_validation"
+    description: "Successful schema validation report"
+    data:
+      report_id: "report:validation:20250111_100000"
+      artifact_id: "artifact:dataset:customer_data"
+      validation_type: "schema"
+      status: "passed"
+      results:
+        total_checks: 10
+        passed_checks: 10
+        failed_checks: 0
+        warning_checks: 0
+        checks:
+          - check_id: "check:001"
+            check_name: "Schema Compliance"
+            description: "Validates artifact against schema definition"
+            status: "passed"
+            message: "All fields conform to schema"
+            severity: "high"
+      errors: []
+      warnings: []
+      metrics:
+        success_rate: 100.0
+        coverage: 100.0
+        execution_time_ms: 45.2
+      metadata:
+        validated_at: "2025-01-11T10:00:00Z"
+        validator: "schema-validator-v1.0"
+        validator_version: "1.0.0"
+        environment: "production"
+        triggered_by: "user:data_engineer"
+
+usage_guidelines:
+  - "Run validation before artifact promotion"
+  - "Address critical errors immediately"
+  - "Review warnings for potential issues"
+  - "Track validation metrics over time"
+  - "Automate validation in CI/CD pipelines"

@@ -1,0 +1,601 @@
+# MCP Level 3 - Governance Engine Specification
+# Defines API specifications, interface contracts, and integration patterns
+
+apiVersion: mcp.ninjatech.ai/v1alpha1
+kind: EngineSpec
+metadata:
+  name: governance-engine
+  namespace: mcp-level3
+  version: 1.0.0
+  description: "Governance Engine API Specification"
+  labels:
+    engine-type: governance
+    capability: policy-compliance
+    tier: core
+  annotations:
+    mcp.ninjatech.ai/spec-version: "1.0.0"
+    mcp.ninjatech.ai/last-updated: "2024-01-15"
+
+# ============================================================================
+# API SPECIFICATIONS
+# ============================================================================
+
+api:
+  rest:
+    baseUrl: "/api/v1/governance"
+    version: "1.0.0"
+    
+    endpoints:
+      # Policy Management Endpoints
+      - path: "/policies"
+        method: POST
+        operationId: createPolicy
+        summary: "Create a new governance policy"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [name, type, rules]
+                properties:
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  type:
+                    type: string
+                    enum: [access_control, data_quality, compliance, security]
+                  rules:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PolicyRule"
+                  enforcement:
+                    type: string
+                    enum: [strict, permissive, audit]
+                  scope:
+                    type: object
+        responses:
+          201:
+            description: "Policy created"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/PolicyResponse"
+      
+      - path: "/policies"
+        method: GET
+        operationId: listPolicies
+        summary: "List all policies"
+        parameters:
+          - name: type
+            in: query
+            schema:
+              type: string
+          - name: status
+            in: query
+            schema:
+              type: string
+              enum: [active, inactive, draft]
+        responses:
+          200:
+            description: "List of policies"
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/PolicySummary"
+      
+      - path: "/policies/{policy_id}"
+        method: GET
+        operationId: getPolicy
+        summary: "Get policy by ID"
+        parameters:
+          - name: policy_id
+            in: path
+            required: true
+            schema:
+              type: string
+        responses:
+          200:
+            description: "Policy details"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/PolicyResponse"
+      
+      - path: "/policies/{policy_id}/evaluate"
+        method: POST
+        operationId: evaluatePolicy
+        summary: "Evaluate a policy against a request"
+        parameters:
+          - name: policy_id
+            in: path
+            required: true
+            schema:
+              type: string
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  subject:
+                    type: object
+                  resource:
+                    type: object
+                  action:
+                    type: string
+                  context:
+                    type: object
+        responses:
+          200:
+            description: "Policy evaluation result"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/PolicyEvaluationResult"
+      
+      # Access Control Endpoints
+      - path: "/access/check"
+        method: POST
+        operationId: checkAccess
+        summary: "Check if access is allowed"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [subject, resource, action]
+                properties:
+                  subject:
+                    type: object
+                    properties:
+                      user_id:
+                        type: string
+                      roles:
+                        type: array
+                        items:
+                          type: string
+                  resource:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      id:
+                        type: string
+                  action:
+                    type: string
+                  context:
+                    type: object
+        responses:
+          200:
+            description: "Access decision"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/AccessDecision"
+      
+      - path: "/access/tokens"
+        method: POST
+        operationId: issueAccessToken
+        summary: "Issue an access token"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [subject, scopes]
+                properties:
+                  subject:
+                    type: string
+                  scopes:
+                    type: array
+                    items:
+                      type: string
+                  ttl:
+                    type: integer
+                  metadata:
+                    type: object
+        responses:
+          201:
+            description: "Access token issued"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/AccessToken"
+      
+      - path: "/access/tokens/{token_id}"
+        method: DELETE
+        operationId: revokeAccessToken
+        summary: "Revoke an access token"
+        parameters:
+          - name: token_id
+            in: path
+            required: true
+            schema:
+              type: string
+        responses:
+          204:
+            description: "Token revoked"
+      
+      # Audit Log Endpoints
+      - path: "/audit/logs"
+        method: GET
+        operationId: getAuditLogs
+        summary: "Retrieve audit logs"
+        parameters:
+          - name: start_time
+            in: query
+            schema:
+              type: string
+              format: date-time
+          - name: end_time
+            in: query
+            schema:
+              type: string
+              format: date-time
+          - name: user_id
+            in: query
+            schema:
+              type: string
+          - name: action
+            in: query
+            schema:
+              type: string
+          - name: resource_type
+            in: query
+            schema:
+              type: string
+          - name: limit
+            in: query
+            schema:
+              type: integer
+              default: 100
+        responses:
+          200:
+            description: "Audit logs"
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/AuditLog"
+      
+      - path: "/audit/logs"
+        method: POST
+        operationId: createAuditLog
+        summary: "Create an audit log entry"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogEntry"
+        responses:
+          201:
+            description: "Audit log created"
+      
+      # Compliance Endpoints
+      - path: "/compliance/reports"
+        method: POST
+        operationId: generateComplianceReport
+        summary: "Generate a compliance report"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [framework, scope]
+                properties:
+                  framework:
+                    type: string
+                    enum: [GDPR, SOC2, HIPAA, PCI-DSS]
+                  scope:
+                    type: object
+                  start_date:
+                    type: string
+                    format: date-time
+                  end_date:
+                    type: string
+                    format: date-time
+        responses:
+          201:
+            description: "Compliance report generated"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/ComplianceReport"
+      
+      - path: "/compliance/reports"
+        method: GET
+        operationId: listComplianceReports
+        summary: "List compliance reports"
+        parameters:
+          - name: framework
+            in: query
+            schema:
+              type: string
+          - name: status
+            in: query
+            schema:
+              type: string
+        responses:
+          200:
+            description: "List of compliance reports"
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/ComplianceReportSummary"
+      
+      - path: "/compliance/reports/{report_id}"
+        method: GET
+        operationId: getComplianceReport
+        summary: "Get compliance report by ID"
+        parameters:
+          - name: report_id
+            in: path
+            required: true
+            schema:
+              type: string
+        responses:
+          200:
+            description: "Compliance report details"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/ComplianceReport"
+      
+      # Role Management Endpoints
+      - path: "/roles"
+        method: POST
+        operationId: createRole
+        summary: "Create a new role"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [name, permissions]
+                properties:
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  permissions:
+                    type: array
+                    items:
+                      type: object
+        responses:
+          201:
+            description: "Role created"
+      
+      - path: "/roles"
+        method: GET
+        operationId: listRoles
+        summary: "List all roles"
+        responses:
+          200:
+            description: "List of roles"
+      
+      - path: "/roles/{role_id}/assignments"
+        method: POST
+        operationId: assignRole
+        summary: "Assign role to a subject"
+        parameters:
+          - name: role_id
+            in: path
+            required: true
+            schema:
+              type: string
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [subject]
+                properties:
+                  subject:
+                    type: object
+                  scope:
+                    type: object
+        responses:
+          201:
+            description: "Role assigned"
+  
+  grpc:
+    package: "mcp.governance.v1"
+    services:
+      - name: GovernanceService
+        methods:
+          - name: EvaluatePolicy
+            input: PolicyEvaluationRequest
+            output: PolicyEvaluationResult
+          
+          - name: CheckAccess
+            input: AccessCheckRequest
+            output: AccessDecision
+          
+          - name: CreateAuditLog
+            input: AuditLogEntry
+            output: AuditLogResponse
+          
+          - name: StreamAuditLogs
+            input: AuditLogStreamRequest
+            output: stream AuditLog
+  
+  events:
+    protocol: kafka
+    topics:
+      - name: governance.policy.created
+        schema: PolicyCreatedEvent
+        partitions: 5
+        retention: 30d
+      
+      - name: governance.policy.updated
+        schema: PolicyUpdatedEvent
+        partitions: 5
+        retention: 30d
+      
+      - name: governance.access.denied
+        schema: AccessDeniedEvent
+        partitions: 10
+        retention: 90d
+      
+      - name: governance.audit.logged
+        schema: AuditLoggedEvent
+        partitions: 20
+        retention: 365d
+      
+      - name: governance.compliance.violation
+        schema: ComplianceViolationEvent
+        partitions: 5
+        retention: 365d
+
+# ============================================================================
+# DATA SCHEMAS
+# ============================================================================
+
+components:
+  schemas:
+    PolicyRule:
+      type: object
+      properties:
+        condition:
+          type: string
+        effect:
+          type: string
+          enum: [allow, deny]
+        actions:
+          type: array
+          items:
+            type: string
+    
+    PolicyResponse:
+      type: object
+      properties:
+        policy_id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        rules:
+          type: array
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    
+    PolicyEvaluationResult:
+      type: object
+      properties:
+        decision:
+          type: string
+          enum: [allow, deny]
+        matched_rules:
+          type: array
+        reason:
+          type: string
+        evaluation_time_ms:
+          type: number
+    
+    AccessDecision:
+      type: object
+      properties:
+        allowed:
+          type: boolean
+        reason:
+          type: string
+        policies_evaluated:
+          type: array
+        decision_time_ms:
+          type: number
+    
+    AccessToken:
+      type: object
+      properties:
+        token:
+          type: string
+        token_type:
+          type: string
+        expires_in:
+          type: integer
+        scopes:
+          type: array
+    
+    AuditLog:
+      type: object
+      properties:
+        log_id:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        user_id:
+          type: string
+        action:
+          type: string
+        resource:
+          type: object
+        result:
+          type: string
+        metadata:
+          type: object
+    
+    ComplianceReport:
+      type: object
+      properties:
+        report_id:
+          type: string
+        framework:
+          type: string
+        status:
+          type: string
+        findings:
+          type: array
+        score:
+          type: number
+        generated_at:
+          type: string
+          format: date-time
+
+contracts:
+  sla:
+    availability: 99.99%
+    latency:
+      p50: 50ms
+      p95: 150ms
+      p99: 300ms
+
+integration:
+  upstream:
+    - service: identity-provider
+      protocol: oidc
+    - service: policy-store
+      protocol: rest
+  
+  downstream:
+    - service: audit-store
+      protocol: kafka
+    - service: alerting
+      protocol: rest
+
+versioning:
+  strategy: semantic
+  current: 1.0.0
+  supported: [1.0.0]
+
+documentation:
+  openapi: "https://docs.ninjatech.ai/mcp/governance-engine/openapi.yaml"
+  examples: "https://github.com/ninjatech/mcp-examples/governance"

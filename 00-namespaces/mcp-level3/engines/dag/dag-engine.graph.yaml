@@ -1,0 +1,335 @@
+# MCP Level 3 - DAG Engine Dependency Graph
+# Defines component dependencies, data flow, and integration points
+
+apiVersion: mcp.ninjatech.ai/v1alpha1
+kind: EngineGraph
+metadata:
+  name: dag-engine
+  namespace: mcp-level3
+  version: 1.0.0
+  description: "DAG Engine dependency graph and data flow visualization"
+  labels:
+    engine-type: dag
+    graph-type: dependency
+  annotations:
+    mcp.ninjatech.ai/graph-version: "1.0.0"
+    mcp.ninjatech.ai/last-updated: "2024-01-11"
+
+# ============================================================================
+# NODE DEFINITIONS
+# ============================================================================
+
+nodes:
+  - id: dag-api-service
+    type: service
+    category: api
+    name: "DAG API Service"
+    description: "REST API for DAG management"
+    properties:
+      protocol: http
+      port: 8080
+      replicas: 3
+      criticality: high
+  
+  - id: dag-scheduler
+    type: service
+    category: core
+    name: "DAG Scheduler"
+    description: "Schedules and orchestrates DAG execution"
+    properties:
+      protocol: grpc
+      port: 8081
+      replicas: 3
+      criticality: critical
+  
+  - id: dag-executor
+    type: service
+    category: core
+    name: "DAG Executor"
+    description: "Executes DAG tasks"
+    properties:
+      protocol: grpc
+      port: 8082
+      replicas: 10
+      criticality: critical
+  
+  - id: dag-monitor
+    type: service
+    category: monitoring
+    name: "DAG Monitor"
+    description: "Monitors DAG execution"
+    properties:
+      protocol: http
+      port: 8083
+      replicas: 2
+      criticality: medium
+  
+  - id: lineage-tracker
+    type: service
+    category: tracking
+    name: "Lineage Tracker"
+    description: "Tracks data lineage"
+    properties:
+      protocol: http
+      port: 8084
+      replicas: 2
+      criticality: medium
+  
+  - id: metadata-store
+    type: datastore
+    category: storage
+    name: "Metadata Store"
+    description: "Stores DAG definitions and metadata"
+    properties:
+      provider: postgresql
+      criticality: critical
+  
+  - id: state-store
+    type: datastore
+    category: storage
+    name: "State Store"
+    description: "Stores execution state"
+    properties:
+      provider: redis
+      criticality: critical
+  
+  - id: log-store
+    type: datastore
+    category: storage
+    name: "Log Store"
+    description: "Stores execution logs"
+    properties:
+      provider: s3
+      criticality: high
+  
+  - id: message-queue
+    type: infrastructure
+    category: messaging
+    name: "Message Queue"
+    description: "Kafka message broker"
+    properties:
+      provider: kafka
+      criticality: high
+
+# ============================================================================
+# EDGE DEFINITIONS
+# ============================================================================
+
+edges:
+  - source: dag-api-service
+    target: dag-scheduler
+    type: synchronous
+    protocol: grpc
+    description: "API triggers DAG execution"
+    properties:
+      latency: 50ms
+      throughput: 1000rps
+  
+  - source: dag-api-service
+    target: metadata-store
+    type: synchronous
+    protocol: postgresql
+    description: "API reads/writes DAG definitions"
+    properties:
+      latency: 20ms
+      throughput: 2000rps
+  
+  - source: dag-scheduler
+    target: dag-executor
+    type: asynchronous
+    protocol: kafka
+    description: "Scheduler dispatches tasks"
+    properties:
+      topic: "dag.tasks"
+  
+  - source: dag-scheduler
+    target: state-store
+    type: synchronous
+    protocol: redis
+    description: "Scheduler manages execution state"
+    properties:
+      latency: 5ms
+      throughput: 5000rps
+  
+  - source: dag-executor
+    target: state-store
+    type: synchronous
+    protocol: redis
+    description: "Executor updates task state"
+    properties:
+      latency: 5ms
+      throughput: 10000rps
+  
+  - source: dag-executor
+    target: log-store
+    type: asynchronous
+    protocol: s3
+    description: "Executor writes logs"
+    properties:
+      latency: 100ms
+  
+  - source: dag-executor
+    target: lineage-tracker
+    type: asynchronous
+    protocol: kafka
+    description: "Executor reports lineage"
+    properties:
+      topic: "dag.lineage"
+  
+  - source: dag-monitor
+    target: state-store
+    type: synchronous
+    protocol: redis
+    description: "Monitor reads execution state"
+    properties:
+      latency: 5ms
+      throughput: 1000rps
+  
+  - source: lineage-tracker
+    target: metadata-store
+    type: synchronous
+    protocol: postgresql
+    description: "Tracker stores lineage"
+    properties:
+      latency: 50ms
+      throughput: 500rps
+
+# ============================================================================
+# DEPENDENCY MATRIX
+# ============================================================================
+
+dependency_matrix:
+  services:
+    - dag-api-service
+    - dag-scheduler
+    - dag-executor
+    - dag-monitor
+    - lineage-tracker
+  
+  matrix:
+    dag-api-service: [0, 1, 0, 0, 0]
+    dag-scheduler: [0, 0, 1, 0, 0]
+    dag-executor: [0, 0, 0, 0, 1]
+    dag-monitor: [0, 0, 0, 0, 0]
+    lineage-tracker: [0, 0, 0, 0, 0]
+
+# ============================================================================
+# DATA FLOW
+# ============================================================================
+
+data_flows:
+  - name: dag-execution-flow
+    description: "End-to-end DAG execution flow"
+    steps:
+      - step: 1
+        component: dag-api-service
+        action: "Receive DAG trigger request"
+        data: "dag_id, parameters"
+      
+      - step: 2
+        component: dag-scheduler
+        action: "Create execution plan"
+        data: "execution_plan, task_graph"
+      
+      - step: 3
+        component: dag-executor
+        action: "Execute tasks"
+        data: "task_results, logs"
+      
+      - step: 4
+        component: lineage-tracker
+        action: "Track data lineage"
+        data: "lineage_graph"
+      
+      - step: 5
+        component: dag-monitor
+        action: "Monitor execution"
+        data: "execution_metrics"
+
+# ============================================================================
+# CRITICAL PATH ANALYSIS
+# ============================================================================
+
+critical_paths:
+  - name: dag-execution-critical-path
+    description: "Critical path for DAG execution"
+    path:
+      - dag-api-service
+      - dag-scheduler
+      - dag-executor
+      - state-store
+    
+    total_latency: 100ms
+    bottlenecks:
+      - component: dag-executor
+        latency: 50ms
+        percentage: 50.0
+      
+      - component: dag-scheduler
+        latency: 30ms
+        percentage: 30.0
+
+# ============================================================================
+# INTEGRATION POINTS
+# ============================================================================
+
+integration_points:
+  upstream:
+    - name: api-gateway
+      type: ingress
+      protocol: https
+      endpoints:
+        - "/api/v1/dag/*"
+  
+  downstream:
+    - name: metadata-store
+      type: datastore
+      protocol: postgresql
+      endpoints:
+        - "metadata-db.ninjatech.ai:5432"
+    
+    - name: message-queue
+      type: message-broker
+      protocol: kafka
+      topics:
+        - "dag.tasks"
+        - "dag.lineage"
+
+# ============================================================================
+# FAILURE MODES
+# ============================================================================
+
+failure_modes:
+  - component: metadata-store
+    failure: "Database unavailable"
+    impact: "Critical - Cannot read/write DAG definitions"
+    mitigation:
+      - "Use read replicas"
+      - "Cache DAG definitions"
+    recovery_time: "5 minutes"
+  
+  - component: dag-executor
+    failure: "Executor crash"
+    impact: "High - Task execution delayed"
+    mitigation:
+      - "Auto-restart failed executors"
+      - "Redistribute tasks"
+    recovery_time: "1 minute"
+
+# ============================================================================
+# PERFORMANCE CHARACTERISTICS
+# ============================================================================
+
+performance:
+  throughput:
+    dag_runs_per_second: 100
+    tasks_per_second: 1000
+  
+  latency:
+    p50: 50ms
+    p95: 200ms
+    p99: 500ms
+
+documentation:
+  architecture_diagram: "https://docs.ninjatech.ai/mcp/dag-engine/architecture"
+  data_flow_diagram: "https://docs.ninjatech.ai/mcp/dag-engine/data-flow"

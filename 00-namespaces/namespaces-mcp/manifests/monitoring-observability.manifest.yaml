@@ -1,3 +1,6 @@
+# Monitoring & Observability Module Manifest
+# Defines module metadata and dependencies
+
 version: "2.0.0"
 semantic_role: manifest_storage
 artifact_type: manifest
@@ -6,16 +9,141 @@ semantic_root: true
 module:
   name: "monitoring-observability"
   version: "1.0.0"
-  description: "Monitoring and observability layer"
-  category: "monitoring-observability"
+  description: "Monitoring and observability layer providing metrics collection, logging, distributed tracing, and dashboard visualization"
+  author: "MCP Core Team"
+  license: "MIT"
+  homepage: "https://github.com/MachineNativeOps/machine-native-ops"
+  repository: "https://github.com/MachineNativeOps/machine-native-ops"
   
+  keywords:
+    - "monitoring"
+    - "observability"
+    - "metrics"
+    - "logging"
+    - "tracing"
+    - "dashboard"
+
+  category: "monitoring-observability"
+  semantic_classification: "monitoring_observability_layer"
+
+dependencies:
+  required:
+    - artifact: "data-management.manifest.yaml"
+      version: ">=1.0.0"
+      purpose: "Storage for metrics and logs"
+      
+  optional:
+    - artifact: "configuration-governance.manifest.yaml"
+      version: ">=1.0.0"
+      purpose: "Governance policies for monitoring"
+      
+  peer: []
+
 provides:
   capabilities:
     - "metrics-collector"
+    - "performance-monitor"
+    - "health-checker"
+    - "alert-manager"
     - "logger"
+    - "log-aggregator"
+    - "log-analyzer"
+    - "audit-logger"
     - "trace-manager"
+    - "span-collector"
+    - "trace-analyzer"
+    - "performance-profiler"
     - "dashboard-server"
+    - "metrics-api"
+    - "visualization"
+    - "report-generator"
+  
+  endpoints:
+    - "logging/setLevel"
+    - "metrics/collect"
+    - "traces/query"
+    - "dashboard/view"
+  
+  artifacts:
+    - type: "schema"
+      path: "schemas/monitoring-observability.schema.yaml"
+    - type: "spec"
+      path: "specs/monitoring-observability.spec.yaml"
+    - type: "policy"
+      path: "policies/monitoring-observability.policy.yaml"
+    - type: "bundle"
+      path: "bundles/monitoring-observability.bundle.yaml"
+    - type: "graph"
+      path: "graphs/monitoring-observability.graph.yaml"
+    - type: "flow"
+      path: "flows/monitoring-pipeline.flow.yaml"
+
+configuration:
+  default_settings:
+    metrics_collection_interval: "1000"
+    log_level: "info"
+    trace_sampling_rate: "0.1"
+    dashboard_refresh_interval: "30"
+    alert_evaluation_interval: "10"
+    retention_period: "30d"
+  
+  performance_targets:
+    metrics_latency_p99: "<20ms"
+    log_latency_p99: "<10ms"
+    trace_overhead: "<1%"
+    query_latency_p99: "<1s"
+    throughput: ">10000 metrics/sec"
+
+deployment:
+  runtime: "nodejs"
+  min_version: "18.0.0"
+  resources:
+    cpu: "500m"
+    memory: "1Gi"
+  
+  health_check:
+    endpoint: "/health"
+    interval: "30s"
+    timeout: "5s"
+  
+  scaling:
+    min_replicas: 2
+    max_replicas: 10
+    target_cpu: 70
+
+lifecycle:
+  status: "active"
+  created_at: "2025-01-10T14:00:00Z"
+  updated_at: "2025-01-11T12:15:00Z"
+  deprecated: false
+  deprecation_date: null
+  
+  changelog:
+    - version: "1.0.0"
+      date: "2025-01-10"
+      changes:
+        - "Initial release"
+        - "Metrics collection system"
+        - "Logging system"
+        - "Distributed tracing"
+        - "Dashboard and visualization"
 
 metadata:
-  created_at: "2025-01-10T14:00:00Z"
-  status: "active"
+  tags:
+    - "monitoring"
+    - "observability"
+    - "metrics"
+    - "logging"
+    - "tracing"
+  
+  maintainers:
+    - name: "MCP Core Team"
+      email: "mcp@machinenativeops.io"
+  
+  references:
+    - type: "dependency-registry"
+      path: "registries/dependency-registry.yaml"
+    - type: "reference-registry"
+      path: "registries/reference-registry.yaml"
+    - type: "naming-registry"
+      path: "registries/naming-registry.yaml"

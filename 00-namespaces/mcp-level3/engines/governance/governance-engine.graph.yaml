@@ -1,0 +1,219 @@
+# MCP Level 3 - Governance Engine Dependency Graph
+
+apiVersion: mcp.ninjatech.ai/v1alpha1
+kind: EngineGraph
+metadata:
+  name: governance-engine
+  namespace: mcp-level3
+  version: 1.0.0
+  description: "Governance Engine dependency graph"
+  labels:
+    engine-type: governance
+    graph-type: dependency
+
+nodes:
+  - id: governance-api-service
+    type: service
+    category: api
+    name: "Governance API Service"
+    properties:
+      port: 8080
+      replicas: 3
+      criticality: high
+  
+  - id: policy-engine
+    type: service
+    category: core
+    name: "Policy Engine"
+    properties:
+      port: 8181
+      replicas: 5
+      criticality: critical
+  
+  - id: access-control-service
+    type: service
+    category: core
+    name: "Access Control Service"
+    properties:
+      port: 8082
+      replicas: 3
+      criticality: critical
+  
+  - id: audit-service
+    type: service
+    category: core
+    name: "Audit Service"
+    properties:
+      port: 8083
+      replicas: 3
+      criticality: high
+  
+  - id: compliance-service
+    type: service
+    category: monitoring
+    name: "Compliance Service"
+    properties:
+      port: 8084
+      replicas: 2
+      criticality: medium
+  
+  - id: policy-store
+    type: datastore
+    category: storage
+    name: "Policy Store"
+    properties:
+      provider: postgresql
+      criticality: critical
+  
+  - id: audit-store
+    type: datastore
+    category: storage
+    name: "Audit Store"
+    properties:
+      provider: timescaledb
+      criticality: critical
+  
+  - id: cache-store
+    type: datastore
+    category: cache
+    name: "Cache Store"
+    properties:
+      provider: redis
+      criticality: high
+  
+  - id: identity-provider
+    type: external
+    category: auth
+    name: "Identity Provider"
+    properties:
+      provider: auth0
+      criticality: critical
+
+edges:
+  - source: governance-api-service
+    target: policy-engine
+    type: synchronous
+    protocol: grpc
+    description: "API calls policy engine"
+    properties:
+      latency: 20ms
+      throughput: 5000rps
+  
+  - source: governance-api-service
+    target: access-control-service
+    type: synchronous
+    protocol: http
+    description: "API calls access control"
+    properties:
+      latency: 30ms
+      throughput: 2000rps
+  
+  - source: policy-engine
+    target: policy-store
+    type: synchronous
+    protocol: postgresql
+    description: "Engine reads policies"
+    properties:
+      latency: 10ms
+      throughput: 10000rps
+  
+  - source: policy-engine
+    target: cache-store
+    type: synchronous
+    protocol: redis
+    description: "Engine caches evaluations"
+    properties:
+      latency: 2ms
+      throughput: 20000rps
+  
+  - source: access-control-service
+    target: identity-provider
+    type: synchronous
+    protocol: https
+    description: "Validates tokens"
+    properties:
+      latency: 50ms
+      throughput: 5000rps
+  
+  - source: audit-service
+    target: audit-store
+    type: asynchronous
+    protocol: postgresql
+    description: "Writes audit logs"
+    properties:
+      latency: 20ms
+  
+  - source: compliance-service
+    target: audit-store
+    type: synchronous
+    protocol: postgresql
+    description: "Reads audit logs"
+    properties:
+      latency: 50ms
+      throughput: 100rps
+
+dependency_matrix:
+  services:
+    - governance-api-service
+    - policy-engine
+    - access-control-service
+    - audit-service
+    - compliance-service
+  
+  matrix:
+    governance-api-service: [0, 1, 1, 1, 0]
+    policy-engine: [0, 0, 0, 0, 0]
+    access-control-service: [0, 0, 0, 0, 0]
+    audit-service: [0, 0, 0, 0, 0]
+    compliance-service: [0, 0, 0, 1, 0]
+
+data_flows:
+  - name: policy-evaluation-flow
+    description: "Policy evaluation flow"
+    steps:
+      - step: 1
+        component: governance-api-service
+        action: "Receive evaluation request"
+      - step: 2
+        component: policy-engine
+        action: "Evaluate policy"
+      - step: 3
+        component: audit-service
+        action: "Log evaluation"
+
+critical_paths:
+  - name: policy-evaluation-critical-path
+    path:
+      - governance-api-service
+      - policy-engine
+      - policy-store
+    total_latency: 30ms
+    bottlenecks:
+      - component: policy-engine
+        latency: 20ms
+        percentage: 66.7
+
+integration_points:
+  upstream:
+    - name: api-gateway
+      type: ingress
+      protocol: https
+  
+  downstream:
+    - name: policy-store
+      type: datastore
+      protocol: postgresql
+    - name: identity-provider
+      type: external-api
+      protocol: https
+
+performance:
+  throughput:
+    evaluations_per_second: 5000
+  latency:
+    p50: 20ms
+    p95: 50ms
+    p99: 100ms
+
+documentation:
+  architecture_diagram: "https://docs.ninjatech.ai/mcp/governance-engine/architecture"

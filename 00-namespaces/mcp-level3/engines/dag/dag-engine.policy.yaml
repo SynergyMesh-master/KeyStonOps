@@ -1,0 +1,586 @@
+# MCP Level 3 - DAG Engine Policy
+# Defines governance policies, access control, and compliance rules
+
+apiVersion: mcp.ninjatech.ai/v1alpha1
+kind: EnginePolicy
+metadata:
+  name: dag-engine
+  namespace: mcp-level3
+  version: 1.0.0
+  description: "DAG Engine Governance and Access Control Policies"
+  labels:
+    engine-type: dag
+    policy-type: governance
+    compliance: required
+  annotations:
+    mcp.ninjatech.ai/policy-version: "1.0.0"
+    mcp.ninjatech.ai/enforcement: "strict"
+
+# ============================================================================
+# ROLE-BASED ACCESS CONTROL (RBAC)
+# ============================================================================
+
+rbac:
+  roles:
+    # Administrator Role
+    - name: dag-admin
+      description: "Full administrative access to DAG engine"
+      permissions:
+        - resource: "*"
+          actions: ["*"]
+      subjects:
+        - kind: User
+          names: ["admin@ninjatech.ai"]
+        - kind: ServiceAccount
+          names: ["dag-admin-sa"]
+    
+    # DAG Developer Role
+    - name: dag-developer
+      description: "Create and manage DAG definitions"
+      permissions:
+        - resource: "dags"
+          actions: ["create", "read", "update", "delete"]
+        - resource: "dag-runs"
+          actions: ["create", "read", "cancel"]
+        - resource: "tasks"
+          actions: ["read", "retry"]
+        - resource: "dependencies"
+          actions: ["read"]
+      subjects:
+        - kind: Group
+          names: ["developers", "data-engineers"]
+    
+    # DAG Operator Role
+    - name: dag-operator
+      description: "Execute and monitor DAG runs"
+      permissions:
+        - resource: "dags"
+          actions: ["read"]
+        - resource: "dag-runs"
+          actions: ["create", "read", "cancel"]
+        - resource: "tasks"
+          actions: ["read", "retry"]
+        - resource: "metrics"
+          actions: ["read"]
+      subjects:
+        - kind: Group
+          names: ["operators", "sre"]
+    
+    # Scheduler Role
+    - name: dag-scheduler
+      description: "Automated scheduling service"
+      permissions:
+        - resource: "dags"
+          actions: ["read"]
+        - resource: "dag-runs"
+          actions: ["create", "read", "update"]
+        - resource: "tasks"
+          actions: ["read", "update"]
+      subjects:
+        - kind: ServiceAccount
+          names: ["scheduler-sa"]
+    
+    # Viewer Role
+    - name: dag-viewer
+      description: "Read-only access for monitoring"
+      permissions:
+        - resource: "*"
+          actions: ["read"]
+      subjects:
+        - kind: Group
+          names: ["viewers", "auditors"]
+
+  roleBindings:
+    - role: dag-admin
+      subjects:
+        - kind: User
+          name: "admin@ninjatech.ai"
+      scope: global
+    
+    - role: dag-developer
+      subjects:
+        - kind: Group
+          name: "data-engineers"
+      scope: namespace
+      namespace: "production"
+    
+    - role: dag-scheduler
+      subjects:
+        - kind: ServiceAccount
+          name: "scheduler-sa"
+      scope: global
+
+# ============================================================================
+# AUTHENTICATION & AUTHORIZATION
+# ============================================================================
+
+authentication:
+  methods:
+    - type: oauth2
+      enabled: true
+      provider: "auth0"
+      config:
+        issuer: "https://auth.ninjatech.ai"
+        audience: "dag-engine-api"
+        scopes:
+          - dag:read
+          - dag:write
+          - dag:execute
+          - dag:admin
+    
+    - type: api-key
+      enabled: true
+      header: "X-API-Key"
+      validation: "hmac-sha256"
+    
+    - type: service-account
+      enabled: true
+      token_path: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+  
+  tokens:
+    access_token:
+      lifetime: 3600
+      refresh: true
+    
+    service_account:
+      auto_rotate: true
+      rotation_period: 30d
+
+authorization:
+  engine: "opa"
+  
+  evaluation:
+    mode: "strict"
+    cache_ttl: 300
+    deny_by_default: true
+  
+  abac:
+    enabled: true
+    attributes:
+      - name: user.role
+        type: string
+      - name: dag.criticality
+        type: string
+        values: ["low", "medium", "high", "critical"]
+      - name: dag.environment
+        type: string
+        values: ["dev", "staging", "production"]
+      - name: time.business_hours
+        type: boolean
+    
+    rules:
+      - name: "production-dag-approval"
+        condition: "dag.environment == 'production' AND dag.criticality == 'critical'"
+        effect: "require_approval"
+      
+      - name: "off-hours-restriction"
+        condition: "dag.environment == 'production' AND time.business_hours == false"
+        effect: "deny"
+        exceptions: ["dag-admin", "on-call-engineer"]
+
+# ============================================================================
+# DAG GOVERNANCE
+# ============================================================================
+
+dag_governance:
+  # DAG Validation Rules
+  validation:
+    - rule: "max_tasks_per_dag"
+      condition: "len(dag.tasks) <= 100"
+      severity: "error"
+      message: "DAG cannot have more than 100 tasks"
+    
+    - rule: "no_circular_dependencies"
+      condition: "is_acyclic(dag)"
+      severity: "error"
+      message: "DAG must not contain circular dependencies"
+    
+    - rule: "task_timeout_limit"
+      condition: "all(task.timeout <= 86400 for task in dag.tasks)"
+      severity: "error"
+      message: "Task timeout cannot exceed 24 hours"
+    
+    - rule: "dag_naming_convention"
+      condition: "matches(dag.name, '^[a-z0-9-]+$')"
+      severity: "warning"
+      message: "DAG name should use lowercase alphanumeric and hyphens"
+  
+  # DAG Lifecycle Management
+  lifecycle:
+    states:
+      - name: "draft"
+        description: "DAG under development"
+        allowed_actions: ["edit", "test", "submit"]
+      
+      - name: "review"
+        description: "DAG pending approval"
+        allowed_actions: ["approve", "reject", "comment"]
+        approvers: ["dag-admin", "senior-engineer"]
+      
+      - name: "active"
+        description: "DAG in production"
+        allowed_actions: ["execute", "pause", "archive"]
+      
+      - name: "paused"
+        description: "DAG temporarily disabled"
+        allowed_actions: ["resume", "archive"]
+      
+      - name: "archived"
+        description: "DAG no longer in use"
+        allowed_actions: ["restore"]
+    
+    transitions:
+      - from: "draft"
+        to: "review"
+        condition: "validation_passed"
+      
+      - from: "review"
+        to: "active"
+        condition: "approved_by >= 2"
+      
+      - from: "active"
+        to: "paused"
+        condition: "user.role in ['dag-admin', 'dag-operator']"
+  
+  # DAG Approval Workflow
+  approval:
+    required_for:
+      - "production deployments"
+      - "critical DAGs"
+      - "DAGs accessing sensitive data"
+    
+    approvers:
+      minimum: 2
+      roles: ["dag-admin", "senior-engineer", "data-architect"]
+    
+    timeout: 48h
+    auto_reject_on_timeout: false
+
+# ============================================================================
+# EXECUTION POLICIES
+# ============================================================================
+
+execution:
+  # Resource Limits
+  resource_limits:
+    - scope: "dag"
+      limits:
+        max_concurrent_runs: 10
+        max_active_tasks: 50
+        max_queued_runs: 100
+    
+    - scope: "task"
+      limits:
+        max_retries: 3
+        max_runtime: 86400  # 24 hours
+        max_memory: "8Gi"
+        max_cpu: "4"
+  
+  # Execution Constraints
+  constraints:
+    - name: "business_hours_only"
+      condition: "dag.tags contains 'business-hours'"
+      enforcement:
+        allowed_hours: "09:00-17:00"
+        timezone: "America/New_York"
+        days: ["Mon", "Tue", "Wed", "Thu", "Fri"]
+    
+    - name: "rate_limiting"
+      condition: "dag.criticality == 'low'"
+      enforcement:
+        max_runs_per_hour: 10
+        max_runs_per_day: 100
+  
+  # Retry Policies
+  retry:
+    default:
+      max_attempts: 3
+      backoff: "exponential"
+      initial_delay: 60
+      max_delay: 3600
+    
+    by_error_type:
+      - error: "TransientError"
+        max_attempts: 5
+        backoff: "exponential"
+      
+      - error: "ResourceExhausted"
+        max_attempts: 10
+        backoff: "linear"
+      
+      - error: "PermanentError"
+        max_attempts: 0
+  
+  # Timeout Policies
+  timeout:
+    default: 3600  # 1 hour
+    
+    by_task_type:
+      - type: "data_ingestion"
+        timeout: 7200  # 2 hours
+      
+      - type: "ml_training"
+        timeout: 86400  # 24 hours
+      
+      - type: "reporting"
+        timeout: 1800  # 30 minutes
+
+# ============================================================================
+# DATA GOVERNANCE
+# ============================================================================
+
+data_governance:
+  # Data Lineage Tracking
+  lineage:
+    enabled: true
+    capture:
+      - inputs
+      - outputs
+      - transformations
+      - dependencies
+    
+    retention: 365d
+    
+    metadata:
+      - dataset_name
+      - schema_version
+      - row_count
+      - data_quality_score
+  
+  # Data Quality Policies
+  quality:
+    validation:
+      - rule: "schema_compliance"
+        severity: "error"
+        action: "fail_task"
+      
+      - rule: "null_value_threshold"
+        threshold: 0.05
+        severity: "warning"
+        action: "alert"
+      
+      - rule: "duplicate_records"
+        threshold: 0.01
+        severity: "warning"
+        action: "alert"
+    
+    monitoring:
+      - metric: "data_freshness"
+        threshold: 24h
+        action: "alert"
+      
+      - metric: "data_completeness"
+        threshold: 0.95
+        action: "alert"
+  
+  # Data Access Control
+  access_control:
+    - dataset: "pii_data"
+      required_role: "data-privacy-officer"
+      audit: true
+      masking: true
+    
+    - dataset: "financial_data"
+      required_role: "financial-analyst"
+      audit: true
+      encryption: true
+
+# ============================================================================
+# SECURITY POLICIES
+# ============================================================================
+
+security:
+  # Encryption
+  encryption:
+    at_rest:
+      enabled: true
+      algorithm: "AES-256-GCM"
+      key_rotation: 90d
+    
+    in_transit:
+      enabled: true
+      protocol: "TLS 1.3"
+  
+  # Secrets Management
+  secrets:
+    provider: "vault"
+    rotation: 30d
+    
+    allowed_sources:
+      - "kubernetes-secrets"
+      - "vault"
+      - "aws-secrets-manager"
+    
+    prohibited:
+      - "hardcoded"
+      - "environment-variables"
+  
+  # Network Policies
+  network:
+    egress:
+      - destination: "internal-services"
+        protocol: "https"
+        allowed: true
+      
+      - destination: "external-apis"
+        protocol: "https"
+        allowed: true
+        require_approval: true
+      
+      - destination: "internet"
+        allowed: false
+    
+    ingress:
+      - source: "api-gateway"
+        allowed: true
+      
+      - source: "scheduler"
+        allowed: true
+
+# ============================================================================
+# COMPLIANCE POLICIES
+# ============================================================================
+
+compliance:
+  frameworks:
+    - name: "SOC2"
+      enabled: true
+      controls:
+        - access_control
+        - audit_logging
+        - change_management
+        - incident_response
+    
+    - name: "GDPR"
+      enabled: true
+      requirements:
+        - data_minimization
+        - purpose_limitation
+        - storage_limitation
+  
+  audit:
+    enabled: true
+    events:
+      - "dag_created"
+      - "dag_updated"
+      - "dag_deleted"
+      - "dag_run_triggered"
+      - "dag_run_cancelled"
+      - "task_failed"
+      - "approval_granted"
+      - "approval_denied"
+    
+    retention: 365d
+    immutable: true
+    
+    log_format:
+      timestamp: true
+      user_id: true
+      action: true
+      resource: true
+      result: true
+      metadata: true
+  
+  change_management:
+    required_for:
+      - "production DAGs"
+      - "critical workflows"
+    
+    process:
+      - step: "create_change_request"
+        approvers: ["change-manager"]
+      
+      - step: "technical_review"
+        approvers: ["senior-engineer"]
+      
+      - step: "security_review"
+        approvers: ["security-team"]
+      
+      - step: "deployment"
+        executor: "dag-operator"
+
+# ============================================================================
+# OPERATIONAL POLICIES
+# ============================================================================
+
+operational:
+  # Resource Quotas
+  quotas:
+    - scope: "user"
+      limits:
+        dags: 50
+        concurrent_runs: 5
+        daily_runs: 100
+    
+    - scope: "team"
+      limits:
+        dags: 500
+        concurrent_runs: 50
+        daily_runs: 10000
+  
+  # SLA Policies
+  sla:
+    - dag_pattern: "critical-*"
+      max_duration: 3600
+      alert_threshold: 0.8
+      escalation: ["on-call-engineer", "engineering-manager"]
+    
+    - dag_pattern: "reporting-*"
+      max_duration: 7200
+      alert_threshold: 0.9
+  
+  # Monitoring & Alerting
+  monitoring:
+    - metric: "dag_failure_rate"
+      threshold: 0.05
+      window: "1h"
+      action: "alert"
+      severity: "high"
+    
+    - metric: "task_queue_depth"
+      threshold: 1000
+      action: "scale_up"
+    
+    - metric: "execution_latency_p95"
+      threshold: 5000
+      unit: "ms"
+      action: "alert"
+
+# ============================================================================
+# POLICY ENFORCEMENT
+# ============================================================================
+
+enforcement:
+  mode: "strict"
+  
+  violations:
+    - severity: "critical"
+      action: "block"
+      notify: ["security-team@ninjatech.ai", "dag-admin@ninjatech.ai"]
+    
+    - severity: "high"
+      action: "block"
+      notify: ["ops-team@ninjatech.ai"]
+    
+    - severity: "medium"
+      action: "warn"
+      notify: ["dev-team@ninjatech.ai"]
+    
+    - severity: "low"
+      action: "log"
+  
+  updates:
+    approval_required: true
+    approvers: ["dag-admin", "security-lead"]
+    rollback:
+      enabled: true
+      retention: 5
+
+# ============================================================================
+# DOCUMENTATION
+# ============================================================================
+
+documentation:
+  policy_guide: "https://docs.ninjatech.ai/mcp/dag-engine/policies"
+  governance_guide: "https://docs.ninjatech.ai/mcp/dag-governance"
+  compliance_guide: "https://docs.ninjatech.ai/mcp/compliance"

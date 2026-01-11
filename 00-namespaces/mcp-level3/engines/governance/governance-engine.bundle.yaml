@@ -1,0 +1,235 @@
+# MCP Level 3 - Governance Engine Bundle
+
+apiVersion: mcp.ninjatech.ai/v1alpha1
+kind: EngineBundle
+metadata:
+  name: governance-engine
+  namespace: mcp-level3
+  version: 1.0.0
+  description: "Governance Engine deployment bundle"
+  labels:
+    engine-type: governance
+    deployment-tier: core
+    criticality: critical
+
+components:
+  services:
+    - name: governance-api-service
+      type: rest-api
+      version: 1.0.0
+      image: "ninjatech/governance-api:1.0.0"
+      port: 8080
+      replicas: 3
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "1Gi"
+        limits:
+          cpu: "2000m"
+          memory: "4Gi"
+    
+    - name: policy-engine
+      type: service
+      version: 1.0.0
+      description: "OPA-based policy evaluation engine"
+      image: "ninjatech/policy-engine:1.0.0"
+      port: 8181
+      replicas: 5
+      resources:
+        requests:
+          cpu: "1000m"
+          memory: "2Gi"
+        limits:
+          cpu: "4000m"
+          memory: "8Gi"
+    
+    - name: access-control-service
+      type: service
+      version: 1.0.0
+      description: "Access control and token management"
+      image: "ninjatech/access-control:1.0.0"
+      port: 8082
+      replicas: 3
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "1Gi"
+        limits:
+          cpu: "2000m"
+          memory: "4Gi"
+    
+    - name: audit-service
+      type: service
+      version: 1.0.0
+      description: "Audit logging and compliance"
+      image: "ninjatech/audit:1.0.0"
+      port: 8083
+      replicas: 3
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "1Gi"
+        limits:
+          cpu: "2000m"
+          memory: "4Gi"
+    
+    - name: compliance-service
+      type: service
+      version: 1.0.0
+      description: "Compliance reporting and monitoring"
+      image: "ninjatech/compliance:1.0.0"
+      port: 8084
+      replicas: 2
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "1Gi"
+        limits:
+          cpu: "2000m"
+          memory: "4Gi"
+  
+  datastores:
+    - name: policy-store
+      type: relational-db
+      provider: "postgresql"
+      version: "15.x"
+      configuration:
+        replicas: 3
+        max_connections: 1000
+      resources:
+        storage: "200Gi"
+        memory: "16Gi"
+    
+    - name: audit-store
+      type: time-series-db
+      provider: "timescaledb"
+      version: "2.x"
+      configuration:
+        replicas: 3
+        retention: 365d
+      resources:
+        storage: "1Ti"
+        memory: "32Gi"
+    
+    - name: cache-store
+      type: cache
+      provider: "redis"
+      version: "7.x"
+      configuration:
+        replicas: 3
+      resources:
+        memory: "16Gi"
+  
+  integrations:
+    - name: identity-provider
+      type: external-api
+      provider: "auth0"
+      endpoint: "https://auth.ninjatech.ai"
+    
+    - name: vault
+      type: secrets-manager
+      provider: "hashicorp-vault"
+      endpoint: "https://vault.ninjatech.ai"
+
+deployment:
+  strategy:
+    type: "blue-green"
+  
+  scaling:
+    horizontal:
+      enabled: true
+      min_replicas: 3
+      max_replicas: 20
+      metrics:
+        - type: cpu
+          target: 70
+        - type: custom
+          name: policy_evaluations_per_second
+          target: 5000
+  
+  quotas:
+    cpu: "50"
+    memory: "100Gi"
+    storage: "2Ti"
+
+environments:
+  production:
+    replicas: 3
+    resources:
+      cpu: "50"
+      memory: "100Gi"
+    features:
+      high_availability: true
+      audit_logging: true
+      compliance_monitoring: true
+
+secrets:
+  - name: policy-db-credentials
+    type: credentials
+    provider: vault
+    path: "secret/governance/policy-db"
+  
+  - name: auth0-credentials
+    type: api-key
+    provider: vault
+    path: "secret/governance/auth0"
+
+health_checks:
+  liveness:
+    http_get:
+      path: "/health/live"
+      port: 8080
+    initial_delay: 30s
+    period: 10s
+  
+  readiness:
+    http_get:
+      path: "/health/ready"
+      port: 8080
+    initial_delay: 10s
+    period: 5s
+
+observability:
+  metrics:
+    enabled: true
+    provider: prometheus
+    custom_metrics:
+      - name: policy_evaluations_total
+        type: counter
+      - name: access_denied_total
+        type: counter
+      - name: audit_logs_written
+        type: counter
+  
+  logging:
+    enabled: true
+    provider: elasticsearch
+    level: info
+  
+  tracing:
+    enabled: true
+    provider: jaeger
+
+security:
+  pod_security:
+    run_as_non_root: true
+    run_as_user: 1000
+  
+  network_policies:
+    - name: allow-ingress
+      ingress:
+        - from:
+            - namespace_selector:
+                match_labels:
+                  name: ingress-nginx
+
+backup:
+  enabled: true
+  schedule: "0 */6 * * *"  # Every 6 hours
+  retention: 90d
+  targets:
+    - policy-store
+    - audit-store
+
+documentation:
+  deployment_guide: "https://docs.ninjatech.ai/mcp/governance-engine/deployment"

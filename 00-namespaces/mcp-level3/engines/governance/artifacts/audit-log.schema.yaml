@@ -1,0 +1,203 @@
+# Audit Log Artifact Schema
+# Defines the structure for audit logs in governance systems
+
+version: "1.0.0"
+semantic_role: "audit_log"
+artifact_type: "schema"
+semantic_root: true
+
+metadata:
+  name: "audit-log"
+  description: "Schema for comprehensive audit logging of system events and policy evaluations"
+  author: "MCP Core Team"
+  created: "2025-01-11"
+  updated: "2025-01-11"
+  tags:
+    - "governance"
+    - "audit"
+    - "compliance"
+    - "logging"
+
+schema:
+  type: "object"
+  required:
+    - "log_id"
+    - "timestamp"
+    - "event_type"
+    - "principal"
+    - "resource"
+    - "action"
+    - "result"
+  properties:
+    log_id:
+      type: "string"
+      description: "Unique identifier for the audit log entry"
+      pattern: "^log:[a-zA-Z0-9_-]+:[0-9]+$"
+      example: "log:audit:20250111_100000_001"
+      
+    timestamp:
+      type: "string"
+      format: "date-time"
+      description: "Event timestamp"
+      example: "2025-01-11T10:00:00.123Z"
+      
+    event_type:
+      type: "string"
+      description: "Type of event"
+      enum: ["access", "modification", "deletion", "policy_evaluation", "authentication", "authorization", "configuration_change"]
+      example: "access"
+      
+    principal:
+      type: "object"
+      description: "Entity performing the action"
+      required:
+        - "principal_id"
+        - "principal_type"
+      properties:
+        principal_id:
+          type: "string"
+          example: "user:john_doe"
+        principal_type:
+          type: "string"
+          enum: ["user", "service", "system"]
+          example: "user"
+        roles:
+          type: "array"
+          items:
+            type: "string"
+          example: ["data_scientist", "ml_engineer"]
+        ip_address:
+          type: "string"
+          format: "ipv4"
+          example: "192.168.1.100"
+        user_agent:
+          type: "string"
+          example: "Mozilla/5.0..."
+          
+    resource:
+      type: "object"
+      description: "Resource being accessed"
+      required:
+        - "resource_id"
+        - "resource_type"
+      properties:
+        resource_id:
+          type: "string"
+          example: "artifact:dataset:customer_data"
+        resource_type:
+          type: "string"
+          example: "dataset"
+        classification:
+          type: "string"
+          enum: ["public", "internal", "confidential", "restricted"]
+          example: "confidential"
+        owner:
+          type: "string"
+          example: "team:data_platform"
+          
+    action:
+      type: "string"
+      description: "Action performed"
+      enum: ["read", "write", "delete", "execute", "update", "create"]
+      example: "read"
+      
+    result:
+      type: "object"
+      description: "Result of the action"
+      required:
+        - "status"
+      properties:
+        status:
+          type: "string"
+          enum: ["success", "failure", "denied", "error"]
+          example: "success"
+        reason:
+          type: "string"
+          description: "Reason for the result"
+          example: "Access granted based on role permissions"
+        policy_id:
+          type: "string"
+          description: "Policy that determined the result"
+          example: "policy:data_access:001"
+        error_code:
+          type: "string"
+          description: "Error code if applicable"
+          example: "ERR_UNAUTHORIZED"
+          
+    context:
+      type: "object"
+      description: "Additional context"
+      properties:
+        session_id:
+          type: "string"
+          example: "session:abc123"
+        request_id:
+          type: "string"
+          example: "req:xyz789"
+        source:
+          type: "string"
+          example: "api_gateway"
+        environment:
+          type: "string"
+          example: "production"
+          
+    metadata:
+      type: "object"
+      properties:
+        retention_days:
+          type: "integer"
+          description: "Days to retain this log"
+          minimum: 1
+          example: 365
+        compliance_tags:
+          type: "array"
+          items:
+            type: "string"
+          example: ["gdpr", "sox", "hipaa"]
+
+validation_rules:
+  - rule: "log_id_format"
+    description: "Log ID must follow naming convention"
+    expression: "log_id matches pattern 'log:type:timestamp_sequence'"
+    
+  - rule: "timestamp_valid"
+    description: "Timestamp must be valid ISO 8601"
+    expression: "timestamp is valid ISO 8601"
+
+examples:
+  - name: "successful_data_access"
+    description: "Audit log for successful data access"
+    data:
+      log_id: "log:audit:20250111_100000_001"
+      timestamp: "2025-01-11T10:00:00.123Z"
+      event_type: "access"
+      principal:
+        principal_id: "user:john_doe"
+        principal_type: "user"
+        roles: ["data_scientist"]
+        ip_address: "192.168.1.100"
+      resource:
+        resource_id: "artifact:dataset:customer_data"
+        resource_type: "dataset"
+        classification: "confidential"
+        owner: "team:data_platform"
+      action: "read"
+      result:
+        status: "success"
+        reason: "Access granted based on role permissions"
+        policy_id: "policy:data_access:001"
+      context:
+        session_id: "session:abc123"
+        request_id: "req:xyz789"
+        source: "api_gateway"
+        environment: "production"
+      metadata:
+        retention_days: 365
+        compliance_tags: ["gdpr", "sox"]
+
+usage_guidelines:
+  - "Log all security-relevant events"
+  - "Include sufficient context for investigation"
+  - "Set appropriate retention periods"
+  - "Tag logs for compliance requirements"
+  - "Ensure tamper-proof storage"

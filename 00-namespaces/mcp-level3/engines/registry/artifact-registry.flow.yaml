@@ -1,0 +1,426 @@
+# MCP Level 3 - Artifact Registry Flow Definitions
+
+apiVersion: mcp.ninjatech.ai/v1alpha1
+kind: EngineFlow
+metadata:
+  name: artifact-registry
+  namespace: mcp-level3
+  version: 1.0.0
+  description: "Artifact Registry workflow definitions"
+  labels:
+    engine-type: artifact-registry
+    flow-type: orchestration
+
+workflows:
+  # Artifact Upload Workflow
+  - name: artifact-upload
+    description: "Upload and process artifact"
+    type: sequential
+    trigger:
+      type: api
+      endpoint: "/api/v1/registry/artifacts"
+      method: POST
+    
+    input:
+      schema:
+        type: object
+        required: [file, metadata]
+        properties:
+          file:
+            type: binary
+          metadata:
+            type: object
+          scan_enabled:
+            type: boolean
+            default: true
+    
+    steps:
+      - id: validate-metadata
+        name: "Validate Metadata"
+        type: validation
+        action: validate_artifact_metadata
+        input:
+          metadata: "{{workflow.input.metadata}}"
+        output:
+          validated_metadata: "{{step.result.metadata}}"
+        timeout: 5s
+      
+      - id: check-version-conflict
+        name: "Check Version Conflict"
+        type: service-call
+        service: version-service
+        action: check_conflict
+        input:
+          name: "{{workflow.input.metadata.name}}"
+          version: "{{workflow.input.metadata.version}}"
+        output:
+          has_conflict: "{{step.result.conflict}}"
+        timeout: 3s
+      
+      - id: calculate-checksum
+        name: "Calculate Checksum"
+        type: service-call
+        service: artifact-storage-service
+        action: calculate_checksum
+        input:
+          file: "{{workflow.input.file}}"
+        output:
+          checksum: "{{step.result.checksum}}"
+        timeout: 30s
+      
+      - id: store-artifact
+        name: "Store Artifact"
+        type: service-call
+        service: object-storage
+        action: upload
+        input:
+          file: "{{workflow.input.file}}"
+          checksum: "{{steps.calculate-checksum.output.checksum}}"
+        output:
+          storage_path: "{{step.result.path}}"
+          artifact_id: "{{step.result.id}}"
+        timeout: 300s
+      
+      - id: store-metadata
+        name: "Store Metadata"
+        type: service-call
+        service: metadata-service
+        action: create
+        input:
+          artifact_id: "{{steps.store-artifact.output.artifact_id}}"
+          metadata: "{{steps.validate-metadata.output.validated_metadata}}"
+          checksum: "{{steps.calculate-checksum.output.checksum}}"
+          storage_path: "{{steps.store-artifact.output.storage_path}}"
+        timeout: 5s
+      
+      - id: index-artifact
+        name: "Index Artifact"
+        type: async
+        service: search-engine
+        action: index
+        input:
+          artifact_id: "{{steps.store-artifact.output.artifact_id}}"
+          metadata: "{{steps.validate-metadata.output.validated_metadata}}"
+      
+      - id: scan-artifact
+        name: "Scan Artifact"
+        type: conditional
+        condition: "{{workflow.input.scan_enabled == true}}"
+        then:
+          - type: async
+            service: scan-service
+            action: scan
+            input:
+              artifact_id: "{{steps.store-artifact.output.artifact_id}}"
+              storage_path: "{{steps.store-artifact.output.storage_path}}"
+      
+      - id: track-lineage
+        name: "Track Lineage"
+        type: async
+        service: lineage-service
+        action: track
+        input:
+          artifact_id: "{{steps.store-artifact.output.artifact_id}}"
+          metadata: "{{steps.validate-metadata.output.validated_metadata}}"
+      
+      - id: publish-upload-event
+        name: "Publish Upload Event"
+        type: event
+        action: publish
+        target:
+          type: kafka
+          topic: registry.artifact.uploaded
+        payload:
+          artifact_id: "{{steps.store-artifact.output.artifact_id}}"
+          name: "{{workflow.input.metadata.name}}"
+          version: "{{workflow.input.metadata.version}}"
+    
+    output:
+      schema:
+        type: object
+        properties:
+          artifact_id:
+            type: string
+          checksum:
+            type: string
+          storage_path:
+            type: string
+    
+    error_handling:
+      global:
+        on_error: cleanup_and_notify
+        notify: ["registry-ops@ninjatech.ai"]
+
+  # Artifact Download Workflow
+  - name: artifact-download
+    description: "Download artifact with caching"
+    type: sequential
+    trigger:
+      type: api
+      endpoint: "/api/v1/registry/artifacts/{artifact_id}/download"
+      method: GET
+    
+    input:
+      schema:
+        type: object
+        required: [artifact_id]
+        properties:
+          artifact_id:
+            type: string
+          version:
+            type: string
+    
+    steps:
+      - id: check-cache
+        name: "Check Cache"
+        type: service-call
+        service: cache-layer
+        action: get
+        input:
+          artifact_id: "{{workflow.input.artifact_id}}"
+          version: "{{workflow.input.version}}"
+        output:
+          cached: "{{step.result.found}}"
+          cache_url: "{{step.result.url}}"
+        timeout: 1s
+      
+      - id: fetch-from-storage
+        name: "Fetch from Storage"
+        type: conditional
+        condition: "{{steps.check-cache.output.cached == false}}"
+        then:
+          - type: service-call
+            service: metadata-service
+            action: get
+            input:
+              artifact_id: "{{workflow.input.artifact_id}}"
+            output:
+              storage_path: "{{step.result.storage_path}}"
+          
+          - type: service-call
+            service: object-storage
+            action: download
+            input:
+              storage_path: "{{step.result.storage_path}}"
+            output:
+              download_url: "{{step.result.url}}"
+          
+          - type: async
+            service: cache-layer
+            action: set
+            input:
+              artifact_id: "{{workflow.input.artifact_id}}"
+              url: "{{step.result.url}}"
+        timeout: 60s
+      
+      - id: verify-checksum
+        name: "Verify Checksum"
+        type: service-call
+        service: artifact-storage-service
+        action: verify_checksum
+        input:
+          artifact_id: "{{workflow.input.artifact_id}}"
+        output:
+          verified: "{{step.result.verified}}"
+        timeout: 10s
+      
+      - id: log-download
+        name: "Log Download"
+        type: async
+        service: metadata-service
+        action: log_download
+        input:
+          artifact_id: "{{workflow.input.artifact_id}}"
+          timestamp: "{{workflow.timestamp}}"
+      
+      - id: publish-download-event
+        name: "Publish Download Event"
+        type: event
+        action: publish
+        target:
+          type: kafka
+          topic: registry.artifact.downloaded
+        payload:
+          artifact_id: "{{workflow.input.artifact_id}}"
+    
+    output:
+      schema:
+        type: object
+        properties:
+          download_url:
+            type: string
+          checksum_verified:
+            type: boolean
+
+  # Artifact Cleanup Workflow
+  - name: artifact-cleanup
+    description: "Clean up old artifacts based on retention policy"
+    type: sequential
+    trigger:
+      type: schedule
+      cron: "0 2 * * *"  # Daily at 2 AM
+    
+    input:
+      schema:
+        type: object
+        properties:
+          retention_days:
+            type: integer
+            default: 90
+    
+    steps:
+      - id: identify-expired-artifacts
+        name: "Identify Expired Artifacts"
+        type: service-call
+        service: metadata-service
+        action: find_expired
+        input:
+          retention_days: "{{workflow.input.retention_days}}"
+        output:
+          expired_artifacts: "{{step.result.artifacts}}"
+        timeout: 60s
+      
+      - id: cleanup-artifacts
+        name: "Cleanup Artifacts"
+        type: loop
+        iterator: "{{steps.identify-expired-artifacts.output.expired_artifacts}}"
+        steps:
+          - id: delete-from-storage
+            type: service-call
+            service: object-storage
+            action: delete
+            input:
+              artifact_id: "{{loop.item.id}}"
+              storage_path: "{{loop.item.storage_path}}"
+            timeout: 30s
+          
+          - id: delete-metadata
+            type: service-call
+            service: metadata-service
+            action: delete
+            input:
+              artifact_id: "{{loop.item.id}}"
+            timeout: 5s
+          
+          - id: remove-from-index
+            type: async
+            service: search-engine
+            action: remove
+            input:
+              artifact_id: "{{loop.item.id}}"
+      
+      - id: publish-cleanup-event
+        name: "Publish Cleanup Event"
+        type: event
+        action: publish
+        target:
+          type: kafka
+          topic: registry.cleanup.completed
+        payload:
+          artifacts_deleted: "{{steps.identify-expired-artifacts.output.expired_artifacts.length}}"
+    
+    output:
+      schema:
+        type: object
+        properties:
+          artifacts_deleted:
+            type: integer
+
+  # Vulnerability Scan Workflow
+  - name: vulnerability-scan
+    description: "Scan artifact for vulnerabilities"
+    type: sequential
+    trigger:
+      type: event
+      source: kafka
+      topic: registry.artifact.uploaded
+    
+    input:
+      schema:
+        type: object
+        required: [artifact_id]
+        properties:
+          artifact_id:
+            type: string
+    
+    steps:
+      - id: fetch-artifact
+        name: "Fetch Artifact"
+        type: service-call
+        service: metadata-service
+        action: get
+        input:
+          artifact_id: "{{workflow.input.artifact_id}}"
+        output:
+          artifact: "{{step.result.artifact}}"
+        timeout: 5s
+      
+      - id: run-scan
+        name: "Run Vulnerability Scan"
+        type: service-call
+        service: scan-service
+        action: scan
+        input:
+          artifact_id: "{{workflow.input.artifact_id}}"
+          storage_path: "{{steps.fetch-artifact.output.artifact.storage_path}}"
+        output:
+          vulnerabilities: "{{step.result.vulnerabilities}}"
+          severity: "{{step.result.severity}}"
+        timeout: 600s
+      
+      - id: store-scan-results
+        name: "Store Scan Results"
+        type: service-call
+        service: metadata-service
+        action: update_scan_results
+        input:
+          artifact_id: "{{workflow.input.artifact_id}}"
+          vulnerabilities: "{{steps.run-scan.output.vulnerabilities}}"
+          severity: "{{steps.run-scan.output.severity}}"
+        timeout: 5s
+      
+      - id: notify-on-critical
+        name: "Notify on Critical Vulnerabilities"
+        type: conditional
+        condition: "{{steps.run-scan.output.severity == 'critical'}}"
+        then:
+          - type: notification
+            action: send
+            input:
+              recipients: ["security-team@ninjatech.ai"]
+              subject: "Critical Vulnerabilities Found"
+              body: "Artifact {{workflow.input.artifact_id}} has critical vulnerabilities"
+    
+    output:
+      schema:
+        type: object
+        properties:
+          vulnerabilities_found:
+            type: integer
+          severity:
+            type: string
+
+error_handling:
+  patterns:
+    - name: upload-retry
+      max_retries: 3
+      backoff: exponential
+    
+    - name: cleanup-on-failure
+      on_error: delete_partial_uploads
+
+state_management:
+  storage: redis
+  ttl: 3600
+
+monitoring:
+  metrics:
+    - name: upload_duration
+      type: histogram
+    - name: download_duration
+      type: histogram
+    - name: storage_used
+      type: gauge
+
+documentation:
+  workflow_guide: "https://docs.ninjatech.ai/mcp/artifact-registry/workflows"

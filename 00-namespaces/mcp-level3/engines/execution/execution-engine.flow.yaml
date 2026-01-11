@@ -1,0 +1,314 @@
+# MCP Level 3 - Execution Engine Flow Definitions
+
+apiVersion: mcp.ninjatech.ai/v1alpha1
+kind: EngineFlow
+metadata:
+  name: execution-engine
+  namespace: mcp-level3
+  version: 1.0.0
+  description: "Execution Engine workflow definitions"
+  labels:
+    engine-type: execution
+    flow-type: orchestration
+
+workflows:
+  # Task Execution Workflow
+  - name: task-execution
+    description: "Execute a task with transaction support"
+    type: sequential
+    trigger:
+      type: api
+      endpoint: "/api/v1/execution/plans/{plan_id}/execute"
+      method: POST
+    
+    input:
+      schema:
+        type: object
+        required: [plan_id]
+        properties:
+          plan_id:
+            type: string
+          parameters:
+            type: object
+          transaction_mode:
+            type: boolean
+            default: false
+    
+    steps:
+      - id: fetch-execution-plan
+        name: "Fetch Execution Plan"
+        type: service-call
+        service: execution-coordinator
+        action: get_plan
+        input:
+          plan_id: "{{workflow.input.plan_id}}"
+        output:
+          execution_plan: "{{step.result.plan}}"
+        timeout: 5s
+      
+      - id: begin-transaction
+        name: "Begin Transaction"
+        type: conditional
+        condition: "{{workflow.input.transaction_mode == true}}"
+        then:
+          - type: service-call
+            service: transaction-manager
+            action: begin
+            input:
+              isolation_level: "read_committed"
+            output:
+              transaction_id: "{{step.result.id}}"
+        timeout: 2s
+      
+      - id: acquire-locks
+        name: "Acquire Locks"
+        type: service-call
+        service: lock-service
+        action: acquire
+        input:
+          resources: "{{steps.fetch-execution-plan.output.execution_plan.resources}}"
+        output:
+          locks: "{{step.result.locks}}"
+        timeout: 5s
+      
+      - id: execute-steps
+        name: "Execute Steps"
+        type: loop
+        iterator: "{{steps.fetch-execution-plan.output.execution_plan.steps}}"
+        steps:
+          - id: execute-step
+            type: service-call
+            service: task-executor
+            action: execute
+            input:
+              step: "{{loop.item}}"
+              parameters: "{{workflow.input.parameters}}"
+              transaction_id: "{{steps.begin-transaction.output.transaction_id}}"
+            output:
+              step_result: "{{step.result}}"
+            error_handling:
+              on_error: rollback
+              max_retries: 3
+            timeout: 300s
+          
+          - id: update-state
+            type: service-call
+            service: state-store
+            action: update
+            input:
+              step_id: "{{loop.item.id}}"
+              status: "{{steps.execute-step.output.step_result.status}}"
+            timeout: 2s
+      
+      - id: commit-transaction
+        name: "Commit Transaction"
+        type: conditional
+        condition: "{{workflow.input.transaction_mode == true}}"
+        then:
+          - type: service-call
+            service: transaction-manager
+            action: commit
+            input:
+              transaction_id: "{{steps.begin-transaction.output.transaction_id}}"
+        timeout: 5s
+      
+      - id: release-locks
+        name: "Release Locks"
+        type: service-call
+        service: lock-service
+        action: release
+        input:
+          locks: "{{steps.acquire-locks.output.locks}}"
+        timeout: 2s
+      
+      - id: log-execution
+        name: "Log Execution"
+        type: async
+        service: execution-log-store
+        action: log
+        input:
+          plan_id: "{{workflow.input.plan_id}}"
+          status: "completed"
+          duration: "{{workflow.duration}}"
+    
+    output:
+      schema:
+        type: object
+        properties:
+          execution_id:
+            type: string
+          status:
+            type: string
+          results:
+            type: array
+    
+    error_handling:
+      global:
+        on_error: rollback_and_release
+        notify: ["execution-ops@ninjatech.ai"]
+
+  # Distributed Transaction Workflow
+  - name: distributed-transaction
+    description: "Execute distributed transaction across services"
+    type: sequential
+    trigger:
+      type: api
+      endpoint: "/api/v1/execution/transactions"
+      method: POST
+    
+    input:
+      schema:
+        type: object
+        required: [operations]
+        properties:
+          operations:
+            type: array
+          protocol:
+            type: string
+            enum: [2PC, SAGA]
+            default: 2PC
+    
+    steps:
+      - id: prepare-phase
+        name: "Prepare Phase"
+        type: parallel
+        branches:
+          - id: prepare-operations
+            type: loop
+            iterator: "{{workflow.input.operations}}"
+            steps:
+              - id: prepare-operation
+                type: service-call
+                service: "{{loop.item.service}}"
+                action: prepare
+                input:
+                  operation: "{{loop.item}}"
+                output:
+                  prepared: "{{step.result.prepared}}"
+                timeout: 30s
+        
+        join:
+          type: all
+          timeout: 60s
+      
+      - id: commit-phase
+        name: "Commit Phase"
+        type: conditional
+        condition: "{{steps.prepare-phase.all_prepared == true}}"
+        then:
+          - type: parallel
+            branches:
+              - id: commit-operations
+                type: loop
+                iterator: "{{workflow.input.operations}}"
+                steps:
+                  - id: commit-operation
+                    type: service-call
+                    service: "{{loop.item.service}}"
+                    action: commit
+                    input:
+                      operation: "{{loop.item}}"
+                    timeout: 30s
+        else:
+          - type: parallel
+            branches:
+              - id: abort-operations
+                type: loop
+                iterator: "{{workflow.input.operations}}"
+                steps:
+                  - id: abort-operation
+                    type: service-call
+                    service: "{{loop.item.service}}"
+                    action: abort
+                    input:
+                      operation: "{{loop.item}}"
+                    timeout: 30s
+    
+    output:
+      schema:
+        type: object
+        properties:
+          transaction_id:
+            type: string
+          status:
+            type: string
+
+  # Rollback Workflow
+  - name: rollback-execution
+    description: "Rollback failed execution"
+    type: sequential
+    trigger:
+      type: event
+      source: kafka
+      topic: execution.failed
+    
+    input:
+      schema:
+        type: object
+        required: [execution_id]
+        properties:
+          execution_id:
+            type: string
+    
+    steps:
+      - id: fetch-execution-state
+        name: "Fetch Execution State"
+        type: service-call
+        service: state-store
+        action: get
+        input:
+          execution_id: "{{workflow.input.execution_id}}"
+        output:
+          execution_state: "{{step.result.state}}"
+        timeout: 5s
+      
+      - id: create-rollback-plan
+        name: "Create Rollback Plan"
+        type: service-call
+        service: execution-coordinator
+        action: create_rollback_plan
+        input:
+          execution_state: "{{steps.fetch-execution-state.output.execution_state}}"
+        output:
+          rollback_plan: "{{step.result.plan}}"
+        timeout: 10s
+      
+      - id: execute-rollback
+        name: "Execute Rollback"
+        type: loop
+        iterator: "{{steps.create-rollback-plan.output.rollback_plan.steps}}"
+        steps:
+          - id: rollback-step
+            type: service-call
+            service: task-executor
+            action: rollback
+            input:
+              step: "{{loop.item}}"
+            timeout: 60s
+    
+    output:
+      schema:
+        type: object
+        properties:
+          rollback_status:
+            type: string
+
+error_handling:
+  patterns:
+    - name: execution-retry
+      max_retries: 3
+      backoff: exponential
+
+state_management:
+  storage: redis
+  ttl: 86400
+
+monitoring:
+  metrics:
+    - name: execution_duration
+      type: histogram
+    - name: transaction_commit_rate
+      type: counter
+
+documentation:
+  workflow_guide: "https://docs.ninjatech.ai/mcp/execution-engine/workflows"

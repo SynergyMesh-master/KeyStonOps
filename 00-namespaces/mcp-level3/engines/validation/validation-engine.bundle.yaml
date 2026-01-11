@@ -1,0 +1,181 @@
+# MCP Level 3 - Validation Engine Bundle
+
+apiVersion: mcp.ninjatech.ai/v1alpha1
+kind: EngineBundle
+metadata:
+  name: validation-engine
+  namespace: mcp-level3
+  version: 1.0.0
+  description: "Validation Engine deployment bundle"
+  labels:
+    engine-type: validation
+    deployment-tier: core
+    criticality: high
+
+components:
+  services:
+    - name: validation-api-service
+      type: rest-api
+      version: 1.0.0
+      image: "ninjatech/validation-api:1.0.0"
+      port: 8080
+      replicas: 3
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "1Gi"
+        limits:
+          cpu: "2000m"
+          memory: "4Gi"
+    
+    - name: schema-validator
+      type: service
+      version: 1.0.0
+      image: "ninjatech/schema-validator:1.0.0"
+      port: 8081
+      replicas: 5
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "1Gi"
+        limits:
+          cpu: "2000m"
+          memory: "4Gi"
+    
+    - name: quality-validator
+      type: service
+      version: 1.0.0
+      image: "ninjatech/quality-validator:1.0.0"
+      port: 8082
+      replicas: 3
+      resources:
+        requests:
+          cpu: "1000m"
+          memory: "2Gi"
+        limits:
+          cpu: "4000m"
+          memory: "8Gi"
+    
+    - name: test-runner
+      type: service
+      version: 1.0.0
+      image: "ninjatech/test-runner:1.0.0"
+      port: 8083
+      replicas: 5
+      resources:
+        requests:
+          cpu: "1000m"
+          memory: "2Gi"
+        limits:
+          cpu: "4000m"
+          memory: "8Gi"
+    
+    - name: evaluation-service
+      type: service
+      version: 1.0.0
+      image: "ninjatech/evaluation-service:1.0.0"
+      port: 8084
+      replicas: 3
+      resources:
+        requests:
+          cpu: "1000m"
+          memory: "2Gi"
+        limits:
+          cpu: "4000m"
+          memory: "8Gi"
+  
+  datastores:
+    - name: schema-registry
+      type: schema-store
+      provider: "confluent-schema-registry"
+      version: "7.x"
+      configuration:
+        replicas: 3
+      resources:
+        storage: "100Gi"
+        memory: "8Gi"
+    
+    - name: test-results-store
+      type: relational-db
+      provider: "postgresql"
+      version: "15.x"
+      configuration:
+        replicas: 3
+      resources:
+        storage: "200Gi"
+        memory: "16Gi"
+    
+    - name: metrics-store
+      type: time-series-db
+      provider: "prometheus"
+      version: "2.x"
+      configuration:
+        replicas: 3
+        retention: 90d
+      resources:
+        storage: "500Gi"
+        memory: "16Gi"
+
+deployment:
+  strategy:
+    type: "rolling"
+  
+  scaling:
+    horizontal:
+      enabled: true
+      min_replicas: 3
+      max_replicas: 20
+  
+  quotas:
+    cpu: "80"
+    memory: "160Gi"
+    storage: "1Ti"
+
+environments:
+  production:
+    replicas: 3
+    resources:
+      cpu: "80"
+      memory: "160Gi"
+
+secrets:
+  - name: schema-registry-credentials
+    type: credentials
+    provider: vault
+    path: "secret/validation/schema-registry"
+
+health_checks:
+  liveness:
+    http_get:
+      path: "/health/live"
+      port: 8080
+    initial_delay: 30s
+    period: 10s
+
+observability:
+  metrics:
+    enabled: true
+    provider: prometheus
+    custom_metrics:
+      - name: validations_total
+        type: counter
+      - name: validation_failures
+        type: counter
+  logging:
+    enabled: true
+    provider: elasticsearch
+  tracing:
+    enabled: true
+    provider: jaeger
+
+security:
+  pod_security:
+    run_as_non_root: true
+
+backup:
+  enabled: true
+  schedule: "0 2 * * *"
+  retention: 30d
+
+documentation:
+  deployment_guide: "https://docs.ninjatech.ai/mcp/validation-engine/deployment"

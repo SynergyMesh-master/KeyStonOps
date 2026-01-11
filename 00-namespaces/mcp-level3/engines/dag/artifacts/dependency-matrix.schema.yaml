@@ -1,0 +1,423 @@
+# Dependency Matrix Artifact Schema
+# Defines the structure for dependency matrices in DAG workflows
+
+version: "1.0.0"
+semantic_role: "dependency_matrix"
+artifact_type: "schema"
+semantic_root: true
+
+metadata:
+  name: "dependency-matrix"
+  description: "Schema for dependency matrices representing task and artifact dependencies"
+  author: "MCP Core Team"
+  created: "2025-01-11"
+  updated: "2025-01-11"
+  tags:
+    - "dag"
+    - "dependency"
+    - "matrix"
+    - "analysis"
+
+schema:
+  type: "object"
+  required:
+    - "matrix_id"
+    - "dag_id"
+    - "nodes"
+    - "matrix"
+    - "metadata"
+  properties:
+    matrix_id:
+      type: "string"
+      description: "Unique identifier for the dependency matrix"
+      pattern: "^matrix:[a-zA-Z0-9_-]+:[0-9]+$"
+      example: "matrix:dag123:001"
+      
+    dag_id:
+      type: "string"
+      description: "Reference to the DAG"
+      example: "dag:ml_pipeline:001"
+      
+    nodes:
+      type: "array"
+      description: "Ordered list of nodes in the matrix"
+      items:
+        type: "object"
+        required:
+          - "node_id"
+          - "index"
+        properties:
+          node_id:
+            type: "string"
+            description: "Node identifier"
+            example: "node:data_ingestion"
+          index:
+            type: "integer"
+            description: "Index in the matrix"
+            minimum: 0
+            example: 0
+          node_type:
+            type: "string"
+            example: "task"
+          label:
+            type: "string"
+            example: "Data Ingestion"
+            
+    matrix:
+      type: "array"
+      description: "2D dependency matrix (adjacency matrix)"
+      items:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            value:
+              type: "integer"
+              description: "Dependency indicator (0=no dependency, 1=direct dependency, 2=transitive)"
+              enum: [0, 1, 2]
+              example: 1
+            edge_id:
+              type: "string"
+              description: "Reference to edge if dependency exists"
+              example: "edge:001"
+            dependency_type:
+              type: "string"
+              enum: ["none", "data", "control", "trigger"]
+              example: "data"
+              
+    analysis:
+      type: "object"
+      description: "Dependency analysis results"
+      properties:
+        total_dependencies:
+          type: "integer"
+          description: "Total number of dependencies"
+          minimum: 0
+          example: 15
+          
+        direct_dependencies:
+          type: "integer"
+          description: "Number of direct dependencies"
+          minimum: 0
+          example: 10
+          
+        transitive_dependencies:
+          type: "integer"
+          description: "Number of transitive dependencies"
+          minimum: 0
+          example: 5
+          
+        max_depth:
+          type: "integer"
+          description: "Maximum dependency depth"
+          minimum: 0
+          example: 4
+          
+        critical_path:
+          type: "array"
+          description: "Critical path through the DAG"
+          items:
+            type: "string"
+          example: ["node:data_ingestion", "node:preprocessing", "node:training"]
+          
+        parallel_groups:
+          type: "array"
+          description: "Groups of nodes that can execute in parallel"
+          items:
+            type: "array"
+            items:
+              type: "string"
+          example: [["node:validation", "node:testing"], ["node:deploy_a", "node:deploy_b"]]
+          
+        bottlenecks:
+          type: "array"
+          description: "Identified bottleneck nodes"
+          items:
+            type: "object"
+            properties:
+              node_id:
+                type: "string"
+              reason:
+                type: "string"
+              impact_score:
+                type: "number"
+                minimum: 0
+                maximum: 1
+          example:
+            - node_id: "node:training"
+              reason: "High resource usage and long execution time"
+              impact_score: 0.85
+              
+    metadata:
+      type: "object"
+      required:
+        - "created_at"
+        - "matrix_size"
+      properties:
+        created_at:
+          type: "string"
+          format: "date-time"
+          description: "Matrix creation timestamp"
+          example: "2025-01-11T10:00:00Z"
+          
+        matrix_size:
+          type: "object"
+          description: "Dimensions of the matrix"
+          properties:
+            rows:
+              type: "integer"
+              minimum: 1
+              example: 10
+            columns:
+              type: "integer"
+              minimum: 1
+              example: 10
+              
+        computation_time_ms:
+          type: "number"
+          description: "Time taken to compute the matrix"
+          minimum: 0
+          example: 45.2
+          
+        algorithm:
+          type: "string"
+          description: "Algorithm used for dependency analysis"
+          example: "floyd_warshall"
+          
+        version:
+          type: "string"
+          description: "Version of the analysis algorithm"
+          example: "1.0.0"
+          
+    visualization:
+      type: "object"
+      description: "Visualization metadata"
+      properties:
+        heatmap_url:
+          type: "string"
+          format: "uri"
+          description: "URL to heatmap visualization"
+          example: "https://viz.example.com/matrix/dag123"
+          
+        graph_url:
+          type: "string"
+          format: "uri"
+          description: "URL to graph visualization"
+          example: "https://viz.example.com/graph/dag123"
+          
+        format:
+          type: "string"
+          enum: ["svg", "png", "html"]
+          example: "svg"
+
+validation_rules:
+  - rule: "matrix_id_format"
+    description: "Matrix ID must follow naming convention"
+    expression: "matrix_id matches pattern 'matrix:dag:version'"
+    
+  - rule: "square_matrix"
+    description: "Matrix must be square (rows == columns)"
+    expression: "metadata.matrix_size.rows == metadata.matrix_size.columns"
+    
+  - rule: "matrix_size_matches_nodes"
+    description: "Matrix size must match number of nodes"
+    expression: "metadata.matrix_size.rows == nodes.length"
+    
+  - rule: "valid_dependency_values"
+    description: "All matrix values must be 0, 1, or 2"
+    expression: "all matrix values in [0, 1, 2]"
+
+examples:
+  - name: "simple_pipeline_matrix"
+    description: "Dependency matrix for a simple 3-node pipeline"
+    data:
+      matrix_id: "matrix:simple_pipeline:001"
+      dag_id: "dag:simple_pipeline:001"
+      nodes:
+        - node_id: "node:ingest"
+          index: 0
+          node_type: "task"
+          label: "Data Ingestion"
+        - node_id: "node:process"
+          index: 1
+          node_type: "task"
+          label: "Data Processing"
+        - node_id: "node:output"
+          index: 2
+          node_type: "task"
+          label: "Output Results"
+      matrix:
+        - - value: 0
+            dependency_type: "none"
+          - value: 1
+            edge_id: "edge:ingest_to_process"
+            dependency_type: "data"
+          - value: 2
+            dependency_type: "data"
+        - - value: 0
+            dependency_type: "none"
+          - value: 0
+            dependency_type: "none"
+          - value: 1
+            edge_id: "edge:process_to_output"
+            dependency_type: "data"
+        - - value: 0
+            dependency_type: "none"
+          - value: 0
+            dependency_type: "none"
+          - value: 0
+            dependency_type: "none"
+      analysis:
+        total_dependencies: 3
+        direct_dependencies: 2
+        transitive_dependencies: 1
+        max_depth: 2
+        critical_path: ["node:ingest", "node:process", "node:output"]
+        parallel_groups: []
+        bottlenecks: []
+      metadata:
+        created_at: "2025-01-11T10:00:00Z"
+        matrix_size:
+          rows: 3
+          columns: 3
+        computation_time_ms: 5.2
+        algorithm: "floyd_warshall"
+        version: "1.0.0"
+        
+  - name: "complex_ml_pipeline_matrix"
+    description: "Dependency matrix for complex ML pipeline with parallel tasks"
+    data:
+      matrix_id: "matrix:ml_pipeline:001"
+      dag_id: "dag:ml_pipeline:001"
+      nodes:
+        - node_id: "node:data_ingestion"
+          index: 0
+          node_type: "task"
+          label: "Data Ingestion"
+        - node_id: "node:validation"
+          index: 1
+          node_type: "task"
+          label: "Data Validation"
+        - node_id: "node:preprocessing"
+          index: 2
+          node_type: "task"
+          label: "Preprocessing"
+        - node_id: "node:feature_eng"
+          index: 3
+          node_type: "task"
+          label: "Feature Engineering"
+        - node_id: "node:training"
+          index: 4
+          node_type: "task"
+          label: "Model Training"
+      matrix:
+        - - value: 0
+            dependency_type: "none"
+          - value: 1
+            edge_id: "edge:001"
+            dependency_type: "data"
+          - value: 2
+            dependency_type: "data"
+          - value: 2
+            dependency_type: "data"
+          - value: 2
+            dependency_type: "data"
+        - - value: 0
+            dependency_type: "none"
+          - value: 0
+            dependency_type: "none"
+          - value: 1
+            edge_id: "edge:002"
+            dependency_type: "data"
+          - value: 2
+            dependency_type: "data"
+          - value: 2
+            dependency_type: "data"
+        - - value: 0
+            dependency_type: "none"
+          - value: 0
+            dependency_type: "none"
+          - value: 0
+            dependency_type: "none"
+          - value: 1
+            edge_id: "edge:003"
+            dependency_type: "data"
+          - value: 2
+            dependency_type: "data"
+        - - value: 0
+            dependency_type: "none"
+          - value: 0
+            dependency_type: "none"
+          - value: 0
+            dependency_type: "none"
+          - value: 0
+            dependency_type: "none"
+          - value: 1
+            edge_id: "edge:004"
+            dependency_type: "data"
+        - - value: 0
+            dependency_type: "none"
+          - value: 0
+            dependency_type: "none"
+          - value: 0
+            dependency_type: "none"
+          - value: 0
+            dependency_type: "none"
+          - value: 0
+            dependency_type: "none"
+      analysis:
+        total_dependencies: 10
+        direct_dependencies: 4
+        transitive_dependencies: 6
+        max_depth: 4
+        critical_path: ["node:data_ingestion", "node:validation", "node:preprocessing", "node:feature_eng", "node:training"]
+        parallel_groups: []
+        bottlenecks:
+          - node_id: "node:training"
+            reason: "High resource usage and long execution time"
+            impact_score: 0.85
+      metadata:
+        created_at: "2025-01-11T10:30:00Z"
+        matrix_size:
+          rows: 5
+          columns: 5
+        computation_time_ms: 12.5
+        algorithm: "floyd_warshall"
+        version: "1.0.0"
+      visualization:
+        heatmap_url: "https://viz.example.com/matrix/ml_pipeline"
+        graph_url: "https://viz.example.com/graph/ml_pipeline"
+        format: "svg"
+
+usage_guidelines:
+  - "Use dependency matrices for dependency analysis and optimization"
+  - "Identify critical paths for scheduling optimization"
+  - "Detect parallel execution opportunities"
+  - "Monitor bottlenecks for performance tuning"
+  - "Visualize dependencies for better understanding"
+  - "Update matrix when DAG structure changes"
+
+performance_considerations:
+  computation:
+    - "Use efficient algorithms (Floyd-Warshall, Warshall's algorithm)"
+    - "Cache computed matrices for reuse"
+    - "Incremental updates for small changes"
+  storage:
+    - "Use sparse matrix representation for large DAGs"
+    - "Compress matrices for storage efficiency"
+  analysis:
+    - "Parallelize critical path computation"
+    - "Use heuristics for large graphs"
+    
+integration_patterns:
+  - pattern: "dependency_validation"
+    description: "Validate DAG structure using dependency matrix"
+    implementation: "Check for cycles, unreachable nodes"
+    
+  - pattern: "scheduling_optimization"
+    description: "Optimize task scheduling using critical path"
+    implementation: "Prioritize critical path tasks"
+    
+  - pattern: "resource_allocation"
+    description: "Allocate resources based on dependency analysis"
+    implementation: "Assign more resources to bottleneck nodes"

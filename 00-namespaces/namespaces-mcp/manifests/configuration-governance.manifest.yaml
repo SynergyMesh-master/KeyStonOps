@@ -1,3 +1,6 @@
+# Configuration & Governance Module Manifest
+# Defines module metadata and dependencies
+
 version: "2.0.0"
 semantic_role: manifest_storage
 artifact_type: manifest
@@ -6,15 +9,136 @@ semantic_root: true
 module:
   name: "configuration-governance"
   version: "1.0.0"
-  description: "Configuration and governance layer"
-  category: "configuration-governance"
+  description: "Configuration and governance layer providing policy engine, compliance checking, access control, and deployment governance"
+  author: "MCP Core Team"
+  license: "MIT"
+  homepage: "https://github.com/MachineNativeOps/machine-native-ops"
+  repository: "https://github.com/MachineNativeOps/machine-native-ops"
   
+  keywords:
+    - "configuration"
+    - "governance"
+    - "policy"
+    - "compliance"
+    - "access-control"
+    - "deployment"
+
+  category: "configuration-governance"
+  semantic_classification: "configuration_governance_layer"
+
+dependencies:
+  required:
+    - artifact: "monitoring-observability.manifest.yaml"
+      version: ">=1.0.0"
+      purpose: "Audit logging and metrics"
+      
+  optional:
+    - artifact: "data-management.manifest.yaml"
+      version: ">=1.0.0"
+      purpose: "Storage for policies and configurations"
+      
+  peer: []
+
 provides:
   capabilities:
     - "policy-engine"
     - "compliance-checker"
     - "audit-manager"
+    - "access-control"
+    - "role-manager"
+    - "configuration-manager"
+    - "feature-flag-manager"
+    - "deployment-governance"
+    - "governance-dashboard"
+  
+  endpoints:
+    - "policies/validate"
+    - "compliance/scan"
+    - "access/check"
+    - "config/get"
+    - "deployment/approve"
+  
+  artifacts:
+    - type: "schema"
+      path: "schemas/configuration-governance.schema.yaml"
+    - type: "spec"
+      path: "specs/configuration-governance.spec.yaml"
+    - type: "policy"
+      path: "policies/configuration-governance.policy.yaml"
+    - type: "bundle"
+      path: "bundles/configuration-governance.bundle.yaml"
+    - type: "graph"
+      path: "graphs/configuration-governance.graph.yaml"
+    - type: "flow"
+      path: "flows/governance-workflow.flow.yaml"
+
+configuration:
+  default_settings:
+    policy_evaluation_mode: "strict"
+    compliance_scan_interval: "24h"
+    access_cache_ttl: "300"
+    config_cache_ttl: "300"
+    deployment_approval_required: true
+    audit_retention: "7y"
+  
+  performance_targets:
+    policy_evaluation_p99: "<20ms"
+    compliance_scan_duration: "<30s"
+    access_check_p99: "<20ms"
+    config_retrieval_p99: "<100ms"
+    deployment_approval_time: "<1h"
+
+deployment:
+  runtime: "nodejs"
+  min_version: "18.0.0"
+  resources:
+    cpu: "500m"
+    memory: "1Gi"
+  
+  health_check:
+    endpoint: "/health"
+    interval: "30s"
+    timeout: "5s"
+  
+  scaling:
+    min_replicas: 2
+    max_replicas: 8
+    target_cpu: 70
+
+lifecycle:
+  status: "active"
+  created_at: "2025-01-10T14:00:00Z"
+  updated_at: "2025-01-11T12:30:00Z"
+  deprecated: false
+  deprecation_date: null
+  
+  changelog:
+    - version: "1.0.0"
+      date: "2025-01-10"
+      changes:
+        - "Initial release"
+        - "Policy engine implementation"
+        - "Compliance checking (SOC2, HIPAA, GDPR)"
+        - "Access control (RBAC/ABAC)"
+        - "Dynamic configuration management"
+        - "Deployment governance"
 
 metadata:
-  created_at: "2025-01-10T14:00:00Z"
-  status: "active"
+  tags:
+    - "configuration"
+    - "governance"
+    - "policy"
+    - "compliance"
+    - "rbac"
+  
+  maintainers:
+    - name: "MCP Core Team"
+      email: "mcp@machinenativeops.io"
+  
+  references:
+    - type: "dependency-registry"
+      path: "registries/dependency-registry.yaml"
+    - type: "reference-registry"
+      path: "registries/reference-registry.yaml"
+    - type: "naming-registry"
+      path: "registries/naming-registry.yaml"

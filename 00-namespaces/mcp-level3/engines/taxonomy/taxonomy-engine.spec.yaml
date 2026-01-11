@@ -1,0 +1,378 @@
+# MCP Level 3 - Taxonomy Engine Specification
+# Defines API specifications, interface contracts, and integration patterns
+
+apiVersion: mcp.ninjatech.ai/v1alpha1
+kind: EngineSpec
+metadata:
+  name: taxonomy-engine
+  namespace: mcp-level3
+  version: 1.0.0
+  description: "Taxonomy Engine API Specification"
+  labels:
+    engine-type: taxonomy
+    capability: knowledge-organization
+    tier: core
+  annotations:
+    mcp.ninjatech.ai/spec-version: "1.0.0"
+    mcp.ninjatech.ai/last-updated: "2024-01-15"
+
+# ============================================================================
+# API SPECIFICATIONS
+# ============================================================================
+
+api:
+  rest:
+    baseUrl: "/api/v1/taxonomy"
+    version: "1.0.0"
+    
+    endpoints:
+      # Taxonomy Management
+      - path: "/taxonomies"
+        method: POST
+        operationId: createTaxonomy
+        summary: "Create a new taxonomy"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [name, type]
+                properties:
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  type:
+                    type: string
+                    enum: [hierarchical, faceted, network]
+                  root_concepts:
+                    type: array
+                    items:
+                      type: object
+        responses:
+          201:
+            description: "Taxonomy created"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/TaxonomyResponse"
+      
+      - path: "/taxonomies"
+        method: GET
+        operationId: listTaxonomies
+        summary: "List all taxonomies"
+        responses:
+          200:
+            description: "List of taxonomies"
+      
+      - path: "/taxonomies/{taxonomy_id}"
+        method: GET
+        operationId: getTaxonomy
+        summary: "Get taxonomy by ID"
+        parameters:
+          - name: taxonomy_id
+            in: path
+            required: true
+            schema:
+              type: string
+        responses:
+          200:
+            description: "Taxonomy details"
+      
+      # Entity Management
+      - path: "/entities"
+        method: POST
+        operationId: createEntity
+        summary: "Create a new entity"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [name, type]
+                properties:
+                  name:
+                    type: string
+                  type:
+                    type: string
+                  attributes:
+                    type: object
+                  taxonomy_id:
+                    type: string
+        responses:
+          201:
+            description: "Entity created"
+      
+      - path: "/entities/{entity_id}"
+        method: GET
+        operationId: getEntity
+        summary: "Get entity by ID"
+        parameters:
+          - name: entity_id
+            in: path
+            required: true
+            schema:
+              type: string
+        responses:
+          200:
+            description: "Entity details"
+      
+      - path: "/entities/search"
+        method: POST
+        operationId: searchEntities
+        summary: "Search for entities"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query:
+                    type: string
+                  filters:
+                    type: object
+                  limit:
+                    type: integer
+        responses:
+          200:
+            description: "Search results"
+      
+      # Relationship Management
+      - path: "/relationships"
+        method: POST
+        operationId: createRelationship
+        summary: "Create a relationship between entities"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [source_id, target_id, type]
+                properties:
+                  source_id:
+                    type: string
+                  target_id:
+                    type: string
+                  type:
+                    type: string
+                  properties:
+                    type: object
+        responses:
+          201:
+            description: "Relationship created"
+      
+      - path: "/relationships/{relationship_id}"
+        method: DELETE
+        operationId: deleteRelationship
+        summary: "Delete a relationship"
+        parameters:
+          - name: relationship_id
+            in: path
+            required: true
+            schema:
+              type: string
+        responses:
+          204:
+            description: "Relationship deleted"
+      
+      # Ontology Management
+      - path: "/ontologies"
+        method: POST
+        operationId: createOntology
+        summary: "Create a new ontology"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [name, format]
+                properties:
+                  name:
+                    type: string
+                  format:
+                    type: string
+                    enum: [OWL, RDF, SKOS]
+                  classes:
+                    type: array
+                  properties:
+                    type: array
+        responses:
+          201:
+            description: "Ontology created"
+      
+      - path: "/ontologies/{ontology_id}/query"
+        method: POST
+        operationId: queryOntology
+        summary: "Query ontology using SPARQL"
+        parameters:
+          - name: ontology_id
+            in: path
+            required: true
+            schema:
+              type: string
+        requestBody:
+          required: true
+          content:
+            application/sparql-query:
+              schema:
+                type: string
+        responses:
+          200:
+            description: "Query results"
+      
+      # Knowledge Graph
+      - path: "/graph/triplets"
+        method: POST
+        operationId: addTriplet
+        summary: "Add a knowledge triplet"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [subject, predicate, object]
+                properties:
+                  subject:
+                    type: string
+                  predicate:
+                    type: string
+                  object:
+                    type: string
+                  confidence:
+                    type: number
+        responses:
+          201:
+            description: "Triplet added"
+      
+      - path: "/graph/query"
+        method: POST
+        operationId: queryGraph
+        summary: "Query knowledge graph"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pattern:
+                    type: object
+                  filters:
+                    type: object
+                  limit:
+                    type: integer
+        responses:
+          200:
+            description: "Query results"
+      
+      - path: "/graph/traverse"
+        method: POST
+        operationId: traverseGraph
+        summary: "Traverse knowledge graph"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [start_node]
+                properties:
+                  start_node:
+                    type: string
+                  direction:
+                    type: string
+                    enum: [incoming, outgoing, both]
+                  max_depth:
+                    type: integer
+                  relationship_types:
+                    type: array
+        responses:
+          200:
+            description: "Traversal results"
+  
+  grpc:
+    package: "mcp.taxonomy.v1"
+    services:
+      - name: TaxonomyService
+        methods:
+          - name: CreateEntity
+            input: CreateEntityRequest
+            output: EntityResponse
+          
+          - name: SearchEntities
+            input: SearchRequest
+            output: SearchResponse
+          
+          - name: QueryGraph
+            input: GraphQueryRequest
+            output: GraphQueryResponse
+  
+  events:
+    protocol: kafka
+    topics:
+      - name: taxonomy.entity.created
+        schema: EntityCreatedEvent
+        partitions: 10
+        retention: 30d
+      
+      - name: taxonomy.relationship.created
+        schema: RelationshipCreatedEvent
+        partitions: 10
+        retention: 30d
+      
+      - name: taxonomy.ontology.updated
+        schema: OntologyUpdatedEvent
+        partitions: 5
+        retention: 30d
+
+# ============================================================================
+# DATA SCHEMAS
+# ============================================================================
+
+components:
+  schemas:
+    TaxonomyResponse:
+      type: object
+      properties:
+        taxonomy_id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+contracts:
+  sla:
+    availability: 99.9%
+    latency:
+      p50: 100ms
+      p95: 300ms
+      p99: 500ms
+
+integration:
+  upstream:
+    - service: graph-database
+      protocol: bolt
+    - service: triple-store
+      protocol: sparql
+  
+  downstream:
+    - service: search-engine
+      protocol: rest
+
+versioning:
+  strategy: semantic
+  current: 1.0.0
+  supported: [1.0.0]
+
+documentation:
+  openapi: "https://docs.ninjatech.ai/mcp/taxonomy-engine/openapi.yaml"

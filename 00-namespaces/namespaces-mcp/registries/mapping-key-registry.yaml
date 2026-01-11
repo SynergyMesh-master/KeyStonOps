@@ -1,0 +1,256 @@
+# MCP Level 1 Mapping Key Registry
+# Defines semantic mappings between artifacts
+
+version: "1.0.0"
+semantic_role: mapping_key_registry
+artifact_type: registry
+semantic_root: true
+
+description: |
+  Mapping Key Registry defines semantic mappings and relationships between
+  MCP artifacts, enabling artifact-first workflow and dependency tracking.
+
+naming_format:
+  pattern: "{source-artifact}:{target-artifact}"
+  rules:
+    - "Mapping keys must use colon separator"
+    - "Source and target must be valid artifact types"
+    - "Support many-to-many relationships"
+  examples:
+    - "manifest:schema"
+    - "schema:spec"
+    - "governance:policy"
+    - "policy:role"
+    - "bundle:manifest"
+
+semantic_boundary:
+  description: "Each mapping key represents a semantic relationship between artifacts"
+  relationship_types:
+    - type: "depends_on"
+      description: "Source artifact depends on target artifact"
+      directionality: "unidirectional"
+      
+    - type: "references"
+      description: "Source artifact references target artifact"
+      directionality: "unidirectional"
+      
+    - type: "provides"
+      description: "Source artifact provides capabilities to target"
+      directionality: "unidirectional"
+      
+    - type: "validates"
+      description: "Source artifact validates target artifact"
+      directionality: "unidirectional"
+      
+    - type: "extends"
+      description: "Source artifact extends target artifact"
+      directionality: "unidirectional"
+
+naming_paradigm:
+  artifact_first: true
+  description: "Artifacts are defined first, then mappings are established"
+  workflow:
+    - "Define source artifact"
+    - "Define target artifact"
+    - "Establish mapping relationship"
+    - "Register mapping key"
+    - "Update mapping registry"
+
+mapping_registry:
+  core_mappings:
+    manifest_to_schema:
+      key: "manifest:schema"
+      source: "manifest.yaml"
+      target: "schema.yaml"
+      relationship: "depends_on"
+      description: "Manifest depends on schema for structure validation"
+      cardinality: "one-to-one"
+      required: true
+      
+    manifest_to_spec:
+      key: "manifest:spec"
+      source: "manifest.yaml"
+      target: "spec.yaml"
+      relationship: "depends_on"
+      description: "Manifest depends on spec for functional specification"
+      cardinality: "one-to-one"
+      required: true
+      
+    schema_to_spec:
+      key: "schema:spec"
+      source: "schema.yaml"
+      target: "spec.yaml"
+      relationship: "references"
+      description: "Schema is referenced by spec for type definitions"
+      cardinality: "one-to-one"
+      required: false
+      
+    manifest_to_index:
+      key: "manifest:index"
+      source: "manifest.yaml"
+      target: "index.yaml"
+      relationship: "references"
+      description: "Manifest is indexed by index.yaml"
+      cardinality: "many-to-one"
+      required: true
+      
+    manifest_to_categories:
+      key: "manifest:categories"
+      source: "manifest.yaml"
+      target: "categories.yaml"
+      relationship: "references"
+      description: "Manifest references categories for classification"
+      cardinality: "many-to-one"
+      required: true
+      
+    governance_to_policy:
+      key: "governance:policy"
+      source: "governance.yaml"
+      target: "policies.yaml"
+      relationship: "provides"
+      description: "Governance provides policy framework"
+      cardinality: "one-to-many"
+      required: true
+      
+    policy_to_role:
+      key: "policy:role"
+      source: "policies.yaml"
+      target: "roles.yaml"
+      relationship: "references"
+      description: "Policies reference roles for access control"
+      cardinality: "many-to-many"
+      required: true
+      
+    bundle_to_manifest:
+      key: "bundle:manifest"
+      source: "bundle.yaml"
+      target: "manifest.yaml"
+      relationship: "depends_on"
+      description: "Bundle depends on manifest for metadata"
+      cardinality: "one-to-one"
+      required: true
+      
+    bundle_to_spec:
+      key: "bundle:spec"
+      source: "bundle.yaml"
+      target: "spec.yaml"
+      relationship: "depends_on"
+      description: "Bundle depends on spec for interface definition"
+      cardinality: "one-to-one"
+      required: true
+      
+    bundle_to_policy:
+      key: "bundle:policy"
+      source: "bundle.yaml"
+      target: "policy.yaml"
+      relationship: "depends_on"
+      description: "Bundle depends on policy for governance"
+      cardinality: "one-to-one"
+      required: false
+      
+    flow_to_graph:
+      key: "flow:graph"
+      source: "flow.yaml"
+      target: "graph.yaml"
+      relationship: "references"
+      description: "Flow references graph for dependency visualization"
+      cardinality: "one-to-one"
+      required: false
+      
+    graph_to_dependency_registry:
+      key: "graph:dependency-registry"
+      source: "graph.yaml"
+      target: "dependency-registry.yaml"
+      relationship: "references"
+      description: "Graph references dependency registry for tracking"
+      cardinality: "many-to-one"
+      required: true
+
+  module_mappings:
+    communication:
+      - key: "communication.manifest:communication.schema"
+        relationship: "depends_on"
+        required: true
+      - key: "communication.manifest:communication.spec"
+        relationship: "depends_on"
+        required: true
+      - key: "communication.bundle:communication.manifest"
+        relationship: "depends_on"
+        required: true
+        
+    protocol:
+      - key: "protocol.manifest:protocol.schema"
+        relationship: "depends_on"
+        required: true
+      - key: "protocol.manifest:protocol.spec"
+        relationship: "depends_on"
+        required: true
+      - key: "protocol.manifest:communication.manifest"
+        relationship: "depends_on"
+        required: true
+        
+    data_management:
+      - key: "data-management.manifest:data-management.schema"
+        relationship: "depends_on"
+        required: true
+      - key: "data-management.manifest:data-management.spec"
+        relationship: "depends_on"
+        required: true
+      - key: "data-management.manifest:data-management.policy"
+        relationship: "depends_on"
+        required: true
+
+conflict_avoidance:
+  strategies:
+    - name: "type_version_priority"
+      description: "Prioritize by artifact type and version number"
+      enforcement: "strict"
+      
+    - name: "timestamp_ordering"
+      description: "Use creation timestamp for conflict resolution"
+      enforcement: "fallback"
+      
+    - name: "auto_archival"
+      description: "Automatically archive conflicting old versions"
+      retention: "1y"
+
+semantic_linkage:
+  linked_artifacts:
+    - type: "manifest"
+      field: "metadata.type"
+      description: "Manifest type determines entry classification"
+      
+    - type: "index"
+      artifact: "index.yaml"
+      description: "Index lists all artifact entries"
+      
+    - type: "dependency-registry"
+      artifact: "dependency-registry.yaml"
+      description: "Dependencies tracked by artifact entry"
+      
+    - type: "reference-registry"
+      artifact: "reference-registry.yaml"
+      description: "References tracked by artifact entry"
+
+validation:
+  rules:
+    - rule: "unique_identifier"
+      description: "Each artifact must have unique identifier"
+      enforcement: "strict"
+      
+    - rule: "valid_version"
+      description: "Version must follow semantic versioning"
+      enforcement: "strict"
+      
+    - rule: "type_consistency"
+      description: "Artifact type must match file extension"
+      enforcement: "warning"
+
+metadata:
+  created_at: "2025-01-11T13:45:00Z"
+  updated_at: "2025-01-11T13:45:00Z"
+  version: "1.0.0"
+  status: "active"
+  total_entries: 47
+  total_mappings: 35
+  maintainer: "MCP Registry Team"

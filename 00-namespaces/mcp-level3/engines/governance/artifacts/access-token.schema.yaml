@@ -1,0 +1,552 @@
+# MCP Level 3 - Governance Engine: Access Token Schema
+# Purpose: Define OAuth2/JWT access tokens for API authentication and authorization
+# Version: 1.0.0
+# Last Updated: 2025-01-11
+
+schema:
+  name: access-token
+  version: "1.0.0"
+  namespace: mcp.level3.governance.artifacts
+  description: |
+    Access token artifact for API authentication and authorization.
+    Supports OAuth2, JWT, and API key authentication mechanisms.
+    Includes token lifecycle management, scope control, and audit trails.
+
+  type: object
+  required:
+    - token_id
+    - token_type
+    - token_value
+    - issued_at
+    - expires_at
+    - scope
+    - subject
+    - issuer
+  
+  properties:
+    # Core Identity
+    token_id:
+      type: string
+      format: uuid
+      description: Unique identifier for the access token
+      example: "550e8400-e29b-41d4-a716-446655440000"
+      index: true
+    
+    token_type:
+      type: string
+      enum:
+        - bearer
+        - jwt
+        - api_key
+        - oauth2
+        - saml
+        - opaque
+      description: Type of access token
+      example: "jwt"
+    
+    token_value:
+      type: string
+      description: The actual token value (encrypted in storage)
+      format: encrypted
+      sensitive: true
+      example: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+      minLength: 32
+      maxLength: 4096
+    
+    # Token Metadata
+    issued_at:
+      type: string
+      format: date-time
+      description: Timestamp when token was issued
+      example: "2025-01-11T10:00:00Z"
+      index: true
+    
+    expires_at:
+      type: string
+      format: date-time
+      description: Timestamp when token expires
+      example: "2025-01-11T11:00:00Z"
+      index: true
+    
+    not_before:
+      type: string
+      format: date-time
+      description: Token not valid before this time
+      example: "2025-01-11T09:55:00Z"
+      optional: true
+    
+    # Subject and Issuer
+    subject:
+      type: object
+      description: Entity the token was issued to
+      required:
+        - id
+        - type
+      properties:
+        id:
+          type: string
+          description: Subject identifier (user ID, service account, etc.)
+          example: "user:john.doe@example.com"
+        type:
+          type: string
+          enum:
+            - user
+            - service_account
+            - application
+            - device
+            - system
+          example: "user"
+        name:
+          type: string
+          description: Human-readable subject name
+          example: "John Doe"
+          optional: true
+        email:
+          type: string
+          format: email
+          description: Subject email address
+          example: "john.doe@example.com"
+          optional: true
+        attributes:
+          type: object
+          description: Additional subject attributes
+          additionalProperties: true
+          optional: true
+    
+    issuer:
+      type: object
+      description: Entity that issued the token
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          description: Issuer identifier
+          example: "auth.example.com"
+        name:
+          type: string
+          description: Issuer name
+          example: "Example Auth Service"
+        url:
+          type: string
+          format: uri
+          description: Issuer URL
+          example: "https://auth.example.com"
+          optional: true
+    
+    # Authorization
+    scope:
+      type: array
+      description: List of permissions granted by this token
+      items:
+        type: string
+      minItems: 1
+      example:
+        - "read:artifacts"
+        - "write:artifacts"
+        - "execute:pipelines"
+    
+    audience:
+      type: array
+      description: Intended recipients of the token
+      items:
+        type: string
+      example:
+        - "api.example.com"
+        - "mcp.level3.engines"
+      optional: true
+    
+    # Token Lifecycle
+    status:
+      type: string
+      enum:
+        - active
+        - expired
+        - revoked
+        - suspended
+        - pending
+      description: Current status of the token
+      example: "active"
+      default: "active"
+    
+    revocation:
+      type: object
+      description: Token revocation information
+      optional: true
+      properties:
+        revoked_at:
+          type: string
+          format: date-time
+          description: When token was revoked
+          example: "2025-01-11T10:30:00Z"
+        revoked_by:
+          type: string
+          description: Who revoked the token
+          example: "admin@example.com"
+        reason:
+          type: string
+          description: Reason for revocation
+          example: "Security incident - credential compromise"
+        revocation_id:
+          type: string
+          format: uuid
+          description: Unique revocation event ID
+          example: "660e8400-e29b-41d4-a716-446655440001"
+    
+    # Security
+    security:
+      type: object
+      description: Security-related token properties
+      properties:
+        algorithm:
+          type: string
+          description: Signing/encryption algorithm
+          example: "RS256"
+          enum:
+            - RS256
+            - RS384
+            - RS512
+            - ES256
+            - ES384
+            - ES512
+            - HS256
+            - HS384
+            - HS512
+        key_id:
+          type: string
+          description: ID of the key used to sign the token
+          example: "key-2025-01"
+          optional: true
+        fingerprint:
+          type: string
+          description: Token fingerprint for verification
+          example: "sha256:a1b2c3d4e5f6..."
+          optional: true
+        ip_whitelist:
+          type: array
+          description: IP addresses allowed to use this token
+          items:
+            type: string
+            format: ipv4
+          example:
+            - "192.168.1.100"
+            - "10.0.0.0/8"
+          optional: true
+        rate_limit:
+          type: object
+          description: Rate limiting configuration
+          optional: true
+          properties:
+            requests_per_minute:
+              type: integer
+              minimum: 1
+              example: 100
+            requests_per_hour:
+              type: integer
+              minimum: 1
+              example: 5000
+            burst_size:
+              type: integer
+              minimum: 1
+              example: 20
+    
+    # Usage Tracking
+    usage:
+      type: object
+      description: Token usage statistics
+      optional: true
+      properties:
+        first_used_at:
+          type: string
+          format: date-time
+          description: First time token was used
+          example: "2025-01-11T10:05:00Z"
+        last_used_at:
+          type: string
+          format: date-time
+          description: Last time token was used
+          example: "2025-01-11T10:45:00Z"
+        use_count:
+          type: integer
+          minimum: 0
+          description: Number of times token has been used
+          example: 42
+        last_ip:
+          type: string
+          format: ipv4
+          description: Last IP address that used the token
+          example: "192.168.1.100"
+        last_user_agent:
+          type: string
+          description: Last user agent that used the token
+          example: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)..."
+    
+    # Refresh Token
+    refresh_token:
+      type: object
+      description: Associated refresh token for token renewal
+      optional: true
+      properties:
+        token_id:
+          type: string
+          format: uuid
+          description: Refresh token ID
+          example: "770e8400-e29b-41d4-a716-446655440002"
+        token_value:
+          type: string
+          description: Refresh token value (encrypted)
+          format: encrypted
+          sensitive: true
+        expires_at:
+          type: string
+          format: date-time
+          description: Refresh token expiration
+          example: "2025-01-18T10:00:00Z"
+    
+    # Claims (JWT-specific)
+    claims:
+      type: object
+      description: Additional JWT claims
+      optional: true
+      additionalProperties: true
+      example:
+        department: "Engineering"
+        role: "Senior Developer"
+        clearance_level: "L3"
+    
+    # Metadata
+    metadata:
+      type: object
+      description: Additional metadata
+      optional: true
+      properties:
+        created_by:
+          type: string
+          description: Who created the token
+          example: "auth-service"
+        purpose:
+          type: string
+          description: Purpose of the token
+          example: "CI/CD pipeline automation"
+        environment:
+          type: string
+          enum:
+            - development
+            - staging
+            - production
+          example: "production"
+        tags:
+          type: array
+          description: Tags for categorization
+          items:
+            type: string
+          example:
+            - "automation"
+            - "ci-cd"
+            - "high-privilege"
+        custom:
+          type: object
+          description: Custom metadata fields
+          additionalProperties: true
+
+  # Validation Rules
+  validation:
+    rules:
+      - name: token_not_expired
+        condition: expires_at > current_time
+        message: "Token has expired"
+        severity: error
+      
+      - name: token_active
+        condition: status == 'active'
+        message: "Token is not active"
+        severity: error
+      
+      - name: valid_time_range
+        condition: issued_at < expires_at
+        message: "Token issued_at must be before expires_at"
+        severity: error
+      
+      - name: scope_not_empty
+        condition: len(scope) > 0
+        message: "Token must have at least one scope"
+        severity: error
+      
+      - name: not_before_valid
+        condition: not_before == null || not_before <= issued_at
+        message: "not_before must be before or equal to issued_at"
+        severity: warning
+      
+      - name: refresh_token_longer_lived
+        condition: refresh_token == null || refresh_token.expires_at > expires_at
+        message: "Refresh token should expire after access token"
+        severity: warning
+
+  # Indexes for Performance
+  indexes:
+    - fields: [token_id]
+      unique: true
+    - fields: [subject.id, status]
+    - fields: [expires_at]
+    - fields: [issued_at]
+    - fields: [status, expires_at]
+
+# Usage Examples
+examples:
+  - name: jwt_user_token
+    description: JWT token for authenticated user
+    data:
+      token_id: "550e8400-e29b-41d4-a716-446655440000"
+      token_type: "jwt"
+      token_value: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyOmpvaG4uZG9lQGV4YW1wbGUuY29tIiwiaWF0IjoxNzM2NTkyMDAwLCJleHAiOjE3MzY1OTU2MDAsInNjb3BlIjpbInJlYWQ6YXJ0aWZhY3RzIiwid3JpdGU6YXJ0aWZhY3RzIl19.signature"
+      issued_at: "2025-01-11T10:00:00Z"
+      expires_at: "2025-01-11T11:00:00Z"
+      scope:
+        - "read:artifacts"
+        - "write:artifacts"
+        - "execute:pipelines"
+      subject:
+        id: "user:john.doe@example.com"
+        type: "user"
+        name: "John Doe"
+        email: "john.doe@example.com"
+      issuer:
+        id: "auth.example.com"
+        name: "Example Auth Service"
+        url: "https://auth.example.com"
+      audience:
+        - "api.example.com"
+        - "mcp.level3.engines"
+      status: "active"
+      security:
+        algorithm: "RS256"
+        key_id: "key-2025-01"
+        rate_limit:
+          requests_per_minute: 100
+          requests_per_hour: 5000
+          burst_size: 20
+      claims:
+        department: "Engineering"
+        role: "Senior Developer"
+        clearance_level: "L3"
+      metadata:
+        created_by: "auth-service"
+        purpose: "User authentication"
+        environment: "production"
+        tags:
+          - "user-token"
+          - "production"
+
+  - name: service_account_api_key
+    description: Long-lived API key for service account
+    data:
+      token_id: "660e8400-e29b-41d4-a716-446655440001"
+      token_type: "api_key"
+      token_value: "api_key_example_51234567890abcdefghijklmnopqrstuvwxyz"
+      issued_at: "2025-01-01T00:00:00Z"
+      expires_at: "2026-01-01T00:00:00Z"
+      scope:
+        - "read:artifacts"
+        - "write:artifacts"
+        - "execute:pipelines"
+        - "manage:deployments"
+      subject:
+        id: "service:ci-cd-pipeline"
+        type: "service_account"
+        name: "CI/CD Pipeline Service"
+      issuer:
+        id: "auth.example.com"
+        name: "Example Auth Service"
+      status: "active"
+      security:
+        algorithm: "HS256"
+        ip_whitelist:
+          - "192.168.1.0/24"
+          - "10.0.0.0/8"
+        rate_limit:
+          requests_per_minute: 1000
+          requests_per_hour: 50000
+          burst_size: 100
+      usage:
+        first_used_at: "2025-01-01T01:00:00Z"
+        last_used_at: "2025-01-11T10:45:00Z"
+        use_count: 15234
+        last_ip: "192.168.1.100"
+      metadata:
+        created_by: "admin@example.com"
+        purpose: "CI/CD pipeline automation"
+        environment: "production"
+        tags:
+          - "automation"
+          - "ci-cd"
+          - "high-privilege"
+
+# Integration Guidelines
+integration:
+  storage:
+    - Store token_value encrypted at rest
+    - Use secure key management service (KMS)
+    - Implement token rotation policies
+    - Maintain audit logs of all token operations
+  
+  validation:
+    - Verify token signature before use
+    - Check expiration and not_before times
+    - Validate scope against requested operation
+    - Check IP whitelist if configured
+    - Enforce rate limits
+  
+  revocation:
+    - Implement token revocation list (TRL)
+    - Support immediate revocation propagation
+    - Maintain revocation audit trail
+    - Notify affected systems of revocation
+  
+  monitoring:
+    - Track token usage patterns
+    - Alert on suspicious activity
+    - Monitor token expiration
+    - Track rate limit violations
+
+# Performance Considerations
+performance:
+  caching:
+    - Cache validated tokens for short duration (1-5 minutes)
+    - Use distributed cache for multi-instance deployments
+    - Implement cache invalidation on revocation
+  
+  database:
+    - Index on token_id, subject.id, expires_at
+    - Partition by issued_at for historical data
+    - Archive expired tokens after retention period
+  
+  validation:
+    - Use asymmetric cryptography for JWT validation
+    - Implement token validation caching
+    - Optimize scope checking with bloom filters
+
+# Security Best Practices
+security:
+  token_generation:
+    - Use cryptographically secure random number generator
+    - Minimum token length: 32 characters
+    - Include sufficient entropy (256+ bits)
+  
+  token_storage:
+    - Never log token values
+    - Encrypt tokens at rest
+    - Use secure transmission (TLS 1.3+)
+    - Implement token hashing for lookups
+  
+  token_lifecycle:
+    - Short-lived access tokens (1 hour or less)
+    - Long-lived refresh tokens (days to months)
+    - Implement token rotation
+    - Support graceful token expiration
+  
+  access_control:
+    - Principle of least privilege for scopes
+    - Regular scope audits
+    - Automatic scope reduction over time
+    - Support scope elevation with re-authentication

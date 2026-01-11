@@ -1,0 +1,189 @@
+# MCP Level 3 - Promotion Engine Bundle
+
+apiVersion: mcp.ninjatech.ai/v1alpha1
+kind: EngineBundle
+metadata:
+  name: promotion-engine
+  namespace: mcp-level3
+  version: 1.0.0
+  description: "Promotion Engine deployment bundle"
+  labels:
+    engine-type: promotion
+    deployment-tier: core
+    criticality: critical
+
+components:
+  services:
+    - name: promotion-api-service
+      type: rest-api
+      version: 1.0.0
+      image: "ninjatech/promotion-api:1.0.0"
+      port: 8080
+      replicas: 3
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "1Gi"
+        limits:
+          cpu: "2000m"
+          memory: "4Gi"
+    
+    - name: promotion-orchestrator
+      type: service
+      version: 1.0.0
+      image: "ninjatech/promotion-orchestrator:1.0.0"
+      port: 8081
+      replicas: 3
+      resources:
+        requests:
+          cpu: "1000m"
+          memory: "2Gi"
+        limits:
+          cpu: "4000m"
+          memory: "8Gi"
+    
+    - name: deployment-service
+      type: service
+      version: 1.0.0
+      image: "ninjatech/deployment-service:1.0.0"
+      port: 8082
+      replicas: 5
+      resources:
+        requests:
+          cpu: "1000m"
+          memory: "2Gi"
+        limits:
+          cpu: "4000m"
+          memory: "8Gi"
+    
+    - name: approval-service
+      type: service
+      version: 1.0.0
+      image: "ninjatech/approval-service:1.0.0"
+      port: 8083
+      replicas: 2
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "1Gi"
+        limits:
+          cpu: "2000m"
+          memory: "4Gi"
+    
+    - name: health-monitor
+      type: service
+      version: 1.0.0
+      image: "ninjatech/health-monitor:1.0.0"
+      port: 8084
+      replicas: 3
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "1Gi"
+        limits:
+          cpu: "2000m"
+          memory: "4Gi"
+  
+  datastores:
+    - name: promotion-store
+      type: relational-db
+      provider: "postgresql"
+      version: "15.x"
+      configuration:
+        replicas: 3
+      resources:
+        storage: "200Gi"
+        memory: "16Gi"
+    
+    - name: deployment-history
+      type: time-series-db
+      provider: "timescaledb"
+      version: "2.x"
+      configuration:
+        replicas: 3
+        retention: 365d
+      resources:
+        storage: "500Gi"
+        memory: "16Gi"
+  
+  integrations:
+    - name: kubernetes-api
+      type: orchestration
+      provider: "kubernetes"
+      endpoint: "https://kubernetes.default.svc"
+    
+    - name: artifact-registry
+      type: registry
+      provider: "harbor"
+      endpoint: "https://registry.ninjatech.ai"
+
+deployment:
+  strategy:
+    type: "blue-green"
+  
+  scaling:
+    horizontal:
+      enabled: true
+      min_replicas: 3
+      max_replicas: 15
+  
+  quotas:
+    cpu: "60"
+    memory: "120Gi"
+    storage: "1Ti"
+
+environments:
+  production:
+    replicas: 3
+    resources:
+      cpu: "60"
+      memory: "120Gi"
+
+secrets:
+  - name: promotion-db-credentials
+    type: credentials
+    provider: vault
+    path: "secret/promotion/db"
+  
+  - name: kubernetes-credentials
+    type: kubeconfig
+    provider: vault
+    path: "secret/promotion/kubernetes"
+
+health_checks:
+  liveness:
+    http_get:
+      path: "/health/live"
+      port: 8080
+    initial_delay: 30s
+    period: 10s
+
+observability:
+  metrics:
+    enabled: true
+    provider: prometheus
+    custom_metrics:
+      - name: promotions_total
+        type: counter
+      - name: deployments_total
+        type: counter
+      - name: rollbacks_total
+        type: counter
+  logging:
+    enabled: true
+    provider: elasticsearch
+  tracing:
+    enabled: true
+    provider: jaeger
+
+security:
+  pod_security:
+    run_as_non_root: true
+
+backup:
+  enabled: true
+  schedule: "0 2 * * *"
+  retention: 90d
+
+documentation:
+  deployment_guide: "https://docs.ninjatech.ai/mcp/promotion-engine/deployment"

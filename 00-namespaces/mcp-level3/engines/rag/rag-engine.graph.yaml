@@ -1,0 +1,637 @@
+# MCP Level 3 - RAG Engine Dependency Graph
+# Defines component dependencies, data flow, and integration points
+
+apiVersion: mcp.ninjatech.ai/v1alpha1
+kind: EngineGraph
+metadata:
+  name: rag-engine
+  namespace: mcp-level3
+  version: 1.0.0
+  description: "RAG Engine dependency graph and data flow visualization"
+  labels:
+    engine-type: rag
+    graph-type: dependency
+  annotations:
+    mcp.ninjatech.ai/graph-version: "1.0.0"
+    mcp.ninjatech.ai/last-updated: "2024-01-11"
+
+# ============================================================================
+# NODE DEFINITIONS
+# ============================================================================
+
+nodes:
+  # API Layer Nodes
+  - id: rag-api-service
+    type: service
+    category: api
+    name: "RAG API Service"
+    description: "REST API endpoint for RAG operations"
+    properties:
+      protocol: http
+      port: 8080
+      replicas: 3
+      criticality: high
+  
+  - id: rag-grpc-service
+    type: service
+    category: api
+    name: "RAG gRPC Service"
+    description: "gRPC endpoint for high-performance operations"
+    properties:
+      protocol: grpc
+      port: 9090
+      replicas: 3
+      criticality: high
+  
+  # Core Service Nodes
+  - id: vector-retrieval-service
+    type: service
+    category: core
+    name: "Vector Retrieval Service"
+    description: "Vector similarity search and retrieval"
+    properties:
+      protocol: http
+      port: 8081
+      replicas: 5
+      criticality: critical
+  
+  - id: graph-retrieval-service
+    type: service
+    category: core
+    name: "Graph Retrieval Service"
+    description: "Knowledge graph traversal and retrieval"
+    properties:
+      protocol: http
+      port: 8082
+      replicas: 3
+      criticality: high
+  
+  - id: hybrid-retrieval-service
+    type: service
+    category: core
+    name: "Hybrid Retrieval Service"
+    description: "Combines vector and graph retrieval"
+    properties:
+      protocol: http
+      port: 8085
+      replicas: 3
+      criticality: high
+  
+  - id: answer-generation-service
+    type: service
+    category: core
+    name: "Answer Generation Service"
+    description: "LLM-based answer generation"
+    properties:
+      protocol: http
+      port: 8083
+      replicas: 5
+      criticality: critical
+  
+  - id: indexing-service
+    type: service
+    category: batch
+    name: "Indexing Service"
+    description: "Document indexing and chunking"
+    properties:
+      protocol: http
+      port: 8084
+      replicas: 2
+      criticality: medium
+  
+  # Data Store Nodes
+  - id: vector-database
+    type: datastore
+    category: storage
+    name: "Vector Database"
+    description: "Stores document embeddings"
+    properties:
+      provider: pinecone
+      dimension: 1536
+      criticality: critical
+  
+  - id: graph-database
+    type: datastore
+    category: storage
+    name: "Graph Database"
+    description: "Stores knowledge graph"
+    properties:
+      provider: neo4j
+      criticality: critical
+  
+  - id: metadata-store
+    type: datastore
+    category: storage
+    name: "Metadata Store"
+    description: "Stores document metadata"
+    properties:
+      provider: postgresql
+      criticality: high
+  
+  - id: cache-store
+    type: datastore
+    category: cache
+    name: "Cache Store"
+    description: "Caches frequent queries and results"
+    properties:
+      provider: redis
+      criticality: medium
+  
+  # External Service Nodes
+  - id: llm-service
+    type: external
+    category: ai
+    name: "LLM Service"
+    description: "External LLM API (OpenAI)"
+    properties:
+      provider: openai
+      models: ["gpt-4", "gpt-3.5-turbo"]
+      criticality: critical
+  
+  - id: embedding-service
+    type: external
+    category: ai
+    name: "Embedding Service"
+    description: "Text embedding generation"
+    properties:
+      provider: openai
+      model: "text-embedding-ada-002"
+      criticality: critical
+  
+  # Infrastructure Nodes
+  - id: message-queue
+    type: infrastructure
+    category: messaging
+    name: "Message Queue"
+    description: "Kafka message broker"
+    properties:
+      provider: kafka
+      topics: ["rag.retrieval", "rag.generation", "rag.indexing"]
+      criticality: high
+  
+  - id: monitoring-service
+    type: infrastructure
+    category: observability
+    name: "Monitoring Service"
+    description: "Prometheus metrics collection"
+    properties:
+      provider: prometheus
+      criticality: medium
+
+# ============================================================================
+# EDGE DEFINITIONS (DEPENDENCIES)
+# ============================================================================
+
+edges:
+  # API Layer Dependencies
+  - source: rag-api-service
+    target: vector-retrieval-service
+    type: synchronous
+    protocol: http
+    description: "REST API calls vector retrieval"
+    properties:
+      latency: 100ms
+      throughput: 1000rps
+  
+  - source: rag-api-service
+    target: graph-retrieval-service
+    type: synchronous
+    protocol: http
+    description: "REST API calls graph retrieval"
+    properties:
+      latency: 150ms
+      throughput: 500rps
+  
+  - source: rag-api-service
+    target: hybrid-retrieval-service
+    type: synchronous
+    protocol: http
+    description: "REST API calls hybrid retrieval"
+    properties:
+      latency: 200ms
+      throughput: 800rps
+  
+  - source: rag-api-service
+    target: answer-generation-service
+    type: synchronous
+    protocol: http
+    description: "REST API calls answer generation"
+    properties:
+      latency: 2000ms
+      throughput: 500rps
+  
+  - source: rag-grpc-service
+    target: vector-retrieval-service
+    type: synchronous
+    protocol: grpc
+    description: "gRPC calls vector retrieval"
+    properties:
+      latency: 50ms
+      throughput: 2000rps
+  
+  - source: rag-grpc-service
+    target: answer-generation-service
+    type: synchronous
+    protocol: grpc
+    description: "gRPC calls answer generation"
+    properties:
+      latency: 1500ms
+      throughput: 1000rps
+  
+  # Core Service Dependencies
+  - source: vector-retrieval-service
+    target: vector-database
+    type: synchronous
+    protocol: grpc
+    description: "Queries vector database"
+    properties:
+      latency: 50ms
+      throughput: 5000rps
+  
+  - source: vector-retrieval-service
+    target: cache-store
+    type: synchronous
+    protocol: redis
+    description: "Checks cache for results"
+    properties:
+      latency: 5ms
+      throughput: 10000rps
+  
+  - source: graph-retrieval-service
+    target: graph-database
+    type: synchronous
+    protocol: bolt
+    description: "Queries graph database"
+    properties:
+      latency: 100ms
+      throughput: 2000rps
+  
+  - source: hybrid-retrieval-service
+    target: vector-retrieval-service
+    type: synchronous
+    protocol: http
+    description: "Calls vector retrieval"
+    properties:
+      latency: 100ms
+      throughput: 1000rps
+  
+  - source: hybrid-retrieval-service
+    target: graph-retrieval-service
+    type: synchronous
+    protocol: http
+    description: "Calls graph retrieval"
+    properties:
+      latency: 150ms
+      throughput: 1000rps
+  
+  - source: answer-generation-service
+    target: llm-service
+    type: synchronous
+    protocol: https
+    description: "Calls external LLM API"
+    properties:
+      latency: 1500ms
+      throughput: 1000rps
+  
+  - source: answer-generation-service
+    target: cache-store
+    type: synchronous
+    protocol: redis
+    description: "Caches generated answers"
+    properties:
+      latency: 5ms
+      throughput: 5000rps
+  
+  # Indexing Dependencies
+  - source: indexing-service
+    target: embedding-service
+    type: synchronous
+    protocol: https
+    description: "Generates embeddings"
+    properties:
+      latency: 500ms
+      throughput: 100rps
+  
+  - source: indexing-service
+    target: vector-database
+    type: synchronous
+    protocol: grpc
+    description: "Stores embeddings"
+    properties:
+      latency: 100ms
+      throughput: 500rps
+  
+  - source: indexing-service
+    target: graph-database
+    type: synchronous
+    protocol: bolt
+    description: "Stores knowledge graph"
+    properties:
+      latency: 200ms
+      throughput: 200rps
+  
+  - source: indexing-service
+    target: metadata-store
+    type: synchronous
+    protocol: postgresql
+    description: "Stores metadata"
+    properties:
+      latency: 50ms
+      throughput: 1000rps
+  
+  # Event-Driven Dependencies
+  - source: vector-retrieval-service
+    target: message-queue
+    type: asynchronous
+    protocol: kafka
+    description: "Publishes retrieval events"
+    properties:
+      topic: "rag.retrieval.completed"
+  
+  - source: answer-generation-service
+    target: message-queue
+    type: asynchronous
+    protocol: kafka
+    description: "Publishes generation events"
+    properties:
+      topic: "rag.generation.completed"
+  
+  - source: indexing-service
+    target: message-queue
+    type: asynchronous
+    protocol: kafka
+    description: "Publishes indexing events"
+    properties:
+      topic: "rag.indexing.completed"
+  
+  # Monitoring Dependencies
+  - source: rag-api-service
+    target: monitoring-service
+    type: asynchronous
+    protocol: prometheus
+    description: "Exports metrics"
+  
+  - source: vector-retrieval-service
+    target: monitoring-service
+    type: asynchronous
+    protocol: prometheus
+    description: "Exports metrics"
+  
+  - source: answer-generation-service
+    target: monitoring-service
+    type: asynchronous
+    protocol: prometheus
+    description: "Exports metrics"
+
+# ============================================================================
+# DEPENDENCY MATRIX
+# ============================================================================
+
+dependency_matrix:
+  # Rows: Dependent services
+  # Columns: Dependencies
+  # Values: 1 = direct dependency, 0 = no dependency
+  
+  services:
+    - rag-api-service
+    - rag-grpc-service
+    - vector-retrieval-service
+    - graph-retrieval-service
+    - hybrid-retrieval-service
+    - answer-generation-service
+    - indexing-service
+  
+  matrix:
+    # API services depend on core services
+    rag-api-service: [0, 0, 1, 1, 1, 1, 0]
+    rag-grpc-service: [0, 0, 1, 0, 0, 1, 0]
+    
+    # Core services depend on data stores
+    vector-retrieval-service: [0, 0, 0, 0, 0, 0, 0]
+    graph-retrieval-service: [0, 0, 0, 0, 0, 0, 0]
+    hybrid-retrieval-service: [0, 0, 1, 1, 0, 0, 0]
+    answer-generation-service: [0, 0, 0, 0, 0, 0, 0]
+    indexing-service: [0, 0, 0, 0, 0, 0, 0]
+
+# ============================================================================
+# DATA FLOW
+# ============================================================================
+
+data_flows:
+  # Query Flow
+  - name: query-flow
+    description: "End-to-end query processing flow"
+    steps:
+      - step: 1
+        component: rag-api-service
+        action: "Receive user query"
+        data: "query text"
+      
+      - step: 2
+        component: vector-retrieval-service
+        action: "Retrieve relevant documents"
+        data: "query embedding, top-k documents"
+      
+      - step: 3
+        component: graph-retrieval-service
+        action: "Retrieve related entities"
+        data: "entity relationships, knowledge triplets"
+      
+      - step: 4
+        component: answer-generation-service
+        action: "Generate answer"
+        data: "context + query → answer"
+      
+      - step: 5
+        component: rag-api-service
+        action: "Return response"
+        data: "answer + sources"
+  
+  # Indexing Flow
+  - name: indexing-flow
+    description: "Document indexing and storage flow"
+    steps:
+      - step: 1
+        component: indexing-service
+        action: "Receive documents"
+        data: "raw documents"
+      
+      - step: 2
+        component: indexing-service
+        action: "Chunk documents"
+        data: "document chunks"
+      
+      - step: 3
+        component: embedding-service
+        action: "Generate embeddings"
+        data: "chunk embeddings"
+      
+      - step: 4
+        component: vector-database
+        action: "Store embeddings"
+        data: "vector index"
+      
+      - step: 5
+        component: graph-database
+        action: "Store relationships"
+        data: "knowledge graph"
+
+# ============================================================================
+# CRITICAL PATH ANALYSIS
+# ============================================================================
+
+critical_paths:
+  - name: query-critical-path
+    description: "Critical path for query processing"
+    path:
+      - rag-api-service
+      - vector-retrieval-service
+      - vector-database
+      - answer-generation-service
+      - llm-service
+    
+    total_latency: 1750ms
+    bottlenecks:
+      - component: llm-service
+        latency: 1500ms
+        percentage: 85.7
+      
+      - component: vector-retrieval-service
+        latency: 100ms
+        percentage: 5.7
+    
+    optimization_opportunities:
+      - "Cache frequent queries in Redis"
+      - "Use smaller LLM model for simple queries"
+      - "Implement request batching for LLM calls"
+  
+  - name: indexing-critical-path
+    description: "Critical path for document indexing"
+    path:
+      - indexing-service
+      - embedding-service
+      - vector-database
+      - graph-database
+    
+    total_latency: 800ms
+    bottlenecks:
+      - component: embedding-service
+        latency: 500ms
+        percentage: 62.5
+      
+      - component: graph-database
+        latency: 200ms
+        percentage: 25.0
+
+# ============================================================================
+# INTEGRATION POINTS
+# ============================================================================
+
+integration_points:
+  # Upstream Integrations
+  upstream:
+    - name: api-gateway
+      type: ingress
+      protocol: https
+      description: "External API gateway"
+      endpoints:
+        - "/api/v1/rag/*"
+    
+    - name: application-layer
+      type: client
+      protocol: grpc
+      description: "Application services"
+      endpoints:
+        - "rag.ninjatech.ai:9090"
+  
+  # Downstream Integrations
+  downstream:
+    - name: vector-database
+      type: datastore
+      protocol: grpc
+      description: "Vector similarity search"
+      endpoints:
+        - "vector-db.ninjatech.ai:443"
+    
+    - name: graph-database
+      type: datastore
+      protocol: bolt
+      description: "Knowledge graph storage"
+      endpoints:
+        - "graph-db.ninjatech.ai:7687"
+    
+    - name: llm-service
+      type: external-api
+      protocol: https
+      description: "External LLM provider"
+      endpoints:
+        - "api.openai.com/v1/chat/completions"
+  
+  # Event Bus Integrations
+  event_bus:
+    - name: kafka-cluster
+      type: message-broker
+      protocol: kafka
+      topics:
+        - "rag.retrieval.completed"
+        - "rag.generation.completed"
+        - "rag.indexing.completed"
+
+# ============================================================================
+# FAILURE MODES AND RESILIENCE
+# ============================================================================
+
+failure_modes:
+  - component: vector-database
+    failure: "Database unavailable"
+    impact: "Critical - No retrieval possible"
+    mitigation:
+      - "Fallback to cache"
+      - "Use graph retrieval only"
+      - "Return cached results"
+    recovery_time: "5 minutes"
+  
+  - component: llm-service
+    failure: "API rate limit exceeded"
+    impact: "High - No answer generation"
+    mitigation:
+      - "Use backup LLM provider"
+      - "Queue requests"
+      - "Return retrieval results only"
+    recovery_time: "1 minute"
+  
+  - component: graph-database
+    failure: "Database unavailable"
+    impact: "Medium - Degraded retrieval"
+    mitigation:
+      - "Use vector retrieval only"
+      - "Skip relationship enrichment"
+    recovery_time: "10 minutes"
+
+# ============================================================================
+# PERFORMANCE CHARACTERISTICS
+# ============================================================================
+
+performance:
+  throughput:
+    queries_per_second: 1000
+    indexing_per_second: 100
+  
+  latency:
+    p50: 200ms
+    p95: 500ms
+    p99: 1000ms
+  
+  resource_utilization:
+    cpu: 70%
+    memory: 75%
+    network: 60%
+
+# ============================================================================
+# DOCUMENTATION
+# ============================================================================
+
+documentation:
+  architecture_diagram: "https://docs.ninjatech.ai/mcp/rag-engine/architecture"
+  data_flow_diagram: "https://docs.ninjatech.ai/mcp/rag-engine/data-flow"
+  dependency_guide: "https://docs.ninjatech.ai/mcp/rag-engine/dependencies"

@@ -159,3 +159,4 @@ comment_body.md
 # CI Error Analyzer outputs
 ci-error-analysis.json
 jobs.json
+temp-repo/

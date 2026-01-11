@@ -1,0 +1,278 @@
+# MCP Level 1 Toolchain Identifier Registry
+# Defines MCP toolchain identifiers and version management
+
+version: "1.0.0"
+semantic_role: toolchain_identifier_registry
+artifact_type: registry
+semantic_root: true
+
+description: |
+  Toolchain Identifier Registry manages MCP toolchain artifacts including
+  validators, publishers, inspectors, and other development tools with
+  version control and dependency tracking.
+
+naming_format:
+  pattern: "{toolchain-name}@{version}"
+  rules:
+    - "Toolchain names must be lowercase with hyphens"
+    - "Must include version suffix"
+    - "Support semantic versioning"
+  examples:
+    - "validator@v1.2.0"
+    - "publisher@v0.9.1"
+    - "inspector@2025-06-18"
+    - "mcp-cli@v2.0.0"
+
+semantic_boundary:
+  description: "Each toolchain identifier corresponds to a set of MCP tools"
+  scope:
+    - "Tool identification"
+    - "Version management"
+    - "Dependency tracking"
+  tool_categories:
+    - "validators"
+    - "publishers"
+    - "inspectors"
+    - "generators"
+    - "analyzers"
+    - "deployers"
+
+naming_paradigm:
+  versioning:
+    enabled: true
+    format: "semantic_versioning"
+    pattern: "^v?\\d+\\.\\d+\\.\\d+(-[a-z0-9]+)?$"
+    
+  artifact_metadata:
+    required_fields:
+      - "name"
+      - "version"
+      - "type"
+      - "purpose"
+    optional_fields:
+      - "dependencies"
+      - "platform"
+      - "license"
+
+toolchain_registry:
+  validators:
+    mcp_validator:
+      id: "mcp-validator"
+      name: "MCP Validator"
+      version: "1.2.0"
+      type: "validator"
+      purpose: "Validate MCP artifacts against schemas"
+      command: "mcp-validator"
+      repository: "https://github.com/Janix-ai/mcp-validator"
+      platform: ["linux", "macos", "windows"]
+      license: "MIT"
+      status: "active"
+      created_at: "2024-12-01T00:00:00Z"
+      
+    schema_validator:
+      id: "schema-validator"
+      name: "Schema Validator"
+      version: "2.0.0"
+      type: "validator"
+      purpose: "Validate JSON/YAML schemas"
+      command: "schema-validator"
+      dependencies:
+        - "ajv@8.12.0"
+      platform: ["linux", "macos", "windows"]
+      license: "MIT"
+      status: "active"
+      
+    registry_validator:
+      id: "registry-validator"
+      name: "Registry Validator"
+      version: "1.0.0"
+      type: "validator"
+      purpose: "Validate MCP registry entries"
+      command: "registry-validator"
+      repository: "https://github.com/rhdeck/mcp-registry-validator"
+      platform: ["linux", "macos", "windows"]
+      license: "MIT"
+      status: "active"
+
+  publishers:
+    mcp_publisher:
+      id: "mcp-publisher"
+      name: "MCP Publisher"
+      version: "1.0.0"
+      type: "publisher"
+      purpose: "Publish MCP artifacts to registry"
+      command: "mcp publish"
+      platform: ["linux", "macos", "windows"]
+      license: "MIT"
+      status: "active"
+      
+    npm_publisher:
+      id: "npm-publisher"
+      name: "NPM Publisher"
+      version: "9.0.0"
+      type: "publisher"
+      purpose: "Publish to NPM registry"
+      command: "npm publish"
+      platform: ["linux", "macos", "windows"]
+      license: "Artistic-2.0"
+      status: "active"
+
+  inspectors:
+    mcp_inspector:
+      id: "mcp-inspector"
+      name: "MCP Inspector"
+      version: "1.0.0"
+      type: "inspector"
+      purpose: "Inspect MCP server capabilities"
+      command: "mcp-inspector"
+      repository: "https://github.com/modelcontextprotocol/inspector"
+      platform: ["linux", "macos", "windows"]
+      license: "MIT"
+      status: "active"
+      
+    artifact_inspector:
+      id: "artifact-inspector"
+      name: "Artifact Inspector"
+      version: "1.0.0"
+      type: "inspector"
+      purpose: "Inspect artifact metadata and dependencies"
+      command: "artifact-inspector"
+      platform: ["linux", "macos", "windows"]
+      license: "MIT"
+      status: "active"
+
+  generators:
+    manifest_generator:
+      id: "manifest-generator"
+      name: "Manifest Generator"
+      version: "1.0.0"
+      type: "generator"
+      purpose: "Generate manifest.yaml from templates"
+      command: "generate-manifest"
+      platform: ["linux", "macos", "windows"]
+      license: "MIT"
+      status: "active"
+      
+    schema_generator:
+      id: "schema-generator"
+      name: "Schema Generator"
+      version: "1.0.0"
+      type: "generator"
+      purpose: "Generate JSON schemas from TypeScript types"
+      command: "generate-schema"
+      dependencies:
+        - "typescript@5.0.0"
+        - "ts-json-schema-generator@1.5.0"
+      platform: ["linux", "macos", "windows"]
+      license: "MIT"
+      status: "active"
+
+  analyzers:
+    dependency_analyzer:
+      id: "dependency-analyzer"
+      name: "Dependency Analyzer"
+      version: "1.0.0"
+      type: "analyzer"
+      purpose: "Analyze artifact dependencies and conflicts"
+      command: "analyze-dependencies"
+      platform: ["linux", "macos", "windows"]
+      license: "MIT"
+      status: "active"
+      
+    security_analyzer:
+      id: "security-analyzer"
+      name: "Security Analyzer"
+      version: "1.0.0"
+      type: "analyzer"
+      purpose: "Analyze security vulnerabilities"
+      command: "security-scan"
+      platform: ["linux", "macos", "windows"]
+      license: "MIT"
+      status: "active"
+
+  deployers:
+    kubernetes_deployer:
+      id: "k8s-deployer"
+      name: "Kubernetes Deployer"
+      version: "1.0.0"
+      type: "deployer"
+      purpose: "Deploy MCP services to Kubernetes"
+      command: "kubectl apply"
+      dependencies:
+        - "kubectl@1.28.0"
+      platform: ["linux", "macos", "windows"]
+      license: "Apache-2.0"
+      status: "active"
+      
+    docker_deployer:
+      id: "docker-deployer"
+      name: "Docker Deployer"
+      version: "1.0.0"
+      type: "deployer"
+      purpose: "Deploy MCP services to Docker"
+      command: "docker compose up"
+      dependencies:
+        - "docker@24.0.0"
+      platform: ["linux", "macos", "windows"]
+      license: "Apache-2.0"
+      status: "active"
+
+conflict_avoidance:
+  strategies:
+    - name: "version_priority"
+      description: "Prioritize by version number (latest first)"
+      enforcement: "strict"
+      
+    - name: "platform_compatibility"
+      description: "Check platform compatibility before selection"
+      enforcement: "strict"
+      
+    - name: "dependency_resolution"
+      description: "Resolve toolchain dependencies automatically"
+      enforcement: "strict"
+
+semantic_linkage:
+  linked_artifacts:
+    - type: "manifest"
+      field: "metadata.toolchain"
+      description: "Manifest specifies required toolchain"
+      
+    - type: "tools"
+      artifact: "tools.yaml"
+      description: "Tools.yaml lists available toolchains"
+      
+    - type: "dependency-registry"
+      artifact: "dependency-registry.yaml"
+      description: "Toolchain dependencies tracked"
+
+toolchain_lifecycle:
+  stages:
+    - stage: "development"
+      description: "Under active development"
+      stability: "unstable"
+      
+    - stage: "beta"
+      description: "Feature complete, testing phase"
+      stability: "moderate"
+      
+    - stage: "stable"
+      description: "Production ready"
+      stability: "stable"
+      
+    - stage: "deprecated"
+      description: "Scheduled for removal"
+      stability: "declining"
+      
+    - stage: "archived"
+      description: "No longer maintained"
+      stability: "none"
+
+metadata:
+  created_at: "2025-01-11T14:00:00Z"
+  updated_at: "2025-01-11T14:00:00Z"
+  version: "1.0.0"
+  status: "active"
+  total_tools: 10
+  active_tools: 10
+  deprecated_tools: 0
+  maintainer: "MCP Registry Team"

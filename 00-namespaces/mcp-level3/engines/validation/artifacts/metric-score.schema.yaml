@@ -1,0 +1,831 @@
+# MCP Level 3 - Validation Engine: Metric Score Schema
+# Purpose: Define quality metrics and scoring for validation results
+# Version: 1.0.0
+# Last Updated: 2025-01-11
+
+schema:
+  name: metric-score
+  version: "1.0.0"
+  namespace: mcp.level3.validation.artifacts
+  description: |
+    Metric score artifact for tracking quality metrics, performance indicators, and validation scores.
+    Supports custom metrics, aggregations, thresholds, and trend analysis.
+    Enables quality monitoring, SLA tracking, and continuous improvement.
+
+  type: object
+  required:
+    - metric_id
+    - name
+    - value
+    - unit
+    - timestamp
+  
+  properties:
+    # Core Identity
+    metric_id:
+      type: string
+      format: uuid
+      description: Unique metric identifier
+      example: "550e8400-e29b-41d4-a716-446655440000"
+      index: true
+    
+    name:
+      type: string
+      description: Metric name
+      example: "validation_success_rate"
+      minLength: 3
+      maxLength: 200
+      pattern: '^[a-z][a-z0-9_]*$'
+    
+    display_name:
+      type: string
+      description: Human-readable display name
+      example: "Validation Success Rate"
+      maxLength: 200
+      optional: true
+    
+    description:
+      type: string
+      description: Detailed metric description
+      example: "Percentage of successful validations over total validations"
+      maxLength: 2000
+      optional: true
+    
+    # Metric Type
+    type:
+      type: string
+      enum:
+        - counter
+        - gauge
+        - histogram
+        - summary
+        - rate
+        - percentage
+        - duration
+        - size
+        - custom
+      description: Metric type
+      example: "percentage"
+    
+    category:
+      type: string
+      enum:
+        - quality
+        - performance
+        - reliability
+        - security
+        - compliance
+        - business
+        - technical
+        - operational
+      description: Metric category
+      example: "quality"
+    
+    # Metric Value
+    value:
+      type: number
+      description: Metric value
+      example: 0.95
+    
+    unit:
+      type: string
+      description: Unit of measurement
+      example: "percent"
+      enum:
+        - percent
+        - count
+        - milliseconds
+        - seconds
+        - minutes
+        - hours
+        - bytes
+        - kilobytes
+        - megabytes
+        - gigabytes
+        - requests_per_second
+        - errors_per_minute
+        - score
+        - ratio
+        - custom
+    
+    # Value Statistics
+    statistics:
+      type: object
+      description: Statistical information about the metric
+      optional: true
+      properties:
+        min:
+          type: number
+          description: Minimum value
+          example: 0.85
+        
+        max:
+          type: number
+          description: Maximum value
+          example: 1.0
+        
+        mean:
+          type: number
+          description: Mean/average value
+          example: 0.94
+        
+        median:
+          type: number
+          description: Median value
+          example: 0.95
+        
+        stddev:
+          type: number
+          description: Standard deviation
+          example: 0.03
+        
+        percentile_50:
+          type: number
+          description: 50th percentile (P50)
+          example: 0.95
+        
+        percentile_90:
+          type: number
+          description: 90th percentile (P90)
+          example: 0.98
+        
+        percentile_95:
+          type: number
+          description: 95th percentile (P95)
+          example: 0.99
+        
+        percentile_99:
+          type: number
+          description: 99th percentile (P99)
+          example: 0.995
+        
+        sample_count:
+          type: integer
+          minimum: 0
+          description: Number of samples
+          example: 1000
+    
+    # Thresholds
+    thresholds:
+      type: object
+      description: Metric thresholds for alerting
+      optional: true
+      properties:
+        critical:
+          type: object
+          description: Critical threshold
+          optional: true
+          properties:
+            min:
+              type: number
+              description: Minimum acceptable value
+              example: 0.90
+            max:
+              type: number
+              description: Maximum acceptable value
+              optional: true
+            operator:
+              type: string
+              enum:
+                - greater_than
+                - less_than
+                - equals
+                - not_equals
+                - between
+              description: Comparison operator
+              example: "greater_than"
+        
+        warning:
+          type: object
+          description: Warning threshold
+          optional: true
+          properties:
+            min:
+              type: number
+              description: Minimum acceptable value
+              example: 0.95
+            max:
+              type: number
+              description: Maximum acceptable value
+              optional: true
+            operator:
+              type: string
+              enum:
+                - greater_than
+                - less_than
+                - equals
+                - not_equals
+                - between
+              description: Comparison operator
+              example: "greater_than"
+        
+        target:
+          type: number
+          description: Target/goal value
+          example: 0.99
+          optional: true
+    
+    # Status
+    status:
+      type: string
+      enum:
+        - healthy
+        - warning
+        - critical
+        - unknown
+      description: Current metric status based on thresholds
+      example: "healthy"
+    
+    # Target/Source
+    target:
+      type: object
+      description: What this metric measures
+      required:
+        - type
+        - id
+      properties:
+        type:
+          type: string
+          enum:
+            - artifact
+            - component
+            - service
+            - pipeline
+            - model
+            - system
+            - team
+            - project
+          description: Target type
+          example: "service"
+        
+        id:
+          type: string
+          description: Target identifier
+          example: "validation-service"
+        
+        name:
+          type: string
+          description: Target name
+          example: "Validation Service"
+          optional: true
+        
+        version:
+          type: string
+          description: Target version
+          example: "2.1.0"
+          optional: true
+    
+    # Time Context
+    timestamp:
+      type: string
+      format: date-time
+      description: Metric measurement timestamp
+      example: "2025-01-11T10:00:00Z"
+      index: true
+    
+    time_window:
+      type: object
+      description: Time window for aggregated metrics
+      optional: true
+      properties:
+        start:
+          type: string
+          format: date-time
+          description: Window start time
+          example: "2025-01-11T09:00:00Z"
+        
+        end:
+          type: string
+          format: date-time
+          description: Window end time
+          example: "2025-01-11T10:00:00Z"
+        
+        duration:
+          type: integer
+          minimum: 1
+          description: Window duration in seconds
+          example: 3600
+        
+        granularity:
+          type: string
+          enum:
+            - second
+            - minute
+            - hour
+            - day
+            - week
+            - month
+          description: Aggregation granularity
+          example: "hour"
+    
+    # Dimensions
+    dimensions:
+      type: object
+      description: Metric dimensions for filtering and grouping
+      additionalProperties: true
+      optional: true
+      example:
+        environment: "production"
+        region: "us-east-1"
+        team: "platform"
+    
+    # Tags
+    tags:
+      type: array
+      items:
+        type: string
+      description: Classification tags
+      example:
+        - "quality"
+        - "sla"
+        - "critical"
+      optional: true
+    
+    # Trend Analysis
+    trend:
+      type: object
+      description: Trend analysis information
+      optional: true
+      properties:
+        direction:
+          type: string
+          enum:
+            - increasing
+            - decreasing
+            - stable
+            - volatile
+          description: Trend direction
+          example: "stable"
+        
+        change_percent:
+          type: number
+          description: Percentage change from previous period
+          example: 2.5
+        
+        change_absolute:
+          type: number
+          description: Absolute change from previous period
+          example: 0.02
+        
+        previous_value:
+          type: number
+          description: Previous period value
+          example: 0.93
+        
+        comparison_period:
+          type: string
+          description: Comparison period
+          example: "previous_hour"
+          enum:
+            - previous_minute
+            - previous_hour
+            - previous_day
+            - previous_week
+            - previous_month
+    
+    # Alerts
+    alerts:
+      type: array
+      description: Active alerts for this metric
+      items:
+        type: object
+        properties:
+          alert_id:
+            type: string
+            format: uuid
+            description: Alert identifier
+          
+          severity:
+            type: string
+            enum:
+              - critical
+              - warning
+              - info
+            description: Alert severity
+          
+          message:
+            type: string
+            description: Alert message
+          
+          triggered_at:
+            type: string
+            format: date-time
+            description: When alert was triggered
+          
+          acknowledged:
+            type: boolean
+            description: Whether alert has been acknowledged
+            default: false
+          
+          acknowledged_by:
+            type: string
+            description: Who acknowledged the alert
+            optional: true
+          
+          acknowledged_at:
+            type: string
+            format: date-time
+            description: When alert was acknowledged
+            optional: true
+      optional: true
+    
+    # Calculation
+    calculation:
+      type: object
+      description: How the metric is calculated
+      optional: true
+      properties:
+        formula:
+          type: string
+          description: Calculation formula
+          example: "(successful_validations / total_validations) * 100"
+        
+        source_metrics:
+          type: array
+          items:
+            type: string
+          description: Source metrics used in calculation
+          example:
+            - "successful_validations"
+            - "total_validations"
+        
+        aggregation:
+          type: string
+          enum:
+            - sum
+            - avg
+            - min
+            - max
+            - count
+            - rate
+            - percentile
+          description: Aggregation method
+          example: "avg"
+          optional: true
+    
+    # Data Quality
+    quality:
+      type: object
+      description: Data quality indicators
+      optional: true
+      properties:
+        completeness:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Data completeness score
+          example: 1.0
+        
+        accuracy:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Data accuracy score
+          example: 0.98
+        
+        freshness:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Data freshness score
+          example: 0.95
+        
+        confidence:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Confidence in the metric value
+          example: 0.99
+    
+    # Metadata
+    metadata:
+      type: object
+      description: Additional metadata
+      optional: true
+      properties:
+        source:
+          type: string
+          description: Metric source system
+          example: "prometheus"
+        
+        collector:
+          type: string
+          description: Metric collector
+          example: "validation-service-exporter"
+        
+        collection_method:
+          type: string
+          enum:
+            - push
+            - pull
+            - calculated
+            - aggregated
+          description: How metric was collected
+          example: "calculated"
+        
+        owner:
+          type: string
+          description: Metric owner
+          example: "team:platform"
+        
+        sla_applicable:
+          type: boolean
+          description: Whether this metric is part of SLA
+          default: false
+        
+        business_critical:
+          type: boolean
+          description: Whether this is a business-critical metric
+          default: false
+        
+        documentation_url:
+          type: string
+          format: uri
+          description: Metric documentation URL
+          optional: true
+        
+        dashboard_url:
+          type: string
+          format: uri
+          description: Dashboard URL for this metric
+          optional: true
+        
+        custom:
+          type: object
+          description: Custom metadata
+          additionalProperties: true
+    
+    # Timestamps
+    created_at:
+      type: string
+      format: date-time
+      description: Record creation timestamp
+      example: "2025-01-11T10:00:00Z"
+      optional: true
+    
+    updated_at:
+      type: string
+      format: date-time
+      description: Last update timestamp
+      example: "2025-01-11T10:00:05Z"
+      optional: true
+
+  # Validation Rules
+  validation:
+    rules:
+      - name: valid_name_format
+        condition: name matches pattern
+        message: "Name must be lowercase with underscores"
+        severity: error
+      
+      - name: valid_unit
+        condition: unit is in allowed units
+        message: "Unit must be a valid measurement unit"
+        severity: error
+      
+      - name: valid_thresholds
+        condition: thresholds are properly configured
+        message: "Thresholds must have valid min/max values"
+        severity: warning
+      
+      - name: valid_time_window
+        condition: time_window.start < time_window.end
+        message: "Time window start must be before end"
+        severity: error
+      
+      - name: quality_scores_in_range
+        condition: all_quality_scores_between_0_and_1()
+        message: "Quality scores must be between 0 and 1"
+        severity: error
+
+  # Indexes
+  indexes:
+    - fields: [metric_id]
+      unique: true
+    - fields: [name, timestamp]
+    - fields: [target.type, target.id, timestamp]
+    - fields: [status, timestamp]
+    - fields: [timestamp]
+
+# Usage Examples
+examples:
+  - name: validation_success_rate
+    description: Validation success rate metric
+    data:
+      metric_id: "550e8400-e29b-41d4-a716-446655440000"
+      name: "validation_success_rate"
+      display_name: "Validation Success Rate"
+      description: "Percentage of successful validations over total validations"
+      type: "percentage"
+      category: "quality"
+      value: 0.95
+      unit: "percent"
+      statistics:
+        min: 0.85
+        max: 1.0
+        mean: 0.94
+        median: 0.95
+        stddev: 0.03
+        percentile_50: 0.95
+        percentile_90: 0.98
+        percentile_95: 0.99
+        percentile_99: 0.995
+        sample_count: 1000
+      thresholds:
+        critical:
+          min: 0.90
+          operator: "greater_than"
+        warning:
+          min: 0.95
+          operator: "greater_than"
+        target: 0.99
+      status: "healthy"
+      target:
+        type: "service"
+        id: "validation-service"
+        name: "Validation Service"
+        version: "2.1.0"
+      timestamp: "2025-01-11T10:00:00Z"
+      time_window:
+        start: "2025-01-11T09:00:00Z"
+        end: "2025-01-11T10:00:00Z"
+        duration: 3600
+        granularity: "hour"
+      dimensions:
+        environment: "production"
+        region: "us-east-1"
+        team: "platform"
+      tags:
+        - "quality"
+        - "sla"
+        - "critical"
+      trend:
+        direction: "stable"
+        change_percent: 0.5
+        change_absolute: 0.005
+        previous_value: 0.945
+        comparison_period: "previous_hour"
+      calculation:
+        formula: "(successful_validations / total_validations) * 100"
+        source_metrics:
+          - "successful_validations"
+          - "total_validations"
+        aggregation: "avg"
+      quality:
+        completeness: 1.0
+        accuracy: 0.98
+        freshness: 0.95
+        confidence: 0.99
+      metadata:
+        source: "prometheus"
+        collector: "validation-service-exporter"
+        collection_method: "calculated"
+        owner: "team:platform"
+        sla_applicable: true
+        business_critical: true
+      created_at: "2025-01-11T10:00:00Z"
+
+  - name: response_time_p95
+    description: API response time 95th percentile
+    data:
+      metric_id: "660e8400-e29b-41d4-a716-446655440001"
+      name: "api_response_time_p95"
+      display_name: "API Response Time (P95)"
+      description: "95th percentile of API response times"
+      type: "duration"
+      category: "performance"
+      value: 250
+      unit: "milliseconds"
+      statistics:
+        min: 50
+        max: 500
+        mean: 180
+        median: 150
+        stddev: 75
+        percentile_95: 250
+        sample_count: 5000
+      thresholds:
+        critical:
+          max: 500
+          operator: "less_than"
+        warning:
+          max: 300
+          operator: "less_than"
+        target: 200
+      status: "warning"
+      target:
+        type: "service"
+        id: "validation-api"
+        name: "Validation API"
+      timestamp: "2025-01-11T10:00:00Z"
+      time_window:
+        start: "2025-01-11T09:00:00Z"
+        end: "2025-01-11T10:00:00Z"
+        duration: 3600
+        granularity: "hour"
+      dimensions:
+        environment: "production"
+        endpoint: "/api/v1/validate"
+      tags:
+        - "performance"
+        - "sla"
+      trend:
+        direction: "increasing"
+        change_percent: 10.0
+        change_absolute: 25
+        previous_value: 225
+        comparison_period: "previous_hour"
+      alerts:
+        - alert_id: "770e8400-e29b-41d4-a716-446655440002"
+          severity: "warning"
+          message: "Response time P95 exceeded warning threshold (250ms > 300ms target)"
+          triggered_at: "2025-01-11T10:00:00Z"
+          acknowledged: false
+      metadata:
+        source: "prometheus"
+        sla_applicable: true
+        business_critical: true
+      created_at: "2025-01-11T10:00:00Z"
+
+  - name: error_rate
+    description: Error rate metric
+    data:
+      metric_id: "880e8400-e29b-41d4-a716-446655440003"
+      name: "validation_error_rate"
+      display_name: "Validation Error Rate"
+      description: "Rate of validation errors per minute"
+      type: "rate"
+      category: "reliability"
+      value: 2.5
+      unit: "errors_per_minute"
+      thresholds:
+        critical:
+          max: 10
+          operator: "less_than"
+        warning:
+          max: 5
+          operator: "less_than"
+        target: 1
+      status: "warning"
+      target:
+        type: "service"
+        id: "validation-service"
+      timestamp: "2025-01-11T10:00:00Z"
+      dimensions:
+        environment: "production"
+      tags:
+        - "reliability"
+        - "errors"
+      trend:
+        direction: "stable"
+        change_percent: 0.0
+        change_absolute: 0.0
+        previous_value: 2.5
+        comparison_period: "previous_hour"
+      metadata:
+        source: "prometheus"
+        sla_applicable: true
+      created_at: "2025-01-11T10:00:00Z"
+
+# Integration Guidelines
+integration:
+  collection:
+    - Define clear metric definitions
+    - Use consistent naming conventions
+    - Set appropriate thresholds
+    - Configure alerting rules
+    - Document calculation methods
+  
+  monitoring:
+    - Track metrics over time
+    - Analyze trends and patterns
+    - Set up dashboards
+    - Configure alerts
+    - Review SLA compliance
+  
+  analysis:
+    - Compare against targets
+    - Identify anomalies
+    - Correlate metrics
+    - Generate reports
+    - Drive improvements
+
+# Performance Considerations
+performance:
+  collection:
+    - Use efficient aggregation
+    - Implement sampling for high-volume metrics
+    - Cache calculated metrics
+    - Batch metric updates
+  
+  storage:
+    - Use time-series database
+    - Implement data retention policies
+    - Compress historical data
+    - Index on timestamp and target
+  
+  querying:
+    - Pre-aggregate common queries
+    - Use materialized views
+    - Implement query caching
+    - Optimize time range queries

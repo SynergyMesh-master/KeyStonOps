@@ -1,0 +1,660 @@
+# MCP Level 3 - Validation Engine: Schema Definition Schema
+# Purpose: Define validation schemas for artifacts, data structures, and API contracts
+# Version: 1.0.0
+# Last Updated: 2025-01-11
+
+schema:
+  name: schema-definition
+  version: "1.0.0"
+  namespace: mcp.level3.validation.artifacts
+  description: |
+    Schema definition artifact for specifying validation rules and constraints.
+    Supports JSON Schema, XML Schema, Avro, Protocol Buffers, and custom formats.
+    Enables contract validation, data quality checks, and API compatibility testing.
+
+  type: object
+  required:
+    - schema_id
+    - name
+    - version
+    - format
+    - definition
+    - created_at
+  
+  properties:
+    # Core Identity
+    schema_id:
+      type: string
+      format: uuid
+      description: Unique schema identifier
+      example: "550e8400-e29b-41d4-a716-446655440000"
+      index: true
+    
+    name:
+      type: string
+      description: Schema name
+      example: "artifact-metadata-schema"
+      minLength: 3
+      maxLength: 200
+      pattern: '^[a-z][a-z0-9-]*$'
+    
+    version:
+      type: string
+      pattern: '^\d+\.\d+\.\d+$'
+      description: Semantic version
+      example: "1.2.3"
+    
+    title:
+      type: string
+      description: Human-readable title
+      example: "Artifact Metadata Schema"
+      maxLength: 200
+      optional: true
+    
+    description:
+      type: string
+      description: Detailed schema description
+      example: "Schema for validating artifact metadata structure and constraints"
+      maxLength: 2000
+      optional: true
+    
+    # Schema Format
+    format:
+      type: string
+      enum:
+        - json_schema
+        - xml_schema
+        - avro
+        - protobuf
+        - openapi
+        - graphql
+        - yaml_schema
+        - custom
+      description: Schema format/language
+      example: "json_schema"
+    
+    format_version:
+      type: string
+      description: Version of the schema format
+      example: "draft-07"
+      optional: true
+    
+    # Schema Definition
+    definition:
+      type: object
+      description: The actual schema definition
+      additionalProperties: true
+      example:
+        $schema: "http://json-schema.org/draft-07/schema#"
+        type: "object"
+        required: ["artifact_id", "name", "version"]
+        properties:
+          artifact_id:
+            type: "string"
+            format: "uuid"
+          name:
+            type: "string"
+            minLength: 3
+          version:
+            type: "string"
+            pattern: "^\\d+\\.\\d+\\.\\d+$"
+    
+    # Validation Rules
+    validation_rules:
+      type: array
+      description: Additional validation rules beyond schema
+      items:
+        type: object
+        required:
+          - rule_id
+          - name
+          - type
+        properties:
+          rule_id:
+            type: string
+            format: uuid
+            description: Rule identifier
+            example: "660e8400-e29b-41d4-a716-446655440001"
+          
+          name:
+            type: string
+            description: Rule name
+            example: "version_format_check"
+            pattern: '^[a-z][a-z0-9_]*$'
+          
+          type:
+            type: string
+            enum:
+              - format
+              - range
+              - pattern
+              - custom
+              - business_logic
+              - cross_field
+              - conditional
+            description: Rule type
+            example: "pattern"
+          
+          description:
+            type: string
+            description: Rule description
+            example: "Validate version follows semantic versioning"
+            optional: true
+          
+          condition:
+            type: string
+            description: Validation condition/expression
+            example: "version matches /^\\d+\\.\\d+\\.\\d+$/"
+          
+          severity:
+            type: string
+            enum:
+              - error
+              - warning
+              - info
+            description: Validation severity
+            example: "error"
+            default: "error"
+          
+          error_message:
+            type: string
+            description: Error message when validation fails
+            example: "Version must follow semantic versioning (x.y.z)"
+          
+          enabled:
+            type: boolean
+            description: Whether rule is enabled
+            default: true
+      optional: true
+    
+    # Constraints
+    constraints:
+      type: object
+      description: Schema-level constraints
+      optional: true
+      properties:
+        required_fields:
+          type: array
+          items:
+            type: string
+          description: Required field paths
+          example:
+            - "artifact_id"
+            - "name"
+            - "version"
+        
+        unique_fields:
+          type: array
+          items:
+            type: string
+          description: Fields that must be unique
+          example:
+            - "artifact_id"
+        
+        immutable_fields:
+          type: array
+          items:
+            type: string
+          description: Fields that cannot be modified
+          example:
+            - "artifact_id"
+            - "created_at"
+        
+        min_properties:
+          type: integer
+          minimum: 0
+          description: Minimum number of properties
+          optional: true
+        
+        max_properties:
+          type: integer
+          minimum: 0
+          description: Maximum number of properties
+          optional: true
+        
+        additional_properties:
+          type: boolean
+          description: Allow additional properties
+          default: true
+    
+    # Compatibility
+    compatibility:
+      type: object
+      description: Schema compatibility settings
+      optional: true
+      properties:
+        mode:
+          type: string
+          enum:
+            - backward
+            - forward
+            - full
+            - none
+          description: Compatibility mode
+          example: "backward"
+          default: "backward"
+        
+        previous_versions:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: Compatible previous schema versions
+          optional: true
+        
+        breaking_changes:
+          type: array
+          items:
+            type: object
+            properties:
+              version:
+                type: string
+                description: Version with breaking change
+              change:
+                type: string
+                description: Description of breaking change
+              migration_guide:
+                type: string
+                description: Migration guide URL
+                optional: true
+          description: List of breaking changes
+          optional: true
+    
+    # Examples
+    examples:
+      type: array
+      description: Example valid instances
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            description: Example name
+          description:
+            type: string
+            description: Example description
+            optional: true
+          data:
+            description: Example data
+            additionalProperties: true
+          valid:
+            type: boolean
+            description: Whether example is valid
+            default: true
+      optional: true
+    
+    # Metadata
+    metadata:
+      type: object
+      description: Schema metadata
+      optional: true
+      properties:
+        domain:
+          type: string
+          description: Domain or subject area
+          example: "artifact-management"
+        
+        scope:
+          type: string
+          enum:
+            - global
+            - organization
+            - project
+            - team
+          description: Schema scope
+          example: "organization"
+        
+        owner:
+          type: object
+          description: Schema owner
+          properties:
+            id:
+              type: string
+              description: Owner ID
+            name:
+              type: string
+              description: Owner name
+            email:
+              type: string
+              format: email
+              description: Contact email
+              optional: true
+        
+        maintainers:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              role:
+                type: string
+          description: Schema maintainers
+          optional: true
+        
+        tags:
+          type: array
+          items:
+            type: string
+          description: Classification tags
+          example:
+            - "artifact"
+            - "metadata"
+            - "core"
+        
+        documentation_url:
+          type: string
+          format: uri
+          description: Documentation URL
+          example: "https://docs.example.com/schemas/artifact-metadata"
+          optional: true
+        
+        source_url:
+          type: string
+          format: uri
+          description: Source repository URL
+          optional: true
+    
+    # Status
+    status:
+      type: string
+      enum:
+        - draft
+        - review
+        - approved
+        - published
+        - deprecated
+        - archived
+      description: Schema status
+      example: "published"
+      default: "draft"
+    
+    # Usage Statistics
+    usage:
+      type: object
+      description: Schema usage statistics
+      optional: true
+      properties:
+        validation_count:
+          type: integer
+          minimum: 0
+          description: Number of validations performed
+          example: 15234
+        
+        success_rate:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Validation success rate
+          example: 0.95
+        
+        last_used_at:
+          type: string
+          format: date-time
+          description: Last usage timestamp
+          example: "2025-01-11T10:00:00Z"
+        
+        dependent_schemas:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: Schemas that depend on this one
+          optional: true
+    
+    # Timestamps
+    created_at:
+      type: string
+      format: date-time
+      description: Creation timestamp
+      example: "2025-01-01T00:00:00Z"
+      index: true
+    
+    updated_at:
+      type: string
+      format: date-time
+      description: Last update timestamp
+      example: "2025-01-11T10:00:00Z"
+      optional: true
+    
+    published_at:
+      type: string
+      format: date-time
+      description: Publication timestamp
+      example: "2025-01-05T00:00:00Z"
+      optional: true
+    
+    deprecated_at:
+      type: string
+      format: date-time
+      description: Deprecation timestamp
+      optional: true
+
+  # Validation Rules
+  validation:
+    rules:
+      - name: valid_version
+        condition: version matches semantic versioning
+        message: "Version must follow semantic versioning (x.y.z)"
+        severity: error
+      
+      - name: valid_name_format
+        condition: name matches pattern
+        message: "Name must be lowercase with hyphens"
+        severity: error
+      
+      - name: definition_not_empty
+        condition: definition is not empty
+        message: "Schema definition cannot be empty"
+        severity: error
+      
+      - name: valid_format_version
+        condition: format_version is compatible with format
+        message: "Format version must be compatible with schema format"
+        severity: warning
+      
+      - name: published_schemas_immutable
+        condition: status != 'published' || no_breaking_changes()
+        message: "Published schemas cannot have breaking changes"
+        severity: error
+
+  # Indexes
+  indexes:
+    - fields: [schema_id]
+      unique: true
+    - fields: [name, version]
+      unique: true
+    - fields: [status]
+    - fields: [created_at]
+
+# Usage Examples
+examples:
+  - name: json_schema_artifact_metadata
+    description: JSON Schema for artifact metadata
+    data:
+      schema_id: "550e8400-e29b-41d4-a716-446655440000"
+      name: "artifact-metadata-schema"
+      version: "1.0.0"
+      title: "Artifact Metadata Schema"
+      description: "Schema for validating artifact metadata structure and constraints"
+      format: "json_schema"
+      format_version: "draft-07"
+      definition:
+        $schema: "http://json-schema.org/draft-07/schema#"
+        type: "object"
+        required:
+          - "artifact_id"
+          - "name"
+          - "version"
+          - "type"
+        properties:
+          artifact_id:
+            type: "string"
+            format: "uuid"
+            description: "Unique artifact identifier"
+          name:
+            type: "string"
+            minLength: 3
+            maxLength: 200
+            description: "Artifact name"
+          version:
+            type: "string"
+            pattern: "^\\d+\\.\\d+\\.\\d+$"
+            description: "Semantic version"
+          type:
+            type: "string"
+            enum:
+              - "model"
+              - "dataset"
+              - "pipeline"
+              - "config"
+            description: "Artifact type"
+          tags:
+            type: "array"
+            items:
+              type: "string"
+            description: "Classification tags"
+          metadata:
+            type: "object"
+            additionalProperties: true
+            description: "Additional metadata"
+      validation_rules:
+        - rule_id: "660e8400-e29b-41d4-a716-446655440001"
+          name: "version_format_check"
+          type: "pattern"
+          description: "Validate version follows semantic versioning"
+          condition: "version matches /^\\d+\\.\\d+\\.\\d+$/"
+          severity: "error"
+          error_message: "Version must follow semantic versioning (x.y.z)"
+          enabled: true
+      constraints:
+        required_fields:
+          - "artifact_id"
+          - "name"
+          - "version"
+          - "type"
+        unique_fields:
+          - "artifact_id"
+        immutable_fields:
+          - "artifact_id"
+        additional_properties: true
+      compatibility:
+        mode: "backward"
+      examples:
+        - name: "valid_ml_model"
+          description: "Valid ML model artifact metadata"
+          data:
+            artifact_id: "770e8400-e29b-41d4-a716-446655440002"
+            name: "sentiment-classifier"
+            version: "2.1.0"
+            type: "model"
+            tags:
+              - "nlp"
+              - "classification"
+            metadata:
+              framework: "pytorch"
+              accuracy: 0.95
+          valid: true
+      metadata:
+        domain: "artifact-management"
+        scope: "organization"
+        owner:
+          id: "team:platform"
+          name: "Platform Team"
+          email: "platform@example.com"
+        tags:
+          - "artifact"
+          - "metadata"
+          - "core"
+        documentation_url: "https://docs.example.com/schemas/artifact-metadata"
+      status: "published"
+      usage:
+        validation_count: 15234
+        success_rate: 0.95
+        last_used_at: "2025-01-11T10:00:00Z"
+      created_at: "2025-01-01T00:00:00Z"
+      updated_at: "2025-01-11T10:00:00Z"
+      published_at: "2025-01-05T00:00:00Z"
+
+  - name: avro_schema_event
+    description: Avro schema for event data
+    data:
+      schema_id: "880e8400-e29b-41d4-a716-446655440003"
+      name: "pipeline-event-schema"
+      version: "1.0.0"
+      title: "Pipeline Event Schema"
+      description: "Avro schema for pipeline execution events"
+      format: "avro"
+      definition:
+        type: "record"
+        name: "PipelineEvent"
+        namespace: "com.example.events"
+        fields:
+          - name: "event_id"
+            type: "string"
+          - name: "pipeline_id"
+            type: "string"
+          - name: "event_type"
+            type:
+              type: "enum"
+              name: "EventType"
+              symbols:
+                - "STARTED"
+                - "COMPLETED"
+                - "FAILED"
+          - name: "timestamp"
+            type: "long"
+            logicalType: "timestamp-millis"
+          - name: "metadata"
+            type:
+              type: "map"
+              values: "string"
+            default: {}
+      status: "published"
+      created_at: "2025-01-01T00:00:00Z"
+      published_at: "2025-01-05T00:00:00Z"
+
+# Integration Guidelines
+integration:
+  creation:
+    - Define clear schema purpose and scope
+    - Use standard schema formats when possible
+    - Include comprehensive examples
+    - Document all constraints
+    - Version schemas semantically
+  
+  validation:
+    - Validate against schema definition
+    - Apply custom validation rules
+    - Check constraint satisfaction
+    - Provide detailed error messages
+    - Support partial validation
+  
+  evolution:
+    - Maintain backward compatibility
+    - Document breaking changes
+    - Provide migration guides
+    - Version schemas appropriately
+    - Deprecate obsolete schemas gracefully
+
+# Performance Considerations
+performance:
+  validation:
+    - Cache compiled schemas
+    - Use efficient validators
+    - Implement early termination
+    - Parallelize independent validations
+  
+  storage:
+    - Index on schema_id and name
+    - Compress large definitions
+    - Cache frequently used schemas
+    - Implement schema registry
+  
+  compatibility:
+    - Cache compatibility checks
+    - Use incremental validation
+    - Optimize schema comparison
+    - Implement efficient diff algorithms

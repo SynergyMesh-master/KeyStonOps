@@ -1,0 +1,268 @@
+# MCP Level 3 - Taxonomy Engine Flow Definitions
+
+apiVersion: mcp.ninjatech.ai/v1alpha1
+kind: EngineFlow
+metadata:
+  name: taxonomy-engine
+  namespace: mcp-level3
+  version: 1.0.0
+  description: "Taxonomy Engine workflow definitions"
+  labels:
+    engine-type: taxonomy
+    flow-type: orchestration
+
+workflows:
+  # Entity Creation Workflow
+  - name: entity-creation
+    description: "Create and link entities in taxonomy"
+    type: sequential
+    trigger:
+      type: api
+      endpoint: "/api/v1/taxonomy/entities"
+      method: POST
+    
+    input:
+      schema:
+        type: object
+        required: [name, type]
+        properties:
+          name:
+            type: string
+          type:
+            type: string
+          attributes:
+            type: object
+          relationships:
+            type: array
+    
+    steps:
+      - id: validate-entity
+        name: "Validate Entity"
+        type: validation
+        action: validate_entity
+        input:
+          name: "{{workflow.input.name}}"
+          type: "{{workflow.input.type}}"
+        output:
+          validated_entity: "{{step.result.entity}}"
+        timeout: 5s
+      
+      - id: check-duplicates
+        name: "Check for Duplicates"
+        type: service-call
+        service: entity-service
+        action: check_duplicates
+        input:
+          name: "{{workflow.input.name}}"
+          type: "{{workflow.input.type}}"
+        output:
+          is_duplicate: "{{step.result.duplicate}}"
+        timeout: 3s
+      
+      - id: create-entity
+        name: "Create Entity"
+        type: conditional
+        condition: "{{steps.check-duplicates.output.is_duplicate == false}}"
+        then:
+          - type: service-call
+            service: graph-database
+            action: create_node
+            input:
+              entity: "{{steps.validate-entity.output.validated_entity}}"
+            output:
+              entity_id: "{{step.result.id}}"
+        timeout: 5s
+      
+      - id: create-relationships
+        name: "Create Relationships"
+        type: loop
+        iterator: "{{workflow.input.relationships}}"
+        steps:
+          - id: create-relationship
+            type: service-call
+            service: graph-database
+            action: create_edge
+            input:
+              source_id: "{{steps.create-entity.output.entity_id}}"
+              target_id: "{{loop.item.target_id}}"
+              type: "{{loop.item.type}}"
+            timeout: 3s
+      
+      - id: index-entity
+        name: "Index Entity"
+        type: async
+        service: search-index
+        action: index
+        input:
+          entity_id: "{{steps.create-entity.output.entity_id}}"
+          entity: "{{steps.validate-entity.output.validated_entity}}"
+    
+    output:
+      schema:
+        type: object
+        properties:
+          entity_id:
+            type: string
+          status:
+            type: string
+
+  # Ontology Import Workflow
+  - name: ontology-import
+    description: "Import ontology from external source"
+    type: sequential
+    trigger:
+      type: api
+      endpoint: "/api/v1/taxonomy/ontologies/import"
+      method: POST
+    
+    input:
+      schema:
+        type: object
+        required: [source, format]
+        properties:
+          source:
+            type: string
+          format:
+            type: string
+            enum: [OWL, RDF, SKOS]
+    
+    steps:
+      - id: fetch-ontology
+        name: "Fetch Ontology"
+        type: service-call
+        service: ontology-service
+        action: fetch
+        input:
+          source: "{{workflow.input.source}}"
+        output:
+          ontology_data: "{{step.result.data}}"
+        timeout: 30s
+      
+      - id: parse-ontology
+        name: "Parse Ontology"
+        type: service-call
+        service: ontology-service
+        action: parse
+        input:
+          data: "{{steps.fetch-ontology.output.ontology_data}}"
+          format: "{{workflow.input.format}}"
+        output:
+          classes: "{{step.result.classes}}"
+          properties: "{{step.result.properties}}"
+        timeout: 60s
+      
+      - id: validate-ontology
+        name: "Validate Ontology"
+        type: validation
+        action: validate_ontology
+        input:
+          classes: "{{steps.parse-ontology.output.classes}}"
+          properties: "{{steps.parse-ontology.output.properties}}"
+        timeout: 30s
+      
+      - id: store-ontology
+        name: "Store Ontology"
+        type: service-call
+        service: triple-store
+        action: import
+        input:
+          classes: "{{steps.parse-ontology.output.classes}}"
+          properties: "{{steps.parse-ontology.output.properties}}"
+        output:
+          ontology_id: "{{step.result.id}}"
+        timeout: 120s
+    
+    output:
+      schema:
+        type: object
+        properties:
+          ontology_id:
+            type: string
+          classes_imported:
+            type: integer
+
+  # Knowledge Graph Query Workflow
+  - name: graph-query
+    description: "Query knowledge graph"
+    type: sequential
+    trigger:
+      type: api
+      endpoint: "/api/v1/taxonomy/graph/query"
+      method: POST
+    
+    input:
+      schema:
+        type: object
+        required: [pattern]
+        properties:
+          pattern:
+            type: object
+          filters:
+            type: object
+          limit:
+            type: integer
+    
+    steps:
+      - id: build-query
+        name: "Build Query"
+        type: service-call
+        service: graph-service
+        action: build_query
+        input:
+          pattern: "{{workflow.input.pattern}}"
+          filters: "{{workflow.input.filters}}"
+        output:
+          cypher_query: "{{step.result.query}}"
+        timeout: 2s
+      
+      - id: execute-query
+        name: "Execute Query"
+        type: service-call
+        service: graph-database
+        action: query
+        input:
+          query: "{{steps.build-query.output.cypher_query}}"
+          limit: "{{workflow.input.limit}}"
+        output:
+          results: "{{step.result.results}}"
+        timeout: 10s
+      
+      - id: format-results
+        name: "Format Results"
+        type: service-call
+        service: graph-service
+        action: format
+        input:
+          results: "{{steps.execute-query.output.results}}"
+        output:
+          formatted_results: "{{step.result.formatted}}"
+        timeout: 2s
+    
+    output:
+      schema:
+        type: object
+        properties:
+          results:
+            type: array
+          count:
+            type: integer
+
+error_handling:
+  patterns:
+    - name: entity-creation-retry
+      max_retries: 3
+      backoff: exponential
+
+state_management:
+  storage: redis
+  ttl: 3600
+
+monitoring:
+  metrics:
+    - name: entity_creation_duration
+      type: histogram
+    - name: graph_query_duration
+      type: histogram
+
+documentation:
+  workflow_guide: "https://docs.ninjatech.ai/mcp/taxonomy-engine/workflows"

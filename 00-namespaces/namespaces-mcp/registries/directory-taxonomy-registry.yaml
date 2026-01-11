@@ -1,0 +1,212 @@
+# MCP Level 1 Directory Taxonomy Registry
+# Defines directory classification and semantic boundaries
+
+version: "1.0.0"
+semantic_role: directory_taxonomy_registry
+artifact_type: registry
+semantic_root: true
+
+description: |
+  Directory Taxonomy Registry defines the classification and organization
+  of MCP artifacts into directories based on semantic function and purpose.
+
+naming_format:
+  pattern: "{category}/{subcategory}"
+  rules:
+    - "Directory names must be lowercase with hyphens"
+    - "Must align with categories.yaml standard classification"
+    - "Support multi-level hierarchy"
+  examples:
+    - "namespaces/core"
+    - "namespaces/governance"
+    - "namespaces/tools"
+    - "namespaces/schemas"
+    - "modules/communication"
+    - "modules/protocol"
+
+semantic_boundary:
+  description: "Each directory corresponds to a class of artifacts"
+  classification:
+    - name: "core"
+      purpose: "Core MCP artifacts (manifest, schema, spec, index)"
+      semantic_type: "foundational"
+      
+    - name: "governance"
+      purpose: "Governance artifacts (policies, roles, compliance)"
+      semantic_type: "regulatory"
+      
+    - name: "modules"
+      purpose: "Functional modules (communication, protocol, data-management)"
+      semantic_type: "functional"
+      
+    - name: "registries"
+      purpose: "Naming and dependency registries"
+      semantic_type: "metadata"
+      
+    - name: "schemas"
+      purpose: "Data structure definitions"
+      semantic_type: "structural"
+      
+    - name: "specs"
+      purpose: "Interface specifications"
+      semantic_type: "behavioral"
+      
+    - name: "policies"
+      purpose: "Access control and governance rules"
+      semantic_type: "regulatory"
+      
+    - name: "bundles"
+      purpose: "Deployment units"
+      semantic_type: "operational"
+      
+    - name: "flows"
+      purpose: "Workflow definitions"
+      semantic_type: "procedural"
+      
+    - name: "graphs"
+      purpose: "Dependency graphs"
+      semantic_type: "relational"
+
+naming_paradigm:
+  artifact_first: true
+  description: "Artifacts are classified first, then organized into directories"
+  workflow:
+    - "Define artifact semantic type"
+    - "Determine artifact category"
+    - "Assign to appropriate directory"
+    - "Update directory taxonomy registry"
+
+directory_structure:
+  root:
+    path: "/"
+    semantic_role: "root"
+    description: "Root directory for all MCP artifacts"
+    
+  level_1_directories:
+    - path: "namespaces/"
+      semantic_role: "namespace_container"
+      description: "Contains namespace-specific artifacts"
+      subdirectories: ["core", "governance", "tools"]
+      
+    - path: "modules/"
+      semantic_role: "module_container"
+      description: "Contains functional modules"
+      subdirectories: ["communication", "protocol", "data-management", "monitoring-observability", "configuration-governance", "integration-extension"]
+      
+    - path: "registries/"
+      semantic_role: "registry_container"
+      description: "Contains naming and dependency registries"
+      files: ["naming-registry.yaml", "dependency-registry.yaml", "reference-registry.yaml", "team-identity-registry.yaml", "directory-taxonomy-registry.yaml", "artifact-entry-registry.yaml", "mapping-key-registry.yaml", "toolchain-registry.yaml"]
+      
+    - path: "schemas/"
+      semantic_role: "schema_container"
+      description: "Contains data structure definitions"
+      pattern: "{module-name}.schema.yaml"
+      
+    - path: "specs/"
+      semantic_role: "spec_container"
+      description: "Contains interface specifications"
+      pattern: "{module-name}.spec.yaml"
+      
+    - path: "policies/"
+      semantic_role: "policy_container"
+      description: "Contains governance policies"
+      pattern: "{module-name}.policy.yaml"
+      
+    - path: "bundles/"
+      semantic_role: "bundle_container"
+      description: "Contains deployment bundles"
+      pattern: "{module-name}.bundle.yaml"
+      
+    - path: "flows/"
+      semantic_role: "flow_container"
+      description: "Contains workflow definitions"
+      pattern: "{workflow-name}.flow.yaml"
+      
+    - path: "graphs/"
+      semantic_role: "graph_container"
+      description: "Contains dependency graphs"
+      pattern: "{module-name}.graph.yaml"
+      
+    - path: "endpoints/"
+      semantic_role: "endpoint_container"
+      description: "Contains MCP endpoint mappings"
+      files: ["endpoints.yaml"]
+      
+    - path: "reports/"
+      semantic_role: "report_container"
+      description: "Contains integration reports"
+      files: ["module-integration-report.yaml"]
+
+conflict_avoidance:
+  strategies:
+    - name: "standard_classification"
+      description: "Follow categories.yaml for directory classification"
+      enforcement: "strict"
+      
+    - name: "auto_archival"
+      description: "Automatically archive deprecated directories"
+      retention: "1y"
+      
+    - name: "rename_on_conflict"
+      description: "Rename conflicting directories with timestamp suffix"
+      pattern: "{directory-name}-{timestamp}"
+
+semantic_linkage:
+  linked_artifacts:
+    - type: "categories"
+      artifact: "categories.yaml"
+      description: "Directory taxonomy aligns with categories"
+      
+    - type: "manifest"
+      field: "module.category"
+      description: "Manifest category determines directory placement"
+      
+    - type: "index"
+      artifact: "index.yaml"
+      description: "Index references directory structure"
+
+directory_metadata:
+  schemas:
+    total_files: 6
+    total_size: "84KB"
+    average_size: "14KB"
+    
+  specs:
+    total_files: 6
+    total_size: "70KB"
+    average_size: "12KB"
+    
+  policies:
+    total_files: 6
+    total_size: "39KB"
+    average_size: "6.5KB"
+    
+  bundles:
+    total_files: 6
+    total_size: "38KB"
+    average_size: "6.3KB"
+    
+  graphs:
+    total_files: 6
+    total_size: "47KB"
+    average_size: "7.8KB"
+    
+  flows:
+    total_files: 5
+    total_size: "49KB"
+    average_size: "9.8KB"
+    
+  manifests:
+    total_files: 6
+    total_size: "19KB"
+    average_size: "3.2KB"
+
+metadata:
+  created_at: "2025-01-11T13:15:00Z"
+  updated_at: "2025-01-11T13:15:00Z"
+  version: "1.0.0"
+  status: "active"
+  total_directories: 11
+  total_files: 41
+  maintainer: "MCP Registry Team"
