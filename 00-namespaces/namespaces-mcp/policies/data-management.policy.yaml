@@ -3,18 +3,112 @@ semantic_role: policy_definitions
 artifact_type: policy
 semantic_root: false
 
-access_control:
-  rbac:
-    roles:
-      - name: "data-management.admin"
-        permissions: ["data-management:*"]
-      - name: "data-management.reader"
-        permissions: ["data-management:read"]
+rbac:
+  roles:
+    - name: "data_admin"
+      permissions: ["storage:*", "cache:*", "index:*", "sync:*"]
+      description: "Full data management access"
+    - name: "data_reader"
+      permissions: ["storage:read", "cache:read", "index:search"]
+      description: "Read-only data access"
+    - name: "data_writer"
+      permissions: ["storage:write", "cache:write", "index:write"]
+      description: "Write data access"
+    - name: "sync_operator"
+      permissions: ["sync:*", "storage:read", "storage:write"]
+      description: "Data synchronization operator"
 
-governance_rules:
-  data_retention: "90d"
-  max_storage_size: "100GB"
+
+governance:
+  data_retention:
+    - type: "hot_data"
+      retention_period: "30d"
+      storage_tier: "memory"
+    - type: "warm_data"
+      retention_period: "90d"
+      storage_tier: "ssd"
+    - type: "cold_data"
+      retention_period: "365d"
+      storage_tier: "hdd"
+  
+  backup_policy:
+    frequency: "daily"
+    retention: "30d"
+    verification: "weekly"
+    encryption: true
+  
+  archival_policy:
+    threshold: "90d"
+    compression: true
+    destination: "cold_storage"
+
+
+compliance:
+  - framework: "GDPR"
+    requirements:
+      - "data_encryption_at_rest"
+      - "data_encryption_in_transit"
+      - "right_to_deletion"
+      - "data_portability"
+    controls:
+      - "access_logging"
+      - "audit_trail"
+  
+  - framework: "SOC2"
+    requirements:
+      - "access_control"
+      - "data_integrity"
+      - "availability"
+    controls:
+      - "backup_verification"
+      - "disaster_recovery"
+  
+  - framework: "HIPAA"
+    requirements:
+      - "phi_protection"
+      - "access_audit"
+    controls:
+      - "encryption"
+      - "access_logs"
+
+
+security:
+  encryption:
+    at_rest: true
+    in_transit: true
+    algorithm: "AES-256-GCM"
+  
+  access_control:
+    type: "RBAC"
+    mfa_required: true
+    session_timeout: "30m"
+  
+  audit:
+    enabled: true
+    retention: "365d"
+    events: ["read", "write", "delete", "admin"]
+
+
+rate_limiting:
+  storage:
+    read: {limit: "10000/s", burst: "20000"}
+    write: {limit: "5000/s", burst: "10000"}
+  
+  cache:
+    get: {limit: "50000/s", burst: "100000"}
+    set: {limit: "20000/s", burst: "40000"}
+  
+  index:
+    search: {limit: "1000/s", burst: "2000"}
+    write: {limit: "500/s", burst: "1000"}
+  
+  sync:
+    operations: {limit: "100/s", burst: "200"}
+
 
 metadata:
-  created_at: "2025-01-10T14:00:00Z"
+  created_at: "2026-01-11T04:17:09.523074Z"
+  updated_at: "2026-01-11T04:17:09.523074Z"
+  version: "2.0.0"
   status: "active"
+  author: "SuperNinja AI Agent"

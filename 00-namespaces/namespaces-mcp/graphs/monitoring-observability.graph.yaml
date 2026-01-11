@@ -1,19 +1,554 @@
 version: "2.0.0"
-semantic_role: dependency_graphs
+semantic_role: dependency_graph
 artifact_type: graph
 semantic_root: false
+module: monitoring-observability
+
+description: |
+  Complete dependency graph for the Monitoring & Observability module.
+  Visualizes relationships between metrics, logging, tracing, and dashboard
+  components with 21 nodes across 4 layers.
+
+# ============================================================================
+# GRAPH STRUCTURE
+# ============================================================================
 
 graph:
-  name: "monitoring-observability-dependencies"
-  version: "1.0.0"
-  type: "dag"
-
+  type: "DAG"  # Directed Acyclic Graph
+  direction: "top-down"
+  layers: 4
+  
 nodes:
-  - id: "monitoring-observability"
-    type: "module"
-    semantic_root: true
+  # ============================================================================
+  # LAYER 1: METRICS COLLECTION (4 nodes)
+  # ============================================================================
+  
+  metrics_collector:
+    id: "monitoring.metrics.collector"
+    type: "service"
+    layer: 1
+    component: "MetricsCollector"
+    file: "src/monitoring/metrics/metrics-collector.ts"
+    responsibilities:
+      - "Collect metrics from various sources"
+      - "Buffer and batch metrics"
+      - "Export to Prometheus/Graphite/InfluxDB"
+    interfaces:
+      provides: ["IMetricsCollector"]
+      consumes: ["IStorage", "ICache"]
+    performance:
+      latency_p99: "< 20ms"
+      throughput: "> 10000 metrics/sec"
+      
+  performance_monitor:
+    id: "monitoring.metrics.performance"
+    type: "service"
+    layer: 1
+    component: "PerformanceMonitor"
+    file: "src/monitoring/metrics/performance-monitor.ts"
+    responsibilities:
+      - "Monitor system performance"
+      - "Profile application performance"
+      - "Detect performance bottlenecks"
+    interfaces:
+      provides: ["IPerformanceMonitor"]
+      consumes: ["IMetricsCollector"]
+    performance:
+      latency_p99: "< 50ms"
+      overhead: "< 5%"
+      
+  health_checker:
+    id: "monitoring.metrics.health"
+    type: "service"
+    layer: 1
+    component: "HealthChecker"
+    file: "src/monitoring/metrics/health-checker.ts"
+    responsibilities:
+      - "Perform health checks"
+      - "Monitor service availability"
+      - "Aggregate health status"
+    interfaces:
+      provides: ["IHealthChecker"]
+      consumes: ["IMetricsCollector"]
+    performance:
+      latency_p99: "< 500ms"
+      check_interval: "30s"
+      
+  alert_manager:
+    id: "monitoring.metrics.alerts"
+    type: "service"
+    layer: 1
+    component: "AlertManager"
+    file: "src/monitoring/metrics/alert-manager.ts"
+    responsibilities:
+      - "Evaluate alert rules"
+      - "Trigger alerts"
+      - "Route notifications"
+    interfaces:
+      provides: ["IAlertManager"]
+      consumes: ["IMetricsCollector", "ILogger"]
+    performance:
+      evaluation_interval: "10s"
+      notification_latency: "< 20ms"
+
+  # ============================================================================
+  # LAYER 2: LOGGING SYSTEM (4 nodes)
+  # ============================================================================
+  
+  logger:
+    id: "monitoring.logging.logger"
+    type: "service"
+    layer: 2
+    component: "Logger"
+    file: "src/monitoring/logging/logger.ts"
+    responsibilities:
+      - "Structured logging"
+      - "Log level filtering"
+      - "Context injection"
+    interfaces:
+      provides: ["ILogger"]
+      consumes: ["IStorage"]
+    performance:
+      latency_p99: "< 10ms"
+      throughput: "> 50000 logs/sec"
+      
+  log_aggregator:
+    id: "monitoring.logging.aggregator"
+    type: "service"
+    layer: 2
+    component: "LogAggregator"
+    file: "src/monitoring/logging/log-aggregator.ts"
+    responsibilities:
+      - "Aggregate logs from multiple sources"
+      - "Full-text search"
+      - "Log indexing"
+    interfaces:
+      provides: ["ILogAggregator"]
+      consumes: ["ILogger", "IStorage", "IIndexManager"]
+    performance:
+      query_latency_p99: "< 1s"
+      indexing_rate: "> 10000 logs/sec"
+      
+  log_analyzer:
+    id: "monitoring.logging.analyzer"
+    type: "service"
+    layer: 2
+    component: "LogAnalyzer"
+    file: "src/monitoring/logging/log-analyzer.ts"
+    responsibilities:
+      - "Analyze log patterns"
+      - "Detect anomalies"
+      - "Generate insights"
+    interfaces:
+      provides: ["ILogAnalyzer"]
+      consumes: ["ILogAggregator"]
+    performance:
+      analysis_latency: "< 2s"
+      accuracy: "> 95%"
+      
+  audit_logger:
+    id: "monitoring.logging.audit"
+    type: "service"
+    layer: 2
+    component: "AuditLogger"
+    file: "src/monitoring/logging/audit-logger.ts"
+    responsibilities:
+      - "Audit logging for compliance"
+      - "Immutable audit trail"
+      - "Compliance reporting"
+    interfaces:
+      provides: ["IAuditLogger"]
+      consumes: ["ILogger", "IStorage"]
+    performance:
+      latency_p99: "< 10ms"
+      retention: "1 year"
+
+  # ============================================================================
+  # LAYER 3: DISTRIBUTED TRACING (4 nodes)
+  # ============================================================================
+  
+  trace_manager:
+    id: "monitoring.tracing.manager"
+    type: "service"
     layer: 3
+    component: "TraceManager"
+    file: "src/monitoring/tracing/trace-manager.ts"
+    responsibilities:
+      - "Manage distributed traces"
+      - "Context propagation"
+      - "Trace sampling"
+    interfaces:
+      provides: ["ITraceManager"]
+      consumes: ["IStorage"]
+    performance:
+      overhead: "< 1%"
+      sampling_rate: "0.1 - 1.0"
+      
+  span_collector:
+    id: "monitoring.tracing.spans"
+    type: "service"
+    layer: 3
+    component: "SpanCollector"
+    file: "src/monitoring/tracing/span-collector.ts"
+    responsibilities:
+      - "Collect trace spans"
+      - "Buffer and batch spans"
+      - "Export to Jaeger/Zipkin"
+    interfaces:
+      provides: ["ISpanCollector"]
+      consumes: ["ITraceManager", "IStorage"]
+    performance:
+      latency_p99: "< 1ms"
+      batch_size: "100 spans"
+      
+  trace_analyzer:
+    id: "monitoring.tracing.analyzer"
+    type: "service"
+    layer: 3
+    component: "TraceAnalyzer"
+    file: "src/monitoring/tracing/trace-analyzer.ts"
+    responsibilities:
+      - "Analyze trace performance"
+      - "Identify bottlenecks"
+      - "Calculate critical path"
+    interfaces:
+      provides: ["ITraceAnalyzer"]
+      consumes: ["ITraceManager"]
+    performance:
+      analysis_latency: "< 500ms"
+      accuracy: "> 90%"
+      
+  performance_profiler:
+    id: "monitoring.tracing.profiler"
+    type: "service"
+    layer: 3
+    component: "PerformanceProfiler"
+    file: "src/monitoring/tracing/performance-profiler.ts"
+    responsibilities:
+      - "Profile application performance"
+      - "Generate flame graphs"
+      - "Provide optimization recommendations"
+    interfaces:
+      provides: ["IPerformanceProfiler"]
+      consumes: ["ITraceAnalyzer"]
+    performance:
+      profiling_latency: "< 2s"
+      overhead: "< 2%"
+
+  # ============================================================================
+  # LAYER 4: DASHBOARD & VISUALIZATION (4 nodes)
+  # ============================================================================
+  
+  dashboard_server:
+    id: "monitoring.dashboard.server"
+    type: "service"
+    layer: 4
+    component: "DashboardServer"
+    file: "src/monitoring/dashboard/dashboard-server.ts"
+    responsibilities:
+      - "Serve dashboard UI"
+      - "WebSocket real-time updates"
+      - "Dashboard management"
+    interfaces:
+      provides: ["IDashboardServer"]
+      consumes: ["IMetricsAPI", "IStorage"]
+    performance:
+      response_time_p99: "< 100ms"
+      concurrent_users: "> 1000"
+      
+  metrics_api:
+    id: "monitoring.dashboard.api"
+    type: "service"
+    layer: 4
+    component: "MetricsAPI"
+    file: "src/monitoring/dashboard/metrics-api.ts"
+    responsibilities:
+      - "Expose metrics via REST API"
+      - "Query metrics data"
+      - "Aggregate metrics"
+    interfaces:
+      provides: ["IMetricsAPI"]
+      consumes: ["IMetricsCollector", "ICache"]
+    performance:
+      query_latency_p99: "< 1s"
+      rate_limit: "1000 req/min"
+      
+  visualization:
+    id: "monitoring.dashboard.viz"
+    type: "service"
+    layer: 4
+    component: "Visualization"
+    file: "src/monitoring/dashboard/visualization.ts"
+    responsibilities:
+      - "Generate visualizations"
+      - "Chart rendering"
+      - "Data transformation"
+    interfaces:
+      provides: ["IVisualization"]
+      consumes: ["IMetricsAPI"]
+    performance:
+      render_time: "< 200ms"
+      chart_types: 5
+      
+  report_generator:
+    id: "monitoring.dashboard.reports"
+    type: "service"
+    layer: 4
+    component: "ReportGenerator"
+    file: "src/monitoring/dashboard/report-generator.ts"
+    responsibilities:
+      - "Generate reports"
+      - "Schedule periodic reports"
+      - "Export to PDF/HTML"
+    interfaces:
+      provides: ["IReportGenerator"]
+      consumes: ["IMetricsAPI", "ILogAggregator", "ITraceManager"]
+    performance:
+      generation_time: "< 10s"
+      formats: ["pdf", "html", "json"]
+
+  # ============================================================================
+  # LEGACY/CONSOLIDATED NODES (4 nodes)
+  # ============================================================================
+  
+  metrics_collector_legacy:
+    id: "monitoring.legacy.metrics"
+    type: "service"
+    layer: 1
+    component: "MetricsCollector (Legacy)"
+    file: "src/monitoring/metrics-collector.ts"
+    status: "deprecated"
+    
+  logging_system_legacy:
+    id: "monitoring.legacy.logging"
+    type: "service"
+    layer: 2
+    component: "LoggingSystem (Legacy)"
+    file: "src/monitoring/logging-system.ts"
+    status: "deprecated"
+    
+  distributed_tracing_legacy:
+    id: "monitoring.legacy.tracing"
+    type: "service"
+    layer: 3
+    component: "DistributedTracing (Legacy)"
+    file: "src/monitoring/distributed-tracing.ts"
+    status: "deprecated"
+    
+  health_monitoring_legacy:
+    id: "monitoring.legacy.health"
+    type: "service"
+    layer: 1
+    component: "HealthMonitoring (Legacy)"
+    file: "src/monitoring/health-monitoring.ts"
+    status: "deprecated"
+
+  # ============================================================================
+  # INDEX NODE
+  # ============================================================================
+  
+  monitoring_index:
+    id: "monitoring.index"
+    type: "barrel"
+    layer: 0
+    component: "Index"
+    file: "src/monitoring/index.ts"
+    responsibilities:
+      - "Export all monitoring components"
+      - "Provide unified API"
+
+# ============================================================================
+# EDGES (Dependencies)
+# ============================================================================
+
+edges:
+  # Layer 1 dependencies
+  - from: "monitoring.metrics.performance"
+    to: "monitoring.metrics.collector"
+    type: "uses"
+    description: "Performance monitor uses metrics collector"
+    
+  - from: "monitoring.metrics.health"
+    to: "monitoring.metrics.collector"
+    type: "uses"
+    description: "Health checker uses metrics collector"
+    
+  - from: "monitoring.metrics.alerts"
+    to: "monitoring.metrics.collector"
+    type: "uses"
+    description: "Alert manager uses metrics collector"
+    
+  - from: "monitoring.metrics.alerts"
+    to: "monitoring.logging.logger"
+    type: "uses"
+    description: "Alert manager uses logger"
+    
+  # Layer 2 dependencies
+  - from: "monitoring.logging.aggregator"
+    to: "monitoring.logging.logger"
+    type: "uses"
+    description: "Log aggregator uses logger"
+    
+  - from: "monitoring.logging.analyzer"
+    to: "monitoring.logging.aggregator"
+    type: "uses"
+    description: "Log analyzer uses aggregator"
+    
+  - from: "monitoring.logging.audit"
+    to: "monitoring.logging.logger"
+    type: "uses"
+    description: "Audit logger uses logger"
+    
+  # Layer 3 dependencies
+  - from: "monitoring.tracing.spans"
+    to: "monitoring.tracing.manager"
+    type: "uses"
+    description: "Span collector uses trace manager"
+    
+  - from: "monitoring.tracing.analyzer"
+    to: "monitoring.tracing.manager"
+    type: "uses"
+    description: "Trace analyzer uses trace manager"
+    
+  - from: "monitoring.tracing.profiler"
+    to: "monitoring.tracing.analyzer"
+    type: "uses"
+    description: "Profiler uses trace analyzer"
+    
+  # Layer 4 dependencies
+  - from: "monitoring.dashboard.server"
+    to: "monitoring.dashboard.api"
+    type: "uses"
+    description: "Dashboard server uses metrics API"
+    
+  - from: "monitoring.dashboard.api"
+    to: "monitoring.metrics.collector"
+    type: "uses"
+    description: "Metrics API uses metrics collector"
+    
+  - from: "monitoring.dashboard.viz"
+    to: "monitoring.dashboard.api"
+    type: "uses"
+    description: "Visualization uses metrics API"
+    
+  - from: "monitoring.dashboard.reports"
+    to: "monitoring.dashboard.api"
+    type: "uses"
+    description: "Report generator uses metrics API"
+    
+  - from: "monitoring.dashboard.reports"
+    to: "monitoring.logging.aggregator"
+    type: "uses"
+    description: "Report generator uses log aggregator"
+    
+  - from: "monitoring.dashboard.reports"
+    to: "monitoring.tracing.manager"
+    type: "uses"
+    description: "Report generator uses trace manager"
+    
+  # Index dependencies
+  - from: "monitoring.index"
+    to: "monitoring.metrics.collector"
+    type: "exports"
+    
+  - from: "monitoring.index"
+    to: "monitoring.logging.logger"
+    type: "exports"
+    
+  - from: "monitoring.index"
+    to: "monitoring.tracing.manager"
+    type: "exports"
+    
+  - from: "monitoring.index"
+    to: "monitoring.dashboard.server"
+    type: "exports"
+
+# ============================================================================
+# INTEGRATION POINTS
+# ============================================================================
+
+integration_points:
+  external:
+    - name: "prometheus"
+      type: "metrics_export"
+      protocol: "http"
+      endpoint: "/metrics"
+      nodes: ["monitoring.metrics.collector"]
+      
+    - name: "grafana"
+      type: "visualization"
+      protocol: "http"
+      endpoint: "/api/datasources"
+      nodes: ["monitoring.dashboard.api"]
+      
+    - name: "elasticsearch"
+      type: "log_storage"
+      protocol: "http"
+      endpoint: "/logs/_bulk"
+      nodes: ["monitoring.logging.aggregator"]
+      
+    - name: "jaeger"
+      type: "trace_export"
+      protocol: "grpc"
+      endpoint: "jaeger-collector:14250"
+      nodes: ["monitoring.tracing.spans"]
+      
+  internal:
+    - name: "data-management"
+      type: "storage"
+      modules: ["IStorage", "ICache", "IIndexManager"]
+      nodes: ["monitoring.metrics.collector", "monitoring.logging.logger", "monitoring.tracing.manager"]
+      
+    - name: "protocol"
+      type: "communication"
+      modules: ["IRequest", "IResponse"]
+      nodes: ["monitoring.dashboard.api"]
+
+# ============================================================================
+# VALIDATION RULES
+# ============================================================================
+
+validation:
+  dag_rules:
+    - rule: "no_cycles"
+      description: "Graph must be acyclic"
+      severity: "error"
+      
+    - rule: "layer_ordering"
+      description: "Dependencies must flow from higher to lower layers"
+      severity: "error"
+      
+    - rule: "no_cross_layer_skip"
+      description: "Cannot skip layers in dependencies"
+      severity: "warning"
+      
+  dependency_rules:
+    - rule: "max_dependencies"
+      description: "Node should have max 5 direct dependencies"
+      threshold: 5
+      severity: "warning"
+      
+    - rule: "circular_check"
+      description: "No circular dependencies allowed"
+      severity: "error"
+
+# ============================================================================
+# METADATA
+# ============================================================================
 
 metadata:
   created_at: "2025-01-10T14:00:00Z"
+  updated_at: "2025-01-11T09:15:00Z"
+  version: "2.0.0"
   status: "active"
+  total_nodes: 21
+  total_edges: 20
+  layers: 4
+  max_depth: 4
+  maintainer: "MachineNativeOps Team"
+  
+graph_metrics:
+  complexity: "medium"
+  coupling: "low"
+  cohesion: "high"
+  maintainability: "excellent"

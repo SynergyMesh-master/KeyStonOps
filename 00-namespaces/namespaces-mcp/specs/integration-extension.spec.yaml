@@ -1,14 +1,522 @@
 version: "2.0.0"
-semantic_role: specification_definitions
+semantic_role: interface_specifications
 artifact_type: spec
 semantic_root: false
+module: integration-extension
+
+description: |
+  Complete interface specifications for the Integration & Extension module.
+  Defines contracts for protocol adapters, plugin system, middleware chain,
+  event bridge, and extension management with performance guarantees.
 
 interfaces:
-  RESTAdapter:
+  # ============================================================================
+  # LAYER 1: PROTOCOL ADAPTER INTERFACES (4 interfaces)
+  # ============================================================================
+  
+  IRESTAdapter:
+    description: "REST API adapter interface"
     methods:
-      get: {parameters: [{name: "url", type: "string"}]}
-      post: {parameters: [{name: "url", type: "string"}, {name: "data", type: "any"}]}
+      request:
+        description: "Make HTTP request"
+        parameters:
+          - name: method
+            type: string
+            enum: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+            required: true
+          - name: path
+            type: string
+            required: true
+          - name: options
+            type: object
+            required: false
+        returns:
+          type: AdapterResponse
+        performance:
+          p50: "< 50ms"
+          p95: "< 200ms"
+          p99: "< 500ms"
+          throughput: "> 10000 req/sec"
+          
+      get:
+        description: "HTTP GET request"
+        parameters:
+          - name: path
+            type: string
+          - name: params
+            type: object
+        returns:
+          type: AdapterResponse
+        performance:
+          p50: "< 50ms"
+          
+      post:
+        description: "HTTP POST request"
+        parameters:
+          - name: path
+            type: string
+          - name: body
+            type: object
+        returns:
+          type: AdapterResponse
+        performance:
+          p50: "< 100ms"
+          
+    behavioral_contracts:
+      - "Automatic retry on transient failures"
+      - "Circuit breaker pattern for fault tolerance"
+      - "Response caching with configurable TTL"
+      - "Rate limiting enforcement"
+      
+  IGraphQLAdapter:
+    description: "GraphQL adapter interface"
+    methods:
+      query:
+        description: "Execute GraphQL query"
+        parameters:
+          - name: query
+            type: string
+            required: true
+          - name: variables
+            type: object
+            required: false
+        returns:
+          type: AdapterResponse
+        performance:
+          p50: "< 100ms"
+          p95: "< 500ms"
+          p99: "< 1s"
+          
+      mutate:
+        description: "Execute GraphQL mutation"
+        parameters:
+          - name: mutation
+            type: string
+            required: true
+          - name: variables
+            type: object
+        returns:
+          type: AdapterResponse
+        performance:
+          p50: "< 200ms"
+          
+      subscribe:
+        description: "Subscribe to GraphQL subscription"
+        parameters:
+          - name: subscription
+            type: string
+            required: true
+          - name: callback
+            type: function
+        returns:
+          type: Subscription
+        performance:
+          latency: "< 50ms"
+          
+    behavioral_contracts:
+      - "Query batching for efficiency"
+      - "DataLoader for N+1 problem prevention"
+      - "Schema validation before execution"
+      - "Persisted queries support"
+      
+  IGRPCAdapter:
+    description: "gRPC adapter interface"
+    methods:
+      unaryCall:
+        description: "Unary RPC call"
+        parameters:
+          - name: method
+            type: string
+            required: true
+          - name: request
+            type: object
+            required: true
+        returns:
+          type: AdapterResponse
+        performance:
+          p50: "< 10ms"
+          p95: "< 50ms"
+          p99: "< 100ms"
+          throughput: "> 50000 req/sec"
+          
+      streamingCall:
+        description: "Streaming RPC call"
+        parameters:
+          - name: method
+            type: string
+          - name: stream_type
+            type: string
+            enum: ["client", "server", "bidirectional"]
+        returns:
+          type: Stream
+        performance:
+          latency: "< 5ms"
+          
+    behavioral_contracts:
+      - "HTTP/2 multiplexing"
+      - "Load balancing across instances"
+      - "Automatic reconnection"
+      - "Deadline propagation"
+      
+  IWebhookAdapter:
+    description: "Webhook adapter interface"
+    methods:
+      send:
+        description: "Send webhook"
+        parameters:
+          - name: url
+            type: string
+            required: true
+          - name: payload
+            type: object
+            required: true
+        returns:
+          type: AdapterResponse
+        performance:
+          p50: "< 50ms"
+          p95: "< 200ms"
+          
+      sendBatch:
+        description: "Send batch of webhooks"
+        parameters:
+          - name: webhooks
+            type: array
+            required: true
+        returns:
+          type: AdapterResponse[]
+        performance:
+          p50: "< 500ms"
+          throughput: "> 1000 webhooks/sec"
+          
+      verify:
+        description: "Verify webhook signature"
+        parameters:
+          - name: payload
+            type: object
+          - name: signature
+            type: string
+        returns:
+          type: boolean
+        performance:
+          p50: "< 5ms"
+          
+    behavioral_contracts:
+      - "Signature verification (HMAC/JWT)"
+      - "Automatic retry with exponential backoff"
+      - "Batch delivery for efficiency"
+      - "Dead letter queue for failures"
+
+  # ============================================================================
+  # LAYER 2: PLUGIN SYSTEM INTERFACES (2 interfaces)
+  # ============================================================================
+  
+  IPluginSystem:
+    description: "Plugin management interface"
+    methods:
+      loadPlugin:
+        description: "Load a plugin"
+        parameters:
+          - name: plugin_config
+            type: PluginConfig
+            required: true
+        returns:
+          type: Plugin
+        performance:
+          p50: "< 100ms"
+          p95: "< 500ms"
+          
+      unloadPlugin:
+        description: "Unload a plugin"
+        parameters:
+          - name: plugin_id
+            type: string
+            required: true
+        returns:
+          type: void
+        performance:
+          p50: "< 50ms"
+          
+      executeHook:
+        description: "Execute plugin hook"
+        parameters:
+          - name: hook_name
+            type: string
+          - name: context
+            type: PluginContext
+        returns:
+          type: object
+        performance:
+          p50: "< 10ms"
+          p95: "< 50ms"
+          
+    behavioral_contracts:
+      - "Plugins isolated in sandboxes"
+      - "Dependency resolution before loading"
+      - "Hot reload support"
+      - "Circular dependency detection"
+      
+  IPluginRegistry:
+    description: "Plugin registry interface"
+    methods:
+      register:
+        description: "Register a plugin"
+        parameters:
+          - name: plugin
+            type: Plugin
+            required: true
+        returns:
+          type: string  # plugin_id
+        performance:
+          p50: "< 20ms"
+          
+      discover:
+        description: "Discover available plugins"
+        parameters:
+          - name: filters
+            type: object
+            required: false
+        returns:
+          type: Plugin[]
+        performance:
+          p50: "< 100ms"
+          
+    behavioral_contracts:
+      - "Plugin metadata indexed"
+      - "Version compatibility checking"
+      - "Plugin marketplace integration"
+
+  # ============================================================================
+  # LAYER 3: MIDDLEWARE & EVENT INTERFACES (3 interfaces)
+  # ============================================================================
+  
+  IMiddlewareChain:
+    description: "Middleware chain interface"
+    methods:
+      addMiddleware:
+        description: "Add middleware to chain"
+        parameters:
+          - name: middleware
+            type: MiddlewareConfig
+            required: true
+        returns:
+          type: void
+        performance:
+          p50: "< 10ms"
+          
+      execute:
+        description: "Execute middleware chain"
+        parameters:
+          - name: request
+            type: AdapterRequest
+            required: true
+        returns:
+          type: AdapterResponse
+        performance:
+          p50: "< 20ms"
+          p95: "< 100ms"
+          overhead: "< 10%"
+          
+      removeMiddleware:
+        description: "Remove middleware from chain"
+        parameters:
+          - name: middleware_id
+            type: string
+        returns:
+          type: void
+        performance:
+          p50: "< 10ms"
+          
+    behavioral_contracts:
+      - "Middlewares executed in priority order"
+      - "Chain short-circuits on error"
+      - "Context passed between middlewares"
+      - "Async middleware support"
+      
+  IEventBridge:
+    description: "Event bridge interface"
+    methods:
+      publish:
+        description: "Publish an event"
+        parameters:
+          - name: event
+            type: Event
+            required: true
+        returns:
+          type: void
+        performance:
+          p50: "< 5ms"
+          p95: "< 20ms"
+          throughput: "> 100000 events/sec"
+          
+      subscribe:
+        description: "Subscribe to events"
+        parameters:
+          - name: pattern
+            type: string
+            required: true
+          - name: handler
+            type: function
+            required: true
+        returns:
+          type: string  # subscription_id
+        performance:
+          p50: "< 10ms"
+          
+      route:
+        description: "Route event to subscribers"
+        parameters:
+          - name: event
+            type: Event
+        returns:
+          type: void
+        performance:
+          p50: "< 5ms"
+          
+    behavioral_contracts:
+      - "At-least-once delivery guarantee"
+      - "Pattern-based routing"
+      - "Event replay capability"
+      - "Dead letter queue for failed events"
+      
+  IExtensionManager:
+    description: "Extension management interface"
+    methods:
+      install:
+        description: "Install an extension"
+        parameters:
+          - name: extension_config
+            type: ExtensionConfig
+            required: true
+        returns:
+          type: Extension
+        performance:
+          p50: "< 2s"
+          p95: "< 10s"
+          
+      activate:
+        description: "Activate an extension"
+        parameters:
+          - name: extension_id
+            type: string
+            required: true
+        returns:
+          type: void
+        performance:
+          p50: "< 100ms"
+          
+      deactivate:
+        description: "Deactivate an extension"
+        parameters:
+          - name: extension_id
+            type: string
+        returns:
+          type: void
+        performance:
+          p50: "< 100ms"
+          
+    behavioral_contracts:
+      - "Extensions run in sandboxes"
+      - "Resource limits enforced"
+      - "Marketplace integration"
+      - "Automatic updates available"
+
+  # ============================================================================
+  # LAYER 4: ADAPTER REGISTRY INTERFACE (1 interface)
+  # ============================================================================
+  
+  IAdapterRegistry:
+    description: "Adapter registry interface"
+    methods:
+      register:
+        description: "Register an adapter"
+        parameters:
+          - name: adapter_type
+            type: string
+            required: true
+          - name: adapter_config
+            type: AdapterConfig
+            required: true
+        returns:
+          type: string  # adapter_id
+        performance:
+          p50: "< 20ms"
+          
+      getAdapter:
+        description: "Get adapter by type"
+        parameters:
+          - name: adapter_type
+            type: string
+            required: true
+        returns:
+          type: IAdapter
+        performance:
+          p50: "< 10ms"
+          cache_hit_rate: "> 95%"
+          
+      listAdapters:
+        description: "List all registered adapters"
+        parameters: []
+        returns:
+          type: AdapterConfig[]
+        performance:
+          p50: "< 50ms"
+          
+    behavioral_contracts:
+      - "Adapters registered at startup"
+      - "Dynamic adapter loading"
+      - "Protocol negotiation"
+      - "Load balancing across adapters"
+
+# Performance contracts summary
+performance_summary:
+  rest_adapter:
+    latency_p50: "< 50ms"
+    latency_p99: "< 500ms"
+    throughput: "> 10000 req/sec"
+    
+  graphql_adapter:
+    latency_p50: "< 100ms"
+    latency_p99: "< 1s"
+    batching_efficiency: "> 90%"
+    
+  grpc_adapter:
+    latency_p50: "< 10ms"
+    latency_p99: "< 100ms"
+    throughput: "> 50000 req/sec"
+    
+  webhook_adapter:
+    latency_p50: "< 50ms"
+    throughput: "> 1000 webhooks/sec"
+    
+  plugin_system:
+    load_time: "< 100ms"
+    execution_overhead: "< 5%"
+    
+  event_bridge:
+    latency_p50: "< 5ms"
+    throughput: "> 100000 events/sec"
+
+# Dependencies
+dependencies:
+  internal:
+    - module: "protocol"
+      interfaces: ["IRequest", "IResponse"]
+    - module: "monitoring-observability"
+      interfaces: ["IMetricsCollector", "ILogger"]
+  external:
+    - library: "axios"
+      version: "^1.6.0"
+    - library: "graphql"
+      version: "^16.8.0"
+    - library: "@grpc/grpc-js"
+      version: "^1.9.0"
 
 metadata:
   created_at: "2025-01-10T14:00:00Z"
+  updated_at: "2025-01-11T11:30:00Z"
+  version: "2.0.0"
   status: "active"
+  total_interfaces: 10
+  total_methods: 30
+  source_files: 18
+  maintainer: "MachineNativeOps Team"

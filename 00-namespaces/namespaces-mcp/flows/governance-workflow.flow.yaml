@@ -1,0 +1,639 @@
+version: "2.0.0"
+semantic_role: workflow_definition
+artifact_type: flow
+semantic_root: false
+module: configuration-governance
+
+description: |
+  Complete workflow definition for the Configuration & Governance pipeline.
+  Defines end-to-end governance flow from policy creation through compliance
+  checking to deployment approval with automated enforcement and auditing.
+
+# ============================================================================
+# WORKFLOW METADATA
+# ============================================================================
+
+workflow:
+  name: "governance-workflow"
+  version: "2.0.0"
+  type: "event-driven"
+  execution_mode: "sequential"
+  
+triggers:
+  - type: "event"
+    events: ["policy_created", "config_changed", "deployment_requested", "compliance_scan_scheduled"]
+    
+  - type: "schedule"
+    cron: "0 2 * * *"  # Daily at 2 AM for compliance scans
+    
+  - type: "manual"
+    enabled: true
+
+# ============================================================================
+# PIPELINE STAGES
+# ============================================================================
+
+stages:
+  # ==========================================================================
+  # STAGE 1: POLICY MANAGEMENT
+  # ==========================================================================
+  
+  policy_management:
+    name: "Policy Management"
+    type: "sequential"
+    description: "Create, validate, and activate policies"
+    
+    tasks:
+      create_policy:
+        name: "Create Policy"
+        component: "PolicyEngine"
+        action: "createPolicy"
+        inputs:
+          - "policy_definition"
+        validation:
+          - "syntax_check"
+          - "semantic_validation"
+          - "conflict_detection"
+        outputs:
+          - "policy_id"
+        performance:
+          timeout: "30s"
+          
+      validate_policy:
+        name: "Validate Policy"
+        component: "PolicyEngine"
+        action: "validatePolicy"
+        inputs:
+          - "policy_id"
+        tests:
+          - "positive_test_cases"
+          - "negative_test_cases"
+          - "edge_cases"
+        outputs:
+          - "validation_result"
+        performance:
+          timeout: "60s"
+          
+      approve_policy:
+        name: "Approve Policy"
+        component: "PolicyEngine"
+        action: "approvePolicy"
+        inputs:
+          - "policy_id"
+          - "approver"
+        conditions:
+          - "validation_result.passed == true"
+          - "approver.role in ['governance_admin', 'policy_manager']"
+        outputs:
+          - "approval_status"
+        performance:
+          timeout: "1h"
+          
+      activate_policy:
+        name: "Activate Policy"
+        component: "PolicyEngine"
+        action: "activatePolicy"
+        inputs:
+          - "policy_id"
+        conditions:
+          - "approval_status == 'approved'"
+        outputs:
+          - "active_policy"
+        performance:
+          timeout: "10s"
+          
+    on_success: "audit_logging"
+    on_failure: "error_handling"
+
+  # ==========================================================================
+  # STAGE 2: COMPLIANCE CHECKING
+  # ==========================================================================
+  
+  compliance_checking:
+    name: "Compliance Checking"
+    type: "parallel"
+    description: "Scan for compliance violations across frameworks"
+    
+    tasks:
+      scan_soc2:
+        name: "SOC2 Compliance Scan"
+        component: "ComplianceChecker"
+        action: "scanCompliance"
+        inputs:
+          framework: "SOC2"
+        outputs:
+          - "soc2_report"
+        performance:
+          timeout: "5m"
+          
+      scan_hipaa:
+        name: "HIPAA Compliance Scan"
+        component: "ComplianceChecker"
+        action: "scanCompliance"
+        inputs:
+          framework: "HIPAA"
+        outputs:
+          - "hipaa_report"
+        performance:
+          timeout: "5m"
+          
+      scan_gdpr:
+        name: "GDPR Compliance Scan"
+        component: "ComplianceChecker"
+        action: "scanCompliance"
+        inputs:
+          framework: "GDPR"
+        outputs:
+          - "gdpr_report"
+        performance:
+          timeout: "5m"
+          
+      aggregate_results:
+        name: "Aggregate Compliance Results"
+        component: "ComplianceChecker"
+        action: "aggregateResults"
+        inputs:
+          - "soc2_report"
+          - "hipaa_report"
+          - "gdpr_report"
+        outputs:
+          - "compliance_summary"
+        performance:
+          timeout: "30s"
+          
+    on_success: "violation_remediation"
+    on_failure: "error_handling"
+
+  # ==========================================================================
+  # STAGE 3: VIOLATION REMEDIATION
+  # ==========================================================================
+  
+  violation_remediation:
+    name: "Violation Remediation"
+    type: "conditional"
+    description: "Remediate compliance violations"
+    condition: "compliance_summary.violations.length > 0"
+    
+    tasks:
+      classify_violations:
+        name: "Classify Violations"
+        component: "ComplianceChecker"
+        action: "classifyViolations"
+        inputs:
+          - "compliance_summary.violations"
+        classification:
+          - "critical"
+          - "high"
+          - "medium"
+          - "low"
+        outputs:
+          - "classified_violations"
+        performance:
+          timeout: "30s"
+          
+      auto_remediate:
+        name: "Auto-Remediate Low-Risk Violations"
+        component: "ComplianceChecker"
+        action: "autoRemediate"
+        inputs:
+          - "classified_violations"
+        filters:
+          - "severity in ['low', 'medium']"
+          - "auto_remediation_available == true"
+        outputs:
+          - "remediation_results"
+        performance:
+          timeout: "5m"
+          
+      create_tickets:
+        name: "Create Remediation Tickets"
+        component: "ComplianceChecker"
+        action: "createTickets"
+        inputs:
+          - "classified_violations"
+        filters:
+          - "severity in ['critical', 'high']"
+          - "auto_remediation_available == false"
+        outputs:
+          - "ticket_ids"
+        performance:
+          timeout: "1m"
+          
+    on_success: "access_control"
+    on_failure: "error_handling"
+
+  # ==========================================================================
+  # STAGE 4: ACCESS CONTROL
+  # ==========================================================================
+  
+  access_control:
+    name: "Access Control Management"
+    type: "sequential"
+    description: "Manage access control and permissions"
+    
+    tasks:
+      check_access:
+        name: "Check Access"
+        component: "AccessControl"
+        action: "checkAccess"
+        inputs:
+          - "access_request"
+        outputs:
+          - "access_decision"
+        performance:
+          timeout: "20ms"
+          
+      enforce_policy:
+        name: "Enforce Access Policy"
+        component: "AccessControl"
+        action: "enforcePolicy"
+        inputs:
+          - "access_decision"
+        conditions:
+          - "access_decision.allowed == true"
+        outputs:
+          - "enforcement_result"
+        performance:
+          timeout: "10ms"
+          
+      update_roles:
+        name: "Update Roles"
+        component: "AccessControl"
+        action: "updateRoles"
+        inputs:
+          - "role_changes"
+        conditions:
+          - "role_changes.approved == true"
+        outputs:
+          - "updated_roles"
+        performance:
+          timeout: "50ms"
+          
+    on_success: "configuration_management"
+    on_failure: "error_handling"
+
+  # ==========================================================================
+  # STAGE 5: CONFIGURATION MANAGEMENT
+  # ==========================================================================
+  
+  configuration_management:
+    name: "Configuration Management"
+    type: "sequential"
+    description: "Manage dynamic configurations and feature flags"
+    
+    tasks:
+      validate_config:
+        name: "Validate Configuration"
+        component: "DynamicConfig"
+        action: "validateConfiguration"
+        inputs:
+          - "configuration"
+        outputs:
+          - "validation_result"
+        performance:
+          timeout: "20ms"
+          
+      update_config:
+        name: "Update Configuration"
+        component: "DynamicConfig"
+        action: "updateConfiguration"
+        inputs:
+          - "configuration"
+          - "change_request"
+        conditions:
+          - "validation_result.valid == true"
+          - "change_request.approved == true"
+        outputs:
+          - "updated_config"
+        performance:
+          timeout: "100ms"
+          
+      propagate_changes:
+        name: "Propagate Configuration Changes"
+        component: "DynamicConfig"
+        action: "propagateChanges"
+        inputs:
+          - "updated_config"
+        outputs:
+          - "propagation_status"
+        performance:
+          timeout: "1s"
+          
+    on_success: "deployment_governance"
+    on_failure: "error_handling"
+
+  # ==========================================================================
+  # STAGE 6: DEPLOYMENT GOVERNANCE
+  # ==========================================================================
+  
+  deployment_governance:
+    name: "Deployment Governance"
+    type: "sequential"
+    description: "Manage deployment requests and approvals"
+    
+    tasks:
+      validate_deployment:
+        name: "Validate Deployment Request"
+        component: "DeploymentPipeline"
+        action: "validateRequest"
+        inputs:
+          - "deployment_request"
+        validation:
+          - "policy_compliance"
+          - "security_checks"
+          - "dependency_checks"
+        outputs:
+          - "validation_result"
+        performance:
+          timeout: "2m"
+          
+      request_approval:
+        name: "Request Deployment Approval"
+        component: "DeploymentPipeline"
+        action: "requestApproval"
+        inputs:
+          - "deployment_request"
+        conditions:
+          - "validation_result.passed == true"
+          - "deployment_request.environment == 'production'"
+        outputs:
+          - "approval_request_id"
+        performance:
+          timeout: "1h"
+          
+      execute_deployment:
+        name: "Execute Deployment"
+        component: "DeploymentPipeline"
+        action: "executeDeployment"
+        inputs:
+          - "deployment_request"
+        conditions:
+          - "approval_status == 'approved'"
+          - "deployment_window.open == true"
+        outputs:
+          - "deployment_result"
+        performance:
+          timeout: "10m"
+          
+      verify_deployment:
+        name: "Verify Deployment"
+        component: "DeploymentPipeline"
+        action: "verifyDeployment"
+        inputs:
+          - "deployment_result"
+        checks:
+          - "health_check"
+          - "smoke_tests"
+          - "performance_tests"
+        outputs:
+          - "verification_result"
+        performance:
+          timeout: "5m"
+          
+      rollback_if_failed:
+        name: "Rollback on Failure"
+        component: "DeploymentPipeline"
+        action: "rollback"
+        inputs:
+          - "deployment_result"
+        conditions:
+          - "verification_result.passed == false"
+        outputs:
+          - "rollback_result"
+        performance:
+          timeout: "2m"
+          
+    on_success: "audit_logging"
+    on_failure: "error_handling"
+
+  # ==========================================================================
+  # STAGE 7: AUDIT LOGGING
+  # ==========================================================================
+  
+  audit_logging:
+    name: "Audit Logging"
+    type: "sequential"
+    description: "Log all governance activities for compliance"
+    
+    tasks:
+      log_event:
+        name: "Log Audit Event"
+        component: "AuditManager"
+        action: "logAuditEvent"
+        inputs:
+          - "event_details"
+        outputs:
+          - "audit_log_id"
+        performance:
+          timeout: "20ms"
+          
+      verify_immutability:
+        name: "Verify Log Immutability"
+        component: "AuditManager"
+        action: "verifyImmutability"
+        inputs:
+          - "audit_log_id"
+        outputs:
+          - "verification_result"
+        performance:
+          timeout: "10ms"
+          
+    on_success: "dashboard_update"
+    on_failure: "error_handling"
+
+  # ==========================================================================
+  # STAGE 8: DASHBOARD UPDATE
+  # ==========================================================================
+  
+  dashboard_update:
+    name: "Dashboard Update"
+    type: "parallel"
+    description: "Update governance dashboard with latest metrics"
+    
+    tasks:
+      update_metrics:
+        name: "Update Governance Metrics"
+        component: "GovernanceDashboard"
+        action: "updateMetrics"
+        inputs:
+          - "policy_metrics"
+          - "compliance_metrics"
+          - "deployment_metrics"
+        outputs:
+          - "updated_metrics"
+        performance:
+          timeout: "500ms"
+          
+      update_violations:
+        name: "Update Violation Dashboard"
+        component: "GovernanceDashboard"
+        action: "updateViolations"
+        inputs:
+          - "compliance_summary"
+        outputs:
+          - "updated_violations"
+        performance:
+          timeout: "200ms"
+          
+      generate_alerts:
+        name: "Generate Alerts"
+        component: "GovernanceDashboard"
+        action: "generateAlerts"
+        inputs:
+          - "compliance_summary"
+          - "deployment_result"
+        conditions:
+          - "critical_violations > 0"
+          - "deployment_failed == true"
+        outputs:
+          - "alerts"
+        performance:
+          timeout: "100ms"
+          
+    on_success: "completion"
+    on_failure: "error_handling"
+
+  # ==========================================================================
+  # STAGE 9: ERROR HANDLING
+  # ==========================================================================
+  
+  error_handling:
+    name: "Error Handling"
+    type: "sequential"
+    description: "Handle errors and failures"
+    
+    tasks:
+      log_error:
+        name: "Log Error"
+        component: "AuditManager"
+        action: "logError"
+        inputs:
+          - "error_details"
+        outputs:
+          - "error_log_id"
+          
+      trigger_alert:
+        name: "Trigger Error Alert"
+        component: "GovernanceDashboard"
+        action: "triggerAlert"
+        inputs:
+          - "error_details"
+        alert:
+          severity: "critical"
+          message: "Governance workflow failure"
+          
+      retry_or_fail:
+        name: "Retry or Fail"
+        action: "decision"
+        conditions:
+          - condition: "retry_count < 3"
+            action: "retry"
+            target: "policy_management"
+          - condition: "retry_count >= 3"
+            action: "fail"
+            target: "completion"
+
+  # ==========================================================================
+  # STAGE 10: COMPLETION
+  # ==========================================================================
+  
+  completion:
+    name: "Workflow Completion"
+    type: "sequential"
+    description: "Finalize workflow execution"
+    
+    tasks:
+      record_metrics:
+        name: "Record Workflow Metrics"
+        component: "GovernanceDashboard"
+        action: "recordMetrics"
+        metrics:
+          - "workflow_duration"
+          - "workflow_success_rate"
+          - "stages_completed"
+          
+      cleanup:
+        name: "Cleanup Resources"
+        action: "cleanup"
+        resources:
+          - "temporary_data"
+          - "cache_entries"
+
+# ============================================================================
+# EXECUTION CONFIGURATION
+# ============================================================================
+
+execution:
+  parallelism:
+    max_concurrent_stages: 2
+    max_concurrent_tasks: 5
+    
+  retry_policy:
+    max_attempts: 3
+    backoff: "exponential"
+    initial_delay: "2s"
+    max_delay: "60s"
+    
+  timeout:
+    workflow: "2h"
+    stage: "30m"
+    task: "10m"
+    
+  error_handling:
+    strategy: "fail_fast"
+    max_errors: 3
+
+# ============================================================================
+# MONITORING & OBSERVABILITY
+# ============================================================================
+
+monitoring:
+  metrics:
+    - name: "governance_workflow_executions_total"
+      type: "counter"
+      labels: ["status"]
+      
+    - name: "governance_workflow_duration_seconds"
+      type: "histogram"
+      buckets: [60, 300, 600, 1800, 3600, 7200]
+      
+    - name: "governance_stage_duration_seconds"
+      type: "histogram"
+      labels: ["stage"]
+      
+    - name: "governance_violations_detected_total"
+      type: "counter"
+      labels: ["framework", "severity"]
+      
+  alerts:
+    - name: "WorkflowFailure"
+      condition: "workflow_success_rate < 0.95"
+      severity: "critical"
+      
+    - name: "CriticalViolation"
+      condition: "critical_violations > 0"
+      severity: "critical"
+      
+    - name: "DeploymentBlocked"
+      condition: "deployment_approval_pending > 24h"
+      severity: "warning"
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  created_at: "2025-01-11T11:00:00Z"
+  updated_at: "2025-01-11T11:00:00Z"
+  version: "2.0.0"
+  status: "active"
+  total_stages: 10
+  total_tasks: 28
+  execution_mode: "sequential"
+  maintainer: "MachineNativeOps Team"
+  
+performance_targets:
+  workflow_duration_p50: "< 10m"
+  workflow_duration_p99: "< 2h"
+  success_rate: "> 99%"
+  compliance_scan_duration: "< 10m"

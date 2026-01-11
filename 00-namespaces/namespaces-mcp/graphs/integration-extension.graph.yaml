@@ -1,19 +1,311 @@
 version: "2.0.0"
-semantic_role: dependency_graphs
+semantic_role: dependency_graph
 artifact_type: graph
 semantic_root: false
+module: integration-extension
+
+description: |
+  Complete dependency graph for the Integration & Extension module.
+  Visualizes relationships between adapters, plugins, middleware, event bridge,
+  and extensions with 18 nodes across 4 layers.
 
 graph:
-  name: "integration-extension-dependencies"
-  version: "1.0.0"
-  type: "dag"
-
+  type: "DAG"
+  direction: "top-down"
+  layers: 4
+  
 nodes:
-  - id: "integration-extension"
-    type: "module"
-    semantic_root: true
+  # Layer 1: Protocol Adapters (4 nodes)
+  rest_adapter:
+    id: "integration.adapters.rest"
+    type: "service"
+    layer: 1
+    component: "RESTAdapter"
+    file: "src/integration/adapters/rest/rest-adapter.ts"
+    responsibilities:
+      - "HTTP/HTTPS requests"
+      - "REST API integration"
+      - "Response caching"
+      - "Rate limiting"
+    interfaces:
+      provides: ["IRESTAdapter"]
+      consumes: ["IMiddlewareChain", "IMetricsCollector"]
+    performance:
+      latency_p99: "< 500ms"
+      throughput: "> 10000 req/sec"
+      
+  graphql_adapter:
+    id: "integration.adapters.graphql"
+    type: "service"
+    layer: 1
+    component: "GraphQLAdapter"
+    file: "src/integration/adapters/graphql/graphql-adapter.ts"
+    responsibilities:
+      - "GraphQL queries/mutations"
+      - "Subscription support"
+      - "Query batching"
+      - "DataLoader integration"
+    interfaces:
+      provides: ["IGraphQLAdapter"]
+      consumes: ["IMiddlewareChain"]
+    performance:
+      latency_p99: "< 1s"
+      batching_efficiency: "> 90%"
+      
+  grpc_adapter:
+    id: "integration.adapters.grpc"
+    type: "service"
+    layer: 1
+    component: "GRPCAdapter"
+    file: "src/integration/adapters/grpc/grpc-adapter.ts"
+    responsibilities:
+      - "gRPC unary calls"
+      - "Streaming RPC"
+      - "Load balancing"
+      - "Connection pooling"
+    interfaces:
+      provides: ["IGRPCAdapter"]
+      consumes: ["IMiddlewareChain"]
+    performance:
+      latency_p99: "< 100ms"
+      throughput: "> 50000 req/sec"
+      
+  webhook_adapter:
+    id: "integration.adapters.webhook"
+    type: "service"
+    layer: 1
+    component: "WebhookAdapter"
+    file: "src/integration/adapters/webhook/webhook-adapter.ts"
+    responsibilities:
+      - "Webhook delivery"
+      - "Signature verification"
+      - "Batch processing"
+      - "Retry logic"
+    interfaces:
+      provides: ["IWebhookAdapter"]
+      consumes: ["IEventBridge"]
+    performance:
+      latency_p99: "< 200ms"
+      throughput: "> 1000 webhooks/sec"
+
+  # Layer 2: Middleware & Events (2 nodes)
+  middleware_chain:
+    id: "integration.middleware.chain"
+    type: "service"
+    layer: 2
+    component: "MiddlewareChain"
+    file: "src/integration/middleware/middleware-chain.ts"
+    responsibilities:
+      - "Request/response processing"
+      - "Authentication/authorization"
+      - "Logging and metrics"
+      - "Transformation"
+    interfaces:
+      provides: ["IMiddlewareChain"]
+      consumes: []
+    performance:
+      overhead: "< 10%"
+      latency: "< 20ms"
+      
+  event_bridge:
+    id: "integration.events.bridge"
+    type: "service"
+    layer: 2
+    component: "EventBridge"
+    file: "src/integration/events/event-bridge.ts"
+    responsibilities:
+      - "Event publishing"
+      - "Event routing"
+      - "Pattern matching"
+      - "Dead letter queue"
+    interfaces:
+      provides: ["IEventBridge"]
+      consumes: []
+    performance:
+      latency_p99: "< 20ms"
+      throughput: "> 100000 events/sec"
+
+  # Layer 3: Plugin & Extension (2 nodes)
+  plugin_system:
+    id: "integration.plugins.system"
+    type: "service"
+    layer: 3
+    component: "PluginSystem"
+    file: "src/integration/plugins/plugin-system.ts"
+    responsibilities:
+      - "Plugin loading/unloading"
+      - "Hook execution"
+      - "Dependency resolution"
+      - "Sandbox management"
+    interfaces:
+      provides: ["IPluginSystem"]
+      consumes: ["IMiddlewareChain"]
+    performance:
+      load_time: "< 100ms"
+      execution_overhead: "< 5%"
+      
+  extension_manager:
+    id: "integration.extensions.manager"
+    type: "service"
+    layer: 3
+    component: "ExtensionManager"
+    file: "src/integration/extensions/extension-manager.ts"
+    responsibilities:
+      - "Extension installation"
+      - "Extension activation"
+      - "Marketplace integration"
+      - "Resource management"
+    interfaces:
+      provides: ["IExtensionManager"]
+      consumes: ["IPluginSystem"]
+    performance:
+      install_time: "< 2s"
+      activation_time: "< 100ms"
+
+  # Layer 4: Registry & Bridge (2 nodes)
+  adapter_registry:
+    id: "integration.registry.adapters"
+    type: "service"
     layer: 4
+    component: "AdapterRegistry"
+    file: "src/integration/registry/adapter-registry.ts"
+    responsibilities:
+      - "Adapter registration"
+      - "Protocol negotiation"
+      - "Load balancing"
+      - "Health checking"
+    interfaces:
+      provides: ["IAdapterRegistry"]
+      consumes: ["IRESTAdapter", "IGraphQLAdapter", "IGRPCAdapter", "IWebhookAdapter"]
+    performance:
+      lookup_time: "< 10ms"
+      cache_hit_rate: "> 95%"
+      
+  integration_bridge:
+    id: "integration.bridge"
+    type: "service"
+    layer: 4
+    component: "IntegrationBridge"
+    file: "src/integration/integration-bridge.ts"
+    responsibilities:
+      - "Unified integration API"
+      - "Request routing"
+      - "Protocol translation"
+      - "Error handling"
+    interfaces:
+      provides: ["IIntegrationBridge"]
+      consumes: ["IAdapterRegistry", "IEventBridge"]
+    performance:
+      routing_latency: "< 5ms"
+
+  # Index node
+  integration_index:
+    id: "integration.index"
+    type: "barrel"
+    layer: 0
+    component: "Integration Index"
+    file: "src/integration/index.ts"
+
+edges:
+  # Layer 1 → Layer 2
+  - from: "integration.adapters.rest"
+    to: "integration.middleware.chain"
+    type: "uses"
+  - from: "integration.adapters.graphql"
+    to: "integration.middleware.chain"
+    type: "uses"
+  - from: "integration.adapters.grpc"
+    to: "integration.middleware.chain"
+    type: "uses"
+  - from: "integration.adapters.webhook"
+    to: "integration.events.bridge"
+    type: "uses"
+    
+  # Layer 3 → Layer 2
+  - from: "integration.plugins.system"
+    to: "integration.middleware.chain"
+    type: "uses"
+    
+  # Layer 3 → Layer 3
+  - from: "integration.extensions.manager"
+    to: "integration.plugins.system"
+    type: "uses"
+    
+  # Layer 4 → Layer 1
+  - from: "integration.registry.adapters"
+    to: "integration.adapters.rest"
+    type: "manages"
+  - from: "integration.registry.adapters"
+    to: "integration.adapters.graphql"
+    type: "manages"
+  - from: "integration.registry.adapters"
+    to: "integration.adapters.grpc"
+    type: "manages"
+  - from: "integration.registry.adapters"
+    to: "integration.adapters.webhook"
+    type: "manages"
+    
+  # Layer 4 → Layer 2
+  - from: "integration.bridge"
+    to: "integration.registry.adapters"
+    type: "uses"
+  - from: "integration.bridge"
+    to: "integration.events.bridge"
+    type: "uses"
+    
+  # Index
+  - from: "integration.index"
+    to: "integration.bridge"
+    type: "exports"
+
+integration_points:
+  external:
+    - name: "rest_apis"
+      type: "http"
+      protocol: "REST"
+      nodes: ["integration.adapters.rest"]
+    - name: "graphql_apis"
+      type: "graphql"
+      protocol: "GraphQL"
+      nodes: ["integration.adapters.graphql"]
+    - name: "grpc_services"
+      type: "grpc"
+      protocol: "gRPC"
+      nodes: ["integration.adapters.grpc"]
+    - name: "webhooks"
+      type: "webhook"
+      protocol: "HTTP"
+      nodes: ["integration.adapters.webhook"]
+      
+  internal:
+    - name: "monitoring-observability"
+      type: "observability"
+      modules: ["IMetricsCollector", "ILogger"]
+      nodes: ["integration.adapters.rest"]
+    - name: "protocol"
+      type: "communication"
+      modules: ["IRequest", "IResponse"]
+      nodes: ["integration.bridge"]
+
+validation:
+  dag_rules:
+    - rule: "no_cycles"
+      severity: "error"
+    - rule: "layer_ordering"
+      severity: "error"
+      
+  dependency_rules:
+    - rule: "max_dependencies"
+      threshold: 5
+      severity: "warning"
 
 metadata:
   created_at: "2025-01-10T14:00:00Z"
+  updated_at: "2025-01-11T12:15:00Z"
+  version: "2.0.0"
   status: "active"
+  total_nodes: 10
+  total_edges: 14
+  layers: 4
+  max_depth: 4
+  maintainer: "MachineNativeOps Team"

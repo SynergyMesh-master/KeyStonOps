@@ -2,14 +2,616 @@ version: "2.0.0"
 semantic_role: schema_definitions
 artifact_type: schema
 semantic_root: false
+module: integration-extension
+
+description: |
+  Complete schema definitions for the Integration & Extension module.
+  Covers protocol adapters (REST, GraphQL, gRPC, Webhook), plugin system,
+  middleware chain, event bridge, and extension management with 18+ source files.
 
 schema_definitions:
+  # ============================================================================
+  # LAYER 1: PROTOCOL ADAPTERS (8 schemas)
+  # ============================================================================
+  
   AdapterConfig:
     type: "object"
+    description: "Base adapter configuration"
     properties:
-      type: {type: "string"}
-      endpoint: {type: "string"}
+      type:
+        type: "string"
+        enum: ["rest", "graphql", "grpc", "webhook"]
+      endpoint:
+        type: "string"
+        format: "uri"
+      enabled:
+        type: "boolean"
+        default: true
+      timeout:
+        type: "integer"
+        description: "Timeout in milliseconds"
+        minimum: 100
+        maximum: 300000
+        default: 30000
+      retry:
+        type: "object"
+        properties:
+          max_attempts: {type: "integer", minimum: 0, maximum: 10, default: 3}
+          backoff: {type: "string", enum: ["linear", "exponential"], default: "exponential"}
+          initial_delay: {type: "integer", default: 1000}
+      circuit_breaker:
+        type: "object"
+        properties:
+          enabled: {type: "boolean", default: true}
+          failure_threshold: {type: "integer", default: 5}
+          timeout: {type: "integer", default: 60000}
+    required: ["type", "endpoint"]
+    
+  RESTAdapterConfig:
+    type: "object"
+    description: "REST adapter configuration"
+    allOf:
+      - $ref: "#/schema_definitions/AdapterConfig"
+    properties:
+      base_url:
+        type: "string"
+        format: "uri"
+      headers:
+        type: "object"
+        additionalProperties:
+          type: "string"
+      authentication:
+        type: "object"
+        properties:
+          type: {type: "string", enum: ["bearer", "basic", "apikey", "oauth2"]}
+          credentials: {type: "object"}
+      rate_limit:
+        type: "object"
+        properties:
+          requests_per_second: {type: "integer"}
+          burst: {type: "integer"}
+      cache:
+        type: "object"
+        properties:
+          enabled: {type: "boolean"}
+          ttl: {type: "integer"}
+    required: ["base_url"]
+    
+  GraphQLAdapterConfig:
+    type: "object"
+    description: "GraphQL adapter configuration"
+    allOf:
+      - $ref: "#/schema_definitions/AdapterConfig"
+    properties:
+      endpoint:
+        type: "string"
+        format: "uri"
+      schema_url:
+        type: "string"
+        format: "uri"
+      introspection:
+        type: "boolean"
+        default: true
+      batching:
+        type: "object"
+        properties:
+          enabled: {type: "boolean"}
+          max_batch_size: {type: "integer", default: 10}
+      persisted_queries:
+        type: "boolean"
+        default: false
+    required: ["endpoint"]
+    
+  GRPCAdapterConfig:
+    type: "object"
+    description: "gRPC adapter configuration"
+    allOf:
+      - $ref: "#/schema_definitions/AdapterConfig"
+    properties:
+      host:
+        type: "string"
+      port:
+        type: "integer"
+        minimum: 1
+        maximum: 65535
+      proto_path:
+        type: "string"
+      service_name:
+        type: "string"
+      tls:
+        type: "object"
+        properties:
+          enabled: {type: "boolean"}
+          cert_path: {type: "string"}
+          key_path: {type: "string"}
+      load_balancing:
+        type: "string"
+        enum: ["round_robin", "least_request", "random"]
+        default: "round_robin"
+    required: ["host", "port", "proto_path", "service_name"]
+    
+  WebhookAdapterConfig:
+    type: "object"
+    description: "Webhook adapter configuration"
+    allOf:
+      - $ref: "#/schema_definitions/AdapterConfig"
+    properties:
+      url:
+        type: "string"
+        format: "uri"
+      method:
+        type: "string"
+        enum: ["POST", "PUT"]
+        default: "POST"
+      signature:
+        type: "object"
+        properties:
+          enabled: {type: "boolean"}
+          algorithm: {type: "string", enum: ["hmac-sha256", "hmac-sha512", "jwt"]}
+          secret: {type: "string"}
+      batch:
+        type: "object"
+        properties:
+          enabled: {type: "boolean"}
+          max_size: {type: "integer", default: 100}
+          flush_interval: {type: "integer", default: 5000}
+    required: ["url"]
+    
+  AdapterRequest:
+    type: "object"
+    description: "Generic adapter request"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      adapter_type:
+        type: "string"
+        enum: ["rest", "graphql", "grpc", "webhook"]
+      method:
+        type: "string"
+      path:
+        type: "string"
+      headers:
+        type: "object"
+        additionalProperties:
+          type: "string"
+      body:
+        type: "object"
+      query_params:
+        type: "object"
+      metadata:
+        type: "object"
+    required: ["id", "adapter_type"]
+    
+  AdapterResponse:
+    type: "object"
+    description: "Generic adapter response"
+    properties:
+      request_id:
+        type: "string"
+        format: "uuid"
+      status_code:
+        type: "integer"
+        minimum: 100
+        maximum: 599
+      headers:
+        type: "object"
+        additionalProperties:
+          type: "string"
+      body:
+        type: "object"
+      duration_ms:
+        type: "number"
+        minimum: 0
+      cached:
+        type: "boolean"
+      error:
+        type: "object"
+        properties:
+          code: {type: "string"}
+          message: {type: "string"}
+          details: {type: "object"}
+    required: ["request_id", "status_code"]
+    
+  AdapterMetrics:
+    type: "object"
+    description: "Adapter performance metrics"
+    properties:
+      adapter_type:
+        type: "string"
+      total_requests:
+        type: "integer"
+        minimum: 0
+      successful_requests:
+        type: "integer"
+        minimum: 0
+      failed_requests:
+        type: "integer"
+        minimum: 0
+      average_latency_ms:
+        type: "number"
+        minimum: 0
+      p50_latency_ms:
+        type: "number"
+      p95_latency_ms:
+        type: "number"
+      p99_latency_ms:
+        type: "number"
+      cache_hit_rate:
+        type: "number"
+        minimum: 0
+        maximum: 1
+      circuit_breaker_state:
+        type: "string"
+        enum: ["closed", "open", "half_open"]
+    required: ["adapter_type", "total_requests"]
+
+  # ============================================================================
+  # LAYER 2: PLUGIN SYSTEM (4 schemas)
+  # ============================================================================
+  
+  PluginConfig:
+    type: "object"
+    description: "Plugin configuration"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      name:
+        type: "string"
+        pattern: "^[a-z][a-z0-9-]*$"
+      version:
+        type: "string"
+        pattern: "^\\d+\\.\\d+\\.\\d+$"
+      enabled:
+        type: "boolean"
+        default: true
+      priority:
+        type: "integer"
+        minimum: 0
+        maximum: 1000
+        default: 100
+      dependencies:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            name: {type: "string"}
+            version: {type: "string"}
+      configuration:
+        type: "object"
+        additionalProperties: true
+      lifecycle:
+        type: "object"
+        properties:
+          on_load: {type: "string"}
+          on_unload: {type: "string"}
+          on_error: {type: "string"}
+    required: ["id", "name", "version"]
+    
+  Plugin:
+    type: "object"
+    description: "Plugin definition"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      name:
+        type: "string"
+      version:
+        type: "string"
+      description:
+        type: "string"
+      author:
+        type: "string"
+      entry_point:
+        type: "string"
+      hooks:
+        type: "array"
+        items:
+          type: "string"
+          enum: ["pre_request", "post_request", "pre_response", "post_response", "on_error"]
+      permissions:
+        type: "array"
+        items:
+          type: "string"
+      status:
+        type: "string"
+        enum: ["loaded", "active", "inactive", "error"]
+      metadata:
+        type: "object"
+        properties:
+          loaded_at: {type: "string", format: "date-time"}
+          last_error: {type: "string"}
+    required: ["id", "name", "version", "entry_point"]
+    
+  PluginContext:
+    type: "object"
+    description: "Plugin execution context"
+    properties:
+      plugin_id:
+        type: "string"
+        format: "uuid"
+      request:
+        $ref: "#/schema_definitions/AdapterRequest"
+      response:
+        $ref: "#/schema_definitions/AdapterResponse"
+      state:
+        type: "object"
+        additionalProperties: true
+      metadata:
+        type: "object"
+    required: ["plugin_id"]
+    
+  PluginRegistry:
+    type: "object"
+    description: "Plugin registry"
+    properties:
+      plugins:
+        type: "array"
+        items:
+          $ref: "#/schema_definitions/Plugin"
+      total_plugins:
+        type: "integer"
+        minimum: 0
+      active_plugins:
+        type: "integer"
+        minimum: 0
+      last_updated:
+        type: "string"
+        format: "date-time"
+    required: ["plugins", "total_plugins"]
+
+  # ============================================================================
+  # LAYER 3: MIDDLEWARE & EVENT BRIDGE (4 schemas)
+  # ============================================================================
+  
+  MiddlewareConfig:
+    type: "object"
+    description: "Middleware configuration"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      name:
+        type: "string"
+      type:
+        type: "string"
+        enum: ["authentication", "authorization", "logging", "metrics", "transformation", "validation", "rate_limiting", "caching"]
+      enabled:
+        type: "boolean"
+        default: true
+      priority:
+        type: "integer"
+        minimum: 0
+        maximum: 1000
+      configuration:
+        type: "object"
+        additionalProperties: true
+    required: ["id", "name", "type"]
+    
+  MiddlewareChain:
+    type: "object"
+    description: "Middleware execution chain"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      middlewares:
+        type: "array"
+        items:
+          $ref: "#/schema_definitions/MiddlewareConfig"
+      execution_order:
+        type: "array"
+        items:
+          type: "string"
+          format: "uuid"
+    required: ["id", "middlewares"]
+    
+  EventBridgeConfig:
+    type: "object"
+    description: "Event bridge configuration"
+    properties:
+      enabled:
+        type: "boolean"
+        default: true
+      protocols:
+        type: "array"
+        items:
+          type: "string"
+          enum: ["http", "websocket", "grpc", "amqp", "kafka"]
+      routing:
+        type: "object"
+        properties:
+          strategy: {type: "string", enum: ["topic", "pattern", "direct"]}
+          rules: {type: "array", items: {type: "object"}}
+      buffer:
+        type: "object"
+        properties:
+          size: {type: "integer", default: 10000}
+          flush_interval: {type: "integer", default: 1000}
+      dead_letter_queue:
+        type: "object"
+        properties:
+          enabled: {type: "boolean"}
+          max_retries: {type: "integer", default: 3}
+    required: ["enabled", "protocols"]
+    
+  Event:
+    type: "object"
+    description: "Event definition"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      type:
+        type: "string"
+      source:
+        type: "string"
+      timestamp:
+        type: "string"
+        format: "date-time"
+      data:
+        type: "object"
+      metadata:
+        type: "object"
+        properties:
+          correlation_id: {type: "string"}
+          causation_id: {type: "string"}
+          version: {type: "string"}
+    required: ["id", "type", "source", "timestamp"]
+
+  # ============================================================================
+  # LAYER 4: EXTENSION MANAGEMENT (4 schemas)
+  # ============================================================================
+  
+  ExtensionConfig:
+    type: "object"
+    description: "Extension configuration"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      name:
+        type: "string"
+      type:
+        type: "string"
+        enum: ["adapter", "plugin", "middleware", "transformer"]
+      version:
+        type: "string"
+        pattern: "^\\d+\\.\\d+\\.\\d+$"
+      enabled:
+        type: "boolean"
+        default: true
+      source:
+        type: "object"
+        properties:
+          type: {type: "string", enum: ["local", "remote", "marketplace"]}
+          url: {type: "string"}
+      sandbox:
+        type: "object"
+        properties:
+          enabled: {type: "boolean"}
+          memory_limit: {type: "integer"}
+          cpu_limit: {type: "number"}
+    required: ["id", "name", "type", "version"]
+    
+  Extension:
+    type: "object"
+    description: "Extension definition"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      name:
+        type: "string"
+      version:
+        type: "string"
+      description:
+        type: "string"
+      capabilities:
+        type: "array"
+        items:
+          type: "string"
+      status:
+        type: "string"
+        enum: ["installed", "active", "inactive", "error"]
+      metadata:
+        type: "object"
+        properties:
+          installed_at: {type: "string", format: "date-time"}
+          last_updated: {type: "string", format: "date-time"}
+          author: {type: "string"}
+          license: {type: "string"}
+    required: ["id", "name", "version"]
+    
+  ExtensionMarketplace:
+    type: "object"
+    description: "Extension marketplace"
+    properties:
+      extensions:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            id: {type: "string"}
+            name: {type: "string"}
+            version: {type: "string"}
+            description: {type: "string"}
+            downloads: {type: "integer"}
+            rating: {type: "number", minimum: 0, maximum: 5}
+            verified: {type: "boolean"}
+      total_extensions:
+        type: "integer"
+      categories:
+        type: "array"
+        items:
+          type: "string"
+    required: ["extensions", "total_extensions"]
+    
+  AdapterRegistry:
+    type: "object"
+    description: "Adapter registry"
+    properties:
+      adapters:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            type: {type: "string"}
+            name: {type: "string"}
+            version: {type: "string"}
+            status: {type: "string"}
+      total_adapters:
+        type: "integer"
+      protocols_supported:
+        type: "array"
+        items:
+          type: "string"
+    required: ["adapters", "total_adapters"]
+
+# Validation rules
+validation_rules:
+  - rule: "adapter_endpoint_format"
+    description: "Adapter endpoints must be valid URIs"
+    applies_to: ["AdapterConfig.endpoint"]
+    
+  - rule: "plugin_version_format"
+    description: "Plugin versions must follow semantic versioning"
+    applies_to: ["PluginConfig.version"]
+    
+  - rule: "middleware_priority_unique"
+    description: "Middleware priorities should be unique within a chain"
+    applies_to: ["MiddlewareChain"]
+    
+  - rule: "event_timestamp_valid"
+    description: "Event timestamps must be valid ISO 8601 dates"
+    applies_to: ["Event.timestamp"]
+
+# Dependencies
+dependencies:
+  internal:
+    - module: "protocol"
+      schemas: ["Request", "Response"]
+    - module: "monitoring-observability"
+      schemas: ["Metric", "LogEntry"]
+  external:
+    - library: "axios"
+      version: "^1.6.0"
+      purpose: "HTTP client for REST adapter"
+    - library: "graphql"
+      version: "^16.8.0"
+      purpose: "GraphQL support"
+    - library: "@grpc/grpc-js"
+      version: "^1.9.0"
+      purpose: "gRPC support"
 
 metadata:
   created_at: "2025-01-10T14:00:00Z"
+  updated_at: "2025-01-11T11:15:00Z"
+  version: "2.0.0"
   status: "active"
+  total_schemas: 20
+  layers: 4
+  source_files: 18
+  maintainer: "MachineNativeOps Team"

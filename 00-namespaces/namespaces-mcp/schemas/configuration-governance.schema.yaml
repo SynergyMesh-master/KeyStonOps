@@ -2,14 +2,641 @@ version: "2.0.0"
 semantic_role: schema_definitions
 artifact_type: schema
 semantic_root: false
+module: configuration-governance
+
+description: |
+  Complete schema definitions for the Configuration & Governance module.
+  Covers policy management, compliance checking, audit logging, access control,
+  dynamic configuration, and deployment governance with 10+ source files.
 
 schema_definitions:
+  # ============================================================================
+  # LAYER 1: POLICY ENGINE (4 schemas)
+  # ============================================================================
+  
+  PolicyConfig:
+    type: "object"
+    description: "Policy engine configuration"
+    properties:
+      enabled:
+        type: "boolean"
+        default: true
+      evaluation_mode:
+        type: "string"
+        enum: ["strict", "permissive", "audit"]
+        default: "strict"
+      cache_enabled:
+        type: "boolean"
+        default: true
+      cache_ttl:
+        type: "integer"
+        description: "Cache TTL in seconds"
+        minimum: 60
+        maximum: 3600
+        default: 300
+      default_action:
+        type: "string"
+        enum: ["allow", "deny"]
+        default: "deny"
+    required: ["enabled", "evaluation_mode"]
+    
   Policy:
     type: "object"
+    description: "Policy definition"
     properties:
-      name: {type: "string"}
-      rules: {type: "array"}
+      id:
+        type: "string"
+        format: "uuid"
+      name:
+        type: "string"
+        minLength: 1
+        maxLength: 255
+      version:
+        type: "string"
+        pattern: "^\\d+\\.\\d+\\.\\d+$"
+      description:
+        type: "string"
+      rules:
+        type: "array"
+        items:
+          $ref: "#/schema_definitions/PolicyRule"
+        minItems: 1
+      effect:
+        type: "string"
+        enum: ["allow", "deny"]
+      priority:
+        type: "integer"
+        minimum: 0
+        maximum: 1000
+        default: 100
+      enabled:
+        type: "boolean"
+        default: true
+      metadata:
+        type: "object"
+        properties:
+          created_at: {type: "string", format: "date-time"}
+          updated_at: {type: "string", format: "date-time"}
+          created_by: {type: "string"}
+          tags: {type: "array", items: {type: "string"}}
+    required: ["id", "name", "version", "rules", "effect"]
+    
+  PolicyRule:
+    type: "object"
+    description: "Individual policy rule"
+    properties:
+      id:
+        type: "string"
+      condition:
+        type: "string"
+        description: "Rule condition expression"
+      action:
+        type: "string"
+        enum: ["allow", "deny", "audit"]
+      resources:
+        type: "array"
+        items:
+          type: "string"
+      principals:
+        type: "array"
+        items:
+          type: "string"
+      operations:
+        type: "array"
+        items:
+          type: "string"
+          enum: ["create", "read", "update", "delete", "execute", "list"]
+      constraints:
+        type: "object"
+        additionalProperties: true
+    required: ["id", "condition", "action"]
+    
+  PolicyEvaluation:
+    type: "object"
+    description: "Policy evaluation result"
+    properties:
+      policy_id:
+        type: "string"
+        format: "uuid"
+      decision:
+        type: "string"
+        enum: ["allow", "deny", "not_applicable"]
+      matched_rules:
+        type: "array"
+        items:
+          type: "string"
+      evaluation_time_ms:
+        type: "number"
+        minimum: 0
+      context:
+        type: "object"
+        additionalProperties: true
+      timestamp:
+        type: "string"
+        format: "date-time"
+    required: ["policy_id", "decision", "timestamp"]
+
+  # ============================================================================
+  # LAYER 2: COMPLIANCE & AUDIT (4 schemas)
+  # ============================================================================
+  
+  ComplianceConfig:
+    type: "object"
+    description: "Compliance checking configuration"
+    properties:
+      frameworks:
+        type: "array"
+        items:
+          type: "string"
+          enum: ["SOC2", "HIPAA", "GDPR", "PCI-DSS", "ISO27001", "NIST"]
+        minItems: 1
+      scan_interval:
+        type: "integer"
+        description: "Scan interval in hours"
+        minimum: 1
+        maximum: 168
+        default: 24
+      auto_remediation:
+        type: "boolean"
+        default: false
+      notification_channels:
+        type: "array"
+        items:
+          type: "string"
+          enum: ["email", "slack", "webhook"]
+    required: ["frameworks"]
+    
+  ComplianceCheck:
+    type: "object"
+    description: "Compliance check definition"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      framework:
+        type: "string"
+        enum: ["SOC2", "HIPAA", "GDPR", "PCI-DSS", "ISO27001", "NIST"]
+      control_id:
+        type: "string"
+      name:
+        type: "string"
+      description:
+        type: "string"
+      severity:
+        type: "string"
+        enum: ["critical", "high", "medium", "low"]
+      check_type:
+        type: "string"
+        enum: ["automated", "manual", "hybrid"]
+      remediation:
+        type: "string"
+    required: ["id", "framework", "control_id", "name", "severity"]
+    
+  ComplianceReport:
+    type: "object"
+    description: "Compliance scan report"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      framework:
+        type: "string"
+      scan_date:
+        type: "string"
+        format: "date-time"
+      status:
+        type: "string"
+        enum: ["compliant", "non_compliant", "partial"]
+      score:
+        type: "number"
+        minimum: 0
+        maximum: 100
+      total_checks:
+        type: "integer"
+        minimum: 0
+      passed_checks:
+        type: "integer"
+        minimum: 0
+      failed_checks:
+        type: "integer"
+        minimum: 0
+      violations:
+        type: "array"
+        items:
+          $ref: "#/schema_definitions/ComplianceViolation"
+      recommendations:
+        type: "array"
+        items:
+          type: "string"
+    required: ["id", "framework", "scan_date", "status", "score"]
+    
+  ComplianceViolation:
+    type: "object"
+    description: "Compliance violation"
+    properties:
+      check_id:
+        type: "string"
+      severity:
+        type: "string"
+        enum: ["critical", "high", "medium", "low"]
+      description:
+        type: "string"
+      resource:
+        type: "string"
+      remediation:
+        type: "string"
+      status:
+        type: "string"
+        enum: ["open", "in_progress", "resolved", "accepted"]
+    required: ["check_id", "severity", "description"]
+
+  # ============================================================================
+  # LAYER 3: ACCESS CONTROL (4 schemas)
+  # ============================================================================
+  
+  AccessControlConfig:
+    type: "object"
+    description: "Access control configuration"
+    properties:
+      model:
+        type: "string"
+        enum: ["rbac", "abac", "hybrid"]
+        default: "rbac"
+      default_deny:
+        type: "boolean"
+        default: true
+      session_timeout:
+        type: "integer"
+        description: "Session timeout in seconds"
+        minimum: 300
+        maximum: 86400
+        default: 3600
+      mfa_required:
+        type: "boolean"
+        default: false
+    required: ["model"]
+    
+  Role:
+    type: "object"
+    description: "RBAC role definition"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      name:
+        type: "string"
+        pattern: "^[a-z][a-z0-9_]*$"
+      description:
+        type: "string"
+      permissions:
+        type: "array"
+        items:
+          type: "string"
+        minItems: 1
+      scope:
+        type: "string"
+        enum: ["global", "namespace", "resource"]
+      constraints:
+        type: "object"
+        additionalProperties: true
+      metadata:
+        type: "object"
+        properties:
+          created_at: {type: "string", format: "date-time"}
+          updated_at: {type: "string", format: "date-time"}
+    required: ["id", "name", "permissions", "scope"]
+    
+  Permission:
+    type: "object"
+    description: "Permission definition"
+    properties:
+      id:
+        type: "string"
+      resource:
+        type: "string"
+      action:
+        type: "string"
+        enum: ["create", "read", "update", "delete", "execute", "list", "*"]
+      conditions:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            attribute: {type: "string"}
+            operator: {type: "string", enum: ["eq", "ne", "gt", "lt", "in", "contains"]}
+            value: {type: ["string", "number", "boolean", "array"]}
+    required: ["id", "resource", "action"]
+    
+  AccessRequest:
+    type: "object"
+    description: "Access control request"
+    properties:
+      principal:
+        type: "string"
+        description: "User or service account"
+      resource:
+        type: "string"
+      action:
+        type: "string"
+      context:
+        type: "object"
+        properties:
+          ip_address: {type: "string", format: "ipv4"}
+          user_agent: {type: "string"}
+          timestamp: {type: "string", format: "date-time"}
+          session_id: {type: "string"}
+    required: ["principal", "resource", "action"]
+
+  # ============================================================================
+  # LAYER 4: DYNAMIC CONFIGURATION (4 schemas)
+  # ============================================================================
+  
+  ConfigurationSchema:
+    type: "object"
+    description: "Configuration schema definition"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      name:
+        type: "string"
+      version:
+        type: "string"
+        pattern: "^\\d+\\.\\d+\\.\\d+$"
+      schema:
+        type: "object"
+        description: "JSON Schema definition"
+      default_values:
+        type: "object"
+      validation_rules:
+        type: "array"
+        items:
+          type: "object"
+    required: ["id", "name", "version", "schema"]
+    
+  Configuration:
+    type: "object"
+    description: "Configuration instance"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      schema_id:
+        type: "string"
+        format: "uuid"
+      environment:
+        type: "string"
+        enum: ["development", "staging", "production"]
+      namespace:
+        type: "string"
+      values:
+        type: "object"
+        additionalProperties: true
+      encrypted_values:
+        type: "array"
+        items:
+          type: "string"
+        description: "Keys of encrypted values"
+      version:
+        type: "integer"
+        minimum: 1
+      status:
+        type: "string"
+        enum: ["draft", "active", "deprecated"]
+      metadata:
+        type: "object"
+        properties:
+          created_at: {type: "string", format: "date-time"}
+          updated_at: {type: "string", format: "date-time"}
+          updated_by: {type: "string"}
+    required: ["id", "schema_id", "environment", "values", "version"]
+    
+  ConfigurationChange:
+    type: "object"
+    description: "Configuration change record"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      configuration_id:
+        type: "string"
+        format: "uuid"
+      change_type:
+        type: "string"
+        enum: ["create", "update", "delete", "rollback"]
+      previous_version:
+        type: "integer"
+      new_version:
+        type: "integer"
+      changes:
+        type: "object"
+        properties:
+          added: {type: "object"}
+          modified: {type: "object"}
+          removed: {type: "array", items: {type: "string"}}
+      changed_by:
+        type: "string"
+      timestamp:
+        type: "string"
+        format: "date-time"
+      approved_by:
+        type: "string"
+      rollback_available:
+        type: "boolean"
+    required: ["id", "configuration_id", "change_type", "timestamp"]
+    
+  FeatureFlag:
+    type: "object"
+    description: "Feature flag configuration"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      name:
+        type: "string"
+        pattern: "^[a-z][a-z0-9_]*$"
+      description:
+        type: "string"
+      enabled:
+        type: "boolean"
+      rollout_percentage:
+        type: "number"
+        minimum: 0
+        maximum: 100
+      targeting_rules:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            attribute: {type: "string"}
+            operator: {type: "string"}
+            values: {type: "array"}
+      environments:
+        type: "array"
+        items:
+          type: "string"
+          enum: ["development", "staging", "production"]
+    required: ["id", "name", "enabled"]
+
+  # ============================================================================
+  # LAYER 5: DEPLOYMENT GOVERNANCE (4 schemas)
+  # ============================================================================
+  
+  DeploymentPolicy:
+    type: "object"
+    description: "Deployment governance policy"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      name:
+        type: "string"
+      environment:
+        type: "string"
+        enum: ["development", "staging", "production"]
+      approval_required:
+        type: "boolean"
+      approvers:
+        type: "array"
+        items:
+          type: "string"
+        minItems: 1
+      deployment_window:
+        type: "object"
+        properties:
+          days: {type: "array", items: {type: "string", enum: ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]}}
+          start_time: {type: "string", pattern: "^\\d{2}:\\d{2}$"}
+          end_time: {type: "string", pattern: "^\\d{2}:\\d{2}$"}
+          timezone: {type: "string"}
+      rollback_policy:
+        type: "object"
+        properties:
+          automatic: {type: "boolean"}
+          conditions: {type: "array", items: {type: "string"}}
+    required: ["id", "name", "environment", "approval_required"]
+    
+  DeploymentRequest:
+    type: "object"
+    description: "Deployment request"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      application:
+        type: "string"
+      version:
+        type: "string"
+      environment:
+        type: "string"
+        enum: ["development", "staging", "production"]
+      requested_by:
+        type: "string"
+      requested_at:
+        type: "string"
+        format: "date-time"
+      status:
+        type: "string"
+        enum: ["pending", "approved", "rejected", "deployed", "failed", "rolled_back"]
+      approvals:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            approver: {type: "string"}
+            approved_at: {type: "string", format: "date-time"}
+            comment: {type: "string"}
+    required: ["id", "application", "version", "environment", "requested_by"]
+    
+  DeploymentPipeline:
+    type: "object"
+    description: "Deployment pipeline configuration"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      name:
+        type: "string"
+      stages:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            name: {type: "string"}
+            environment: {type: "string"}
+            approval_required: {type: "boolean"}
+            tests: {type: "array", items: {type: "string"}}
+            rollback_on_failure: {type: "boolean"}
+        minItems: 1
+      notifications:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            channel: {type: "string"}
+            events: {type: "array", items: {type: "string"}}
+    required: ["id", "name", "stages"]
+    
+  GovernanceDashboard:
+    type: "object"
+    description: "Governance dashboard configuration"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      widgets:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            type: {type: "string", enum: ["compliance_score", "policy_violations", "access_requests", "deployments"]}
+            title: {type: "string"}
+            config: {type: "object"}
+      refresh_interval:
+        type: "integer"
+        minimum: 30
+        maximum: 3600
+        default: 300
+    required: ["id", "widgets"]
+
+# Validation rules
+validation_rules:
+  - rule: "policy_version_format"
+    description: "Policy versions must follow semantic versioning"
+    applies_to: ["Policy.version"]
+    
+  - rule: "role_name_format"
+    description: "Role names must be lowercase with underscores"
+    applies_to: ["Role.name"]
+    
+  - rule: "deployment_window_validation"
+    description: "Deployment window end time must be after start time"
+    applies_to: ["DeploymentPolicy.deployment_window"]
+    
+  - rule: "compliance_score_range"
+    description: "Compliance score must be between 0 and 100"
+    applies_to: ["ComplianceReport.score"]
+
+# Dependencies
+dependencies:
+  internal:
+    - module: "protocol"
+      schemas: ["Request", "Response"]
+    - module: "monitoring-observability"
+      schemas: ["AuditLog"]
+  external:
+    - library: "ajv"
+      version: "^8.12.0"
+      purpose: "JSON Schema validation"
+    - library: "casbin"
+      version: "^5.26.0"
+      purpose: "Access control"
 
 metadata:
   created_at: "2025-01-10T14:00:00Z"
+  updated_at: "2025-01-11T09:45:00Z"
+  version: "2.0.0"
   status: "active"
+  total_schemas: 20
+  layers: 5
+  source_files: 10
+  maintainer: "MachineNativeOps Team"

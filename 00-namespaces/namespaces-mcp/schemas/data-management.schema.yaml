@@ -4,17 +4,402 @@ artifact_type: schema
 semantic_root: false
 
 schema_definitions:
+  # Storage Layer Schemas
   StorageConfig:
     type: "object"
+    description: "Configuration for storage backends"
     properties:
-      backend: {type: "string"}
-      path: {type: "string"}
+      backend:
+        type: "string"
+        enum: ["memory", "file", "database", "cloud"]
+        description: "Storage backend type"
+      path:
+        type: "string"
+        description: "Storage path or connection string"
+      options:
+        type: "object"
+        description: "Backend-specific options"
+        properties:
+          compression:
+            type: "boolean"
+            default: false
+          encryption:
+            type: "boolean"
+            default: false
+          replication:
+            type: "number"
+            default: 1
+    required: ["backend", "path"]
+
+  StorageInterface:
+    type: "object"
+    description: "Generic storage interface"
+    properties:
+      read:
+        type: "function"
+        signature: "(key: string) => Promise<any>"
+        description: "Read data by key"
+      write:
+        type: "function"
+        signature: "(key: string, value: any) => Promise<void>"
+        description: "Write data with key"
+      delete:
+        type: "function"
+        signature: "(key: string) => Promise<boolean>"
+        description: "Delete data by key"
+      exists:
+        type: "function"
+        signature: "(key: string) => Promise<boolean>"
+        description: "Check if key exists"
+      list:
+        type: "function"
+        signature: "(prefix?: string) => Promise<string[]>"
+        description: "List keys with optional prefix"
+
+  # Cache Layer Schemas
   CacheConfig:
     type: "object"
+    description: "Cache configuration"
     properties:
-      size: {type: "string"}
-      ttl: {type: "string"}
+      size:
+        type: "string"
+        pattern: "^\\d+[KMGT]?B$"
+        description: "Maximum cache size (e.g., 100MB, 1GB)"
+      ttl:
+        type: "string"
+        pattern: "^\\d+[smhd]$"
+        description: "Time to live (e.g., 60s, 5m, 1h, 1d)"
+      evictionPolicy:
+        type: "string"
+        enum: ["LRU", "LFU", "FIFO", "TTL"]
+        default: "LRU"
+      persistToDisk:
+        type: "boolean"
+        default: false
+    required: ["size", "ttl"]
+
+  CacheManager:
+    type: "object"
+    description: "Cache management interface"
+    properties:
+      get:
+        type: "function"
+        signature: "(key: string) => Promise<any>"
+        description: "Get cached value"
+      set:
+        type: "function"
+        signature: "(key: string, value: any, ttl?: number) => Promise<void>"
+        description: "Set cache value with optional TTL"
+      invalidate:
+        type: "function"
+        signature: "(key: string) => Promise<boolean>"
+        description: "Invalidate cache entry"
+      clear:
+        type: "function"
+        signature: "() => Promise<void>"
+        description: "Clear all cache entries"
+      getStats:
+        type: "function"
+        signature: "() => Promise<CacheStats>"
+        description: "Get cache statistics"
+
+  CacheStats:
+    type: "object"
+    description: "Cache statistics"
+    properties:
+      hits:
+        type: "number"
+        description: "Number of cache hits"
+      misses:
+        type: "number"
+        description: "Number of cache misses"
+      hitRate:
+        type: "number"
+        description: "Cache hit rate (0-1)"
+      size:
+        type: "number"
+        description: "Current cache size in bytes"
+      entries:
+        type: "number"
+        description: "Number of cache entries"
+
+  # Indexing Layer Schemas
+  IndexConfig:
+    type: "object"
+    description: "Index configuration"
+    properties:
+      fields:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            name: {type: "string"}
+            type: {type: "string", enum: ["text", "number", "date", "boolean"]}
+            indexed: {type: "boolean", default: true}
+            stored: {type: "boolean", default: true}
+      analyzer:
+        type: "string"
+        enum: ["standard", "simple", "whitespace", "keyword"]
+        default: "standard"
+      similarity:
+        type: "string"
+        enum: ["BM25", "TF-IDF", "cosine"]
+        default: "BM25"
+
+  IndexManager:
+    type: "object"
+    description: "Index management interface"
+    properties:
+      createIndex:
+        type: "function"
+        signature: "(name: string, config: IndexConfig) => Promise<void>"
+        description: "Create a new index"
+      deleteIndex:
+        type: "function"
+        signature: "(name: string) => Promise<boolean>"
+        description: "Delete an index"
+      addDocument:
+        type: "function"
+        signature: "(index: string, doc: object) => Promise<string>"
+        description: "Add document to index"
+      updateDocument:
+        type: "function"
+        signature: "(index: string, id: string, doc: object) => Promise<void>"
+        description: "Update indexed document"
+      deleteDocument:
+        type: "function"
+        signature: "(index: string, id: string) => Promise<boolean>"
+        description: "Delete document from index"
+
+  SearchQuery:
+    type: "object"
+    description: "Search query structure"
+    properties:
+      query:
+        type: "string"
+        description: "Search query string"
+      filters:
+        type: "object"
+        description: "Query filters"
+      sort:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            field: {type: "string"}
+            order: {type: "string", enum: ["asc", "desc"]}
+      limit:
+        type: "number"
+        default: 10
+      offset:
+        type: "number"
+        default: 0
+
+  SearchResult:
+    type: "object"
+    description: "Search result structure"
+    properties:
+      total:
+        type: "number"
+        description: "Total number of results"
+      hits:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            id: {type: "string"}
+            score: {type: "number"}
+            document: {type: "object"}
+      took:
+        type: "number"
+        description: "Query execution time in ms"
+
+  SearchEngine:
+    type: "object"
+    description: "Search engine interface"
+    properties:
+      search:
+        type: "function"
+        signature: "(index: string, query: SearchQuery) => Promise<SearchResult>"
+        description: "Execute search query"
+      suggest:
+        type: "function"
+        signature: "(index: string, prefix: string) => Promise<string[]>"
+        description: "Get search suggestions"
+
+  # Synchronization Layer Schemas
+  SyncConfig:
+    type: "object"
+    description: "Synchronization configuration"
+    properties:
+      mode:
+        type: "string"
+        enum: ["push", "pull", "bidirectional"]
+        default: "bidirectional"
+      interval:
+        type: "string"
+        pattern: "^\\d+[smh]$"
+        description: "Sync interval (e.g., 30s, 5m, 1h)"
+      conflictResolution:
+        type: "string"
+        enum: ["last-write-wins", "first-write-wins", "manual", "merge"]
+        default: "last-write-wins"
+      batchSize:
+        type: "number"
+        default: 100
+
+  SyncManager:
+    type: "object"
+    description: "Synchronization manager interface"
+    properties:
+      sync:
+        type: "function"
+        signature: "(source: string, target: string) => Promise<SyncResult>"
+        description: "Synchronize data between sources"
+      startAutoSync:
+        type: "function"
+        signature: "(config: SyncConfig) => Promise<void>"
+        description: "Start automatic synchronization"
+      stopAutoSync:
+        type: "function"
+        signature: "() => Promise<void>"
+        description: "Stop automatic synchronization"
+      getSyncStatus:
+        type: "function"
+        signature: "() => Promise<SyncStatus>"
+        description: "Get synchronization status"
+
+  SyncResult:
+    type: "object"
+    description: "Synchronization result"
+    properties:
+      success:
+        type: "boolean"
+        description: "Sync success status"
+      itemsSynced:
+        type: "number"
+        description: "Number of items synchronized"
+      conflicts:
+        type: "number"
+        description: "Number of conflicts detected"
+      errors:
+        type: "array"
+        items: {type: "string"}
+      duration:
+        type: "number"
+        description: "Sync duration in ms"
+
+  ConflictResolver:
+    type: "object"
+    description: "Conflict resolution interface"
+    properties:
+      resolveConflict:
+        type: "function"
+        signature: "(conflict: Conflict) => Promise<any>"
+        description: "Resolve data conflict"
+      getConflicts:
+        type: "function"
+        signature: "() => Promise<Conflict[]>"
+        description: "Get pending conflicts"
+
+  Conflict:
+    type: "object"
+    description: "Data conflict structure"
+    properties:
+      id:
+        type: "string"
+        description: "Conflict identifier"
+      key:
+        type: "string"
+        description: "Conflicting data key"
+      localValue:
+        type: "any"
+        description: "Local version of data"
+      remoteValue:
+        type: "any"
+        description: "Remote version of data"
+      timestamp:
+        type: "string"
+        format: "date-time"
+
+  ReplicationManager:
+    type: "object"
+    description: "Data replication interface"
+    properties:
+      replicate:
+        type: "function"
+        signature: "(source: string, targets: string[]) => Promise<void>"
+        description: "Replicate data to targets"
+      getReplicationStatus:
+        type: "function"
+        signature: "() => Promise<ReplicationStatus>"
+        description: "Get replication status"
+
+  ReplicationStatus:
+    type: "object"
+    description: "Replication status"
+    properties:
+      active:
+        type: "boolean"
+      lag:
+        type: "number"
+        description: "Replication lag in ms"
+      lastSync:
+        type: "string"
+        format: "date-time"
+
+  ConsistencyChecker:
+    type: "object"
+    description: "Data consistency checker interface"
+    properties:
+      checkConsistency:
+        type: "function"
+        signature: "(sources: string[]) => Promise<ConsistencyReport>"
+        description: "Check data consistency across sources"
+      repairInconsistencies:
+        type: "function"
+        signature: "(report: ConsistencyReport) => Promise<void>"
+        description: "Repair detected inconsistencies"
+
+  ConsistencyReport:
+    type: "object"
+    description: "Consistency check report"
+    properties:
+      consistent:
+        type: "boolean"
+      inconsistencies:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            key: {type: "string"}
+            sources: {type: "array", items: {type: "string"}}
+            values: {type: "array"}
+      checkedAt:
+        type: "string"
+        format: "date-time"
+
+validation_rules:
+  storage_path:
+    pattern: "^[a-zA-Z0-9/_-]+$"
+    message: "Storage path must contain only alphanumeric characters, slashes, underscores, and hyphens"
+  
+  cache_size:
+    min: "1MB"
+    max: "100GB"
+    message: "Cache size must be between 1MB and 100GB"
+  
+  ttl_range:
+    min: "1s"
+    max: "30d"
+    message: "TTL must be between 1 second and 30 days"
 
 metadata:
   created_at: "2025-01-10T14:00:00Z"
+  updated_at: "2025-01-11T04:30:00Z"
+  version: "2.0.0"
   status: "active"
+  author: "SuperNinja AI Agent"
+  dependencies:
+    - "naming-registry.yaml"
+    - "protocol.schema.yaml"
