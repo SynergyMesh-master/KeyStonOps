@@ -75,8 +75,9 @@ class TestServiceFailure:
                         if response.status == 200:
                             print("RAG engine recovered successfully")
                             return
-                except (aiohttp.ClientError, asyncio.TimeoutError):
-                    pass
+                except (aiohttp.ClientError, asyncio.TimeoutError) as exc:
+                    # Transient failure while service is recovering; continue retry loop
+                    print(f"Health check attempt {i+1}/{max_retries} failed: {exc!r}")
                 await asyncio.sleep(2)
             
             pytest.fail("RAG engine failed to recover")
