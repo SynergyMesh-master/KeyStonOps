@@ -1,0 +1,131 @@
+# MCP Level 1 - Naming Registries Index
+# Description: 七大命名註冊表的統一索引
+
+apiVersion: mcp.io/v1
+kind: RegistryIndex
+metadata:
+  name: io.github.machinenativeops/naming-registries-index
+  version: "1.0.0"
+  description: "MCP Level 1 - Naming Registries Index"
+  
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+# Registry Entries
+registries:
+  - id: "0"
+    name: "Naming Rules Registry"
+    file: "0-naming-rules-registry.yaml"
+    registryType: "naming-rules"
+    description: "命名規範註冊表 - 定義所有 artifact 的命名規則與規範"
+    status: "stable"
+    version: "1.0.0"
+    
+  - id: "1"
+    name: "Team Identity Registry"
+    file: "1-team-identity-registry.yaml"
+    registryType: "team-identity"
+    description: "Teams 命名註冊表 - 定義團隊、組織與個人的命名空間身份"
+    status: "stable"
+    version: "1.0.0"
+    
+  - id: "2"
+    name: "Directory Taxonomy Registry"
+    file: "2-directory-taxonomy-registry.yaml"
+    registryType: "directory-taxonomy"
+    description: "目錄命名註冊表 - 定義 artifact 的目錄分類與組織結構"
+    status: "stable"
+    version: "1.0.0"
+    
+  - id: "3"
+    name: "Artifact Entry Registry"
+    file: "3-artifact-entry-registry.yaml"
+    registryType: "artifact-entry"
+    description: "條目命名註冊表 - 定義 artifact 實例的唯一標識與語義類型"
+    status: "stable"
+    version: "1.0.0"
+    
+  - id: "4"
+    name: "Mapping Key Registry"
+    file: "4-mapping-key-registry.yaml"
+    registryType: "mapping-key"
+    description: "映射命名註冊表 - 定義 artifact 間的語義映射關係"
+    status: "stable"
+    version: "1.0.0"
+    
+  - id: "5"
+    name: "Dependency Identifier Registry"
+    file: "5-dependency-identifier-registry.yaml"
+    registryType: "dependency-identifier"
+    description: "依賴命名註冊表 - 定義 artifact 依賴關係的唯一標識"
+    status: "stable"
+    version: "1.0.0"
+    
+  - id: "6"
+    name: "Reference Tag Registry"
+    file: "6-reference-tag-registry.yaml"
+    registryType: "reference-tag"
+    description: "引用命名註冊表 - 定義 artifact 的語義引用與標註"
+    status: "stable"
+    version: "1.0.0"
+    
+  - id: "7"
+    name: "Toolchain Identifier Registry"
+    file: "7-toolchain-identifier-registry.yaml"
+    registryType: "toolchain-identifier"
+    description: "工具命名註冊表 - 定義 MCP 工具鏈的唯一標識與版本管理"
+    status: "stable"
+    version: "1.0.0"
+
+# Statistics
+statistics:
+  totalRegistries: 8
+  stableRegistries: 8
+  draftRegistries: 0
+  deprecatedRegistries: 0
+
+# Registry Dependencies
+dependencies:
+  - registry: "0-naming-rules-registry"
+    dependsOn: []
+    usedBy: ["1", "2", "3", "4", "5", "6", "7"]
+    
+  - registry: "1-team-identity-registry"
+    dependsOn: ["0"]
+    usedBy: ["2", "3"]
+    
+  - registry: "2-directory-taxonomy-registry"
+    dependsOn: ["0", "1"]
+    usedBy: ["3"]
+    
+  - registry: "3-artifact-entry-registry"
+    dependsOn: ["0", "1", "2"]
+    usedBy: ["4", "5", "6"]
+    
+  - registry: "4-mapping-key-registry"
+    dependsOn: ["0", "3"]
+    usedBy: ["5"]
+    
+  - registry: "5-dependency-identifier-registry"
+    dependsOn: ["0", "3", "4"]
+    usedBy: ["6"]
+    
+  - registry: "6-reference-tag-registry"
+    dependsOn: ["0", "3", "5"]
+    usedBy: ["7"]
+    
+  - registry: "7-toolchain-identifier-registry"
+    dependsOn: ["0", "3", "6"]
+    usedBy: []
+
+# Validation
+validation:
+  allRegistriesPresent: true
+  dependenciesResolved: true
+  versionsConsistent: true
+
+# Toolchain
+toolchain:
+  validator: "mcp-validator@v1.2.0"
+  publisher: "mcp-publisher@v0.9.1"
+  inspector: "mcp-inspector@2024-01-11"

@@ -1,0 +1,94 @@
+# MCP Level 1 - Toolchain Identifier Registry
+# Registry Type: Toolchain Identifier Registry
+# Description: 工具命名註冊表 - 定義 MCP 工具鏈的唯一標識與版本管理
+
+apiVersion: mcp.io/v1
+kind: ToolchainRegistry
+metadata:
+  name: io.github.machinenativeops/toolchain-identifier-registry
+  version: "1.0.0"
+  description: "MCP Level 1 - Toolchain Identifier Registry"
+  registryType: "toolchain-identifier"
+  registryId: "7"
+  
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "toolchain-identifier-registry"
+    
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+naming_format:
+  description: |
+    - 工具鏈標識符採用小寫字母、數字、連字號
+    - 格式為 {toolchain-name}@{version}
+  
+  rules:
+    - id: "TI-001"
+      rule: "Toolchain identifiers include version"
+      pattern: "^[a-z0-9-]+@v?[0-9]+\\.[0-9]+\\.[0-9]+$"
+      examples:
+        - "validator@v1.2.0"
+        - "publisher@v0.9.1"
+        - "inspector@2024-01-11"
+
+semantic_boundary:
+  description: |
+    - 每個工具鏈標識符對應一組 MCP 工具（如 validator、publisher、inspector）
+    - 支援多版本工具鏈管理
+
+naming_paradigm:
+  description: |
+    - 工具鏈標識符需與 artifact metadata 中的 toolchain 對齊
+    - 支援 artifact-first workflow，artifact 先於工具鏈標註
+
+namespace_example:
+  - identifier: "validator@v1.2.0"
+    toolchain: "mcp-validator"
+    version: "1.2.0"
+    purpose: "Validate artifacts"
+    capabilities:
+      - "schema-validation"
+      - "dependency-check"
+      - "semantic-validation"
+    
+  - identifier: "publisher@v0.9.1"
+    toolchain: "mcp-publisher"
+    version: "0.9.1"
+    purpose: "Publish artifacts"
+    capabilities:
+      - "artifact-upload"
+      - "metadata-generation"
+      - "registry-sync"
+    
+  - identifier: "inspector@2024-01-11"
+    toolchain: "mcp-inspector"
+    version: "2024-01-11"
+    purpose: "Inspect artifacts"
+    capabilities:
+      - "artifact-analysis"
+      - "security-scan"
+      - "compliance-check"
+
+conflict_avoidance:
+  strategies:
+    - "Version-based conflict resolution"
+    - "Automatic toolchain archival"
+    - "Version rollback support"
+
+semantic_linkage:
+  requirements:
+    - "Toolchain identifiers link to manifest, schema, spec"
+    - "Toolchain info synchronized to MCP Registry index"
+    - "Lineage map tracks toolchain usage"
+
+validation:
+  schemaValidation: true
+  versionValidation: true
+  capabilityCheck: true
+
+toolchain:
+  validator: "mcp-validator@v1.2.0"
+  publisher: "mcp-publisher@v0.9.1"
+  inspector: "mcp-inspector@2024-01-11"

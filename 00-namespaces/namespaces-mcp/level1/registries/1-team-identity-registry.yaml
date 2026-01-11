@@ -1,0 +1,194 @@
+# MCP Level 1 - Team Identity Registry
+# Registry Type: Team Identity Registry
+# Description: Teams 命名註冊表 - 定義團隊、組織與個人的命名空間身份
+
+apiVersion: mcp.io/v1
+kind: TeamRegistry
+metadata:
+  name: io.github.machinenativeops/team-identity-registry
+  version: "1.0.0"
+  description: "MCP Level 1 - Team Identity Registry"
+  registryType: "team-identity"
+  registryId: "1"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "team-identity-registry"
+    
+  # Timestamps
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+# Naming Format
+naming_format:
+  description: |
+    - 採用反向 DNS 命名空間，格式為 {namespace}
+    - 僅允許小寫字母、數字、連字號
+  
+  rules:
+    - id: "TI-001"
+      rule: "Namespace must use reverse-DNS format"
+      pattern: "^[a-z0-9]+([.-][a-z0-9]+)*$"
+      example: "io.github.username"
+      
+    - id: "TI-002"
+      rule: "Namespace must be lowercase"
+      enforcement: "mandatory"
+      
+    - id: "TI-003"
+      rule: "Namespace must be verified"
+      verificationMethods: ["github-oauth", "dns-txt", "http-well-known"]
+
+# Semantic Boundary
+semantic_boundary:
+  description: |
+    - 每個命名空間對應一個團隊、組織或個人
+    - 支援多層次組織結構（如 io.github.orgname、com.company.division）
+  
+  scopes:
+    individual:
+      format: "io.github.{username}"
+      example: "io.github.domdomegg"
+      verification: "github-oauth"
+      
+    organization:
+      format: "io.github.{orgname}"
+      example: "io.github.modelcontextprotocol"
+      verification: "github-oauth"
+      
+    company:
+      format: "com.{company}"
+      example: "com.anthropic"
+      verification: "dns-txt"
+      
+    nonprofit:
+      format: "org.{orgname}"
+      example: "org.openai.research"
+      verification: "dns-txt"
+
+# Naming Paradigm
+naming_paradigm:
+  description: |
+    - 團隊命名空間需經所有權驗證
+    - 支援組織內部子空間（如 com.company/devops）
+  
+  principles:
+    - "Verification Required: All namespaces must be verified"
+    - "Hierarchical: Support organizational hierarchy"
+    - "Ownership: Clear ownership and responsibility"
+    - "Transferable: Support ownership transfer with approval"
+
+# Namespace Examples
+namespace_example:
+  - namespace: "io.github.domdomegg"
+    type: "individual"
+    owner: "domdomegg"
+    verificationMethod: "github-oauth"
+    verificationStatus: "verified"
+    verifiedAt: "2024-01-11T00:00:00Z"
+    
+  - namespace: "com.anthropic"
+    type: "company"
+    owner: "Anthropic PBC"
+    verificationMethod: "dns-txt"
+    verificationStatus: "verified"
+    verifiedAt: "2024-01-11T00:00:00Z"
+    
+  - namespace: "org.openai.research"
+    type: "nonprofit"
+    owner: "OpenAI Research"
+    verificationMethod: "dns-txt"
+    verificationStatus: "verified"
+    verifiedAt: "2024-01-11T00:00:00Z"
+
+# Conflict Avoidance
+conflict_avoidance:
+  description: |
+    - 僅允許經驗證的團隊/組織發佈 artifact
+    - 命名空間所有權變更時，需同步更新 artifact 所屬權
+    - 支援命名空間回收與再分配機制
+  
+  strategies:
+    - strategy: "Verification Enforcement"
+      description: "Only verified teams can publish"
+      enforcement: "mandatory"
+      
+    - strategy: "Ownership Transfer"
+      description: "Support ownership transfer with approval"
+      requirements:
+        - "Current owner approval"
+        - "New owner verification"
+        - "Artifact migration plan"
+      
+    - strategy: "Namespace Reclamation"
+      description: "Reclaim inactive namespaces"
+      criteria:
+        - "No activity for 2 years"
+        - "Owner unresponsive"
+        - "Verification expired"
+      process:
+        - "Notification to owner"
+        - "Grace period (90 days)"
+        - "Reclamation if no response"
+
+# Semantic Linkage
+semantic_linkage:
+  description: |
+    - artifact manifest 必須標註所屬 team identity
+    - team identity registry 與 governance artifact（如 policies.yaml）緊密關聯
+  
+  requirements:
+    - artifact: "manifest.yaml"
+      mustInclude: "metadata.teamIdentity"
+      fields:
+        - "namespace"
+        - "verificationMethod"
+        - "verificationStatus"
+        
+    - artifact: "governance.yaml"
+      mustReference: "team-identity-registry"
+      purpose: "Enforce team-based governance"
+
+# Verification Methods
+verificationMethods:
+  github-oauth:
+    description: "Verify GitHub user or organization ownership"
+    scope: "io.github.*"
+    process:
+      - "OAuth authentication"
+      - "Username/org verification"
+      - "Token generation"
+    validity: "1 year"
+    
+  dns-txt:
+    description: "Verify domain ownership via DNS TXT record"
+    scope: "com.*, org.*, net.*"
+    process:
+      - "Generate verification token"
+      - "Add TXT record to domain"
+      - "Verify TXT record"
+    validity: "1 year"
+    
+  http-well-known:
+    description: "Verify domain ownership via HTTP well-known endpoint"
+    scope: "com.*, org.*, net.*"
+    process:
+      - "Generate verification token"
+      - "Place token at /.well-known/mcp-registry-auth"
+      - "Verify HTTP endpoint"
+    validity: "1 year"
+
+# Validation Rules
+validation:
+  schemaValidation: true
+  verificationCheck: true
+  ownershipValidation: true
+  expirationCheck: true
+
+# Toolchain
+toolchain:
+  validator: "mcp-validator@v1.2.0"
+  publisher: "mcp-publisher@v0.9.1"
+  inspector: "mcp-inspector@2024-01-11"

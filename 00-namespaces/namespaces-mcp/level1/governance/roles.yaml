@@ -1,0 +1,303 @@
+# MCP Level 1 Governance Roles
+# Semantic Type: role
+# Description: MCP 治理角色與權限分配
+
+apiVersion: mcp.io/v1
+kind: Roles
+metadata:
+  name: io.github.machinenativeops/mcp-governance-roles
+  version: "1.0.0"
+  description: "MCP Level 1 Governance - Role-Based Access Control"
+  semanticType: "role"
+  mcpEndpoint: "/roles/validate"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mcp-governance-roles"
+    
+  # Team Identity
+  teamIdentity:
+    namespace: "io.github.machinenativeops"
+    verificationMethod: "github-oauth"
+    
+  # Timestamps
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+# Dependencies
+dependsOn:
+  - artifact: "manifest.yaml"
+    purpose: "Main descriptor"
+    version: "1.0.0"
+
+# References
+references: []
+
+# Roles
+roles:
+  # Administrator Roles
+  - id: "ROLE-ADMIN-001"
+    name: "System Administrator"
+    description: "Full system access and control"
+    level: "system"
+    permissions:
+      artifacts:
+        - "create"
+        - "read"
+        - "update"
+        - "delete"
+        - "publish"
+        - "deprecate"
+      namespaces:
+        - "create"
+        - "read"
+        - "update"
+        - "delete"
+        - "verify"
+      policies:
+        - "create"
+        - "read"
+        - "update"
+        - "delete"
+        - "enforce"
+      roles:
+        - "create"
+        - "read"
+        - "update"
+        - "delete"
+        - "assign"
+      audit:
+        - "read"
+        - "export"
+        - "analyze"
+    restrictions:
+      - "Must have multi-factor authentication"
+      - "Actions must be logged"
+      - "Requires approval for critical operations"
+  
+  - id: "ROLE-ADMIN-002"
+    name: "Governance Administrator"
+    description: "Manage governance policies and compliance"
+    level: "governance"
+    permissions:
+      artifacts:
+        - "read"
+        - "validate"
+      namespaces:
+        - "read"
+        - "verify"
+      policies:
+        - "create"
+        - "read"
+        - "update"
+        - "delete"
+        - "enforce"
+      roles:
+        - "read"
+        - "assign"
+      audit:
+        - "read"
+        - "export"
+        - "analyze"
+    restrictions:
+      - "Must have governance training"
+      - "Actions must be logged"
+      - "Cannot modify own permissions"
+  
+  # Publisher Roles
+  - id: "ROLE-PUB-001"
+    name: "Artifact Publisher"
+    description: "Publish and manage artifacts"
+    level: "publisher"
+    permissions:
+      artifacts:
+        - "create"
+        - "read"
+        - "update"
+        - "publish"
+      namespaces:
+        - "read"
+        - "verify-own"
+      policies:
+        - "read"
+      roles:
+        - "read-own"
+      audit:
+        - "read-own"
+    restrictions:
+      - "Can only publish to verified namespaces"
+      - "Must pass artifact validation"
+      - "Subject to rate limiting"
+  
+  - id: "ROLE-PUB-002"
+    name: "Namespace Owner"
+    description: "Own and manage namespaces"
+    level: "namespace"
+    permissions:
+      artifacts:
+        - "create"
+        - "read"
+        - "update"
+        - "delete"
+        - "publish"
+      namespaces:
+        - "read-own"
+        - "update-own"
+        - "verify-own"
+      policies:
+        - "read"
+      roles:
+        - "read-own"
+        - "assign-namespace"
+      audit:
+        - "read-own"
+    restrictions:
+      - "Limited to owned namespaces"
+      - "Must maintain namespace verification"
+      - "Cannot transfer namespace without approval"
+  
+  # Validator Roles
+  - id: "ROLE-VAL-001"
+    name: "Artifact Validator"
+    description: "Validate artifacts and enforce policies"
+    level: "validator"
+    permissions:
+      artifacts:
+        - "read"
+        - "validate"
+      namespaces:
+        - "read"
+        - "verify"
+      policies:
+        - "read"
+        - "enforce"
+      roles:
+        - "read"
+      audit:
+        - "read"
+        - "write"
+    restrictions:
+      - "Read-only access to artifacts"
+      - "Cannot modify validation rules"
+      - "Must report validation results"
+  
+  # Auditor Roles
+  - id: "ROLE-AUD-001"
+    name: "Security Auditor"
+    description: "Audit security and compliance"
+    level: "auditor"
+    permissions:
+      artifacts:
+        - "read"
+      namespaces:
+        - "read"
+      policies:
+        - "read"
+      roles:
+        - "read"
+      audit:
+        - "read"
+        - "export"
+        - "analyze"
+    restrictions:
+      - "Read-only access"
+      - "Cannot modify any resources"
+      - "Must maintain audit trail"
+  
+  # User Roles
+  - id: "ROLE-USER-001"
+    name: "Artifact Consumer"
+    description: "Consume and use artifacts"
+    level: "user"
+    permissions:
+      artifacts:
+        - "read"
+        - "download"
+      namespaces:
+        - "read"
+      policies:
+        - "read"
+      roles:
+        - "read-own"
+      audit:
+        - "read-own"
+    restrictions:
+      - "Read-only access"
+      - "Subject to rate limiting"
+      - "Must accept terms of use"
+
+# Role Hierarchy
+roleHierarchy:
+  system:
+    - "ROLE-ADMIN-001"
+  governance:
+    - "ROLE-ADMIN-002"
+  publisher:
+    - "ROLE-PUB-001"
+    - "ROLE-PUB-002"
+  validator:
+    - "ROLE-VAL-001"
+  auditor:
+    - "ROLE-AUD-001"
+  user:
+    - "ROLE-USER-001"
+
+# Permission Matrix
+permissionMatrix:
+  artifacts:
+    create: ["ROLE-ADMIN-001", "ROLE-PUB-001", "ROLE-PUB-002"]
+    read: ["ROLE-ADMIN-001", "ROLE-ADMIN-002", "ROLE-PUB-001", "ROLE-PUB-002", "ROLE-VAL-001", "ROLE-AUD-001", "ROLE-USER-001"]
+    update: ["ROLE-ADMIN-001", "ROLE-PUB-001", "ROLE-PUB-002"]
+    delete: ["ROLE-ADMIN-001", "ROLE-PUB-002"]
+    publish: ["ROLE-ADMIN-001", "ROLE-PUB-001", "ROLE-PUB-002"]
+    validate: ["ROLE-ADMIN-001", "ROLE-ADMIN-002", "ROLE-VAL-001"]
+  
+  namespaces:
+    create: ["ROLE-ADMIN-001"]
+    read: ["ROLE-ADMIN-001", "ROLE-ADMIN-002", "ROLE-PUB-001", "ROLE-PUB-002", "ROLE-VAL-001", "ROLE-AUD-001", "ROLE-USER-001"]
+    update: ["ROLE-ADMIN-001"]
+    delete: ["ROLE-ADMIN-001"]
+    verify: ["ROLE-ADMIN-001", "ROLE-ADMIN-002", "ROLE-VAL-001"]
+  
+  policies:
+    create: ["ROLE-ADMIN-001", "ROLE-ADMIN-002"]
+    read: ["ROLE-ADMIN-001", "ROLE-ADMIN-002", "ROLE-PUB-001", "ROLE-PUB-002", "ROLE-VAL-001", "ROLE-AUD-001", "ROLE-USER-001"]
+    update: ["ROLE-ADMIN-001", "ROLE-ADMIN-002"]
+    delete: ["ROLE-ADMIN-001", "ROLE-ADMIN-002"]
+    enforce: ["ROLE-ADMIN-001", "ROLE-ADMIN-002", "ROLE-VAL-001"]
+  
+  roles:
+    create: ["ROLE-ADMIN-001"]
+    read: ["ROLE-ADMIN-001", "ROLE-ADMIN-002", "ROLE-VAL-001", "ROLE-AUD-001"]
+    update: ["ROLE-ADMIN-001"]
+    delete: ["ROLE-ADMIN-001"]
+    assign: ["ROLE-ADMIN-001", "ROLE-ADMIN-002", "ROLE-PUB-002"]
+  
+  audit:
+    read: ["ROLE-ADMIN-001", "ROLE-ADMIN-002", "ROLE-VAL-001", "ROLE-AUD-001"]
+    write: ["ROLE-ADMIN-001", "ROLE-VAL-001"]
+    export: ["ROLE-ADMIN-001", "ROLE-ADMIN-002", "ROLE-AUD-001"]
+    analyze: ["ROLE-ADMIN-001", "ROLE-ADMIN-002", "ROLE-AUD-001"]
+
+# Role Assignment Rules
+assignmentRules:
+  - "Users must be authenticated before role assignment"
+  - "Role assignments must be approved by administrators"
+  - "Role changes must be logged"
+  - "Users can have multiple roles"
+  - "Least privilege principle must be followed"
+  - "Role assignments must be reviewed periodically"
+
+# Validation
+validation:
+  schemaValidation: true
+  permissionConsistency: true
+  hierarchyValidation: true
+
+# Toolchain
+toolchain:
+  validator: "mcp-validator@v1.2.0"
+  publisher: "mcp-publisher@v0.9.1"
+  inspector: "mcp-inspector@2024-01-11"

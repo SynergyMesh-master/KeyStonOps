@@ -1,0 +1,79 @@
+# MCP Level 1 - Artifact Entry Registry
+# Registry Type: Artifact Entry Registry
+# Description: 條目命名註冊表 - 定義 artifact 實例的唯一標識與語義類型
+
+apiVersion: mcp.io/v1
+kind: ArtifactRegistry
+metadata:
+  name: io.github.machinenativeops/artifact-entry-registry
+  version: "1.0.0"
+  description: "MCP Level 1 - Artifact Entry Registry"
+  registryType: "artifact-entry"
+  registryId: "3"
+  
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "artifact-entry-registry"
+    
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+naming_format:
+  description: |
+    - 條目名稱（artifact entry）採用小寫字母、數字、連字號
+    - 條目名稱需具備語義描述性，格式為 {artifact-type}-{purpose}
+  
+  rules:
+    - id: "AE-001"
+      rule: "Entry names must reflect semantic type"
+      pattern: "^[a-z0-9]+(-[a-z0-9]+)*\\.(yaml|json|md)$"
+      examples:
+        - "manifest.yaml"
+        - "schema.json"
+        - "spec.yaml"
+
+semantic_boundary:
+  description: |
+    - 條目對應單一 artifact 實例（如 manifest.yaml、schema.json、spec.yaml）
+    - 條目名稱反映 artifact 的語義類型與用途
+
+naming_paradigm:
+  description: |
+    - 條目命名需與 artifact metadata 中的 type、purpose 對齊
+    - 支援 artifact 版本號（如 artifact-name@v1.0.0）
+
+namespace_example:
+  - entry: "manifest.yaml"
+    semanticType: "manifest"
+    purpose: "Main descriptor"
+    mcpEndpoint: "/manifest/validate"
+  - entry: "schema.yaml"
+    semanticType: "schema"
+    purpose: "Structure validation"
+    mcpEndpoint: "/schema/validate"
+  - entry: "spec.yaml"
+    semanticType: "spec"
+    purpose: "Functional specifications"
+    mcpEndpoint: "/spec/validate"
+
+conflict_avoidance:
+  strategies:
+    - "Entry name conflicts resolved by semantic type"
+    - "Version-based entry management"
+    - "Automatic archival of deprecated entries"
+
+semantic_linkage:
+  requirements:
+    - "Entry registry links to manifest, index, schema, spec"
+    - "Entry metadata must include registry version"
+
+validation:
+  schemaValidation: true
+  typeAlignment: true
+  versionCheck: true
+
+toolchain:
+  validator: "mcp-validator@v1.2.0"
+  publisher: "mcp-publisher@v0.9.1"
+  inspector: "mcp-inspector@2024-01-11"

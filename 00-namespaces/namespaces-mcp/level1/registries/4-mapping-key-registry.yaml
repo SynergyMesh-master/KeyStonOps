@@ -1,0 +1,82 @@
+# MCP Level 1 - Mapping Key Registry
+# Registry Type: Mapping Key Registry
+# Description: 映射命名註冊表 - 定義 artifact 間的語義映射關係
+
+apiVersion: mcp.io/v1
+kind: MappingRegistry
+metadata:
+  name: io.github.machinenativeops/mapping-key-registry
+  version: "1.0.0"
+  description: "MCP Level 1 - Mapping Key Registry"
+  registryType: "mapping-key"
+  registryId: "4"
+  
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mapping-key-registry"
+    
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+naming_format:
+  description: |
+    - 映射鍵（mapping key）採用小寫字母、數字、連字號
+    - 格式為 {source-artifact}:{target-artifact}
+  
+  rules:
+    - id: "MK-001"
+      rule: "Mapping keys use colon separator"
+      pattern: "^[a-z0-9-]+:[a-z0-9-]+$"
+      examples:
+        - "manifest:schema"
+        - "schema:spec"
+        - "governance:policy"
+
+semantic_boundary:
+  description: |
+    - 每個映射鍵對應 artifact 間的語義映射（如 manifest → schema、schema → spec）
+    - 支援多對多映射關係
+
+naming_paradigm:
+  description: |
+    - 映射鍵需明確標註 source 與 target artifact
+    - 支援 artifact-first workflow，artifact 先於映射關係
+
+namespace_example:
+  - mappingKey: "manifest:schema"
+    source: "manifest.yaml"
+    target: "schema.yaml"
+    relationship: "validates-with"
+    
+  - mappingKey: "schema:spec"
+    source: "schema.yaml"
+    target: "spec.yaml"
+    relationship: "defines-structure-for"
+    
+  - mappingKey: "governance:policy"
+    source: "governance.yaml"
+    target: "policies.yaml"
+    relationship: "enforces-via"
+
+conflict_avoidance:
+  strategies:
+    - "Mapping key conflicts resolved by timestamp"
+    - "Version-based mapping management"
+    - "Automatic archival of deprecated mappings"
+
+semantic_linkage:
+  requirements:
+    - "Mapping keys must reference valid artifacts"
+    - "Mappings synchronized to MCP Registry index"
+    - "Lineage map tracks all mappings"
+
+validation:
+  schemaValidation: true
+  artifactExistence: true
+  relationshipValidation: true
+
+toolchain:
+  validator: "mcp-validator@v1.2.0"
+  publisher: "mcp-publisher@v0.9.1"
+  inspector: "mcp-inspector@2024-01-11"

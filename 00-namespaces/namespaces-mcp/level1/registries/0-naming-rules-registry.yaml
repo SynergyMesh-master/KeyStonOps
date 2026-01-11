@@ -1,0 +1,167 @@
+# MCP Level 1 - Naming Rules Registry
+# Registry Type: Naming Rules Registry
+# Description: 命名規範註冊表 - 定義所有 artifact 的命名規則與規範
+
+apiVersion: mcp.io/v1
+kind: NamingRegistry
+metadata:
+  name: io.github.machinenativeops/naming-rules-registry
+  version: "1.0.0"
+  description: "MCP Level 1 - Naming Rules Registry"
+  registryType: "naming-rules"
+  registryId: "0"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "naming-rules-registry"
+    
+  # Timestamps
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+# Naming Format Rules
+naming_format:
+  description: |
+    - 必須採用反向 DNS 命名（reverse-DNS），格式為 {namespace}/{artifact-name}
+    - 命名空間可為 io.github.{username}、com.{company}、org.{orgname} 等
+    - artifact-name 僅允許小寫字母、數字、連字號，且需具備語義描述性
+  
+  rules:
+    - id: "NR-001"
+      rule: "Must use reverse-DNS format"
+      pattern: "^[a-z0-9]+([.-][a-z0-9]+)*\\/[a-z0-9]+(-[a-z0-9]+)*$"
+      example: "io.github.username/artifact-name"
+      
+    - id: "NR-002"
+      rule: "Namespace must be verifiable"
+      validation: "oauth|dns|http"
+      
+    - id: "NR-003"
+      rule: "Artifact name must be lowercase"
+      pattern: "^[a-z0-9]+(-[a-z0-9]+)*$"
+      
+    - id: "NR-004"
+      rule: "Artifact name must be semantically descriptive"
+      minLength: 3
+      maxLength: 64
+
+# Semantic Boundary
+semantic_boundary:
+  description: |
+    - 命名空間（namespace）界定 artifact 所屬團隊或組織
+    - artifact-name 界定 artifact 的功能、用途或語義類型
+  
+  namespace:
+    purpose: "Identifies team or organization ownership"
+    format: "{domain}.{subdomain}.{owner}"
+    examples:
+      - "io.github.modelcontextprotocol"
+      - "com.anthropic"
+      - "org.openai.research"
+  
+  artifactName:
+    purpose: "Identifies artifact function and purpose"
+    format: "{function}-{purpose}"
+    examples:
+      - "filesystem-mcp"
+      - "claude-tools"
+      - "data-analyzer"
+
+# Naming Paradigm
+naming_paradigm:
+  description: |
+    - 強制唯一性
+    - 支援多層次命名（如 io.github.alice/filesystem-mcp）
+    - 建議以 artifact-first 為核心，先定義 artifact，再映射命名空間
+  
+  principles:
+    - "Uniqueness: Each artifact must have unique identifier"
+    - "Hierarchy: Support multi-level namespace hierarchy"
+    - "Artifact-First: Define artifact before namespace mapping"
+    - "Semantic: Names must be semantically meaningful"
+    - "Stability: Names should be stable and not change frequently"
+
+# Namespace Examples
+namespace_example:
+  - namespace: "io.github.modelcontextprotocol"
+    artifact: "filesystem"
+    fullName: "io.github.modelcontextprotocol/filesystem"
+    description: "Official MCP filesystem server"
+    
+  - namespace: "com.anthropic"
+    artifact: "claude-tools"
+    fullName: "com.anthropic/claude-tools"
+    description: "Anthropic Claude tools"
+    
+  - namespace: "org.nonprofit.research"
+    artifact: "data-analyzer"
+    fullName: "org.nonprofit.research/data-analyzer"
+    description: "Research data analysis tools"
+
+# Conflict Avoidance
+conflict_avoidance:
+  description: |
+    - 命名空間所有權需經 OAuth、DNS 或 HTTP 驗證
+    - artifact-name 衝突時，優先權依據命名空間所有權與 artifact 發佈時間排序
+    - 支援命名衝突自動檢測與警告
+  
+  strategies:
+    - strategy: "Namespace Ownership Verification"
+      methods: ["oauth", "dns-txt", "http-well-known"]
+      priority: "critical"
+      
+    - strategy: "Artifact Name Uniqueness"
+      scope: "within-namespace"
+      enforcement: "automatic"
+      
+    - strategy: "Conflict Detection"
+      timing: "on-publish"
+      action: "reject-with-warning"
+      
+    - strategy: "Priority Resolution"
+      criteria:
+        - "Namespace ownership verification status"
+        - "Artifact publication timestamp"
+        - "Artifact version number"
+
+# Semantic Linkage
+semantic_linkage:
+  description: |
+    - manifest、index、schema、spec、governance 等 artifact 必須引用命名規範
+    - 所有 artifact 必須在 metadata 中標註所屬命名規範版本
+  
+  requirements:
+    - artifact: "manifest.yaml"
+      mustReference: "naming-rules-registry"
+      versionField: "metadata.namingRegistry.version"
+      
+    - artifact: "index.yaml"
+      mustReference: "naming-rules-registry"
+      versionField: "metadata.namingRegistry.version"
+      
+    - artifact: "schema.yaml"
+      mustReference: "naming-rules-registry"
+      versionField: "metadata.namingRegistry.version"
+      
+    - artifact: "spec.yaml"
+      mustReference: "naming-rules-registry"
+      versionField: "metadata.namingRegistry.version"
+      
+    - artifact: "governance.yaml"
+      mustReference: "naming-rules-registry"
+      versionField: "metadata.namingRegistry.version"
+
+# Validation Rules
+validation:
+  schemaValidation: true
+  formatValidation: true
+  uniquenessCheck: true
+  ownershipVerification: true
+
+# Toolchain
+toolchain:
+  validator: "mcp-validator@v1.2.0"
+  publisher: "mcp-publisher@v0.9.1"
+  inspector: "mcp-inspector@2024-01-11"

@@ -1,0 +1,82 @@
+# MCP Level 1 - Dependency Identifier Registry
+# Registry Type: Dependency Identifier Registry
+# Description: 依賴命名註冊表 - 定義 artifact 依賴關係的唯一標識
+
+apiVersion: mcp.io/v1
+kind: DependencyRegistry
+metadata:
+  name: io.github.machinenativeops/dependency-identifier-registry
+  version: "1.0.0"
+  description: "MCP Level 1 - Dependency Identifier Registry"
+  registryType: "dependency-identifier"
+  registryId: "5"
+  
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "dependency-identifier-registry"
+    
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+naming_format:
+  description: |
+    - 依賴標識符採用小寫字母、數字、連字號
+    - 格式為 {artifact-name}@{version}
+  
+  rules:
+    - id: "DI-001"
+      rule: "Dependency identifiers include version"
+      pattern: "^[a-z0-9-]+@v?[0-9]+\\.[0-9]+\\.[0-9]+$"
+      examples:
+        - "schema@v1.0.0"
+        - "spec@v2.1.3"
+        - "governance@1.0.0"
+
+semantic_boundary:
+  description: |
+    - 每個依賴標識符對應 artifact 的唯一版本實例
+    - 支援跨 artifact 類型的依賴關係
+
+naming_paradigm:
+  description: |
+    - 依賴標識符需與 artifact manifest、schema、spec 等 metadata 對齊
+    - 支援語義版本控制（semver）
+
+namespace_example:
+  - identifier: "schema@v1.0.0"
+    artifact: "schema.yaml"
+    version: "1.0.0"
+    semanticVersion: "1.0.0"
+    
+  - identifier: "spec@v2.1.3"
+    artifact: "spec.yaml"
+    version: "2.1.3"
+    semanticVersion: "2.1.3"
+    
+  - identifier: "governance@2025-01-01"
+    artifact: "governance.yaml"
+    version: "2025-01-01"
+    semanticVersion: "1.0.0"
+
+conflict_avoidance:
+  strategies:
+    - "Version-based conflict resolution"
+    - "Semantic versioning enforcement"
+    - "Automatic dependency tracking"
+
+semantic_linkage:
+  requirements:
+    - "Dependency identifiers link to manifest, schema, spec"
+    - "Dependencies synchronized to MCP Registry index"
+    - "Lineage map tracks all dependencies"
+
+validation:
+  schemaValidation: true
+  versionValidation: true
+  dependencyResolution: true
+
+toolchain:
+  validator: "mcp-validator@v1.2.0"
+  publisher: "mcp-publisher@v0.9.1"
+  inspector: "mcp-inspector@2024-01-11"

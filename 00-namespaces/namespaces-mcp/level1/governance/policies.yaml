@@ -1,0 +1,246 @@
+# MCP Level 1 Governance Policies
+# Semantic Type: policy
+# Description: MCP 治理政策條目
+
+apiVersion: mcp.io/v1
+kind: Policies
+metadata:
+  name: io.github.machinenativeops/mcp-governance-policies
+  version: "1.0.0"
+  description: "MCP Level 1 Governance - Policy Definitions"
+  semanticType: "policy"
+  mcpEndpoint: "/policies/validate"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mcp-governance-policies"
+    
+  # Team Identity
+  teamIdentity:
+    namespace: "io.github.machinenativeops"
+    verificationMethod: "github-oauth"
+    
+  # Timestamps
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+# Dependencies
+dependsOn:
+  - artifact: "manifest.yaml"
+    purpose: "Main descriptor"
+    version: "1.0.0"
+
+# References
+references:
+  - artifact: "roles.yaml"
+    purpose: "Role-based policy enforcement"
+
+# Policies
+policies:
+  # Naming and Namespace Policies
+  - id: "POL-NS-001"
+    name: "Namespace Ownership Verification"
+    category: "namespace-governance"
+    description: "All namespaces must be verified through OAuth, DNS, or HTTP"
+    severity: "critical"
+    enforcement: "mandatory"
+    rules:
+      - "Namespace must follow reverse-DNS format"
+      - "Ownership must be verified via GitHub OAuth, DNS TXT, or HTTP well-known"
+      - "Namespace changes require re-verification"
+    validation:
+      method: "automated"
+      frequency: "on-publish"
+    
+  - id: "POL-NS-002"
+    name: "Naming Convention Compliance"
+    category: "namespace-governance"
+    description: "All artifacts must follow naming conventions"
+    severity: "high"
+    enforcement: "mandatory"
+    rules:
+      - "Artifact names must use lowercase, numbers, and hyphens only"
+      - "Artifact names must be semantically descriptive"
+      - "Artifact names must be unique within namespace"
+    validation:
+      method: "automated"
+      frequency: "on-publish"
+  
+  # Artifact Management Policies
+  - id: "POL-ART-001"
+    name: "Artifact-First Workflow"
+    category: "artifact-management"
+    description: "All artifacts must follow artifact-first workflow"
+    severity: "high"
+    enforcement: "mandatory"
+    rules:
+      - "Artifacts must define semantic_type"
+      - "Artifacts must declare dependencies and references"
+      - "Artifacts must map to MCP endpoints"
+      - "Artifacts must include metadata"
+    validation:
+      method: "automated"
+      frequency: "on-publish"
+    
+  - id: "POL-ART-002"
+    name: "Dependency Management"
+    category: "artifact-management"
+    description: "Artifact dependencies must be properly managed"
+    severity: "high"
+    enforcement: "mandatory"
+    rules:
+      - "Dependencies must use semantic versioning"
+      - "Circular dependencies are prohibited"
+      - "All dependencies must be resolvable"
+      - "Dependency versions must be explicitly declared"
+    validation:
+      method: "automated"
+      frequency: "on-publish"
+    
+  - id: "POL-ART-003"
+    name: "Schema Validation"
+    category: "artifact-management"
+    description: "All artifacts must pass schema validation"
+    severity: "critical"
+    enforcement: "mandatory"
+    rules:
+      - "Artifacts must conform to declared schema"
+      - "Schema validation must pass before publication"
+      - "Schema changes require version increment"
+    validation:
+      method: "automated"
+      frequency: "on-publish"
+  
+  # Security Policies
+  - id: "POL-SEC-001"
+    name: "Artifact Source Verification"
+    category: "security"
+    description: "Artifact sources must be verified"
+    severity: "critical"
+    enforcement: "mandatory"
+    rules:
+      - "Only verified sources can publish artifacts"
+      - "Source verification must be current"
+      - "Compromised sources must be immediately revoked"
+    validation:
+      method: "automated"
+      frequency: "continuous"
+    
+  - id: "POL-SEC-002"
+    name: "Supply Chain Security"
+    category: "security"
+    description: "Artifact supply chain must be secure"
+    severity: "critical"
+    enforcement: "mandatory"
+    rules:
+      - "All dependencies must be from verified sources"
+      - "Dependency integrity must be verified"
+      - "Supply chain attacks must be detected and prevented"
+    validation:
+      method: "automated"
+      frequency: "continuous"
+    
+  - id: "POL-SEC-003"
+    name: "Access Control"
+    category: "security"
+    description: "Access to artifacts must be controlled"
+    severity: "high"
+    enforcement: "mandatory"
+    rules:
+      - "Access must follow least privilege principle"
+      - "Role-based access control must be enforced"
+      - "Access logs must be maintained"
+    validation:
+      method: "automated"
+      frequency: "continuous"
+  
+  # Audit and Compliance Policies
+  - id: "POL-AUD-001"
+    name: "Audit Logging"
+    category: "audit"
+    description: "All governance activities must be logged"
+    severity: "high"
+    enforcement: "mandatory"
+    rules:
+      - "All artifact operations must be logged"
+      - "Logs must be tamper-proof"
+      - "Logs must be retained for compliance period"
+    validation:
+      method: "automated"
+      frequency: "continuous"
+    
+  - id: "POL-AUD-002"
+    name: "Compliance Checking"
+    category: "audit"
+    description: "Compliance with policies must be verified"
+    severity: "high"
+    enforcement: "mandatory"
+    rules:
+      - "Compliance checks must run automatically"
+      - "Non-compliance must trigger alerts"
+      - "Compliance reports must be generated regularly"
+    validation:
+      method: "automated"
+      frequency: "daily"
+  
+  # Version Management Policies
+  - id: "POL-VER-001"
+    name: "Semantic Versioning"
+    category: "version-management"
+    description: "Artifacts must use semantic versioning"
+    severity: "high"
+    enforcement: "mandatory"
+    rules:
+      - "Version format must be MAJOR.MINOR.PATCH"
+      - "Breaking changes require MAJOR version increment"
+      - "New features require MINOR version increment"
+      - "Bug fixes require PATCH version increment"
+    validation:
+      method: "automated"
+      frequency: "on-publish"
+    
+  - id: "POL-VER-002"
+    name: "Version Compatibility"
+    category: "version-management"
+    description: "Version compatibility must be maintained"
+    severity: "medium"
+    enforcement: "recommended"
+    rules:
+      - "Backward compatibility should be maintained"
+      - "Breaking changes must be documented"
+      - "Deprecation warnings must be provided"
+    validation:
+      method: "manual"
+      frequency: "on-publish"
+
+# Policy Enforcement
+enforcement:
+  automated:
+    - "POL-NS-001"
+    - "POL-NS-002"
+    - "POL-ART-001"
+    - "POL-ART-002"
+    - "POL-ART-003"
+    - "POL-SEC-001"
+    - "POL-SEC-002"
+    - "POL-SEC-003"
+    - "POL-AUD-001"
+    - "POL-AUD-002"
+    - "POL-VER-001"
+  
+  manual:
+    - "POL-VER-002"
+
+# Validation
+validation:
+  schemaValidation: true
+  policyConsistency: true
+  enforcementCheck: true
+
+# Toolchain
+toolchain:
+  validator: "mcp-validator@v1.2.0"
+  publisher: "mcp-publisher@v0.9.1"
+  inspector: "mcp-inspector@2024-01-11"

@@ -1,0 +1,129 @@
+# MCP Level 1 Governance Spec
+# Semantic Type: spec
+# Description: MCP 治理 artifact 的功能規格
+
+apiVersion: mcp.io/v1
+kind: Spec
+metadata:
+  name: io.github.machinenativeops/mcp-governance-spec
+  version: "1.0.0"
+  description: "MCP Level 1 Governance - Functional Specifications"
+  semanticType: "spec"
+  mcpEndpoint: "/spec/validate"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mcp-governance-spec"
+    
+  # Team Identity
+  teamIdentity:
+    namespace: "io.github.machinenativeops"
+    verificationMethod: "github-oauth"
+    
+  # Timestamps
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+# Dependencies
+dependsOn:
+  - artifact: "schema.yaml"
+    purpose: "Structure validation"
+    version: "1.0.0"
+
+# References
+references: []
+
+# Specification Details
+specification:
+  # Governance Framework
+  governanceFramework:
+    description: "Defines governance rules, permissions, audit and security policies"
+    
+    components:
+      - name: "Policy Management"
+        description: "Manage governance policies and rules"
+        capabilities:
+          - "policy-definition"
+          - "policy-validation"
+          - "policy-enforcement"
+          
+      - name: "Role-Based Access Control"
+        description: "Define and manage roles and permissions"
+        capabilities:
+          - "role-definition"
+          - "permission-assignment"
+          - "access-control"
+          
+      - name: "Audit and Compliance"
+        description: "Track and audit governance activities"
+        capabilities:
+          - "audit-logging"
+          - "compliance-checking"
+          - "security-monitoring"
+  
+  # Functional Requirements
+  functionalRequirements:
+    - id: "FR-GOV-001"
+      description: "System must support policy definition and validation"
+      priority: "high"
+      
+    - id: "FR-GOV-002"
+      description: "System must support role-based access control"
+      priority: "high"
+      
+    - id: "FR-GOV-003"
+      description: "System must provide audit logging capabilities"
+      priority: "high"
+      
+    - id: "FR-GOV-004"
+      description: "System must enforce security policies"
+      priority: "critical"
+  
+  # Non-Functional Requirements
+  nonFunctionalRequirements:
+    - id: "NFR-GOV-001"
+      description: "Governance operations must complete within 100ms"
+      category: "performance"
+      
+    - id: "NFR-GOV-002"
+      description: "Audit logs must be tamper-proof"
+      category: "security"
+      
+    - id: "NFR-GOV-003"
+      description: "System must support 99.9% availability"
+      category: "reliability"
+  
+  # Behavioral Constraints
+  behavioralConstraints:
+    - "All governance operations must be audited"
+    - "Policy changes require approval workflow"
+    - "Role assignments must follow least privilege principle"
+    - "Security policies must be enforced at all levels"
+  
+  # Integration Points
+  integrationPoints:
+    - name: "Policy Engine"
+      description: "Integrates with policy evaluation engine"
+      endpoint: "/governance/policy/evaluate"
+      
+    - name: "Audit System"
+      description: "Integrates with audit logging system"
+      endpoint: "/governance/audit/log"
+      
+    - name: "Access Control"
+      description: "Integrates with RBAC system"
+      endpoint: "/governance/rbac/check"
+
+# Validation Rules
+validation:
+  schemaValidation: true
+  dependencyCheck: true
+  semanticValidation: true
+
+# Toolchain
+toolchain:
+  validator: "mcp-validator@v1.2.0"
+  publisher: "mcp-publisher@v0.9.1"
+  inspector: "mcp-inspector@2024-01-11"

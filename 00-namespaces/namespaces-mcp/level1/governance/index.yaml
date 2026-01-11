@@ -1,0 +1,139 @@
+# MCP Level 1 Governance Index
+# Semantic Type: index
+# Description: MCP 治理 artifact 條目索引
+
+apiVersion: mcp.io/v1
+kind: Index
+metadata:
+  name: io.github.machinenativeops/mcp-governance-index
+  version: "1.0.0"
+  description: "MCP Level 1 Governance - Artifact Entry Index"
+  semanticType: "index"
+  mcpEndpoint: "/index/list"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mcp-governance-index"
+    
+  # Team Identity
+  teamIdentity:
+    namespace: "io.github.machinenativeops"
+    verificationMethod: "github-oauth"
+    
+  # Timestamps
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+# Dependencies
+dependsOn:
+  - artifact: "manifest.yaml"
+    purpose: "Main descriptor"
+    version: "1.0.0"
+  - artifact: "schema.yaml"
+    purpose: "Structure validation"
+    version: "1.0.0"
+  - artifact: "spec.yaml"
+    purpose: "Functional specifications"
+    version: "1.0.0"
+
+# References
+references:
+  - artifact: "categories.yaml"
+    purpose: "Functional classification"
+
+# Index Entries
+entries:
+  - name: "manifest.yaml"
+    semanticType: "manifest"
+    description: "MCP 治理 artifact 主描述檔"
+    version: "1.0.0"
+    status: "stable"
+    mcpEndpoint: "/manifest/validate"
+    path: "level1/governance/manifest.yaml"
+    
+  - name: "schema.yaml"
+    semanticType: "schema"
+    description: "MCP 治理 artifact 結構與驗證規則"
+    version: "1.0.0"
+    status: "stable"
+    mcpEndpoint: "/schema/validate"
+    path: "level1/governance/schema.yaml"
+    
+  - name: "spec.yaml"
+    semanticType: "spec"
+    description: "MCP 治理 artifact 功能規格"
+    version: "1.0.0"
+    status: "stable"
+    mcpEndpoint: "/spec/validate"
+    path: "level1/governance/spec.yaml"
+    
+  - name: "index.yaml"
+    semanticType: "index"
+    description: "MCP 治理 artifact 條目索引"
+    version: "1.0.0"
+    status: "stable"
+    mcpEndpoint: "/index/list"
+    path: "level1/governance/index.yaml"
+    
+  - name: "categories.yaml"
+    semanticType: "taxonomy"
+    description: "MCP 治理 artifact 功能分類"
+    version: "1.0.0"
+    status: "stable"
+    mcpEndpoint: "/categories/list"
+    path: "level1/governance/categories.yaml"
+    
+  - name: "policies.yaml"
+    semanticType: "policy"
+    description: "MCP 治理政策條目"
+    version: "1.0.0"
+    status: "stable"
+    mcpEndpoint: "/policies/validate"
+    path: "level1/governance/policies.yaml"
+    
+  - name: "roles.yaml"
+    semanticType: "role"
+    description: "MCP 治理角色與權限分配"
+    version: "1.0.0"
+    status: "stable"
+    mcpEndpoint: "/roles/validate"
+    path: "level1/governance/roles.yaml"
+    
+  - name: "README.md"
+    semanticType: "documentation"
+    description: "治理 artifact 說明文件"
+    version: "1.0.0"
+    status: "stable"
+    mcpEndpoint: null
+    path: "level1/governance/README.md"
+
+# Statistics
+statistics:
+  totalArtifacts: 8
+  bySemanticType:
+    manifest: 1
+    schema: 1
+    spec: 1
+    index: 1
+    taxonomy: 1
+    policy: 1
+    role: 1
+    documentation: 1
+  byStatus:
+    stable: 8
+    draft: 0
+    deprecated: 0
+
+# Validation
+validation:
+  schemaValidation: true
+  dependencyCheck: true
+  completenessCheck: true
+
+# Toolchain
+toolchain:
+  validator: "mcp-validator@v1.2.0"
+  publisher: "mcp-publisher@v0.9.1"
+  inspector: "mcp-inspector@2024-01-11"

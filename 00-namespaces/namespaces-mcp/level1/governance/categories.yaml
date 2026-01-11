@@ -1,0 +1,131 @@
+# MCP Level 1 Governance Categories
+# Semantic Type: taxonomy
+# Description: MCP 治理 artifact 的功能分類
+
+apiVersion: mcp.io/v1
+kind: Categories
+metadata:
+  name: io.github.machinenativeops/mcp-governance-categories
+  version: "1.0.0"
+  description: "MCP Level 1 Governance - Functional Classification"
+  semanticType: "taxonomy"
+  mcpEndpoint: "/categories/list"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mcp-governance-categories"
+    
+  # Team Identity
+  teamIdentity:
+    namespace: "io.github.machinenativeops"
+    verificationMethod: "github-oauth"
+    
+  # Timestamps
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+# Dependencies
+dependsOn: []
+
+# References
+references: []
+
+# Categories
+categories:
+  - id: "governance-policy"
+    name: "Policy Management"
+    description: "Governance policies and rules management"
+    subcategories:
+      - id: "policy-definition"
+        name: "Policy Definition"
+        description: "Define governance policies"
+      - id: "policy-validation"
+        name: "Policy Validation"
+        description: "Validate policy compliance"
+      - id: "policy-enforcement"
+        name: "Policy Enforcement"
+        description: "Enforce governance policies"
+    
+  - id: "governance-rbac"
+    name: "Role-Based Access Control"
+    description: "Roles and permissions management"
+    subcategories:
+      - id: "role-definition"
+        name: "Role Definition"
+        description: "Define user roles"
+      - id: "permission-assignment"
+        name: "Permission Assignment"
+        description: "Assign permissions to roles"
+      - id: "access-control"
+        name: "Access Control"
+        description: "Control access based on roles"
+    
+  - id: "governance-audit"
+    name: "Audit and Compliance"
+    description: "Audit logging and compliance checking"
+    subcategories:
+      - id: "audit-logging"
+        name: "Audit Logging"
+        description: "Log governance activities"
+      - id: "compliance-checking"
+        name: "Compliance Checking"
+        description: "Check compliance with policies"
+      - id: "security-monitoring"
+        name: "Security Monitoring"
+        description: "Monitor security events"
+    
+  - id: "governance-security"
+    name: "Security Management"
+    description: "Security policies and controls"
+    subcategories:
+      - id: "security-policy"
+        name: "Security Policy"
+        description: "Define security policies"
+      - id: "threat-detection"
+        name: "Threat Detection"
+        description: "Detect security threats"
+      - id: "incident-response"
+        name: "Incident Response"
+        description: "Respond to security incidents"
+    
+  - id: "governance-framework"
+    name: "Governance Framework"
+    description: "Overall governance framework"
+    subcategories:
+      - id: "framework-definition"
+        name: "Framework Definition"
+        description: "Define governance framework"
+      - id: "framework-implementation"
+        name: "Framework Implementation"
+        description: "Implement governance framework"
+      - id: "framework-monitoring"
+        name: "Framework Monitoring"
+        description: "Monitor framework effectiveness"
+
+# Category Mappings
+categoryMappings:
+  artifacts:
+    - artifact: "policies.yaml"
+      categories: ["governance-policy", "governance-framework"]
+    - artifact: "roles.yaml"
+      categories: ["governance-rbac", "governance-framework"]
+    - artifact: "manifest.yaml"
+      categories: ["governance-framework"]
+    - artifact: "schema.yaml"
+      categories: ["governance-framework"]
+    - artifact: "spec.yaml"
+      categories: ["governance-framework"]
+
+# Validation
+validation:
+  schemaValidation: true
+  categoryUniqueness: true
+  hierarchyValidation: true
+
+# Toolchain
+toolchain:
+  validator: "mcp-validator@v1.2.0"
+  publisher: "mcp-publisher@v0.9.1"
+  inspector: "mcp-inspector@2024-01-11"

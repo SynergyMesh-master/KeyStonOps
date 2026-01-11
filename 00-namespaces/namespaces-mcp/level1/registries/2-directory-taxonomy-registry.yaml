@@ -1,0 +1,228 @@
+# MCP Level 1 - Directory Taxonomy Registry
+# Registry Type: Directory Taxonomy Registry
+# Description: 目錄命名註冊表 - 定義 artifact 的目錄分類與組織結構
+
+apiVersion: mcp.io/v1
+kind: DirectoryRegistry
+metadata:
+  name: io.github.machinenativeops/directory-taxonomy-registry
+  version: "1.0.0"
+  description: "MCP Level 1 - Directory Taxonomy Registry"
+  registryType: "directory-taxonomy"
+  registryId: "2"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "directory-taxonomy-registry"
+    
+  # Timestamps
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+# Naming Format
+naming_format:
+  description: |
+    - 目錄名稱採用小寫字母、數字、連字號
+    - 支援多層次目錄結構，格式為 {namespace}/{category}/{artifact}
+  
+  rules:
+    - id: "DT-001"
+      rule: "Directory names must be lowercase"
+      pattern: "^[a-z0-9]+(-[a-z0-9]+)*$"
+      
+    - id: "DT-002"
+      rule: "Support hierarchical structure"
+      format: "{namespace}/{category}/{subcategory}/{artifact}"
+      
+    - id: "DT-003"
+      rule: "Directory names must be semantically meaningful"
+      minLength: 3
+      maxLength: 32
+
+# Semantic Boundary
+semantic_boundary:
+  description: |
+    - 每個目錄對應一類 artifact（如 core、governance、tools、schemas）
+    - 目錄結構反映 artifact 的語義分類與功能域
+  
+  categories:
+    core:
+      description: "Core protocol and foundation artifacts"
+      path: "namespaces/core/"
+      semanticType: "foundation"
+      
+    governance:
+      description: "Governance and policy artifacts"
+      path: "namespaces/governance/"
+      semanticType: "governance"
+      
+    tools:
+      description: "Toolchain and utility artifacts"
+      path: "namespaces/tools/"
+      semanticType: "toolchain"
+      
+    schemas:
+      description: "Schema definition artifacts"
+      path: "namespaces/schemas/"
+      semanticType: "schema"
+      
+    specs:
+      description: "Specification artifacts"
+      path: "namespaces/specs/"
+      semanticType: "spec"
+
+# Naming Paradigm
+naming_paradigm:
+  description: |
+    - 目錄分類需對應 categories.yaml 標準分類
+    - 支援 artifact-first workflow，artifact 先於目錄分類
+  
+  principles:
+    - "Category Alignment: Directories must align with categories.yaml"
+    - "Artifact-First: Artifacts defined before directory placement"
+    - "Semantic Hierarchy: Directory structure reflects semantic relationships"
+    - "Consistency: Consistent naming across all directories"
+
+# Namespace Examples
+namespace_example:
+  - directory: "namespaces/core/"
+    description: "Core protocol artifacts"
+    artifacts:
+      - "manifest.yaml"
+      - "schema.yaml"
+      - "spec.yaml"
+      - "index.yaml"
+      - "categories.yaml"
+      - "governance.yaml"
+      - "policies.yaml"
+      - "roles.yaml"
+      - "tools.yaml"
+    
+  - directory: "namespaces/governance/"
+    description: "Governance artifacts"
+    artifacts:
+      - "manifest.yaml"
+      - "schema.yaml"
+      - "spec.yaml"
+      - "index.yaml"
+      - "categories.yaml"
+      - "policies.yaml"
+      - "roles.yaml"
+    
+  - directory: "namespaces/tools/"
+    description: "Toolchain artifacts"
+    artifacts:
+      - "validator.yaml"
+      - "publisher.yaml"
+      - "inspector.yaml"
+
+# Conflict Avoidance
+conflict_avoidance:
+  description: |
+    - 目錄名稱衝突時，優先依據 categories.yaml 標準分類
+    - 支援目錄自動歸檔與重命名
+  
+  strategies:
+    - strategy: "Category Priority"
+      description: "Resolve conflicts using categories.yaml"
+      enforcement: "automatic"
+      
+    - strategy: "Auto-Archive"
+      description: "Archive deprecated directories"
+      criteria:
+        - "No artifacts for 1 year"
+        - "Marked as deprecated"
+      
+    - strategy: "Rename Support"
+      description: "Support directory renaming with migration"
+      requirements:
+        - "Migration plan"
+        - "Artifact path updates"
+        - "Deprecation notice"
+
+# Semantic Linkage
+semantic_linkage:
+  description: |
+    - 目錄 taxonomy registry 與 categories.yaml、manifest、index 等 artifact 關聯
+    - 目錄分類資訊需同步至 MCP Registry index
+  
+  requirements:
+    - artifact: "categories.yaml"
+      mustReference: "directory-taxonomy-registry"
+      purpose: "Define directory categories"
+      
+    - artifact: "manifest.yaml"
+      mustInclude: "artifact.category"
+      purpose: "Specify artifact directory placement"
+      
+    - artifact: "index.yaml"
+      mustInclude: "entries[].path"
+      purpose: "Track artifact directory locations"
+
+# Directory Structure
+directoryStructure:
+  level1:
+    path: "namespaces/"
+    description: "Root namespace directory"
+    subdirectories:
+      - "core"
+      - "governance"
+      - "tools"
+      - "schemas"
+      - "specs"
+  
+  level2:
+    core:
+      path: "namespaces/core/"
+      artifacts:
+        - type: "manifest"
+          required: true
+        - type: "schema"
+          required: true
+        - type: "spec"
+          required: true
+        - type: "index"
+          required: true
+        - type: "categories"
+          required: true
+        - type: "governance"
+          required: true
+        - type: "policies"
+          required: true
+        - type: "roles"
+          required: true
+        - type: "tools"
+          required: true
+    
+    governance:
+      path: "namespaces/governance/"
+      artifacts:
+        - type: "manifest"
+          required: true
+        - type: "schema"
+          required: true
+        - type: "spec"
+          required: true
+        - type: "index"
+          required: true
+        - type: "categories"
+          required: true
+        - type: "policies"
+          required: true
+        - type: "roles"
+          required: true
+
+# Validation Rules
+validation:
+  schemaValidation: true
+  categoryAlignment: true
+  structureValidation: true
+  completenessCheck: true
+
+# Toolchain
+toolchain:
+  validator: "mcp-validator@v1.2.0"
+  publisher: "mcp-publisher@v0.9.1"
+  inspector: "mcp-inspector@2024-01-11"

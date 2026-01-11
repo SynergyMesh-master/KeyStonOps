@@ -1,0 +1,82 @@
+# MCP Level 1 - Reference Tag Registry
+# Registry Type: Reference Tag Registry
+# Description: 引用命名註冊表 - 定義 artifact 的語義引用與標註
+
+apiVersion: mcp.io/v1
+kind: ReferenceRegistry
+metadata:
+  name: io.github.machinenativeops/reference-tag-registry
+  version: "1.0.0"
+  description: "MCP Level 1 - Reference Tag Registry"
+  registryType: "reference-tag"
+  registryId: "6"
+  
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "reference-tag-registry"
+    
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+naming_format:
+  description: |
+    - 引用標籤採用小寫字母、數字、連字號
+    - 格式為 {artifact-name}#{tag}
+  
+  rules:
+    - id: "RT-001"
+      rule: "Reference tags use hash separator"
+      pattern: "^[a-z0-9-]+#[a-z0-9-]+$"
+      examples:
+        - "schema#validate"
+        - "spec#draft"
+        - "governance#approved"
+
+semantic_boundary:
+  description: |
+    - 每個引用標籤對應 artifact 的語義引用（如 schema#validate、spec#draft）
+    - 支援 artifact 的多重語義標註
+
+naming_paradigm:
+  description: |
+    - 引用標籤需與 artifact metadata 中的 tags 對齊
+    - 支援 artifact-first workflow，artifact 先於引用標註
+
+namespace_example:
+  - referenceTag: "schema#validate"
+    artifact: "schema.yaml"
+    tag: "validate"
+    semanticMeaning: "Ready for validation"
+    
+  - referenceTag: "spec#draft"
+    artifact: "spec.yaml"
+    tag: "draft"
+    semanticMeaning: "Draft specification"
+    
+  - referenceTag: "governance#approved"
+    artifact: "governance.yaml"
+    tag: "approved"
+    semanticMeaning: "Approved for use"
+
+conflict_avoidance:
+  strategies:
+    - "Tag conflicts resolved by priority"
+    - "Automatic tag archival"
+    - "Tag renaming support"
+
+semantic_linkage:
+  requirements:
+    - "Reference tags link to manifest, schema, spec"
+    - "Tags synchronized to MCP Registry index"
+    - "Lineage map tracks all references"
+
+validation:
+  schemaValidation: true
+  tagValidation: true
+  semanticCheck: true
+
+toolchain:
+  validator: "mcp-validator@v1.2.0"
+  publisher: "mcp-publisher@v0.9.1"
+  inspector: "mcp-inspector@2024-01-11"
