@@ -1,0 +1,192 @@
+# Evaluation Report Artifact Schema
+# Defines the structure for RAG evaluation reports with quality metrics
+
+version: "1.0.0"
+semantic_role: "evaluation_report"
+artifact_type: "schema"
+semantic_root: true
+
+metadata:
+  name: "evaluation-report"
+  description: "Schema for RAG evaluation reports with faithfulness, relevance, and quality metrics"
+  author: "MCP Core Team"
+  created: "2025-01-11"
+  updated: "2025-01-11"
+  tags:
+    - "validation"
+    - "evaluation"
+    - "rag"
+    - "quality"
+
+schema:
+  type: "object"
+  required:
+    - "report_id"
+    - "answer_id"
+    - "metrics"
+    - "metadata"
+  properties:
+    report_id:
+      type: "string"
+      pattern: "^report:[a-zA-Z0-9_-]+:[0-9]+$"
+      example: "report:eval:20250111_100000"
+      
+    answer_id:
+      type: "string"
+      description: "ID of the answer being evaluated"
+      example: "answer:query123:001"
+      
+    metrics:
+      type: "object"
+      description: "Evaluation metrics"
+      required:
+        - "faithfulness"
+        - "answer_relevance"
+        - "context_precision"
+        - "context_recall"
+      properties:
+        faithfulness:
+          type: "object"
+          description: "Faithfulness to source context"
+          properties:
+            score:
+              type: "number"
+              minimum: 0
+              maximum: 1
+              example: 0.92
+            explanation:
+              type: "string"
+              example: "Answer is well-grounded in provided context"
+            supporting_facts:
+              type: "array"
+              items:
+                type: "string"
+              example: ["Fact 1 from chunk:doc123:001", "Fact 2 from chunk:doc123:002"]
+              
+        answer_relevance:
+          type: "object"
+          description: "Relevance to the query"
+          properties:
+            score:
+              type: "number"
+              minimum: 0
+              maximum: 1
+              example: 0.88
+            explanation:
+              type: "string"
+              example: "Answer directly addresses the query"
+              
+        context_precision:
+          type: "object"
+          description: "Precision of retrieved context"
+          properties:
+            score:
+              type: "number"
+              minimum: 0
+              maximum: 1
+              example: 0.85
+            relevant_chunks:
+              type: "integer"
+              example: 4
+            total_chunks:
+              type: "integer"
+              example: 5
+              
+        context_recall:
+          type: "object"
+          description: "Recall of relevant context"
+          properties:
+            score:
+              type: "number"
+              minimum: 0
+              maximum: 1
+              example: 0.90
+            retrieved_relevant:
+              type: "integer"
+              example: 9
+            total_relevant:
+              type: "integer"
+              example: 10
+              
+        overall_score:
+          type: "number"
+          description: "Weighted average of all metrics"
+          minimum: 0
+          maximum: 1
+          example: 0.89
+          
+    ground_truth:
+      type: "object"
+      description: "Ground truth for evaluation (if available)"
+      properties:
+        expected_answer:
+          type: "string"
+          example: "Machine learning has applications in healthcare..."
+        reference_context:
+          type: "array"
+          items:
+            type: "string"
+          example: ["chunk:doc123:001", "chunk:doc123:002"]
+          
+    metadata:
+      type: "object"
+      required:
+        - "evaluated_at"
+        - "evaluator"
+      properties:
+        evaluated_at:
+          type: "string"
+          format: "date-time"
+          example: "2025-01-11T10:00:00Z"
+        evaluator:
+          type: "string"
+          description: "Evaluation method or model"
+          example: "ragas-v0.1"
+        evaluation_time_ms:
+          type: "number"
+          example: 250.5
+
+validation_rules:
+  - rule: "report_id_format"
+    description: "Report ID must follow naming convention"
+    expression: "report_id matches pattern 'report:type:timestamp'"
+    
+  - rule: "scores_in_range"
+    description: "All scores must be between 0 and 1"
+    expression: "all metric scores between 0 and 1"
+
+examples:
+  - name: "rag_evaluation_report"
+    description: "RAG answer evaluation report"
+    data:
+      report_id: "report:eval:20250111_100000"
+      answer_id: "answer:query123:001"
+      metrics:
+        faithfulness:
+          score: 0.92
+          explanation: "Answer is well-grounded in provided context"
+          supporting_facts:
+            - "Machine learning can analyze medical images (from chunk:doc123:001)"
+            - "Predictive analytics for patient outcomes (from chunk:doc123:002)"
+        answer_relevance:
+          score: 0.88
+          explanation: "Answer directly addresses the query about ML in healthcare"
+        context_precision:
+          score: 0.85
+          relevant_chunks: 4
+          total_chunks: 5
+        context_recall:
+          score: 0.90
+          retrieved_relevant: 9
+          total_relevant: 10
+        overall_score: 0.89
+      metadata:
+        evaluated_at: "2025-01-11T10:00:00Z"
+        evaluator: "ragas-v0.1"
+        evaluation_time_ms: 250.5
+
+usage_guidelines:
+  - "Evaluate all production answers"
+  - "Track metrics over time"
+  - "Use ground truth when available"
+  - "Monitor score trends for quality degradation"

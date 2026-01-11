@@ -1,0 +1,240 @@
+# Metadata Artifact Schema
+# Defines the structure for artifact metadata in the registry
+
+version: "1.0.0"
+semantic_role: "metadata"
+artifact_type: "schema"
+semantic_root: true
+
+metadata:
+  name: "metadata"
+  description: "Schema for comprehensive artifact metadata with searchability and discoverability"
+  author: "MCP Core Team"
+  created: "2025-01-11"
+  updated: "2025-01-11"
+  tags:
+    - "registry"
+    - "metadata"
+    - "search"
+    - "discovery"
+
+schema:
+  type: "object"
+  required:
+    - "metadata_id"
+    - "artifact_id"
+    - "descriptive"
+    - "technical"
+    - "administrative"
+  properties:
+    metadata_id:
+      type: "string"
+      pattern: "^metadata:[a-zA-Z0-9_-]+:[0-9]+$"
+      example: "metadata:artifact123:001"
+      
+    artifact_id:
+      type: "string"
+      description: "Reference to the artifact"
+      example: "artifact:model:customer_churn_v1.0"
+      
+    descriptive:
+      type: "object"
+      description: "Descriptive metadata"
+      required:
+        - "title"
+        - "description"
+      properties:
+        title:
+          type: "string"
+          minLength: 1
+          maxLength: 255
+          example: "Customer Churn Prediction Model"
+        description:
+          type: "string"
+          example: "ML model for predicting customer churn based on usage patterns"
+        keywords:
+          type: "array"
+          items:
+            type: "string"
+          example: ["ml", "churn", "prediction", "customer"]
+        categories:
+          type: "array"
+          items:
+            type: "string"
+          example: ["machine-learning", "classification"]
+        language:
+          type: "string"
+          pattern: "^[a-z]{2}$"
+          example: "en"
+          
+    technical:
+      type: "object"
+      description: "Technical metadata"
+      properties:
+        format:
+          type: "string"
+          example: "pytorch"
+        version:
+          type: "string"
+          example: "1.0.0"
+        size_bytes:
+          type: "integer"
+          minimum: 0
+          example: 1048576
+        checksum:
+          type: "object"
+          properties:
+            algorithm:
+              type: "string"
+              enum: ["md5", "sha256", "sha512"]
+              example: "sha256"
+            value:
+              type: "string"
+              example: "abc123def456..."
+        dependencies:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              name:
+                type: "string"
+              version:
+                type: "string"
+          example:
+            - name: "pytorch"
+              version: "2.0.0"
+            - name: "scikit-learn"
+              version: "1.3.0"
+        runtime_requirements:
+          type: "object"
+          properties:
+            python_version:
+              type: "string"
+              example: "3.9"
+            gpu_required:
+              type: "boolean"
+              example: false
+              
+    administrative:
+      type: "object"
+      description: "Administrative metadata"
+      required:
+        - "created_at"
+        - "created_by"
+      properties:
+        created_at:
+          type: "string"
+          format: "date-time"
+          example: "2025-01-11T10:00:00Z"
+        created_by:
+          type: "string"
+          example: "user:ml_engineer"
+        updated_at:
+          type: "string"
+          format: "date-time"
+          example: "2025-01-11T12:00:00Z"
+        updated_by:
+          type: "string"
+          example: "user:ml_engineer"
+        owner:
+          type: "string"
+          example: "team:ml_platform"
+        license:
+          type: "string"
+          example: "MIT"
+        access_level:
+          type: "string"
+          enum: ["public", "internal", "confidential", "restricted"]
+          example: "internal"
+          
+    usage:
+      type: "object"
+      description: "Usage statistics"
+      properties:
+        download_count:
+          type: "integer"
+          minimum: 0
+          example: 150
+        view_count:
+          type: "integer"
+          minimum: 0
+          example: 500
+        last_accessed_at:
+          type: "string"
+          format: "date-time"
+          example: "2025-01-11T09:00:00Z"
+          
+    quality:
+      type: "object"
+      description: "Quality metrics"
+      properties:
+        validation_status:
+          type: "string"
+          enum: ["validated", "pending", "failed"]
+          example: "validated"
+        quality_score:
+          type: "number"
+          minimum: 0
+          maximum: 100
+          example: 95.5
+        test_coverage:
+          type: "number"
+          minimum: 0
+          maximum: 100
+          example: 85.0
+
+validation_rules:
+  - rule: "metadata_id_format"
+    description: "Metadata ID must follow naming convention"
+    expression: "metadata_id matches pattern 'metadata:artifact:version'"
+
+examples:
+  - name: "ml_model_metadata"
+    description: "Comprehensive metadata for ML model"
+    data:
+      metadata_id: "metadata:model_v1:001"
+      artifact_id: "artifact:model:customer_churn_v1.0"
+      descriptive:
+        title: "Customer Churn Prediction Model"
+        description: "ML model for predicting customer churn based on usage patterns"
+        keywords: ["ml", "churn", "prediction", "customer"]
+        categories: ["machine-learning", "classification"]
+        language: "en"
+      technical:
+        format: "pytorch"
+        version: "1.0.0"
+        size_bytes: 1048576
+        checksum:
+          algorithm: "sha256"
+          value: "abc123def456..."
+        dependencies:
+          - name: "pytorch"
+            version: "2.0.0"
+          - name: "scikit-learn"
+            version: "1.3.0"
+        runtime_requirements:
+          python_version: "3.9"
+          gpu_required: false
+      administrative:
+        created_at: "2025-01-11T10:00:00Z"
+        created_by: "user:ml_engineer"
+        updated_at: "2025-01-11T12:00:00Z"
+        updated_by: "user:ml_engineer"
+        owner: "team:ml_platform"
+        license: "MIT"
+        access_level: "internal"
+      usage:
+        download_count: 150
+        view_count: 500
+        last_accessed_at: "2025-01-11T09:00:00Z"
+      quality:
+        validation_status: "validated"
+        quality_score: 95.5
+        test_coverage: 85.0
+
+usage_guidelines:
+  - "Provide comprehensive descriptive metadata"
+  - "Include all technical dependencies"
+  - "Track usage statistics for insights"
+  - "Maintain quality metrics"
+  - "Use consistent categorization"
