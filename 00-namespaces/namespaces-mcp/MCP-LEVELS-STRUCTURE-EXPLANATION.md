@@ -175,7 +175,7 @@ Level 2 (基礎設施) ← namespaces-mcp
    - 不需要額外的 `mcp-level2` 子資料夾
    - 它本身就是完整的 Level 2 實現
 
-2. **`mcp-level3` 和 `mcp-level4` 是獨立的子專案**
+2. **`level3` 和 `level4` 是獨立的子專案**
    - 建立在 Level 2 的基礎之上
    - 提供更高層級的語義能力
 
