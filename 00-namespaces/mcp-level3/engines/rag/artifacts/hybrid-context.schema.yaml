@@ -1,0 +1,448 @@
+# Hybrid Context Artifact Schema
+# Defines the structure for hybrid retrieval contexts combining vector and graph RAG
+
+version: "1.0.0"
+semantic_role: "hybrid_context"
+artifact_type: "schema"
+semantic_root: true
+
+metadata:
+  name: "hybrid-context"
+  description: "Schema for hybrid retrieval contexts that combine vector-based and graph-based retrieval results"
+  author: "MCP Core Team"
+  created: "2025-01-11"
+  updated: "2025-01-11"
+  tags:
+    - "rag"
+    - "hybrid"
+    - "context"
+    - "retrieval"
+
+schema:
+  type: "object"
+  required:
+    - "context_id"
+    - "query"
+    - "vector_results"
+    - "graph_results"
+    - "merged_context"
+    - "metadata"
+  properties:
+    context_id:
+      type: "string"
+      description: "Unique identifier for the hybrid context"
+      pattern: "^context:[a-zA-Z0-9_-]+:[0-9]+$"
+      example: "context:query123:001"
+      
+    query:
+      type: "object"
+      description: "Original query information"
+      required:
+        - "query_id"
+        - "query_text"
+        - "query_type"
+      properties:
+        query_id:
+          type: "string"
+          description: "Unique query identifier"
+          example: "query:123"
+          
+        query_text:
+          type: "string"
+          description: "Original query text"
+          example: "What are the applications of machine learning in healthcare?"
+          
+        query_type:
+          type: "string"
+          description: "Type of query"
+          enum: ["factual", "analytical", "exploratory", "comparative"]
+          example: "exploratory"
+          
+        query_embedding:
+          type: "array"
+          description: "Vector embedding of the query"
+          items:
+            type: "number"
+            format: "float"
+          example: [0.123, -0.456, 0.789]
+          
+        query_entities:
+          type: "array"
+          description: "Extracted entities from query"
+          items:
+            type: "object"
+            properties:
+              entity_id:
+                type: "string"
+              entity_type:
+                type: "string"
+              label:
+                type: "string"
+          example:
+            - entity_id: "entity:concept:machine_learning"
+              entity_type: "Concept"
+              label: "machine learning"
+            - entity_id: "entity:domain:healthcare"
+              entity_type: "Domain"
+              label: "healthcare"
+              
+    vector_results:
+      type: "object"
+      description: "Results from vector-based retrieval"
+      required:
+        - "chunks"
+        - "retrieval_method"
+      properties:
+        chunks:
+          type: "array"
+          description: "Retrieved vector chunks"
+          items:
+            type: "object"
+            required:
+              - "chunk_id"
+              - "content"
+              - "similarity_score"
+            properties:
+              chunk_id:
+                type: "string"
+                example: "chunk:doc123:001"
+              content:
+                type: "string"
+                example: "Machine learning algorithms can analyze medical images..."
+              similarity_score:
+                type: "number"
+                minimum: 0
+                maximum: 1
+                example: 0.92
+              metadata:
+                type: "object"
+                additionalProperties: true
+                
+        retrieval_method:
+          type: "string"
+          description: "Vector retrieval method used"
+          enum: ["cosine_similarity", "dot_product", "euclidean_distance"]
+          example: "cosine_similarity"
+          
+        top_k:
+          type: "integer"
+          description: "Number of top results retrieved"
+          minimum: 1
+          example: 5
+          
+        total_candidates:
+          type: "integer"
+          description: "Total number of candidate chunks"
+          minimum: 0
+          example: 1000
+          
+    graph_results:
+      type: "object"
+      description: "Results from graph-based retrieval"
+      required:
+        - "triplets"
+        - "traversal_method"
+      properties:
+        triplets:
+          type: "array"
+          description: "Retrieved knowledge triplets"
+          items:
+            type: "object"
+            required:
+              - "triplet_id"
+              - "subject"
+              - "predicate"
+              - "object"
+              - "relevance_score"
+            properties:
+              triplet_id:
+                type: "string"
+                example: "triplet:doc456:002"
+              subject:
+                type: "object"
+                properties:
+                  entity_id:
+                    type: "string"
+                  label:
+                    type: "string"
+              predicate:
+                type: "object"
+                properties:
+                  relation_type:
+                    type: "string"
+                  label:
+                    type: "string"
+              object:
+                type: "object"
+                properties:
+                  entity_id:
+                    type: "string"
+                  label:
+                    type: "string"
+              relevance_score:
+                type: "number"
+                minimum: 0
+                maximum: 1
+                example: 0.88
+                
+        traversal_method:
+          type: "string"
+          description: "Graph traversal method used"
+          enum: ["bfs", "dfs", "shortest_path", "pagerank"]
+          example: "bfs"
+          
+        max_hops:
+          type: "integer"
+          description: "Maximum number of hops in graph traversal"
+          minimum: 1
+          example: 3
+          
+        subgraph_size:
+          type: "integer"
+          description: "Size of retrieved subgraph"
+          minimum: 0
+          example: 15
+          
+    merged_context:
+      type: "object"
+      description: "Merged and ranked context from both retrieval methods"
+      required:
+        - "context_text"
+        - "context_elements"
+        - "merge_strategy"
+      properties:
+        context_text:
+          type: "string"
+          description: "Merged context as continuous text"
+          example: "Machine learning has numerous applications in healthcare. It can analyze medical images for disease detection..."
+          
+        context_elements:
+          type: "array"
+          description: "Ordered list of context elements"
+          items:
+            type: "object"
+            required:
+              - "element_id"
+              - "element_type"
+              - "content"
+              - "score"
+              - "source"
+            properties:
+              element_id:
+                type: "string"
+                example: "chunk:doc123:001"
+              element_type:
+                type: "string"
+                enum: ["chunk", "triplet", "synthesized"]
+                example: "chunk"
+              content:
+                type: "string"
+                example: "Machine learning algorithms can analyze medical images..."
+              score:
+                type: "number"
+                minimum: 0
+                maximum: 1
+                example: 0.92
+              source:
+                type: "string"
+                enum: ["vector", "graph", "hybrid"]
+                example: "vector"
+              position:
+                type: "integer"
+                minimum: 0
+                example: 1
+                
+        merge_strategy:
+          type: "string"
+          description: "Strategy used for merging results"
+          enum: ["interleave", "score_based", "semantic_clustering", "reciprocal_rank_fusion"]
+          example: "reciprocal_rank_fusion"
+          
+        total_elements:
+          type: "integer"
+          description: "Total number of context elements"
+          minimum: 0
+          example: 10
+          
+        context_length:
+          type: "integer"
+          description: "Total length of merged context in characters"
+          minimum: 0
+          example: 2048
+          
+    metadata:
+      type: "object"
+      required:
+        - "timestamp"
+        - "retrieval_time_ms"
+      properties:
+        timestamp:
+          type: "string"
+          format: "date-time"
+          description: "Context creation timestamp"
+          example: "2025-01-11T10:30:00Z"
+          
+        retrieval_time_ms:
+          type: "object"
+          description: "Retrieval time breakdown"
+          properties:
+            vector_retrieval:
+              type: "number"
+              example: 45.2
+            graph_retrieval:
+              type: "number"
+              example: 78.5
+            merge_time:
+              type: "number"
+              example: 12.3
+            total:
+              type: "number"
+              example: 136.0
+              
+        quality_metrics:
+          type: "object"
+          description: "Quality metrics for the context"
+          properties:
+            relevance_score:
+              type: "number"
+              minimum: 0
+              maximum: 1
+              example: 0.89
+            diversity_score:
+              type: "number"
+              minimum: 0
+              maximum: 1
+              example: 0.75
+            coverage_score:
+              type: "number"
+              minimum: 0
+              maximum: 1
+              example: 0.82
+            coherence_score:
+              type: "number"
+              minimum: 0
+              maximum: 1
+              example: 0.91
+              
+        retrieval_config:
+          type: "object"
+          description: "Configuration used for retrieval"
+          properties:
+            vector_weight:
+              type: "number"
+              minimum: 0
+              maximum: 1
+              example: 0.6
+            graph_weight:
+              type: "number"
+              minimum: 0
+              maximum: 1
+              example: 0.4
+            rerank_enabled:
+              type: "boolean"
+              example: true
+            rerank_model:
+              type: "string"
+              example: "cross-encoder/ms-marco-MiniLM-L-12-v2"
+
+validation_rules:
+  - rule: "context_id_format"
+    description: "Context ID must follow naming convention"
+    expression: "context_id matches pattern 'context:query:index'"
+    
+  - rule: "weights_sum_to_one"
+    description: "Vector and graph weights should sum to 1"
+    expression: "metadata.retrieval_config.vector_weight + metadata.retrieval_config.graph_weight == 1"
+    
+  - rule: "non_empty_results"
+    description: "At least one retrieval method must return results"
+    expression: "vector_results.chunks.length > 0 OR graph_results.triplets.length > 0"
+    
+  - rule: "merged_context_not_empty"
+    description: "Merged context must contain at least one element"
+    expression: "merged_context.context_elements.length > 0"
+
+examples:
+  - name: "basic_hybrid_context"
+    description: "Basic hybrid context with vector and graph results"
+    data:
+      context_id: "context:query123:001"
+      query:
+        query_id: "query:123"
+        query_text: "What are the applications of machine learning in healthcare?"
+        query_type: "exploratory"
+      vector_results:
+        chunks:
+          - chunk_id: "chunk:doc123:001"
+            content: "Machine learning algorithms can analyze medical images for disease detection."
+            similarity_score: 0.92
+        retrieval_method: "cosine_similarity"
+        top_k: 5
+        total_candidates: 1000
+      graph_results:
+        triplets:
+          - triplet_id: "triplet:doc456:002"
+            subject:
+              entity_id: "entity:concept:machine_learning"
+              label: "machine learning"
+            predicate:
+              relation_type: "HAS_APPLICATION"
+              label: "has application"
+            object:
+              entity_id: "entity:domain:healthcare"
+              label: "healthcare"
+            relevance_score: 0.88
+        traversal_method: "bfs"
+        max_hops: 3
+        subgraph_size: 15
+      merged_context:
+        context_text: "Machine learning has numerous applications in healthcare. It can analyze medical images for disease detection..."
+        context_elements:
+          - element_id: "chunk:doc123:001"
+            element_type: "chunk"
+            content: "Machine learning algorithms can analyze medical images..."
+            score: 0.92
+            source: "vector"
+            position: 1
+        merge_strategy: "reciprocal_rank_fusion"
+        total_elements: 10
+        context_length: 2048
+      metadata:
+        timestamp: "2025-01-11T10:30:00Z"
+        retrieval_time_ms:
+          vector_retrieval: 45.2
+          graph_retrieval: 78.5
+          merge_time: 12.3
+          total: 136.0
+        quality_metrics:
+          relevance_score: 0.89
+          diversity_score: 0.75
+          coverage_score: 0.82
+          coherence_score: 0.91
+        retrieval_config:
+          vector_weight: 0.6
+          graph_weight: 0.4
+          rerank_enabled: true
+          rerank_model: "cross-encoder/ms-marco-MiniLM-L-12-v2"
+
+usage_guidelines:
+  - "Balance vector and graph weights based on query type"
+  - "Use reranking for improved relevance"
+  - "Monitor quality metrics to tune retrieval parameters"
+  - "Consider query complexity when setting max_hops"
+  - "Implement caching for frequently accessed contexts"
+  - "Track retrieval times for performance optimization"
+
+performance_considerations:
+  retrieval:
+    - "Parallelize vector and graph retrieval"
+    - "Use approximate methods for large-scale retrieval"
+    - "Implement early stopping for graph traversal"
+  merging:
+    - "Use efficient ranking algorithms (RRF, CombSUM)"
+    - "Limit context length to model constraints"
+    - "Cache merged contexts for repeated queries"
+  quality:
+    - "Monitor and log quality metrics"
+    - "A/B test different merge strategies"
+    - "Implement feedback loops for continuous improvement"
