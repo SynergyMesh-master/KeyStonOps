@@ -209,7 +209,7 @@ class TestResourceExhaustion:
                             tasks_submitted += 1
                         else:
                             tasks_failed += 1
-                except:
+                except Exception:
                     tasks_failed += 1
             
             # System should reject new tasks gracefully
