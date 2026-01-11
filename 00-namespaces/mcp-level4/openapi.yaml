@@ -1,0 +1,118 @@
+openapi: 3.0.3
+info:
+  title: MCP Level 4 Semantic Autonomy API
+  description: API specification for MCP Level 4 semantic autonomy engines
+  version: 1.0.0
+  contact:
+    name: MCP Level 4 Team
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Development server
+  - url: https://api.mcp-l4.example.com/api/v1
+    description: Production server
+
+tags:
+  - name: Observation
+    description: Self-observation and monitoring
+  - name: Evolution
+    description: Self-evolution and optimization
+  - name: Reflex
+    description: Self-repair and recovery
+  - name: Governance
+    description: Self-governance and policy
+
+paths:
+  /observation/metrics:
+    get:
+      tags: [Observation]
+      summary: Get all metrics
+      operationId: getMetrics
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Metric'
+
+  /observation/health:
+    get:
+      tags: [Observation]
+      summary: Perform health checks
+      operationId: performHealthChecks
+      responses:
+        '200':
+          description: Successful response
+
+  /evolution/baselines:
+    post:
+      tags: [Evolution]
+      summary: Create performance baseline
+      operationId: createBaseline
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Baseline created
+
+  /reflex/faults:
+    get:
+      tags: [Reflex]
+      summary: Get active faults
+      operationId: getActiveFaults
+      responses:
+        '200':
+          description: Successful response
+
+  /governance/policies:
+    get:
+      tags: [Governance]
+      summary: Get all policies
+      operationId: getPolicies
+      responses:
+        '200':
+          description: Successful response
+    post:
+      tags: [Governance]
+      summary: Create policy
+      operationId: createPolicy
+      responses:
+        '201':
+          description: Policy created
+
+components:
+  schemas:
+    Metric:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [counter, gauge, histogram, summary]
+        value:
+          type: number
+        timestamp:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
