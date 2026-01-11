@@ -1,0 +1,58 @@
+# MCP Level 1 Example: Basic Artifact
+# This is a minimal example of a valid MCP Level 1 artifact
+
+apiVersion: mcp.io/v1
+kind: Manifest
+metadata:
+  name: io.github.example/hello-mcp
+  version: "1.0.0"
+  description: "A basic example MCP artifact"
+  semanticType: "manifest"
+  mcpEndpoint: "/manifest/validate"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.example"
+    artifactName: "hello-mcp"
+  
+  # Team Identity
+  teamIdentity:
+    namespace: "io.github.example"
+    verificationMethod: "github-oauth"
+  
+  # Timestamps
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+# Dependencies
+dependsOn:
+  - artifact: "schema.yaml"
+    purpose: "Structure validation"
+    version: "1.0.0"
+
+# References
+references:
+  - artifact: "categories.yaml"
+    purpose: "Functional classification"
+
+# Artifact Information
+artifact:
+  type: "example"
+  category: "tutorial"
+  status: "stable"
+  
+  capabilities:
+    - "basic-example"
+    - "tutorial-reference"
+  
+  compliance:
+    namingRules: "v1.0.0"
+    artifactFirst: true
+    semanticVersioning: true
+
+# Validation
+validation:
+  schemaValidation: true
+  dependencyCheck: true
+  namespaceVerification: true
