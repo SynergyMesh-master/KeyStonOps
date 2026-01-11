@@ -2,15 +2,672 @@ version: "2.0.0"
 semantic_role: schema_definitions
 artifact_type: schema
 semantic_root: false
+module: monitoring-observability
+
+description: |
+  Complete schema definitions for the Monitoring & Observability module.
+  Covers metrics collection, logging, distributed tracing, health monitoring,
+  and dashboard visualization with 21+ source files across 4 layers.
 
 schema_definitions:
+  # ============================================================================
+  # LAYER 1: METRICS COLLECTION (4 schemas)
+  # ============================================================================
+  
+  MetricConfig:
+    type: "object"
+    description: "Configuration for metrics collection system"
+    properties:
+      enabled:
+        type: "boolean"
+        default: true
+      collection_interval:
+        type: "integer"
+        description: "Interval in milliseconds"
+        minimum: 100
+        maximum: 60000
+        default: 1000
+      retention_period:
+        type: "integer"
+        description: "Retention period in days"
+        minimum: 1
+        maximum: 365
+        default: 30
+      aggregation_window:
+        type: "integer"
+        description: "Aggregation window in seconds"
+        default: 60
+      exporters:
+        type: "array"
+        items:
+          type: "string"
+          enum: ["prometheus", "graphite", "influxdb", "datadog"]
+    required: ["enabled", "collection_interval"]
+    
   Metric:
     type: "object"
+    description: "Individual metric data point"
     properties:
-      name: {type: "string"}
-      value: {type: "number"}
-      timestamp: {type: "string"}
+      name:
+        type: "string"
+        pattern: "^[a-z][a-z0-9_]*$"
+        minLength: 1
+        maxLength: 255
+      value:
+        type: "number"
+      type:
+        type: "string"
+        enum: ["counter", "gauge", "histogram", "summary"]
+      labels:
+        type: "object"
+        additionalProperties:
+          type: "string"
+      timestamp:
+        type: "string"
+        format: "date-time"
+      unit:
+        type: "string"
+        enum: ["bytes", "seconds", "milliseconds", "count", "percent"]
+    required: ["name", "value", "type", "timestamp"]
+    
+  PerformanceMetrics:
+    type: "object"
+    description: "System performance metrics"
+    properties:
+      cpu_usage:
+        type: "number"
+        minimum: 0
+        maximum: 100
+      memory_usage:
+        type: "number"
+        minimum: 0
+        maximum: 100
+      disk_io:
+        type: "object"
+        properties:
+          read_bytes_per_sec: {type: "number"}
+          write_bytes_per_sec: {type: "number"}
+      network_io:
+        type: "object"
+        properties:
+          rx_bytes_per_sec: {type: "number"}
+          tx_bytes_per_sec: {type: "number"}
+      request_rate:
+        type: "number"
+        minimum: 0
+      error_rate:
+        type: "number"
+        minimum: 0
+        maximum: 100
+      latency_p50:
+        type: "number"
+        minimum: 0
+      latency_p95:
+        type: "number"
+        minimum: 0
+      latency_p99:
+        type: "number"
+        minimum: 0
+    required: ["cpu_usage", "memory_usage", "request_rate", "error_rate"]
+    
+  AlertRule:
+    type: "object"
+    description: "Alert rule configuration"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      name:
+        type: "string"
+        minLength: 1
+        maxLength: 255
+      condition:
+        type: "string"
+        description: "Alert condition expression"
+      threshold:
+        type: "number"
+      severity:
+        type: "string"
+        enum: ["critical", "warning", "info"]
+      duration:
+        type: "integer"
+        description: "Duration in seconds before triggering"
+        minimum: 0
+      actions:
+        type: "array"
+        items:
+          type: "string"
+          enum: ["email", "slack", "pagerduty", "webhook"]
+      enabled:
+        type: "boolean"
+        default: true
+    required: ["id", "name", "condition", "threshold", "severity"]
+
+  # ============================================================================
+  # LAYER 2: LOGGING SYSTEM (4 schemas)
+  # ============================================================================
+  
+  LogConfig:
+    type: "object"
+    description: "Logging system configuration"
+    properties:
+      level:
+        type: "string"
+        enum: ["debug", "info", "warn", "error", "fatal"]
+        default: "info"
+      format:
+        type: "string"
+        enum: ["json", "text", "structured"]
+        default: "json"
+      output:
+        type: "array"
+        items:
+          type: "string"
+          enum: ["console", "file", "syslog", "elasticsearch"]
+      rotation:
+        type: "object"
+        properties:
+          max_size: {type: "integer", description: "Max size in MB"}
+          max_age: {type: "integer", description: "Max age in days"}
+          max_backups: {type: "integer"}
+          compress: {type: "boolean"}
+      sampling:
+        type: "object"
+        properties:
+          enabled: {type: "boolean"}
+          rate: {type: "number", minimum: 0, maximum: 1}
+    required: ["level", "format", "output"]
+    
+  LogEntry:
+    type: "object"
+    description: "Individual log entry"
+    properties:
+      timestamp:
+        type: "string"
+        format: "date-time"
+      level:
+        type: "string"
+        enum: ["debug", "info", "warn", "error", "fatal"]
+      message:
+        type: "string"
+        minLength: 1
+      logger:
+        type: "string"
+      context:
+        type: "object"
+        additionalProperties: true
+      trace_id:
+        type: "string"
+        format: "uuid"
+      span_id:
+        type: "string"
+      error:
+        type: "object"
+        properties:
+          type: {type: "string"}
+          message: {type: "string"}
+          stack: {type: "string"}
+    required: ["timestamp", "level", "message"]
+    
+  LogQuery:
+    type: "object"
+    description: "Log query parameters"
+    properties:
+      start_time:
+        type: "string"
+        format: "date-time"
+      end_time:
+        type: "string"
+        format: "date-time"
+      level:
+        type: "array"
+        items:
+          type: "string"
+          enum: ["debug", "info", "warn", "error", "fatal"]
+      logger:
+        type: "string"
+      search:
+        type: "string"
+        description: "Full-text search query"
+      limit:
+        type: "integer"
+        minimum: 1
+        maximum: 10000
+        default: 100
+      offset:
+        type: "integer"
+        minimum: 0
+        default: 0
+    required: ["start_time", "end_time"]
+    
+  AuditLog:
+    type: "object"
+    description: "Audit log entry for compliance"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      timestamp:
+        type: "string"
+        format: "date-time"
+      user_id:
+        type: "string"
+      action:
+        type: "string"
+        enum: ["create", "read", "update", "delete", "execute"]
+      resource_type:
+        type: "string"
+      resource_id:
+        type: "string"
+      status:
+        type: "string"
+        enum: ["success", "failure"]
+      ip_address:
+        type: "string"
+        format: "ipv4"
+      user_agent:
+        type: "string"
+      details:
+        type: "object"
+        additionalProperties: true
+    required: ["id", "timestamp", "user_id", "action", "resource_type", "status"]
+
+  # ============================================================================
+  # LAYER 3: DISTRIBUTED TRACING (5 schemas)
+  # ============================================================================
+  
+  TraceConfig:
+    type: "object"
+    description: "Distributed tracing configuration"
+    properties:
+      enabled:
+        type: "boolean"
+        default: true
+      sampling_rate:
+        type: "number"
+        minimum: 0
+        maximum: 1
+        default: 0.1
+      exporter:
+        type: "string"
+        enum: ["jaeger", "zipkin", "otlp"]
+      endpoint:
+        type: "string"
+        format: "uri"
+      max_spans_per_trace:
+        type: "integer"
+        minimum: 1
+        maximum: 10000
+        default: 1000
+    required: ["enabled", "sampling_rate", "exporter"]
+    
+  Trace:
+    type: "object"
+    description: "Distributed trace"
+    properties:
+      trace_id:
+        type: "string"
+        format: "uuid"
+      spans:
+        type: "array"
+        items:
+          $ref: "#/schema_definitions/Span"
+      start_time:
+        type: "string"
+        format: "date-time"
+      end_time:
+        type: "string"
+        format: "date-time"
+      duration_ms:
+        type: "number"
+        minimum: 0
+      service_name:
+        type: "string"
+    required: ["trace_id", "spans", "start_time"]
+    
+  Span:
+    type: "object"
+    description: "Individual span in a trace"
+    properties:
+      span_id:
+        type: "string"
+      parent_span_id:
+        type: "string"
+      trace_id:
+        type: "string"
+        format: "uuid"
+      operation_name:
+        type: "string"
+      start_time:
+        type: "string"
+        format: "date-time"
+      end_time:
+        type: "string"
+        format: "date-time"
+      duration_ms:
+        type: "number"
+        minimum: 0
+      tags:
+        type: "object"
+        additionalProperties:
+          type: "string"
+      logs:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            timestamp: {type: "string", format: "date-time"}
+            fields: {type: "object"}
+      status:
+        type: "string"
+        enum: ["ok", "error", "unset"]
+    required: ["span_id", "trace_id", "operation_name", "start_time"]
+    
+  TraceQuery:
+    type: "object"
+    description: "Trace query parameters"
+    properties:
+      service_name:
+        type: "string"
+      operation_name:
+        type: "string"
+      min_duration_ms:
+        type: "number"
+        minimum: 0
+      max_duration_ms:
+        type: "number"
+        minimum: 0
+      start_time:
+        type: "string"
+        format: "date-time"
+      end_time:
+        type: "string"
+        format: "date-time"
+      tags:
+        type: "object"
+        additionalProperties:
+          type: "string"
+      limit:
+        type: "integer"
+        minimum: 1
+        maximum: 1000
+        default: 100
+    required: ["start_time", "end_time"]
+    
+  PerformanceProfile:
+    type: "object"
+    description: "Performance profiling data"
+    properties:
+      trace_id:
+        type: "string"
+        format: "uuid"
+      total_duration_ms:
+        type: "number"
+      bottlenecks:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            span_id: {type: "string"}
+            operation: {type: "string"}
+            duration_ms: {type: "number"}
+            percentage: {type: "number"}
+      critical_path:
+        type: "array"
+        items:
+          type: "string"
+      recommendations:
+        type: "array"
+        items:
+          type: "string"
+    required: ["trace_id", "total_duration_ms"]
+
+  # ============================================================================
+  # LAYER 4: HEALTH MONITORING & DASHBOARD (8 schemas)
+  # ============================================================================
+  
+  HealthCheckConfig:
+    type: "object"
+    description: "Health check configuration"
+    properties:
+      enabled:
+        type: "boolean"
+        default: true
+      interval:
+        type: "integer"
+        description: "Check interval in seconds"
+        minimum: 1
+        maximum: 3600
+        default: 30
+      timeout:
+        type: "integer"
+        description: "Check timeout in seconds"
+        minimum: 1
+        maximum: 60
+        default: 5
+      checks:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            name: {type: "string"}
+            type: {type: "string", enum: ["http", "tcp", "grpc", "custom"]}
+            endpoint: {type: "string"}
+            critical: {type: "boolean"}
+    required: ["enabled", "interval", "checks"]
+    
+  HealthStatus:
+    type: "object"
+    description: "Overall health status"
+    properties:
+      status:
+        type: "string"
+        enum: ["healthy", "degraded", "unhealthy"]
+      timestamp:
+        type: "string"
+        format: "date-time"
+      checks:
+        type: "array"
+        items:
+          $ref: "#/schema_definitions/HealthCheckResult"
+      uptime_seconds:
+        type: "integer"
+        minimum: 0
+      version:
+        type: "string"
+    required: ["status", "timestamp", "checks"]
+    
+  HealthCheckResult:
+    type: "object"
+    description: "Individual health check result"
+    properties:
+      name:
+        type: "string"
+      status:
+        type: "string"
+        enum: ["pass", "fail", "warn"]
+      duration_ms:
+        type: "number"
+        minimum: 0
+      message:
+        type: "string"
+      timestamp:
+        type: "string"
+        format: "date-time"
+      critical:
+        type: "boolean"
+    required: ["name", "status", "timestamp"]
+    
+  DashboardConfig:
+    type: "object"
+    description: "Dashboard configuration"
+    properties:
+      title:
+        type: "string"
+      refresh_interval:
+        type: "integer"
+        description: "Refresh interval in seconds"
+        minimum: 5
+        maximum: 3600
+        default: 30
+      widgets:
+        type: "array"
+        items:
+          $ref: "#/schema_definitions/Widget"
+      layout:
+        type: "string"
+        enum: ["grid", "flex", "masonry"]
+        default: "grid"
+    required: ["title", "widgets"]
+    
+  Widget:
+    type: "object"
+    description: "Dashboard widget"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      type:
+        type: "string"
+        enum: ["chart", "table", "gauge", "counter", "heatmap", "timeline"]
+      title:
+        type: "string"
+      query:
+        type: "string"
+        description: "Data query expression"
+      visualization:
+        type: "object"
+        properties:
+          chart_type: {type: "string", enum: ["line", "bar", "pie", "area"]}
+          colors: {type: "array", items: {type: "string"}}
+          legend: {type: "boolean"}
+      position:
+        type: "object"
+        properties:
+          x: {type: "integer"}
+          y: {type: "integer"}
+          width: {type: "integer"}
+          height: {type: "integer"}
+    required: ["id", "type", "title", "query"]
+    
+  Report:
+    type: "object"
+    description: "Generated report"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+      type:
+        type: "string"
+        enum: ["performance", "availability", "security", "compliance"]
+      period:
+        type: "object"
+        properties:
+          start: {type: "string", format: "date-time"}
+          end: {type: "string", format: "date-time"}
+      metrics:
+        type: "object"
+        additionalProperties: true
+      insights:
+        type: "array"
+        items:
+          type: "string"
+      recommendations:
+        type: "array"
+        items:
+          type: "string"
+      generated_at:
+        type: "string"
+        format: "date-time"
+    required: ["id", "type", "period", "generated_at"]
+    
+  Visualization:
+    type: "object"
+    description: "Data visualization configuration"
+    properties:
+      type:
+        type: "string"
+        enum: ["timeseries", "histogram", "heatmap", "topology", "flamegraph"]
+      data_source:
+        type: "string"
+      filters:
+        type: "object"
+        additionalProperties: true
+      aggregation:
+        type: "string"
+        enum: ["sum", "avg", "min", "max", "count", "p50", "p95", "p99"]
+      time_range:
+        type: "object"
+        properties:
+          start: {type: "string", format: "date-time"}
+          end: {type: "string", format: "date-time"}
+    required: ["type", "data_source"]
+    
+  MetricsAPI:
+    type: "object"
+    description: "Metrics API endpoint configuration"
+    properties:
+      endpoint:
+        type: "string"
+        format: "uri"
+      method:
+        type: "string"
+        enum: ["GET", "POST"]
+      authentication:
+        type: "object"
+        properties:
+          type: {type: "string", enum: ["bearer", "basic", "apikey"]}
+          credentials: {type: "string"}
+      rate_limit:
+        type: "object"
+        properties:
+          requests_per_minute: {type: "integer"}
+          burst: {type: "integer"}
+    required: ["endpoint", "method"]
+
+# Validation rules
+validation_rules:
+  - rule: "metric_name_format"
+    description: "Metric names must follow snake_case convention"
+    applies_to: ["Metric.name"]
+    
+  - rule: "timestamp_ordering"
+    description: "End time must be after start time"
+    applies_to: ["Trace", "LogQuery", "TraceQuery"]
+    
+  - rule: "sampling_rate_range"
+    description: "Sampling rate must be between 0 and 1"
+    applies_to: ["TraceConfig.sampling_rate"]
+    
+  - rule: "alert_severity_escalation"
+    description: "Critical alerts must have immediate actions"
+    applies_to: ["AlertRule"]
+    
+  - rule: "log_retention"
+    description: "Log retention must comply with compliance requirements"
+    applies_to: ["LogConfig"]
+
+# Dependencies
+dependencies:
+  internal:
+    - module: "protocol"
+      schemas: ["Request", "Response"]
+    - module: "data-management"
+      schemas: ["StorageConfig"]
+  external:
+    - library: "prometheus-client"
+      version: "^14.0.0"
+    - library: "winston"
+      version: "^3.8.0"
+    - library: "opentelemetry"
+      version: "^1.9.0"
 
 metadata:
   created_at: "2025-01-10T14:00:00Z"
+  updated_at: "2025-01-11T08:00:00Z"
+  version: "2.0.0"
   status: "active"
+  total_schemas: 21
+  layers: 4
+  source_files: 21
+  maintainer: "MachineNativeOps Team"

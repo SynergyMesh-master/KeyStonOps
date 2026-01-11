@@ -1,16 +1,683 @@
 version: "2.0.0"
-semantic_role: specification_definitions
+semantic_role: interface_specifications
 artifact_type: spec
 semantic_root: false
+module: monitoring-observability
+
+description: |
+  Complete interface specifications for the Monitoring & Observability module.
+  Defines contracts for metrics collection, logging, tracing, health monitoring,
+  and dashboard visualization with performance and behavioral guarantees.
 
 interfaces:
-  MetricsCollector:
+  # ============================================================================
+  # LAYER 1: METRICS COLLECTION INTERFACES (4 interfaces)
+  # ============================================================================
+  
+  IMetricsCollector:
+    description: "Core metrics collection interface"
     methods:
-      collect: {parameters: [{name: "metric", type: "Metric"}]}
-  Logger:
+      collect:
+        description: "Collect a single metric"
+        parameters:
+          - name: metric
+            type: Metric
+            required: true
+        returns:
+          type: void
+        errors:
+          - InvalidMetricError
+          - CollectionFailedError
+        performance:
+          p50: "< 5ms"
+          p95: "< 10ms"
+          p99: "< 20ms"
+          
+      collectBatch:
+        description: "Collect multiple metrics in batch"
+        parameters:
+          - name: metrics
+            type: Metric[]
+            required: true
+        returns:
+          type: CollectionResult
+        performance:
+          p50: "< 20ms"
+          p95: "< 50ms"
+          p99: "< 100ms"
+          throughput: "> 10000 metrics/sec"
+          
+      query:
+        description: "Query collected metrics"
+        parameters:
+          - name: query
+            type: MetricQuery
+            required: true
+        returns:
+          type: Metric[]
+        performance:
+          p50: "< 50ms"
+          p95: "< 100ms"
+          p99: "< 200ms"
+          
+    behavioral_contracts:
+      - "Metrics must be timestamped with nanosecond precision"
+      - "Duplicate metrics within 1s window are deduplicated"
+      - "Metrics are buffered for up to 5s before flushing"
+      - "Failed collections are retried up to 3 times"
+      
+  IPerformanceMonitor:
+    description: "System performance monitoring interface"
     methods:
-      log: {parameters: [{name: "message", type: "string"}, {name: "level", type: "string"}]}
+      getSystemMetrics:
+        description: "Get current system performance metrics"
+        parameters: []
+        returns:
+          type: PerformanceMetrics
+        performance:
+          p50: "< 10ms"
+          p95: "< 20ms"
+          p99: "< 50ms"
+          
+      startProfiling:
+        description: "Start performance profiling session"
+        parameters:
+          - name: config
+            type: ProfilingConfig
+            required: true
+        returns:
+          type: string  # session_id
+        performance:
+          p50: "< 5ms"
+          
+      stopProfiling:
+        description: "Stop profiling and get results"
+        parameters:
+          - name: session_id
+            type: string
+            required: true
+        returns:
+          type: PerformanceProfile
+        performance:
+          p50: "< 100ms"
+          
+    behavioral_contracts:
+      - "System metrics updated every 1 second"
+      - "Profiling has < 5% performance overhead"
+      - "Profiling sessions auto-expire after 1 hour"
+      
+  IHealthChecker:
+    description: "Health checking interface"
+    methods:
+      check:
+        description: "Perform health check"
+        parameters:
+          - name: check_name
+            type: string
+            required: false
+        returns:
+          type: HealthStatus
+        performance:
+          p50: "< 100ms"
+          p95: "< 200ms"
+          p99: "< 500ms"
+          
+      registerCheck:
+        description: "Register a custom health check"
+        parameters:
+          - name: check
+            type: HealthCheck
+            required: true
+        returns:
+          type: void
+        performance:
+          p50: "< 5ms"
+          
+    behavioral_contracts:
+      - "Health checks run on configured interval (default 30s)"
+      - "Failed checks are retried once before marking unhealthy"
+      - "Critical checks cause immediate unhealthy status"
+      
+  IAlertManager:
+    description: "Alert management interface"
+    methods:
+      createRule:
+        description: "Create new alert rule"
+        parameters:
+          - name: rule
+            type: AlertRule
+            required: true
+        returns:
+          type: string  # rule_id
+        performance:
+          p50: "< 10ms"
+          
+      evaluateRules:
+        description: "Evaluate all active alert rules"
+        parameters: []
+        returns:
+          type: AlertEvaluation[]
+        performance:
+          p50: "< 50ms"
+          p95: "< 100ms"
+          
+      triggerAlert:
+        description: "Manually trigger an alert"
+        parameters:
+          - name: alert
+            type: Alert
+            required: true
+        returns:
+          type: void
+        performance:
+          p50: "< 20ms"
+          
+    behavioral_contracts:
+      - "Rules evaluated every 10 seconds"
+      - "Alerts deduplicated within 5 minute window"
+      - "Critical alerts sent immediately"
+      - "Alert actions executed asynchronously"
+
+  # ============================================================================
+  # LAYER 2: LOGGING INTERFACES (4 interfaces)
+  # ============================================================================
+  
+  ILogger:
+    description: "Core logging interface"
+    methods:
+      log:
+        description: "Log a message"
+        parameters:
+          - name: level
+            type: LogLevel
+            required: true
+          - name: message
+            type: string
+            required: true
+          - name: context
+            type: object
+            required: false
+        returns:
+          type: void
+        performance:
+          p50: "< 1ms"
+          p95: "< 5ms"
+          p99: "< 10ms"
+          
+      debug:
+        description: "Log debug message"
+        parameters:
+          - name: message
+            type: string
+          - name: context
+            type: object
+        returns:
+          type: void
+          
+      info:
+        description: "Log info message"
+        parameters:
+          - name: message
+            type: string
+          - name: context
+            type: object
+        returns:
+          type: void
+          
+      warn:
+        description: "Log warning message"
+        parameters:
+          - name: message
+            type: string
+          - name: context
+            type: object
+        returns:
+          type: void
+          
+      error:
+        description: "Log error message"
+        parameters:
+          - name: message
+            type: string
+          - name: error
+            type: Error
+          - name: context
+            type: object
+        returns:
+          type: void
+          
+    behavioral_contracts:
+      - "Logs are buffered and flushed every 1 second"
+      - "Log level filtering applied before writing"
+      - "Structured logging with JSON format"
+      - "Automatic trace_id injection when available"
+      
+  ILogAggregator:
+    description: "Log aggregation interface"
+    methods:
+      aggregate:
+        description: "Aggregate logs from multiple sources"
+        parameters:
+          - name: sources
+            type: string[]
+            required: true
+          - name: query
+            type: LogQuery
+            required: true
+        returns:
+          type: LogEntry[]
+        performance:
+          p50: "< 100ms"
+          p95: "< 500ms"
+          p99: "< 1s"
+          
+      search:
+        description: "Full-text search across logs"
+        parameters:
+          - name: query
+            type: string
+            required: true
+          - name: filters
+            type: LogFilters
+            required: false
+        returns:
+          type: LogEntry[]
+        performance:
+          p50: "< 200ms"
+          p95: "< 1s"
+          p99: "< 2s"
+          
+    behavioral_contracts:
+      - "Logs indexed for fast searching"
+      - "Search supports regex and wildcards"
+      - "Results paginated with max 10000 per page"
+      
+  ILogAnalyzer:
+    description: "Log analysis interface"
+    methods:
+      analyze:
+        description: "Analyze log patterns"
+        parameters:
+          - name: logs
+            type: LogEntry[]
+            required: true
+        returns:
+          type: LogAnalysis
+        performance:
+          p50: "< 500ms"
+          p95: "< 2s"
+          
+      detectAnomalies:
+        description: "Detect anomalous log patterns"
+        parameters:
+          - name: time_range
+            type: TimeRange
+            required: true
+        returns:
+          type: Anomaly[]
+        performance:
+          p50: "< 1s"
+          p95: "< 5s"
+          
+    behavioral_contracts:
+      - "Pattern detection uses ML algorithms"
+      - "Anomaly detection with 95% accuracy"
+      - "Analysis results cached for 5 minutes"
+      
+  IAuditLogger:
+    description: "Audit logging interface for compliance"
+    methods:
+      logAuditEvent:
+        description: "Log an audit event"
+        parameters:
+          - name: event
+            type: AuditLog
+            required: true
+        returns:
+          type: void
+        performance:
+          p50: "< 5ms"
+          p95: "< 10ms"
+          
+      queryAuditLogs:
+        description: "Query audit logs"
+        parameters:
+          - name: query
+            type: AuditQuery
+            required: true
+        returns:
+          type: AuditLog[]
+        performance:
+          p50: "< 100ms"
+          p95: "< 500ms"
+          
+    behavioral_contracts:
+      - "Audit logs are immutable"
+      - "Audit logs retained for minimum 1 year"
+      - "All access to sensitive resources logged"
+      - "Audit logs encrypted at rest"
+
+  # ============================================================================
+  # LAYER 3: DISTRIBUTED TRACING INTERFACES (4 interfaces)
+  # ============================================================================
+  
+  ITraceManager:
+    description: "Distributed tracing management interface"
+    methods:
+      startTrace:
+        description: "Start a new trace"
+        parameters:
+          - name: operation_name
+            type: string
+            required: true
+          - name: context
+            type: TraceContext
+            required: false
+        returns:
+          type: Trace
+        performance:
+          p50: "< 1ms"
+          
+      endTrace:
+        description: "End a trace"
+        parameters:
+          - name: trace_id
+            type: string
+            required: true
+        returns:
+          type: void
+        performance:
+          p50: "< 5ms"
+          
+      getTrace:
+        description: "Retrieve a trace by ID"
+        parameters:
+          - name: trace_id
+            type: string
+            required: true
+        returns:
+          type: Trace
+        performance:
+          p50: "< 50ms"
+          p95: "< 100ms"
+          
+    behavioral_contracts:
+      - "Traces sampled based on configured rate"
+      - "Trace context propagated across services"
+      - "Traces exported to configured backend"
+      
+  ISpanCollector:
+    description: "Span collection interface"
+    methods:
+      startSpan:
+        description: "Start a new span"
+        parameters:
+          - name: operation_name
+            type: string
+            required: true
+          - name: parent_span_id
+            type: string
+            required: false
+        returns:
+          type: Span
+        performance:
+          p50: "< 1ms"
+          
+      endSpan:
+        description: "End a span"
+        parameters:
+          - name: span_id
+            type: string
+            required: true
+        returns:
+          type: void
+        performance:
+          p50: "< 1ms"
+          
+      addSpanEvent:
+        description: "Add event to span"
+        parameters:
+          - name: span_id
+            type: string
+          - name: event
+            type: SpanEvent
+        returns:
+          type: void
+          
+    behavioral_contracts:
+      - "Spans buffered and sent in batches"
+      - "Span overhead < 1% of operation time"
+      - "Parent-child relationships maintained"
+      
+  ITraceAnalyzer:
+    description: "Trace analysis interface"
+    methods:
+      analyzeTrace:
+        description: "Analyze a trace for performance issues"
+        parameters:
+          - name: trace_id
+            type: string
+            required: true
+        returns:
+          type: TraceAnalysis
+        performance:
+          p50: "< 100ms"
+          p95: "< 500ms"
+          
+      findBottlenecks:
+        description: "Identify performance bottlenecks"
+        parameters:
+          - name: trace_id
+            type: string
+            required: true
+        returns:
+          type: Bottleneck[]
+        performance:
+          p50: "< 200ms"
+          
+    behavioral_contracts:
+      - "Critical path calculated automatically"
+      - "Bottlenecks identified with > 90% accuracy"
+      - "Recommendations provided for optimization"
+      
+  IPerformanceProfiler:
+    description: "Performance profiling interface"
+    methods:
+      profile:
+        description: "Profile a trace"
+        parameters:
+          - name: trace_id
+            type: string
+            required: true
+        returns:
+          type: PerformanceProfile
+        performance:
+          p50: "< 500ms"
+          p95: "< 2s"
+          
+      compareProfiles:
+        description: "Compare two performance profiles"
+        parameters:
+          - name: profile1_id
+            type: string
+          - name: profile2_id
+            type: string
+        returns:
+          type: ProfileComparison
+        performance:
+          p50: "< 100ms"
+          
+    behavioral_contracts:
+      - "Profiles include CPU, memory, and I/O metrics"
+      - "Flame graphs generated automatically"
+      - "Profiles stored for 30 days"
+
+  # ============================================================================
+  # LAYER 4: DASHBOARD & VISUALIZATION INTERFACES (3 interfaces)
+  # ============================================================================
+  
+  IDashboardServer:
+    description: "Dashboard server interface"
+    methods:
+      createDashboard:
+        description: "Create a new dashboard"
+        parameters:
+          - name: config
+            type: DashboardConfig
+            required: true
+        returns:
+          type: string  # dashboard_id
+        performance:
+          p50: "< 50ms"
+          
+      getDashboard:
+        description: "Get dashboard by ID"
+        parameters:
+          - name: dashboard_id
+            type: string
+            required: true
+        returns:
+          type: Dashboard
+        performance:
+          p50: "< 20ms"
+          p95: "< 50ms"
+          
+      updateDashboard:
+        description: "Update dashboard configuration"
+        parameters:
+          - name: dashboard_id
+            type: string
+          - name: config
+            type: DashboardConfig
+        returns:
+          type: void
+        performance:
+          p50: "< 30ms"
+          
+    behavioral_contracts:
+      - "Dashboards auto-refresh based on interval"
+      - "Real-time updates via WebSocket"
+      - "Dashboard state persisted"
+      
+  IMetricsAPI:
+    description: "Metrics API interface"
+    methods:
+      query:
+        description: "Query metrics via API"
+        parameters:
+          - name: query
+            type: string
+            required: true
+          - name: time_range
+            type: TimeRange
+            required: true
+        returns:
+          type: MetricResult[]
+        performance:
+          p50: "< 100ms"
+          p95: "< 500ms"
+          p99: "< 1s"
+          
+      aggregate:
+        description: "Aggregate metrics"
+        parameters:
+          - name: metric_name
+            type: string
+          - name: aggregation
+            type: AggregationType
+          - name: time_range
+            type: TimeRange
+        returns:
+          type: AggregationResult
+        performance:
+          p50: "< 200ms"
+          
+    behavioral_contracts:
+      - "API rate limited to 1000 req/min per user"
+      - "Results cached for 30 seconds"
+      - "Supports PromQL-like query language"
+      
+  IReportGenerator:
+    description: "Report generation interface"
+    methods:
+      generateReport:
+        description: "Generate a report"
+        parameters:
+          - name: type
+            type: ReportType
+            required: true
+          - name: period
+            type: TimePeriod
+            required: true
+        returns:
+          type: Report
+        performance:
+          p50: "< 5s"
+          p95: "< 10s"
+          p99: "< 30s"
+          
+      scheduleReport:
+        description: "Schedule periodic report generation"
+        parameters:
+          - name: config
+            type: ReportSchedule
+            required: true
+        returns:
+          type: string  # schedule_id
+        performance:
+          p50: "< 50ms"
+          
+    behavioral_contracts:
+      - "Reports generated asynchronously"
+      - "Reports available in PDF and HTML formats"
+      - "Scheduled reports sent via email"
+      - "Reports retained for 90 days"
+
+# Performance contracts summary
+performance_summary:
+  metrics_collection:
+    latency_p50: "< 5ms"
+    latency_p99: "< 20ms"
+    throughput: "> 10000 metrics/sec"
+    
+  logging:
+    latency_p50: "< 1ms"
+    latency_p99: "< 10ms"
+    throughput: "> 50000 logs/sec"
+    
+  tracing:
+    overhead: "< 1%"
+    latency_p50: "< 1ms"
+    sampling_rate: "0.1 - 1.0"
+    
+  dashboard:
+    query_latency_p50: "< 100ms"
+    query_latency_p99: "< 1s"
+    refresh_rate: "1 - 60 seconds"
+
+# Dependencies
+dependencies:
+  internal:
+    - module: "protocol"
+      interfaces: ["IRequest", "IResponse"]
+    - module: "data-management"
+      interfaces: ["IStorage", "ICache"]
+  external:
+    - library: "prometheus-client"
+      version: "^14.0.0"
+    - library: "winston"
+      version: "^3.8.0"
+    - library: "opentelemetry-api"
+      version: "^1.9.0"
+    - library: "grafana-sdk"
+      version: "^9.0.0"
 
 metadata:
   created_at: "2025-01-10T14:00:00Z"
+  updated_at: "2025-01-11T08:30:00Z"
+  version: "2.0.0"
   status: "active"
+  total_interfaces: 15
+  total_methods: 45
+  source_files: 21
+  maintainer: "MachineNativeOps Team"
