@@ -1,0 +1,158 @@
+# MCP Level 1 Core Categories
+# Semantic Type: taxonomy
+# Description: 定義 artifact 的功能分類
+
+apiVersion: mcp.io/v1
+kind: Category
+metadata:
+  name: io.github.machinenativeops/mcp-categories
+  version: "1.0.0"
+  description: "MCP Level 1 Core Categories - Functional Classification"
+  semanticType: "taxonomy"
+  mcpEndpoint: "/categories/list"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mcp-categories"
+
+# Dependencies
+dependsOn: []
+
+# References
+references: []
+
+# Category Definitions
+categories:
+  # Foundation Categories
+  - id: "foundation"
+    name: "Foundation Protocol"
+    description: "Core protocol definitions and base standards"
+    subcategories:
+      - id: "protocol-definition"
+        name: "Protocol Definition"
+        description: "Base protocol standards and specifications"
+      - id: "base-schemas"
+        name: "Base Schemas"
+        description: "Foundational data schemas"
+      - id: "core-interfaces"
+        name: "Core Interfaces"
+        description: "Core API interfaces"
+      - id: "naming-standards"
+        name: "Naming Standards"
+        description: "Naming conventions and registries"
+  
+  # Artifact Categories
+  - id: "artifacts"
+    name: "Artifact Types"
+    description: "Classification of MCP artifacts"
+    subcategories:
+      - id: "manifest"
+        name: "Manifest"
+        description: "Artifact metadata and descriptors"
+      - id: "schema"
+        name: "Schema"
+        description: "Structure and validation definitions"
+      - id: "spec"
+        name: "Specification"
+        description: "Functional requirements and constraints"
+      - id: "index"
+        name: "Index"
+        description: "Artifact registries and catalogs"
+      - id: "taxonomy"
+        name: "Taxonomy"
+        description: "Classification and categorization"
+      - id: "governance"
+        name: "Governance"
+        description: "Rules, policies, and compliance"
+      - id: "toolchain"
+        name: "Toolchain"
+        description: "Development and deployment tools"
+      - id: "documentation"
+        name: "Documentation"
+        description: "Human-readable documentation"
+  
+  # Naming Registry Categories
+  - id: "naming-registries"
+    name: "Naming Registries"
+    description: "Seven core naming registries"
+    subcategories:
+      - id: "naming-rules"
+        name: "Naming Rules Registry"
+        description: "Naming format and conventions"
+      - id: "team-identity"
+        name: "Team Identity Registry"
+        description: "Team and organization namespaces"
+      - id: "directory-taxonomy"
+        name: "Directory Taxonomy Registry"
+        description: "Directory structure and classification"
+      - id: "artifact-entry"
+        name: "Artifact Entry Registry"
+        description: "Artifact instance identifiers"
+      - id: "mapping-key"
+        name: "Mapping Key Registry"
+        description: "Artifact relationship mappings"
+      - id: "dependency-identifier"
+        name: "Dependency Identifier Registry"
+        description: "Dependency version tracking"
+      - id: "reference-tag"
+        name: "Reference Tag Registry"
+        description: "Semantic reference annotations"
+      - id: "toolchain-identifier"
+        name: "Toolchain Identifier Registry"
+        description: "Toolchain version management"
+  
+  # Governance Categories
+  - id: "governance"
+    name: "Governance & Security"
+    description: "Governance, security, and compliance"
+    subcategories:
+      - id: "policies"
+        name: "Policies"
+        description: "Governance policy definitions"
+      - id: "roles"
+        name: "Roles & Permissions"
+        description: "Access control and authorization"
+      - id: "audit"
+        name: "Audit & Compliance"
+        description: "Audit logging and compliance reporting"
+      - id: "security"
+        name: "Security"
+        description: "Security policies and controls"
+  
+  # Workflow Categories
+  - id: "workflows"
+    name: "Workflows"
+    description: "Artifact-first workflows and processes"
+    subcategories:
+      - id: "publishing"
+        name: "Publishing"
+        description: "Artifact publishing workflows"
+      - id: "validation"
+        name: "Validation"
+        description: "Artifact validation processes"
+      - id: "verification"
+        name: "Verification"
+        description: "Namespace and ownership verification"
+      - id: "deployment"
+        name: "Deployment"
+        description: "Artifact deployment processes"
+
+# Category Mapping
+categoryMapping:
+  manifest.yaml: ["foundation", "artifacts/manifest"]
+  schema.yaml: ["foundation", "artifacts/schema"]
+  spec.yaml: ["foundation", "artifacts/spec"]
+  index.yaml: ["foundation", "artifacts/index"]
+  categories.yaml: ["foundation", "artifacts/taxonomy"]
+  governance.yaml: ["governance", "artifacts/governance"]
+  policies.yaml: ["governance", "artifacts/governance"]
+  roles.yaml: ["governance", "artifacts/governance"]
+  tools.yaml: ["foundation", "artifacts/toolchain"]
+
+# Statistics
+statistics:
+  totalCategories: 5
+  totalSubcategories: 25
+  totalMappings: 9

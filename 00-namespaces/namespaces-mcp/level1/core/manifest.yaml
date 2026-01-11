@@ -1,0 +1,74 @@
+# MCP Level 1 Core Manifest
+# Semantic Type: manifest
+# Description: MCP 服務的主描述檔，定義 artifact 的基本資訊、版本、依賴與分類
+
+apiVersion: mcp.io/v1
+kind: Manifest
+metadata:
+  name: io.github.machinenativeops/mcp-core
+  version: "1.0.0"
+  description: "MCP Level 1 Core - Foundation Protocol and Standards"
+  semanticType: "manifest"
+  mcpEndpoint: "/manifest/validate"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mcp-core"
+    
+  # Team Identity
+  teamIdentity:
+    namespace: "io.github.machinenativeops"
+    verificationMethod: "github-oauth"
+    
+  # Timestamps
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+# Dependencies
+dependsOn:
+  - artifact: "schema.yaml"
+    purpose: "Structure validation"
+    version: "1.0.0"
+  - artifact: "spec.yaml"
+    purpose: "Functional specifications"
+    version: "1.0.0"
+
+# References
+references:
+  - artifact: "categories.yaml"
+    purpose: "Functional classification"
+  - artifact: "index.yaml"
+    purpose: "Artifact entry index"
+
+# Artifact Information
+artifact:
+  type: "protocol"
+  category: "foundation"
+  status: "stable"
+  
+  # Capabilities
+  capabilities:
+    - "protocol-definition"
+    - "base-schemas"
+    - "core-interfaces"
+    - "naming-standards"
+    
+  # Compliance
+  compliance:
+    namingRules: "v1.0.0"
+    artifactFirst: true
+    semanticVersioning: true
+
+# Validation
+validation:
+  schemaValidation: true
+  dependencyCheck: true
+  namespaceVerification: true
+  
+# Toolchain
+toolchain:
+  validator: "mcp-validator@v1.2.0"
+  publisher: "mcp-publisher@v0.9.1"
+  inspector: "mcp-inspector@2024-01-11"

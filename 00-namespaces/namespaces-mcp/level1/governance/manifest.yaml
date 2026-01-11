@@ -1,0 +1,108 @@
+# MCP Level 1 Governance Manifest
+# Semantic Type: manifest
+# Description: MCP 治理 artifact 的主描述檔
+
+apiVersion: mcp.io/v1
+kind: Manifest
+metadata:
+  name: io.github.machinenativeops/mcp-governance
+  version: "1.0.0"
+  description: "MCP Level 1 Governance - Governance Artifacts and Policies"
+  semanticType: "manifest"
+  mcpEndpoint: "/manifest/validate"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mcp-governance"
+    
+  # Team Identity
+  teamIdentity:
+    namespace: "io.github.machinenativeops"
+    verificationMethod: "github-oauth"
+    
+  # Timestamps
+  createdAt: "2024-01-11T00:00:00Z"
+  updatedAt: "2024-01-11T00:00:00Z"
+
+# Dependencies
+dependsOn:
+  - artifact: "schema.yaml"
+    purpose: "Structure validation"
+    version: "1.0.0"
+  - artifact: "spec.yaml"
+    purpose: "Functional specifications"
+    version: "1.0.0"
+
+# References
+references:
+  - artifact: "categories.yaml"
+    purpose: "Functional classification"
+  - artifact: "index.yaml"
+    purpose: "Artifact entry index"
+
+# Artifact Information
+artifact:
+  type: "governance"
+  category: "governance-security"
+  status: "stable"
+  
+  # Capabilities
+  capabilities:
+    - "policy-enforcement"
+    - "access-control"
+    - "audit-logging"
+    - "compliance-reporting"
+    - "security-governance"
+    
+  # Compliance
+  compliance:
+    namingRules: "v1.0.0"
+    artifactFirst: true
+    semanticVersioning: true
+    securityStandards:
+      - "OAuth 2.0"
+      - "RBAC"
+      - "Audit Logging"
+
+# Governance Scope
+governanceScope:
+  # Namespace Governance
+  namespaceGovernance:
+    enabled: true
+    verificationRequired: true
+    conflictResolution: "ownership-priority"
+    
+  # Artifact Governance
+  artifactGovernance:
+    enabled: true
+    validationRequired: true
+    signingRequired: true
+    
+  # Security Governance
+  securityGovernance:
+    enabled: true
+    vulnerabilityScanRequired: true
+    accessControlModel: "RBAC"
+    
+  # Audit Governance
+  auditGovernance:
+    enabled: true
+    loggingRequired: true
+    retentionPeriod: "365 days"
+    complianceReporting: true
+
+# Validation
+validation:
+  schemaValidation: true
+  dependencyCheck: true
+  namespaceVerification: true
+  policyCompliance: true
+  
+# Toolchain
+toolchain:
+  validator: "mcp-validator@v1.2.0"
+  publisher: "mcp-publisher@v0.9.1"
+  complianceChecker: "mcp-compliance@v1.0.0"
+  securityScanner: "mcp-security-scan@v2.0.0"

@@ -1,0 +1,125 @@
+# MCP Level 1 Governance Schema
+# Semantic Type: schema
+# Description: MCP 治理 artifact 的結構與驗證規則
+
+apiVersion: mcp.io/v1
+kind: Schema
+metadata:
+  name: io.github.machinenativeops/mcp-governance-schema
+  version: "1.0.0"
+  description: "MCP Level 1 Governance Schema - Structure and Validation Rules"
+  semanticType: "schema"
+  mcpEndpoint: "/schema/validate"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mcp-governance-schema"
+
+# Dependencies
+dependsOn: []
+
+# References
+references:
+  - artifact: "spec.yaml"
+    purpose: "Functional specifications"
+
+# JSON Schema Definition
+schema:
+  $schema: "http://json-schema.org/draft-07/schema#"
+  title: "MCP Governance Artifact Schema"
+  type: "object"
+  
+  required:
+    - apiVersion
+    - kind
+    - metadata
+    - governance
+    
+  properties:
+    apiVersion:
+      type: "string"
+      pattern: "^mcp\\.io/v[0-9]+$"
+      
+    kind:
+      type: "string"
+      enum: ["Governance", "Policy", "Role"]
+      
+    metadata:
+      type: "object"
+      required:
+        - name
+        - version
+        - semanticType
+      properties:
+        name:
+          type: "string"
+          pattern: "^[a-z0-9.-]+/[a-z0-9-]+$"
+        version:
+          type: "string"
+          pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        semanticType:
+          type: "string"
+          enum: ["governance", "policy", "role"]
+          
+    governance:
+      type: "object"
+      properties:
+        namespaceGovernance:
+          type: "object"
+          properties:
+            ownershipVerification:
+              type: "object"
+              required: ["required", "methods"]
+              properties:
+                required:
+                  type: "boolean"
+                methods:
+                  type: "array"
+                  items:
+                    type: "object"
+                    required: ["name", "description"]
+                    
+        artifactGovernance:
+          type: "object"
+          properties:
+            publishingRules:
+              type: "array"
+              items:
+                type: "string"
+            versioningRules:
+              type: "array"
+              items:
+                type: "string"
+                
+        securityGovernance:
+          type: "object"
+          properties:
+            artifactSigning:
+              type: "object"
+              required: ["required", "algorithm"]
+            dependencySecurity:
+              type: "object"
+              required: ["scanRequired"]
+            accessControl:
+              type: "object"
+              required: ["model"]
+              
+        auditGovernance:
+          type: "object"
+          properties:
+            auditLogging:
+              type: "object"
+              required: ["enabled", "retention"]
+            complianceReporting:
+              type: "object"
+              required: ["enabled"]
+
+# Validation Rules
+validation:
+  strictMode: true
+  allowAdditionalProperties: false
+  validateGovernanceRules: true
+  validatePolicies: true
+  validateRoles: true

@@ -1,0 +1,177 @@
+# MCP Level 1 Core Specification
+# Semantic Type: spec
+# Description: 詳細描述 artifact 的功能規格與行為約束
+
+apiVersion: mcp.io/v1
+kind: Spec
+metadata:
+  name: io.github.machinenativeops/mcp-core-spec
+  version: "1.0.0"
+  description: "MCP Level 1 Core Specification - Functional Requirements and Behavior Constraints"
+  semanticType: "spec"
+  mcpEndpoint: "/spec/validate"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mcp-core-spec"
+
+# Dependencies
+dependsOn:
+  - artifact: "schema.yaml"
+    purpose: "Structure validation"
+    version: "1.0.0"
+
+# References
+references: []
+
+# Specification
+specification:
+  # Protocol Definition
+  protocol:
+    name: "Model Context Protocol (MCP)"
+    version: "1.0.0"
+    description: "Foundation protocol for AI tool and resource management"
+    
+    # Core Capabilities
+    capabilities:
+      - name: "protocol-definition"
+        description: "Define base protocol standards and interfaces"
+        required: true
+        
+      - name: "base-schemas"
+        description: "Provide foundational data schemas"
+        required: true
+        
+      - name: "core-interfaces"
+        description: "Define core API interfaces"
+        required: true
+        
+      - name: "naming-standards"
+        description: "Establish naming conventions and registries"
+        required: true
+    
+    # Communication Model
+    communication:
+      transport: ["stdio", "http", "websocket"]
+      serialization: ["json", "msgpack"]
+      authentication: ["oauth", "jwt", "api-key"]
+      
+    # Message Format
+    messageFormat:
+      request:
+        required: ["jsonrpc", "method", "id"]
+        optional: ["params"]
+      response:
+        required: ["jsonrpc", "id"]
+        oneOf: ["result", "error"]
+      notification:
+        required: ["jsonrpc", "method"]
+        optional: ["params"]
+  
+  # Naming Standards
+  namingStandards:
+    format: "reverse-DNS"
+    pattern: "^[a-z0-9.-]+/[a-z0-9-]+$"
+    
+    # Namespace Verification
+    verification:
+      methods:
+        - "github-oauth"
+        - "dns-txt"
+        - "http-well-known"
+      required: true
+      
+    # Conflict Avoidance
+    conflictResolution:
+      strategy: "ownership-priority"
+      fallback: "timestamp-priority"
+      
+  # Artifact-First Workflow
+  artifactFirst:
+    enabled: true
+    requirements:
+      - "Semantic type annotation"
+      - "Dependency declaration"
+      - "Reference tracking"
+      - "Endpoint mapping"
+      
+    # Artifact Lifecycle
+    lifecycle:
+      stages:
+        - "draft"
+        - "review"
+        - "approved"
+        - "published"
+        - "deprecated"
+        - "archived"
+      
+  # Validation Requirements
+  validation:
+    schemaValidation:
+      required: true
+      strictMode: true
+      
+    dependencyCheck:
+      required: true
+      recursive: true
+      
+    namespaceVerification:
+      required: true
+      methods: ["oauth", "dns", "http"]
+      
+    semanticValidation:
+      required: true
+      checkReferences: true
+      checkEndpoints: true
+  
+  # Security Requirements
+  security:
+    namespaceOwnership:
+      verification: "required"
+      methods: ["oauth", "dns", "http"]
+      
+    artifactSigning:
+      enabled: true
+      algorithm: "ed25519"
+      
+    dependencySecurity:
+      scanRequired: true
+      allowedSources: ["verified-namespaces"]
+      
+  # Compliance
+  compliance:
+    standards:
+      - "MCP Registry API v1.0"
+      - "Semantic Versioning 2.0.0"
+      - "JSON Schema Draft-07"
+      
+    requirements:
+      - "Artifact-first workflow"
+      - "Namespace verification"
+      - "Dependency tracking"
+      - "Semantic annotation"
+
+# Behavioral Constraints
+constraints:
+  # Naming Constraints
+  naming:
+    - "Must use reverse-DNS format"
+    - "Namespace must be verified"
+    - "Artifact name must be lowercase"
+    - "No special characters except hyphen"
+    
+  # Dependency Constraints
+  dependencies:
+    - "Must declare all dependencies"
+    - "Circular dependencies not allowed"
+    - "Version pinning required"
+    - "Transitive dependencies must be resolved"
+    
+  # Versioning Constraints
+  versioning:
+    - "Must follow semantic versioning"
+    - "Breaking changes require major version bump"
+    - "Backward compatibility in minor versions"
+    - "Patch versions for bug fixes only"
