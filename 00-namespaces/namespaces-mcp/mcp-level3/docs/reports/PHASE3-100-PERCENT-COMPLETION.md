@@ -545,11 +545,11 @@ The system is now **fully production-ready** and meets all enterprise requiremen
 
 ### Documentation
 - **API Docs:** `/00-namespaces/namespaces-mcp/openapi.yaml`
-- **Deployment Guide:** `/00-namespaces/DEPLOYMENT-GUIDE.md`
-- **Developer Guide:** `/00-namespaces/DEVELOPER-GUIDE.md`
-- **Operations Manual:** `/00-namespaces/OPERATIONS-MANUAL.md`
-- **Security Audit:** `/00-namespaces/SECURITY-AUDIT-REPORT.md`
-- **DR Plan:** `/00-namespaces/DISASTER-RECOVERY-PLAN.md`
+- **Deployment Guide:** `/00-namespaces/docs/DEPLOYMENT-GUIDE.md`
+- **Developer Guide:** `/00-namespaces/docs/DEVELOPER-GUIDE.md`
+- **Operations Manual:** `/00-namespaces/docs/OPERATIONS-MANUAL.md`
+- **Security Audit:** `/00-namespaces/docs/SECURITY-AUDIT-REPORT.md`
+- **DR Plan:** `/00-namespaces/docs/DISASTER-RECOVERY-PLAN.md`
 
 ### Contact
 - **GitHub:** https://github.com/MachineNativeOps/machine-native-ops
