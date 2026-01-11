@@ -175,7 +175,7 @@ class TestNetworkFailure:
                     ) as response:
                         if response.status >= 500:
                             errors += 1
-                except:
+                except Exception:
                     errors += 1
             
             # Circuit breaker should prevent cascading failures
