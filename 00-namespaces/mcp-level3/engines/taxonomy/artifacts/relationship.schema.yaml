@@ -1,0 +1,152 @@
+# Relationship Artifact Schema
+# Defines the structure for relationships between entities in taxonomy
+
+version: "1.0.0"
+semantic_role: "relationship"
+artifact_type: "schema"
+semantic_root: true
+
+metadata:
+  name: "relationship"
+  description: "Schema for relationships connecting entities in the taxonomy system"
+  author: "MCP Core Team"
+  created: "2025-01-11"
+  updated: "2025-01-11"
+  tags:
+    - "taxonomy"
+    - "relationship"
+    - "semantic"
+    - "graph"
+
+schema:
+  type: "object"
+  required:
+    - "relationship_id"
+    - "relation_type"
+    - "source_entity"
+    - "target_entity"
+    - "metadata"
+  properties:
+    relationship_id:
+      type: "string"
+      pattern: "^rel:[a-zA-Z0-9_-]+:[0-9]+$"
+      example: "rel:works_at:001"
+      
+    relation_type:
+      type: "string"
+      description: "Type of relationship"
+      example: "WORKS_AT"
+      
+    label:
+      type: "string"
+      description: "Human-readable label"
+      example: "works at"
+      
+    source_entity:
+      type: "object"
+      required:
+        - "entity_id"
+        - "entity_type"
+      properties:
+        entity_id:
+          type: "string"
+          example: "entity:person:john_doe"
+        entity_type:
+          type: "string"
+          example: "Person"
+        label:
+          type: "string"
+          example: "John Doe"
+          
+    target_entity:
+      type: "object"
+      required:
+        - "entity_id"
+        - "entity_type"
+      properties:
+        entity_id:
+          type: "string"
+          example: "entity:organization:acme_corp"
+        entity_type:
+          type: "string"
+          example: "Organization"
+        label:
+          type: "string"
+          example: "ACME Corporation"
+          
+    properties:
+      type: "object"
+      description: "Relationship properties"
+      additionalProperties: true
+      example:
+        since: "2020-01-01"
+        role: "Senior Engineer"
+        
+    directionality:
+      type: "string"
+      enum: ["directed", "undirected", "bidirectional"]
+      default: "directed"
+      example: "directed"
+      
+    metadata:
+      type: "object"
+      required:
+        - "extracted_at"
+        - "confidence"
+      properties:
+        extracted_at:
+          type: "string"
+          format: "date-time"
+          example: "2025-01-11T10:00:00Z"
+        confidence:
+          type: "number"
+          minimum: 0
+          maximum: 1
+          example: 0.95
+        source:
+          type: "string"
+          example: "doc:123"
+        extraction_method:
+          type: "string"
+          enum: ["manual", "rule-based", "ml-model", "llm"]
+          example: "llm"
+
+validation_rules:
+  - rule: "relationship_id_format"
+    description: "Relationship ID must follow naming convention"
+    expression: "relationship_id matches pattern 'rel:type:id'"
+    
+  - rule: "confidence_range"
+    description: "Confidence must be between 0 and 1"
+    expression: "metadata.confidence >= 0 && metadata.confidence <= 1"
+
+examples:
+  - name: "employment_relationship"
+    description: "Employment relationship between person and organization"
+    data:
+      relationship_id: "rel:works_at:001"
+      relation_type: "WORKS_AT"
+      label: "works at"
+      source_entity:
+        entity_id: "entity:person:john_doe"
+        entity_type: "Person"
+        label: "John Doe"
+      target_entity:
+        entity_id: "entity:organization:acme_corp"
+        entity_type: "Organization"
+        label: "ACME Corporation"
+      properties:
+        since: "2020-01-01"
+        role: "Senior Engineer"
+      directionality: "directed"
+      metadata:
+        extracted_at: "2025-01-11T10:00:00Z"
+        confidence: 0.95
+        source: "doc:123"
+        extraction_method: "llm"
+
+usage_guidelines:
+  - "Use consistent relation type naming"
+  - "Track extraction confidence"
+  - "Specify directionality clearly"
+  - "Include temporal properties when relevant"

@@ -19,14 +19,14 @@ Implement MCP Level 3 Semantic Capability Map and Control Plane based on the com
 ### Phase 2: Artifact Schema Definition (In Progress)
 - [x] RAG Engine - Create artifact schemas ✅ 4/4 (100%)
 - [x] DAG Engine - Create artifact schemas ✅ 3/3 (100%)
-- [x] Governance Engine - Create artifact schemas ✅ 2/4 (50%)
-- [x] Taxonomy Engine - Create artifact schemas ✅ 1/5 (20%)
-- [x] Execution Engine - Create artifact schemas ✅ 1/4 (25%)
+- [x] Governance Engine - Create artifact schemas ✅ 3/4 (75%)
+- [x] Taxonomy Engine - Create artifact schemas ✅ 2/5 (40%)
+- [x] Execution Engine - Create artifact schemas ✅ 2/4 (50%)
 - [x] Validation Engine - Create artifact schemas ✅ 1/5 (20%)
 - [x] Promotion Engine - Create artifact schemas ✅ 1/4 (25%)
 - [x] Artifact Registry - Create artifact schemas ✅ 1/5 (20%)
 
-**Phase 2 Progress: 14/30 schemas completed (47%)**
+**Phase 2 Progress: 17/30 schemas completed (57%)**
 
 ### Phase 3: Engine Manifest Files
 - [ ] Create RAG Engine manifest

@@ -1,0 +1,205 @@
+# Execution Log Artifact Schema
+# Defines the structure for workflow execution logs
+
+version: "1.0.0"
+semantic_role: "execution_log"
+artifact_type: "schema"
+semantic_root: true
+
+metadata:
+  name: "execution-log"
+  description: "Schema for detailed workflow execution logs with task-level tracking"
+  author: "MCP Core Team"
+  created: "2025-01-11"
+  updated: "2025-01-11"
+  tags:
+    - "execution"
+    - "logging"
+    - "monitoring"
+    - "observability"
+
+schema:
+  type: "object"
+  required:
+    - "log_id"
+    - "execution_id"
+    - "dag_id"
+    - "status"
+    - "tasks"
+    - "metadata"
+  properties:
+    log_id:
+      type: "string"
+      pattern: "^log:[a-zA-Z0-9_-]+:[0-9]+$"
+      example: "log:exec:20250111_100000"
+      
+    execution_id:
+      type: "string"
+      example: "exec:20250111_100000"
+      
+    dag_id:
+      type: "string"
+      example: "dag:ml_pipeline:001"
+      
+    status:
+      type: "string"
+      enum: ["running", "success", "failed", "cancelled", "timeout"]
+      example: "success"
+      
+    tasks:
+      type: "array"
+      description: "Task execution logs"
+      items:
+        type: "object"
+        required:
+          - "task_id"
+          - "status"
+          - "start_time"
+        properties:
+          task_id:
+            type: "string"
+            example: "task:ingest_data"
+          node_id:
+            type: "string"
+            example: "node:data_ingestion"
+          status:
+            type: "string"
+            enum: ["pending", "running", "success", "failed", "skipped", "retry"]
+            example: "success"
+          start_time:
+            type: "string"
+            format: "date-time"
+            example: "2025-01-11T10:00:00Z"
+          end_time:
+            type: "string"
+            format: "date-time"
+            example: "2025-01-11T10:05:00Z"
+          duration_seconds:
+            type: "number"
+            minimum: 0
+            example: 300.5
+          retry_count:
+            type: "integer"
+            minimum: 0
+            default: 0
+            example: 0
+          exit_code:
+            type: "integer"
+            example: 0
+          stdout:
+            type: "string"
+            description: "Standard output (truncated)"
+            example: "Processing completed successfully"
+          stderr:
+            type: "string"
+            description: "Standard error (truncated)"
+            example: ""
+          error_message:
+            type: "string"
+            example: ""
+          resources_used:
+            type: "object"
+            properties:
+              cpu_seconds:
+                type: "number"
+                example: 150.2
+              memory_mb:
+                type: "number"
+                example: 2048.5
+              
+    timeline:
+      type: "object"
+      description: "Execution timeline"
+      properties:
+        start_time:
+          type: "string"
+          format: "date-time"
+          example: "2025-01-11T10:00:00Z"
+        end_time:
+          type: "string"
+          format: "date-time"
+          example: "2025-01-11T11:00:00Z"
+        total_duration_seconds:
+          type: "number"
+          example: 3600.0
+          
+    summary:
+      type: "object"
+      description: "Execution summary"
+      properties:
+        total_tasks:
+          type: "integer"
+          example: 10
+        successful_tasks:
+          type: "integer"
+          example: 9
+        failed_tasks:
+          type: "integer"
+          example: 1
+        skipped_tasks:
+          type: "integer"
+          example: 0
+          
+    metadata:
+      type: "object"
+      required:
+        - "created_at"
+      properties:
+        created_at:
+          type: "string"
+          format: "date-time"
+          example: "2025-01-11T11:00:00Z"
+        triggered_by:
+          type: "string"
+          example: "user:ml_engineer"
+        trigger_type:
+          type: "string"
+          enum: ["manual", "scheduled", "event", "api"]
+          example: "scheduled"
+
+validation_rules:
+  - rule: "log_id_format"
+    description: "Log ID must follow naming convention"
+    expression: "log_id matches pattern 'log:type:timestamp'"
+
+examples:
+  - name: "successful_pipeline_execution"
+    description: "Successful ML pipeline execution log"
+    data:
+      log_id: "log:exec:20250111_100000"
+      execution_id: "exec:20250111_100000"
+      dag_id: "dag:ml_pipeline:001"
+      status: "success"
+      tasks:
+        - task_id: "task:ingest_data"
+          node_id: "node:data_ingestion"
+          status: "success"
+          start_time: "2025-01-11T10:00:00Z"
+          end_time: "2025-01-11T10:05:00Z"
+          duration_seconds: 300.5
+          retry_count: 0
+          exit_code: 0
+          stdout: "Ingested 10000 records"
+          stderr: ""
+          resources_used:
+            cpu_seconds: 150.2
+            memory_mb: 2048.5
+      timeline:
+        start_time: "2025-01-11T10:00:00Z"
+        end_time: "2025-01-11T11:00:00Z"
+        total_duration_seconds: 3600.0
+      summary:
+        total_tasks: 10
+        successful_tasks: 10
+        failed_tasks: 0
+        skipped_tasks: 0
+      metadata:
+        created_at: "2025-01-11T11:00:00Z"
+        triggered_by: "user:ml_engineer"
+        trigger_type: "scheduled"
+
+usage_guidelines:
+  - "Log all task executions"
+  - "Track resource usage for optimization"
+  - "Retain logs for debugging and audit"
+  - "Monitor execution patterns"
