@@ -177,6 +177,7 @@ class TestNetworkFailure:
                         if response.status >= 500:
                             errors += 1
                 except Exception:
+                    # Count any exception (network errors, timeouts, etc.) as an error for circuit breaker testing
                     errors += 1
             
             # Circuit breaker should prevent cascading failures
@@ -211,6 +212,7 @@ class TestResourceExhaustion:
                         else:
                             tasks_failed += 1
                 except Exception:
+                    # Count any exception (connection errors, timeouts, etc.) as a failed task under memory pressure
                     tasks_failed += 1
             
             # System should reject new tasks gracefully
