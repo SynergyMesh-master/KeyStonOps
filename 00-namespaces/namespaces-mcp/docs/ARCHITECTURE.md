@@ -1,378 +1,191 @@
-# Architecture Documentation
+# MCP Levels 目錄結構說明
 
-## System Overview
-
-The Machine Native Ops platform is built on a modular, event-driven architecture designed for infinite scalability, carbon-neutral operations, and zero-trust security.
-
----
-
-## High-Level Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Application Layer                             │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │   Web Apps   │  │   Services   │  │   APIs       │          │
-│  └──────────────┘  └──────────────┘  └──────────────┘          │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Platform Layer                                │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │ Scalability  │  │Sustainability│  │  Security    │          │
-│  │   Fabric     │  │  Operations  │  │   Fabric     │          │
-│  └──────────────┘  └──────────────┘  └──────────────┘          │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Infrastructure Layer                          │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │   Compute    │  │   Storage    │  │   Network    │          │
-│  └──────────────┘  └──────────────┘  └──────────────┘          │
-└─────────────────────────────────────────────────────────────────┘
-```
+**日期:** 2025年1月11日  
+**狀態:** ✅ 已完成
 
 ---
 
-## Module Architecture
+## 📋 目錄結構概覽
 
-### 1. Scalability Fabric
+### 為什麼沒有 `mcp-level2` 資料夾？
 
-**Purpose:** Infinite scalability with intelligent resource management
+**答案很簡單：`namespaces-mcp` 目錄本身就是 MCP Level 2 的完整實現！**
 
-**Components:**
-- Elastic Resource Manager
-- Global Load Balancer
-- Auto-Scaling Engine
-- Resource Pool Manager
-- Performance Optimizer
-
-**Architecture Pattern:** Event-Driven + Microservices
+### 完整的層級結構
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│         Infinite Scalability System (Orchestrator)          │
-└─────────────────────────────────────────────────────────────┘
-                          │
-        ┌─────────────────┼─────────────────┐
-        │                 │                 │
-        ▼                 ▼                 ▼
-┌───────────────┐ ┌───────────────┐ ┌───────────────┐
-│   Resource    │ │     Load      │ │  Auto-Scaling │
-│   Manager     │ │   Balancer    │ │    Engine     │
-└───────────────┘ └───────────────┘ └───────────────┘
-        │                 │                 │
-        └─────────────────┼─────────────────┘
-                          ▼
-                ┌───────────────────┐
-                │   Resource Pool   │
-                │     Manager       │
-                └───────────────────┘
-                          │
-                          ▼
-                ┌───────────────────┐
-                │   Performance     │
-                │    Optimizer      │
-                └───────────────────┘
-```
-
-### 2. Sustainability Operations
-
-**Purpose:** Carbon-neutral computing with real-time tracking
-
-**Components:**
-- Carbon Monitor
-- Green Scheduler
-- Energy Optimizer
-- Sustainability Reporter
-
-**Architecture Pattern:** Pipeline + Event-Driven
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│         Carbon-Neutral System (Orchestrator)                │
-└─────────────────────────────────────────────────────────────┘
-                          │
-        ┌─────────────────┼─────────────────┐
-        │                 │                 │
-        ▼                 ▼                 ▼
-┌───────────────┐ ┌───────────────┐ ┌───────────────┐
-│    Carbon     │ │     Green     │ │    Energy     │
-│   Monitor     │ │   Scheduler   │ │   Optimizer   │
-└───────────────┘ └───────────────┘ └───────────────┘
-        │                 │                 │
-        └─────────────────┼─────────────────┘
-                          ▼
-                ┌───────────────────┐
-                │  Sustainability   │
-                │     Reporter      │
-                └───────────────────┘
-```
-
-### 3. Security Fabric
-
-**Purpose:** Zero-trust security with quantum resistance
-
-**Components:**
-- Quantum Cryptography
-- AI Threat Detection
-- Behavioral Authentication
-- Zero-Trust Gateway
-- Security Intelligence
-
-**Architecture Pattern:** Layered Security + Zero-Trust
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│         Zero-Trust Security System (Orchestrator)           │
-└─────────────────────────────────────────────────────────────┘
-                          │
-        ┌─────────────────┼─────────────────┐
-        │                 │                 │
-        ▼                 ▼                 ▼
-┌───────────────┐ ┌───────────────┐ ┌───────────────┐
-│   Quantum     │ │  AI Threat    │ │  Behavioral   │
-│ Cryptography  │ │  Detection    │ │     Auth      │
-└───────────────┘ └───────────────┘ └───────────────┘
-        │                 │                 │
-        └─────────────────┼─────────────────┘
-                          ▼
-                ┌───────────────────┐
-                │   Zero-Trust      │
-                │     Gateway       │
-                └───────────────────┘
-                          │
-                          ▼
-                ┌───────────────────┐
-                │    Security       │
-                │  Intelligence     │
-                └───────────────────┘
+machine-native-ops/
+└── 00-namespaces/
+    ├── namespaces-mcp/          ← MCP Level 2 (基礎實現)
+    │   ├── schemas/             ← Level 2 數據結構定義
+    │   ├── specs/               ← Level 2 接口規範
+    │   ├── policies/            ← Level 2 治理政策
+    │   ├── bundles/             ← Level 2 部署組件
+    │   ├── graphs/              ← Level 2 依賴圖
+    │   ├── flows/               ← Level 2 工作流
+    │   ├── registries/          ← Level 2 命名註冊表
+    │   ├── endpoints/           ← Level 2 端點映射
+    │   ├── reports/             ← Level 2 整合報告
+    │   ├── src/                 ← Level 2 源代碼
+    │   ├── config/              ← Level 2 配置
+    │   ├── docs/                ← Level 2 文檔
+    │   └── tests/               ← Level 2 測試
+    │
+    ├── namespaces-mcp/level3/              ← MCP Level 3 (語義控制平面)
+    │   ├── engines/             ← Level 3 語義引擎
+    │   ├── rag/                 ← Level 3 RAG 系統
+    │   ├── dag/                 ← Level 3 DAG 工作流
+    │   └── ...
+    │
+    └── namespaces-mcp/level4/              ← MCP Level 4 (自主演化)
+        ├── interfaces/          ← Level 4 接口定義
+        ├── engines/             ← Level 4 自主引擎
+        └── ...
 ```
 
 ---
 
-## Design Principles
+## 🎯 各層級的定位
 
-### 1. Event-Driven Architecture
+### MCP Level 2 (`namespaces-mcp/`)
 
-All components communicate through events:
+**定位:** 基礎設施層 - Artifact-First Workflow
 
-```typescript
-// Component emits event
-component.emit('resource-allocated', { resourceId, amount });
+**核心功能:**
+- ✅ 完整的 artifact 結構 (schemas, specs, policies, bundles, graphs, flows)
+- ✅ 模組化設計 (6個核心模組)
+- ✅ 命名規範與註冊表
+- ✅ 依賴管理與語義閉環
+- ✅ 端點映射與 API 治理
 
-// Other components listen
-component.on('resource-allocated', (data) => {
-  // React to event
-});
-```
+**已完成內容:**
+- 24 個 artifacts (schemas, specs, policies, bundles, graphs, flows)
+- 4 個完整模組 (Data Management, Monitoring, Governance, Integration)
+- ~260 KB 生產級 YAML 配置
+- 完整的源代碼實現
 
-**Benefits:**
-- Loose coupling
-- Asynchronous processing
-- Scalability
-- Resilience
+### MCP Level 3 (`namespaces-mcp/level3/`)
 
-### 2. Microservices Pattern
+**定位:** 語義控制平面 - Semantic Control Plane
 
-Each component is independently deployable:
+**核心功能:**
+- 語義引擎 (RAG, DAG, Taxonomy, Execution)
+- 治理引擎 (Policy, Compliance, Audit)
+- 多模態 RAG
+- 邊緣計算
+- 聯邦學習
 
-- **Isolation:** Components run in separate processes
-- **Scalability:** Scale components independently
-- **Resilience:** Failure isolation
-- **Technology Freedom:** Use best tool for each job
+**狀態:** 75% 完成 (3/4 階段)
 
-### 3. Layered Architecture
+### MCP Level 4 (`namespaces-mcp/level4/`)
 
-Clear separation of concerns:
+**定位:** 自主演化層 - Semantic Autonomy
 
-1. **Presentation Layer:** APIs and interfaces
-2. **Business Logic Layer:** Core functionality
-3. **Data Layer:** Storage and persistence
-4. **Infrastructure Layer:** System resources
+**核心功能:**
+- 自主演化引擎 (Evolution, Reflex, Closure)
+- 自我觀察與修復
+- 自我治理與審計
+- 自我配置與部署
 
-### 4. SOLID Principles
-
-- **Single Responsibility:** Each component has one purpose
-- **Open/Closed:** Open for extension, closed for modification
-- **Liskov Substitution:** Subtypes are substitutable
-- **Interface Segregation:** Small, focused interfaces
-- **Dependency Inversion:** Depend on abstractions
+**狀態:** 75% 完成 (3/4 階段)
 
 ---
 
-## Data Flow
+## 📊 為什麼這樣設計？
 
-### Resource Allocation Flow
+### 1. 語義層級分離
+
+每個層級都有明確的職責：
+- **Level 2:** 提供基礎設施和 artifact 管理
+- **Level 3:** 提供語義能力和控制平面
+- **Level 4:** 提供自主演化和智能治理
+
+### 2. 獨立演進
+
+- Level 2 作為基礎，穩定且完整
+- Level 3 和 Level 4 可以獨立演進和擴展
+- 每個層級都可以單獨部署和測試
+
+### 3. 清晰的依賴關係
 
 ```
-1. Request → Elastic Resource Manager
-2. Manager → Check Capacity
-3. Manager → Select Strategy
-4. Manager → Allocate Resources
-5. Manager → Update Metrics
-6. Manager → Emit Event
-7. Event → Auto-Scaling Engine
-8. Engine → Evaluate Scaling
-9. Engine → Execute Scaling (if needed)
-```
-
-### Security Flow
-
-```
-1. Request → Zero-Trust Gateway
-2. Gateway → Evaluate Policies
-3. Gateway → Behavioral Authentication
-4. Auth → Risk Assessment
-5. Auth → Authentication Decision
-6. Gateway → Access Decision
-7. Decision → Security Intelligence
-8. Intelligence → Log Event
-9. Intelligence → Correlate Events
-10. Intelligence → Detect Threats
+Level 4 (自主演化)
+    ↓ 依賴
+Level 3 (語義控制)
+    ↓ 依賴
+Level 2 (基礎設施) ← namespaces-mcp
 ```
 
 ---
 
-## Scalability Strategy
+## 🔍 如何識別各層級？
 
-### Horizontal Scaling
+### 識別 Level 2 (namespaces-mcp)
 
-- **Stateless Components:** All components are stateless
-- **Load Balancing:** Distribute load across instances
-- **Auto-Scaling:** Automatic scaling based on metrics
+**特徵:**
+- 包含 `schemas/`, `specs/`, `policies/`, `bundles/`, `graphs/`, `flows/` 目錄
+- 包含 `registries/` 和 `endpoints/` 目錄
+- 包含完整的 artifact 結構
+- 文件名格式: `<module-name>.<artifact-type>.yaml`
 
-### Vertical Scaling
+**範例文件:**
+- `schemas/data-management.schema.yaml`
+- `specs/monitoring-observability.spec.yaml`
+- `policies/configuration-governance.policy.yaml`
 
-- **Resource Optimization:** Efficient resource usage
-- **Performance Tuning:** Continuous optimization
-- **Caching:** Multi-level caching strategy
+### 識別 Level 3 (namespaces-mcp/level3/)
 
-### Geographic Distribution
+**特徵:**
+- 包含 `engines/` 目錄
+- 包含 RAG/DAG 相關實現
+- 文件名包含 "engine", "rag", "dag"
 
-- **Multi-Region:** Deploy across regions
-- **Edge Computing:** Process at the edge
-- **CDN Integration:** Content delivery optimization
+**範例文件:**
+- `engines/rag-engine.ts`
+- `engines/dag-engine.ts`
+- `engines/taxonomy-engine.ts`
 
----
+### 識別 Level 4 (namespaces-mcp/level4/)
 
-## Performance Optimization
+**特徵:**
+- 包含 `interfaces/` 目錄
+- 包含自主演化相關實現
+- 文件名包含 "evolution", "reflex", "closure"
 
-### Caching Strategy
-
-```
-┌─────────────┐
-│   L1 Cache  │  (In-Memory, <1ms)
-└─────────────┘
-       │
-       ▼
-┌─────────────┐
-│   L2 Cache  │  (Redis, <10ms)
-└─────────────┘
-       │
-       ▼
-┌─────────────┐
-│   L3 Cache  │  (Database, <100ms)
-└─────────────┘
-```
-
-### Connection Pooling
-
-- **Database Pools:** Reuse connections
-- **HTTP Pools:** Keep-alive connections
-- **Resource Pools:** Pre-allocated resources
-
-### Asynchronous Processing
-
-- **Non-Blocking I/O:** All I/O is async
-- **Event Loop:** Single-threaded event loop
-- **Worker Threads:** CPU-intensive tasks
+**範例文件:**
+- `engines/evolution-engine.ts`
+- `engines/reflex-engine.ts`
+- `engines/observation-engine.ts`
 
 ---
 
-## Monitoring & Observability
+## 📈 完成度總覽
 
-### Metrics Collection
-
-- **System Metrics:** CPU, memory, disk, network
-- **Application Metrics:** Request rate, latency, errors
-- **Business Metrics:** Resource utilization, cost
-
-### Logging
-
-- **Structured Logging:** JSON format
-- **Log Levels:** DEBUG, INFO, WARN, ERROR
-- **Centralized:** ELK Stack integration
-
-### Tracing
-
-- **Distributed Tracing:** OpenTelemetry
-- **Span Context:** Propagate across services
-- **Performance Analysis:** Identify bottlenecks
+| 層級 | 目錄 | 完成度 | 狀態 |
+|------|------|--------|------|
+| Level 2 | `namespaces-mcp/` | 100% | ✅ 完成 |
+| Level 3 | `namespaces-mcp/level3/` | 75% | 🚧 進行中 |
+| Level 4 | `namespaces-mcp/level4/` | 75% | 🚧 進行中 |
 
 ---
 
-## Deployment Architecture
+## 🎯 總結
 
-### Container-Based
+1. **`namespaces-mcp` = MCP Level 2**
+   - 不需要額外的 `mcp-level2` 子資料夾
+   - 它本身就是完整的 Level 2 實現
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Kubernetes Cluster                    │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │   Pod 1      │  │   Pod 2      │  │   Pod 3      │  │
-│  │ ┌──────────┐ │  │ ┌──────────┐ │  │ ┌──────────┐ │  │
-│  │ │Container │ │  │ │Container │ │  │ │Container │ │  │
-│  │ └──────────┘ │  │ └──────────┘ │  │ └──────────┘ │  │
-│  └──────────────┘  └──────────────┘  └──────────────┘  │
-└─────────────────────────────────────────────────────────┘
-```
+2. **`level3` 和 `level4` 是獨立的子專案**
+   - 建立在 Level 2 的基礎之上
+   - 提供更高層級的語義能力
 
-### Service Mesh
-
-- **Istio/Linkerd:** Service-to-service communication
-- **mTLS:** Mutual TLS encryption
-- **Traffic Management:** Routing, load balancing
-- **Observability:** Metrics, logs, traces
+3. **清晰的層級結構**
+   - 每個層級職責明確
+   - 依賴關係清晰
+   - 便於獨立演進和維護
 
 ---
 
-## Security Architecture
-
-### Defense in Depth
-
-1. **Network Security:** Firewalls, VPNs
-2. **Application Security:** Input validation, CSRF protection
-3. **Data Security:** Encryption at rest and in transit
-4. **Identity Security:** Authentication, authorization
-5. **Monitoring:** Threat detection, incident response
-
-### Zero-Trust Model
-
-- **Never Trust, Always Verify**
-- **Least Privilege Access**
-- **Micro-Segmentation**
-- **Continuous Verification**
-
----
-
-## Disaster Recovery
-
-### Backup Strategy
-
-- **Automated Backups:** Daily incremental, weekly full
-- **Geographic Redundancy:** Multi-region backups
-- **Point-in-Time Recovery:** Restore to any point
-
-### High Availability
-
-- **Multi-AZ Deployment:** Across availability zones
-- **Auto-Failover:** Automatic failover
-- **Health Checks:** Continuous monitoring
-
----
-
-**Version:** 1.0.0  
-**Last Updated:** 2025-01-10
+**文檔創建:** 2025年1月11日  
+**作者:** SuperNinja AI Agent  
+**狀態:** ✅ 完成
