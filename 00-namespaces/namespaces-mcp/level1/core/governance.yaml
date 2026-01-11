@@ -1,0 +1,183 @@
+# MCP Level 1 Core Governance
+# Semantic Type: governance
+# Description: 定義 artifact 的治理規則、權限、審計與安全政策
+
+apiVersion: mcp.io/v1
+kind: Governance
+metadata:
+  name: io.github.machinenativeops/mcp-governance
+  version: "1.0.0"
+  description: "MCP Level 1 Core Governance - Rules, Policies, and Security"
+  semanticType: "governance"
+  mcpEndpoint: "/governance/validate"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mcp-governance"
+
+# Dependencies
+dependsOn:
+  - artifact: "manifest.yaml"
+    purpose: "Artifact metadata"
+    version: "1.0.0"
+
+# References
+references:
+  - artifact: "policies.yaml"
+    purpose: "Governance policies"
+  - artifact: "roles.yaml"
+    purpose: "Role definitions"
+
+# Governance Framework
+governance:
+  # Namespace Governance
+  namespaceGovernance:
+    ownershipVerification:
+      required: true
+      methods:
+        - name: "github-oauth"
+          description: "GitHub OAuth/OIDC verification"
+          applicableTo: ["io.github.*"]
+        - name: "dns-txt"
+          description: "DNS TXT record verification"
+          applicableTo: ["com.*", "org.*", "net.*"]
+        - name: "http-well-known"
+          description: "HTTP well-known endpoint verification"
+          applicableTo: ["com.*", "org.*", "net.*"]
+      
+    conflictResolution:
+      strategy: "ownership-priority"
+      fallback: "timestamp-priority"
+      appeal: true
+      
+    namespaceReclamation:
+      enabled: true
+      inactivityPeriod: "365 days"
+      notificationPeriod: "90 days"
+  
+  # Artifact Governance
+  artifactGovernance:
+    publishingRules:
+      - "Namespace ownership must be verified"
+      - "Artifact must pass schema validation"
+      - "Dependencies must be declared"
+      - "Semantic type must be annotated"
+      
+    versioningRules:
+      - "Must follow semantic versioning"
+      - "Breaking changes require major version bump"
+      - "Backward compatibility in minor versions"
+      - "Patch versions for bug fixes only"
+      
+    deprecationPolicy:
+      notificationPeriod: "90 days"
+      supportPeriod: "180 days"
+      archivalPeriod: "365 days"
+  
+  # Security Governance
+  securityGovernance:
+    artifactSigning:
+      required: true
+      algorithm: "ed25519"
+      keyManagement: "secure-key-store"
+      
+    dependencySecurity:
+      scanRequired: true
+      allowedSources: ["verified-namespaces"]
+      vulnerabilityThreshold: "medium"
+      
+    accessControl:
+      model: "RBAC"
+      defaultRole: "viewer"
+      privilegedOperations:
+        - "artifact-publish"
+        - "artifact-delete"
+        - "namespace-transfer"
+        - "policy-update"
+  
+  # Audit Governance
+  auditGovernance:
+    auditLogging:
+      enabled: true
+      retention: "365 days"
+      events:
+        - "artifact-publish"
+        - "artifact-update"
+        - "artifact-delete"
+        - "namespace-verification"
+        - "policy-change"
+        - "role-assignment"
+        
+    complianceReporting:
+      enabled: true
+      frequency: "monthly"
+      reports:
+        - "artifact-inventory"
+        - "namespace-ownership"
+        - "security-vulnerabilities"
+        - "policy-violations"
+  
+  # Quality Governance
+  qualityGovernance:
+    validationRequirements:
+      schemaValidation: true
+      dependencyCheck: true
+      namespaceVerification: true
+      semanticValidation: true
+      
+    qualityMetrics:
+      - name: "schema-compliance"
+        threshold: 100
+        unit: "percentage"
+      - name: "dependency-resolution"
+        threshold: 100
+        unit: "percentage"
+      - name: "documentation-coverage"
+        threshold: 80
+        unit: "percentage"
+
+# Compliance Standards
+compliance:
+  standards:
+    - name: "MCP Registry API v1.0"
+      required: true
+    - name: "Semantic Versioning 2.0.0"
+      required: true
+    - name: "JSON Schema Draft-07"
+      required: true
+    - name: "OAuth 2.0"
+      required: true
+    - name: "OpenID Connect"
+      required: false
+  
+  certifications:
+    - name: "Artifact-First Workflow"
+      status: "certified"
+    - name: "Namespace Verification"
+      status: "certified"
+    - name: "Security Best Practices"
+      status: "in-progress"
+
+# Enforcement
+enforcement:
+  automated:
+    - "Schema validation on publish"
+    - "Namespace verification on publish"
+    - "Dependency resolution check"
+    - "Vulnerability scanning"
+    
+  manual:
+    - "Policy violation review"
+    - "Namespace ownership disputes"
+    - "Security incident response"
+    - "Compliance audits"
+  
+  penalties:
+    - violation: "namespace-squatting"
+      action: "namespace-revocation"
+    - violation: "malicious-artifact"
+      action: "artifact-removal-and-ban"
+    - violation: "policy-violation"
+      action: "warning-or-suspension"

@@ -1,0 +1,145 @@
+# MCP Level 1 Core Schema
+# Semantic Type: schema
+# Description: 定義 artifact 的結構、欄位與驗證規則（JSON Schema 格式）
+
+apiVersion: mcp.io/v1
+kind: Schema
+metadata:
+  name: io.github.machinenativeops/mcp-core-schema
+  version: "1.0.0"
+  description: "MCP Level 1 Core Schema - Structure and Validation Rules"
+  semanticType: "schema"
+  mcpEndpoint: "/schema/validate"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mcp-core-schema"
+
+# Dependencies
+dependsOn: []
+
+# References
+references:
+  - artifact: "spec.yaml"
+    purpose: "Functional specifications"
+
+# JSON Schema Definition
+schema:
+  $schema: "http://json-schema.org/draft-07/schema#"
+  title: "MCP Core Artifact Schema"
+  type: "object"
+  
+  required:
+    - apiVersion
+    - kind
+    - metadata
+    
+  properties:
+    apiVersion:
+      type: "string"
+      pattern: "^mcp\\.io/v[0-9]+$"
+      description: "MCP API version"
+      
+    kind:
+      type: "string"
+      enum:
+        - "Manifest"
+        - "Schema"
+        - "Spec"
+        - "Index"
+        - "Category"
+        - "Governance"
+        - "Policy"
+        - "Role"
+        - "Toolchain"
+      description: "Artifact type"
+      
+    metadata:
+      type: "object"
+      required:
+        - name
+        - version
+        - semanticType
+      properties:
+        name:
+          type: "string"
+          pattern: "^[a-z0-9.-]+/[a-z0-9-]+$"
+          description: "Artifact name in reverse-DNS format"
+        version:
+          type: "string"
+          pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+          description: "Semantic version"
+        description:
+          type: "string"
+          description: "Human-readable description"
+        semanticType:
+          type: "string"
+          enum:
+            - "manifest"
+            - "schema"
+            - "spec"
+            - "index"
+            - "taxonomy"
+            - "governance"
+            - "policy"
+            - "role"
+            - "toolchain"
+            - "documentation"
+          description: "Semantic artifact type"
+        mcpEndpoint:
+          type: "string"
+          pattern: "^/[a-z-]+/[a-z-]+$"
+          description: "MCP endpoint for validation/query"
+        namingRegistry:
+          type: "object"
+          required:
+            - format
+            - namespace
+            - artifactName
+          properties:
+            format:
+              type: "string"
+              enum: ["reverse-DNS"]
+            namespace:
+              type: "string"
+              pattern: "^[a-z0-9.-]+$"
+            artifactName:
+              type: "string"
+              pattern: "^[a-z0-9-]+$"
+              
+    dependsOn:
+      type: "array"
+      items:
+        type: "object"
+        required:
+          - artifact
+          - purpose
+        properties:
+          artifact:
+            type: "string"
+          purpose:
+            type: "string"
+          version:
+            type: "string"
+            
+    references:
+      type: "array"
+      items:
+        type: "object"
+        required:
+          - artifact
+          - purpose
+        properties:
+          artifact:
+            type: "string"
+          purpose:
+            type: "string"
+
+# Validation Rules
+validation:
+  strictMode: true
+  allowAdditionalProperties: false
+  validateDependencies: true
+  validateReferences: true

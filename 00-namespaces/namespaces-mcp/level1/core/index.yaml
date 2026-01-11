@@ -1,0 +1,173 @@
+# MCP Level 1 Core Index
+# Semantic Type: index
+# Description: MCP 服務條目索引，列舉所有 artifact 與其 metadata
+
+apiVersion: mcp.io/v1
+kind: Index
+metadata:
+  name: io.github.machinenativeops/mcp-core-index
+  version: "1.0.0"
+  description: "MCP Level 1 Core Index - Artifact Entry Registry"
+  semanticType: "index"
+  mcpEndpoint: "/index/list"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mcp-core-index"
+
+# Dependencies
+dependsOn:
+  - artifact: "manifest.yaml"
+    purpose: "Artifact metadata"
+    version: "1.0.0"
+  - artifact: "schema.yaml"
+    purpose: "Structure validation"
+    version: "1.0.0"
+  - artifact: "spec.yaml"
+    purpose: "Functional specifications"
+    version: "1.0.0"
+
+# References
+references:
+  - artifact: "categories.yaml"
+    purpose: "Functional classification"
+
+# Core Artifacts Index
+coreArtifacts:
+  - id: "manifest"
+    name: "io.github.machinenativeops/mcp-manifest"
+    type: "manifest"
+    version: "1.0.0"
+    path: "manifest.yaml"
+    description: "Main MCP manifest"
+    status: "active"
+    mcpEndpoint: "/manifest/validate"
+    createdAt: "2024-01-11T00:00:00Z"
+    updatedAt: "2024-01-11T00:00:00Z"
+  
+  - id: "schema"
+    name: "io.github.machinenativeops/mcp-schema"
+    type: "schema"
+    version: "1.0.0"
+    path: "schema.yaml"
+    description: "JSON Schema definitions"
+    status: "active"
+    mcpEndpoint: "/schema/validate"
+    createdAt: "2024-01-11T00:00:00Z"
+    updatedAt: "2024-01-11T00:00:00Z"
+  
+  - id: "spec"
+    name: "io.github.machinenativeops/mcp-spec"
+    type: "spec"
+    version: "1.0.0"
+    path: "spec.yaml"
+    description: "Functional specifications"
+    status: "active"
+    mcpEndpoint: "/spec/validate"
+    createdAt: "2024-01-11T00:00:00Z"
+    updatedAt: "2024-01-11T00:00:00Z"
+  
+  - id: "index"
+    name: "io.github.machinenativeops/mcp-index"
+    type: "index"
+    version: "1.0.0"
+    path: "index.yaml"
+    description: "Artifact entry index"
+    status: "active"
+    mcpEndpoint: "/index/list"
+    createdAt: "2024-01-11T00:00:00Z"
+    updatedAt: "2024-01-11T00:00:00Z"
+  
+  - id: "categories"
+    name: "io.github.machinenativeops/mcp-categories"
+    type: "taxonomy"
+    version: "1.0.0"
+    path: "categories.yaml"
+    description: "Functional classification"
+    status: "active"
+    mcpEndpoint: "/categories/list"
+    createdAt: "2024-01-11T00:00:00Z"
+    updatedAt: "2024-01-11T00:00:00Z"
+  
+  - id: "governance"
+    name: "io.github.machinenativeops/mcp-governance"
+    type: "governance"
+    version: "1.0.0"
+    path: "governance.yaml"
+    description: "Governance rules and policies"
+    status: "active"
+    mcpEndpoint: "/governance/validate"
+    createdAt: "2024-01-11T00:00:00Z"
+    updatedAt: "2024-01-11T00:00:00Z"
+  
+  - id: "policies"
+    name: "io.github.machinenativeops/mcp-policies"
+    type: "policy"
+    version: "1.0.0"
+    path: "policies.yaml"
+    description: "Governance policy entries"
+    status: "active"
+    mcpEndpoint: "/policies/validate"
+    createdAt: "2024-01-11T00:00:00Z"
+    updatedAt: "2024-01-11T00:00:00Z"
+  
+  - id: "roles"
+    name: "io.github.machinenativeops/mcp-roles"
+    type: "role"
+    version: "1.0.0"
+    path: "roles.yaml"
+    description: "Role and permission definitions"
+    status: "active"
+    mcpEndpoint: "/roles/validate"
+    createdAt: "2024-01-11T00:00:00Z"
+    updatedAt: "2024-01-11T00:00:00Z"
+  
+  - id: "tools"
+    name: "io.github.machinenativeops/mcp-tools"
+    type: "toolchain"
+    version: "1.0.0"
+    path: "tools.yaml"
+    description: "MCP toolchain definitions"
+    status: "active"
+    mcpEndpoint: "/tools/list"
+    createdAt: "2024-01-11T00:00:00Z"
+    updatedAt: "2024-01-11T00:00:00Z"
+
+# Statistics
+statistics:
+  totalArtifacts: 9
+  byType:
+    manifest: 1
+    schema: 1
+    spec: 1
+    index: 1
+    taxonomy: 1
+    governance: 1
+    policy: 1
+    role: 1
+    toolchain: 1
+  byStatus:
+    active: 9
+    deprecated: 0
+    archived: 0
+
+# Naming Registries Reference
+namingRegistries:
+  - name: "Naming Rules Registry"
+    artifacts: ["manifest.yaml", "schema.yaml", "spec.yaml"]
+  - name: "Team Identity Registry"
+    artifacts: ["manifest.yaml"]
+  - name: "Directory Taxonomy Registry"
+    artifacts: ["categories.yaml", "index.yaml"]
+  - name: "Artifact Entry Registry"
+    artifacts: ["index.yaml"]
+  - name: "Mapping Key Registry"
+    artifacts: ["manifest.yaml", "schema.yaml", "spec.yaml"]
+  - name: "Dependency Identifier Registry"
+    artifacts: ["manifest.yaml", "schema.yaml", "spec.yaml"]
+  - name: "Reference Tag Registry"
+    artifacts: ["manifest.yaml", "index.yaml"]
+  - name: "Toolchain Identifier Registry"
+    artifacts: ["tools.yaml"]

@@ -1,0 +1,257 @@
+# MCP Level 1 Core Policies
+# Semantic Type: policy
+# Description: 具體治理政策條目，細化權限、審計與安全要求
+
+apiVersion: mcp.io/v1
+kind: Policy
+metadata:
+  name: io.github.machinenativeops/mcp-policies
+  version: "1.0.0"
+  description: "MCP Level 1 Core Policies - Detailed Governance Rules"
+  semanticType: "policy"
+  mcpEndpoint: "/policies/validate"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mcp-policies"
+
+# Dependencies
+dependsOn:
+  - artifact: "governance.yaml"
+    purpose: "Governance framework"
+    version: "1.0.0"
+
+# References
+references:
+  - artifact: "roles.yaml"
+    purpose: "Role definitions"
+
+# Policy Definitions
+policies:
+  # Naming Policies
+  - id: "naming-001"
+    name: "Reverse-DNS Naming Requirement"
+    category: "naming"
+    severity: "critical"
+    description: "All artifacts must use reverse-DNS naming format"
+    rule: "artifact.name MUST match pattern ^[a-z0-9.-]+/[a-z0-9-]+$"
+    enforcement: "automated"
+    
+  - id: "naming-002"
+    name: "Namespace Ownership Verification"
+    category: "naming"
+    severity: "critical"
+    description: "Namespace ownership must be verified before publishing"
+    rule: "artifact.namespace MUST be verified via OAuth, DNS, or HTTP"
+    enforcement: "automated"
+    
+  - id: "naming-003"
+    name: "Artifact Name Uniqueness"
+    category: "naming"
+    severity: "critical"
+    description: "Artifact names must be unique within namespace"
+    rule: "artifact.name MUST be unique within namespace"
+    enforcement: "automated"
+  
+  # Versioning Policies
+  - id: "version-001"
+    name: "Semantic Versioning Requirement"
+    category: "versioning"
+    severity: "critical"
+    description: "All artifacts must follow semantic versioning"
+    rule: "artifact.version MUST match pattern ^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    enforcement: "automated"
+    
+  - id: "version-002"
+    name: "Breaking Change Version Bump"
+    category: "versioning"
+    severity: "high"
+    description: "Breaking changes require major version increment"
+    rule: "IF breaking_change THEN major_version += 1"
+    enforcement: "manual-review"
+    
+  - id: "version-003"
+    name: "Backward Compatibility"
+    category: "versioning"
+    severity: "high"
+    description: "Minor versions must maintain backward compatibility"
+    rule: "minor_version changes MUST be backward compatible"
+    enforcement: "manual-review"
+  
+  # Security Policies
+  - id: "security-001"
+    name: "Artifact Signing Requirement"
+    category: "security"
+    severity: "critical"
+    description: "All artifacts must be cryptographically signed"
+    rule: "artifact MUST have valid ed25519 signature"
+    enforcement: "automated"
+    
+  - id: "security-002"
+    name: "Dependency Vulnerability Scanning"
+    category: "security"
+    severity: "high"
+    description: "Dependencies must be scanned for vulnerabilities"
+    rule: "dependencies MUST NOT have vulnerabilities above threshold"
+    enforcement: "automated"
+    
+  - id: "security-003"
+    name: "Verified Source Requirement"
+    category: "security"
+    severity: "high"
+    description: "Dependencies must come from verified sources"
+    rule: "dependencies MUST be from verified namespaces"
+    enforcement: "automated"
+  
+  # Validation Policies
+  - id: "validation-001"
+    name: "Schema Validation Requirement"
+    category: "validation"
+    severity: "critical"
+    description: "All artifacts must pass schema validation"
+    rule: "artifact MUST validate against schema.yaml"
+    enforcement: "automated"
+    
+  - id: "validation-002"
+    name: "Dependency Resolution Check"
+    category: "validation"
+    severity: "critical"
+    description: "All dependencies must be resolvable"
+    rule: "ALL dependencies MUST exist and be accessible"
+    enforcement: "automated"
+    
+  - id: "validation-003"
+    name: "Semantic Type Annotation"
+    category: "validation"
+    severity: "high"
+    description: "All artifacts must have semantic type annotation"
+    rule: "artifact.metadata.semanticType MUST be defined"
+    enforcement: "automated"
+  
+  # Publishing Policies
+  - id: "publish-001"
+    name: "Pre-Publish Validation"
+    category: "publishing"
+    severity: "critical"
+    description: "Artifacts must pass all validations before publishing"
+    rule: "artifact MUST pass schema, dependency, and security checks"
+    enforcement: "automated"
+    
+  - id: "publish-002"
+    name: "Metadata Completeness"
+    category: "publishing"
+    severity: "high"
+    description: "Artifact metadata must be complete"
+    rule: "artifact.metadata MUST include name, version, description, semanticType"
+    enforcement: "automated"
+    
+  - id: "publish-003"
+    name: "Documentation Requirement"
+    category: "publishing"
+    severity: "medium"
+    description: "Artifacts should include documentation"
+    rule: "artifact SHOULD include README.md"
+    enforcement: "warning"
+  
+  # Audit Policies
+  - id: "audit-001"
+    name: "Audit Logging Requirement"
+    category: "audit"
+    severity: "critical"
+    description: "All privileged operations must be logged"
+    rule: "privileged operations MUST be logged with timestamp, user, action"
+    enforcement: "automated"
+    
+  - id: "audit-002"
+    name: "Audit Log Retention"
+    category: "audit"
+    severity: "high"
+    description: "Audit logs must be retained for compliance period"
+    rule: "audit logs MUST be retained for 365 days"
+    enforcement: "automated"
+    
+  - id: "audit-003"
+    name: "Compliance Reporting"
+    category: "audit"
+    severity: "medium"
+    description: "Regular compliance reports must be generated"
+    rule: "compliance reports MUST be generated monthly"
+    enforcement: "automated"
+  
+  # Governance Policies
+  - id: "governance-001"
+    name: "Role-Based Access Control"
+    category: "governance"
+    severity: "critical"
+    description: "Access control must follow RBAC model"
+    rule: "operations MUST check user roles before execution"
+    enforcement: "automated"
+    
+  - id: "governance-002"
+    name: "Policy Update Approval"
+    category: "governance"
+    severity: "high"
+    description: "Policy updates require approval"
+    rule: "policy changes MUST be approved by governance team"
+    enforcement: "manual-review"
+    
+  - id: "governance-003"
+    name: "Namespace Transfer Approval"
+    category: "governance"
+    severity: "high"
+    description: "Namespace transfers require approval"
+    rule: "namespace transfers MUST be approved by both parties"
+    enforcement: "manual-review"
+
+# Policy Enforcement Matrix
+enforcementMatrix:
+  automated:
+    - "naming-001"
+    - "naming-002"
+    - "naming-003"
+    - "version-001"
+    - "security-001"
+    - "security-002"
+    - "security-003"
+    - "validation-001"
+    - "validation-002"
+    - "validation-003"
+    - "publish-001"
+    - "publish-002"
+    - "audit-001"
+    - "audit-002"
+    - "audit-003"
+    - "governance-001"
+    
+  manual-review:
+    - "version-002"
+    - "version-003"
+    - "governance-002"
+    - "governance-003"
+    
+  warning:
+    - "publish-003"
+
+# Violation Handling
+violationHandling:
+  critical:
+    action: "block-operation"
+    notification: "immediate"
+    escalation: "governance-team"
+    
+  high:
+    action: "block-operation"
+    notification: "immediate"
+    escalation: "security-team"
+    
+  medium:
+    action: "warn-and-log"
+    notification: "daily-digest"
+    escalation: "none"
+    
+  low:
+    action: "log-only"
+    notification: "weekly-digest"
+    escalation: "none"

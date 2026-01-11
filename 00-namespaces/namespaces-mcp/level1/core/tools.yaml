@@ -1,0 +1,335 @@
+# MCP Level 1 Core Tools
+# Semantic Type: toolchain
+# Description: 定義 MCP 服務可用工具（如 validator、publisher）
+
+apiVersion: mcp.io/v1
+kind: Toolchain
+metadata:
+  name: io.github.machinenativeops/mcp-tools
+  version: "1.0.0"
+  description: "MCP Level 1 Core Tools - Toolchain Definitions"
+  semanticType: "toolchain"
+  mcpEndpoint: "/tools/list"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mcp-tools"
+
+# Dependencies
+dependsOn: []
+
+# References
+references: []
+
+# Toolchain Definitions
+tools:
+  # Validation Tools
+  - id: "validator"
+    name: "MCP Validator"
+    version: "1.2.0"
+    identifier: "validator@v1.2.0"
+    description: "Validates MCP artifacts against schemas and policies"
+    category: "validation"
+    
+    capabilities:
+      - "Schema validation"
+      - "Dependency resolution check"
+      - "Namespace verification"
+      - "Semantic validation"
+      - "Policy compliance check"
+    
+    usage:
+      command: "mcp-validator"
+      arguments:
+        - "--artifact <path>"
+        - "--schema <schema-path>"
+        - "--strict"
+      example: "mcp-validator --artifact manifest.yaml --schema schema.yaml --strict"
+    
+    endpoints:
+      - "/schema/validate"
+      - "/manifest/validate"
+      - "/spec/validate"
+      - "/governance/validate"
+    
+    requirements:
+      - "Node.js 18+"
+      - "YAML parser"
+      - "JSON Schema validator"
+  
+  # Publishing Tools
+  - id: "publisher"
+    name: "MCP Publisher"
+    version: "0.9.1"
+    identifier: "publisher@v0.9.1"
+    description: "Publishes MCP artifacts to registry"
+    category: "publishing"
+    
+    capabilities:
+      - "Artifact signing"
+      - "Namespace verification"
+      - "Dependency resolution"
+      - "Registry upload"
+      - "Version management"
+    
+    usage:
+      command: "mcp-publisher"
+      arguments:
+        - "--artifact <path>"
+        - "--namespace <namespace>"
+        - "--sign"
+      example: "mcp-publisher --artifact manifest.yaml --namespace io.github.user --sign"
+    
+    endpoints:
+      - "/artifact/publish"
+      - "/artifact/update"
+      - "/namespace/verify"
+    
+    requirements:
+      - "Node.js 18+"
+      - "Cryptographic signing library"
+      - "Registry API access"
+  
+  # Inspection Tools
+  - id: "inspector"
+    name: "MCP Inspector"
+    version: "2024-01-11"
+    identifier: "inspector@2024-01-11"
+    description: "Inspects and analyzes MCP artifacts"
+    category: "analysis"
+    
+    capabilities:
+      - "Artifact metadata extraction"
+      - "Dependency graph visualization"
+      - "Security vulnerability scanning"
+      - "Quality metrics analysis"
+      - "Compliance reporting"
+    
+    usage:
+      command: "mcp-inspector"
+      arguments:
+        - "--artifact <path>"
+        - "--report <format>"
+        - "--output <path>"
+      example: "mcp-inspector --artifact manifest.yaml --report json --output report.json"
+    
+    endpoints:
+      - "/artifact/inspect"
+      - "/dependency/analyze"
+      - "/security/scan"
+    
+    requirements:
+      - "Python 3.9+"
+      - "Vulnerability database"
+      - "Graph visualization library"
+  
+  # Schema Generator
+  - id: "schema-generator"
+    name: "MCP Schema Generator"
+    version: "1.0.0"
+    identifier: "schema-generator@v1.0.0"
+    description: "Generates JSON schemas from artifact definitions"
+    category: "development"
+    
+    capabilities:
+      - "Schema generation from YAML"
+      - "Schema validation"
+      - "Schema documentation"
+      - "Schema versioning"
+    
+    usage:
+      command: "mcp-schema-gen"
+      arguments:
+        - "--input <yaml-path>"
+        - "--output <schema-path>"
+        - "--format json"
+      example: "mcp-schema-gen --input artifact.yaml --output schema.json --format json"
+    
+    endpoints:
+      - "/schema/generate"
+      - "/schema/validate"
+    
+    requirements:
+      - "Node.js 18+"
+      - "YAML parser"
+      - "JSON Schema generator"
+  
+  # Dependency Resolver
+  - id: "dependency-resolver"
+    name: "MCP Dependency Resolver"
+    version: "1.1.0"
+    identifier: "dependency-resolver@v1.1.0"
+    description: "Resolves and manages artifact dependencies"
+    category: "dependency-management"
+    
+    capabilities:
+      - "Dependency resolution"
+      - "Version conflict detection"
+      - "Transitive dependency analysis"
+      - "Dependency graph generation"
+    
+    usage:
+      command: "mcp-deps"
+      arguments:
+        - "--artifact <path>"
+        - "--resolve"
+        - "--graph"
+      example: "mcp-deps --artifact manifest.yaml --resolve --graph"
+    
+    endpoints:
+      - "/dependency/resolve"
+      - "/dependency/graph"
+    
+    requirements:
+      - "Node.js 18+"
+      - "Graph library"
+      - "Registry API access"
+  
+  # Security Scanner
+  - id: "security-scanner"
+    name: "MCP Security Scanner"
+    version: "2.0.0"
+    identifier: "security-scanner@v2.0.0"
+    description: "Scans artifacts for security vulnerabilities"
+    category: "security"
+    
+    capabilities:
+      - "Vulnerability scanning"
+      - "Dependency security analysis"
+      - "Malware detection"
+      - "Security policy validation"
+    
+    usage:
+      command: "mcp-security-scan"
+      arguments:
+        - "--artifact <path>"
+        - "--severity <level>"
+        - "--report"
+      example: "mcp-security-scan --artifact manifest.yaml --severity high --report"
+    
+    endpoints:
+      - "/security/scan"
+      - "/vulnerability/assess"
+    
+    requirements:
+      - "Python 3.9+"
+      - "Vulnerability database"
+      - "Malware detection engine"
+  
+  # Compliance Checker
+  - id: "compliance-checker"
+    name: "MCP Compliance Checker"
+    version: "1.0.0"
+    identifier: "compliance-checker@v1.0.0"
+    description: "Checks artifact compliance with policies"
+    category: "compliance"
+    
+    capabilities:
+      - "Policy compliance checking"
+      - "Governance rule validation"
+      - "Audit trail generation"
+      - "Compliance reporting"
+    
+    usage:
+      command: "mcp-compliance"
+      arguments:
+        - "--artifact <path>"
+        - "--policies <path>"
+        - "--report"
+      example: "mcp-compliance --artifact manifest.yaml --policies policies.yaml --report"
+    
+    endpoints:
+      - "/compliance/check"
+      - "/governance/validate"
+      - "/policies/validate"
+    
+    requirements:
+      - "Node.js 18+"
+      - "Policy engine"
+      - "Audit logging"
+  
+  # Documentation Generator
+  - id: "doc-generator"
+    name: "MCP Documentation Generator"
+    version: "1.0.0"
+    identifier: "doc-generator@v1.0.0"
+    description: "Generates documentation from artifacts"
+    category: "documentation"
+    
+    capabilities:
+      - "Markdown documentation generation"
+      - "API reference generation"
+      - "Schema documentation"
+      - "Dependency documentation"
+    
+    usage:
+      command: "mcp-docs"
+      arguments:
+        - "--artifact <path>"
+        - "--output <path>"
+        - "--format markdown"
+      example: "mcp-docs --artifact manifest.yaml --output README.md --format markdown"
+    
+    endpoints:
+      - "/docs/generate"
+    
+    requirements:
+      - "Node.js 18+"
+      - "Markdown generator"
+      - "Template engine"
+
+# Toolchain Integration
+integration:
+  cicd:
+    - name: "GitHub Actions"
+      supported: true
+      examples:
+        - "mcp-validator in pre-commit hooks"
+        - "mcp-publisher in release workflow"
+        - "mcp-security-scan in PR checks"
+    
+    - name: "GitLab CI"
+      supported: true
+      examples:
+        - "mcp-validator in pipeline"
+        - "mcp-compliance in merge requests"
+    
+    - name: "Jenkins"
+      supported: true
+      examples:
+        - "mcp-inspector in build stage"
+        - "mcp-publisher in deploy stage"
+  
+  ide:
+    - name: "VS Code"
+      supported: true
+      extensions:
+        - "MCP Validator Extension"
+        - "MCP Schema IntelliSense"
+    
+    - name: "IntelliJ IDEA"
+      supported: true
+      plugins:
+        - "MCP Support Plugin"
+
+# Toolchain Versioning
+versioning:
+  strategy: "semantic-versioning"
+  updatePolicy: "backward-compatible"
+  deprecationNotice: "90 days"
+  supportPeriod: "180 days"
+
+# Toolchain Statistics
+statistics:
+  totalTools: 8
+  byCategory:
+    validation: 1
+    publishing: 1
+    analysis: 1
+    development: 1
+    dependency-management: 1
+    security: 1
+    compliance: 1
+    documentation: 1

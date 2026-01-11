@@ -12,6 +12,42 @@ metadata:
 
 structure:
   levels:
+    level1:
+      path: "./level1"
+      description: "Foundation Protocol and Standards"
+      status: "stable"
+      version: "1.0.0"
+      artifacts: 16
+      components:
+        - core
+        - governance
+      subcomponents:
+        core:
+          path: "./level1/core"
+          description: "Core protocol definitions and naming standards"
+          artifacts: 9
+          namingRegistries: 8
+          endpoints: 9
+          toolchain: 8
+        governance:
+          path: "./level1/governance"
+          description: "Governance framework and security policies"
+          artifacts: 7
+          policies: 21
+          roles: 6
+          endpoints: 3
+      capabilities:
+        - "Protocol definition"
+        - "Base schemas"
+        - "Core interfaces"
+        - "Naming standards"
+        - "Seven naming registries"
+        - "Artifact-first workflow"
+        - "Namespace governance"
+        - "Security governance"
+        - "Audit governance"
+        - "RBAC model"
+    
     level2:
       path: "./level2"
       description: "Modular Components and Services"
@@ -118,10 +154,15 @@ structure:
     - legacy
 
 statistics:
-  totalLevels: 3
-  totalArtifacts: 218+
+  totalLevels: 4
+  totalArtifacts: 234+
   totalEngines: 20
   totalModules: 6
+  totalNamingRegistries: 8
+  totalPolicies: 21
+  totalRoles: 6
+  totalToolchain: 8
+  totalEndpoints: 21
 
 # Path Migration Guide
 pathMigration:

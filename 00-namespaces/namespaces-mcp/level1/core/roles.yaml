@@ -1,0 +1,307 @@
+# MCP Level 1 Core Roles
+# Semantic Type: role
+# Description: 定義 artifact 的角色與權限分配
+
+apiVersion: mcp.io/v1
+kind: Role
+metadata:
+  name: io.github.machinenativeops/mcp-roles
+  version: "1.0.0"
+  description: "MCP Level 1 Core Roles - Role and Permission Definitions"
+  semanticType: "role"
+  mcpEndpoint: "/roles/validate"
+  
+  # Naming Registry Compliance
+  namingRegistry:
+    format: "reverse-DNS"
+    namespace: "io.github.machinenativeops"
+    artifactName: "mcp-roles"
+
+# Dependencies
+dependsOn:
+  - artifact: "governance.yaml"
+    purpose: "Governance framework"
+    version: "1.0.0"
+
+# References
+references: []
+
+# Role Definitions
+roles:
+  # Viewer Role
+  - id: "viewer"
+    name: "Viewer"
+    description: "Read-only access to artifacts"
+    permissions:
+      - "artifact:read"
+      - "index:list"
+      - "categories:list"
+      - "schema:read"
+      - "spec:read"
+      - "manifest:read"
+    restrictions:
+      - "Cannot publish artifacts"
+      - "Cannot modify artifacts"
+      - "Cannot delete artifacts"
+    defaultRole: true
+    
+  # Publisher Role
+  - id: "publisher"
+    name: "Publisher"
+    description: "Can publish and update artifacts in owned namespaces"
+    inherits: ["viewer"]
+    permissions:
+      - "artifact:publish"
+      - "artifact:update"
+      - "artifact:read"
+      - "namespace:verify"
+      - "dependency:declare"
+    restrictions:
+      - "Can only publish to verified namespaces"
+      - "Cannot delete artifacts"
+      - "Cannot modify governance policies"
+    requirements:
+      - "Namespace ownership verification"
+      - "Artifact signing capability"
+    
+  # Maintainer Role
+  - id: "maintainer"
+    name: "Maintainer"
+    description: "Can manage artifacts and namespaces"
+    inherits: ["publisher"]
+    permissions:
+      - "artifact:delete"
+      - "artifact:deprecate"
+      - "namespace:manage"
+      - "dependency:update"
+      - "version:manage"
+    restrictions:
+      - "Cannot modify global governance policies"
+      - "Cannot transfer namespaces without approval"
+    requirements:
+      - "Namespace ownership verification"
+      - "Maintainer approval"
+    
+  # Administrator Role
+  - id: "administrator"
+    name: "Administrator"
+    description: "Full administrative access"
+    inherits: ["maintainer"]
+    permissions:
+      - "governance:update"
+      - "policy:create"
+      - "policy:update"
+      - "policy:delete"
+      - "role:assign"
+      - "role:revoke"
+      - "namespace:transfer"
+      - "audit:access"
+    restrictions:
+      - "Actions are logged and audited"
+      - "Requires multi-factor authentication"
+    requirements:
+      - "Administrator approval"
+      - "Multi-factor authentication"
+      - "Audit logging"
+    
+  # Auditor Role
+  - id: "auditor"
+    name: "Auditor"
+    description: "Can access audit logs and compliance reports"
+    inherits: ["viewer"]
+    permissions:
+      - "audit:read"
+      - "compliance:read"
+      - "logs:access"
+      - "reports:generate"
+    restrictions:
+      - "Cannot modify artifacts"
+      - "Cannot modify policies"
+      - "Read-only access to audit data"
+    requirements:
+      - "Auditor approval"
+      - "Compliance training"
+    
+  # Security Analyst Role
+  - id: "security-analyst"
+    name: "Security Analyst"
+    description: "Can perform security analysis and vulnerability scanning"
+    inherits: ["viewer"]
+    permissions:
+      - "security:scan"
+      - "vulnerability:assess"
+      - "dependency:analyze"
+      - "artifact:inspect"
+      - "security:report"
+    restrictions:
+      - "Cannot modify artifacts"
+      - "Cannot modify security policies"
+    requirements:
+      - "Security clearance"
+      - "Security training"
+
+# Permission Definitions
+permissions:
+  # Artifact Permissions
+  artifact:
+    - id: "artifact:read"
+      description: "Read artifact metadata and content"
+      scope: "artifact"
+      
+    - id: "artifact:publish"
+      description: "Publish new artifacts"
+      scope: "namespace"
+      requiresVerification: true
+      
+    - id: "artifact:update"
+      description: "Update existing artifacts"
+      scope: "artifact"
+      requiresOwnership: true
+      
+    - id: "artifact:delete"
+      description: "Delete artifacts"
+      scope: "artifact"
+      requiresOwnership: true
+      requiresApproval: true
+      
+    - id: "artifact:deprecate"
+      description: "Mark artifacts as deprecated"
+      scope: "artifact"
+      requiresOwnership: true
+  
+  # Namespace Permissions
+  namespace:
+    - id: "namespace:verify"
+      description: "Verify namespace ownership"
+      scope: "namespace"
+      
+    - id: "namespace:manage"
+      description: "Manage namespace settings"
+      scope: "namespace"
+      requiresOwnership: true
+      
+    - id: "namespace:transfer"
+      description: "Transfer namespace ownership"
+      scope: "namespace"
+      requiresOwnership: true
+      requiresApproval: true
+  
+  # Governance Permissions
+  governance:
+    - id: "governance:update"
+      description: "Update governance rules"
+      scope: "global"
+      requiresApproval: true
+      
+    - id: "policy:create"
+      description: "Create new policies"
+      scope: "global"
+      requiresApproval: true
+      
+    - id: "policy:update"
+      description: "Update existing policies"
+      scope: "global"
+      requiresApproval: true
+      
+    - id: "policy:delete"
+      description: "Delete policies"
+      scope: "global"
+      requiresApproval: true
+  
+  # Audit Permissions
+  audit:
+    - id: "audit:read"
+      description: "Read audit logs"
+      scope: "global"
+      
+    - id: "audit:access"
+      description: "Full access to audit system"
+      scope: "global"
+      
+    - id: "compliance:read"
+      description: "Read compliance reports"
+      scope: "global"
+  
+  # Security Permissions
+  security:
+    - id: "security:scan"
+      description: "Perform security scans"
+      scope: "artifact"
+      
+    - id: "vulnerability:assess"
+      description: "Assess vulnerabilities"
+      scope: "artifact"
+      
+    - id: "security:report"
+      description: "Generate security reports"
+      scope: "global"
+
+# Role Assignment Rules
+roleAssignment:
+  default:
+    role: "viewer"
+    automatic: true
+    
+  publisher:
+    requirements:
+      - "Verified namespace ownership"
+      - "Artifact signing setup"
+    approval: "automatic"
+    
+  maintainer:
+    requirements:
+      - "Publisher role for 90 days"
+      - "Published 5+ artifacts"
+      - "No policy violations"
+    approval: "manual"
+    approvers: ["administrator"]
+    
+  administrator:
+    requirements:
+      - "Maintainer role for 180 days"
+      - "Governance team nomination"
+      - "Multi-factor authentication"
+    approval: "manual"
+    approvers: ["existing-administrators"]
+    minimumApprovals: 2
+    
+  auditor:
+    requirements:
+      - "Compliance training"
+      - "Governance team approval"
+    approval: "manual"
+    approvers: ["administrator"]
+    
+  security-analyst:
+    requirements:
+      - "Security clearance"
+      - "Security training"
+      - "Security team approval"
+    approval: "manual"
+    approvers: ["administrator", "security-lead"]
+
+# Role Hierarchy
+roleHierarchy:
+  administrator:
+    inherits: ["maintainer", "auditor", "security-analyst"]
+    level: 5
+    
+  maintainer:
+    inherits: ["publisher"]
+    level: 4
+    
+  publisher:
+    inherits: ["viewer"]
+    level: 3
+    
+  auditor:
+    inherits: ["viewer"]
+    level: 3
+    
+  security-analyst:
+    inherits: ["viewer"]
+    level: 3
+    
+  viewer:
+    inherits: []
+    level: 1
